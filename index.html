@@ -85,21 +85,6 @@
         }
         .font-display { font-family: 'Sora', sans-serif; }
 
-        /* Splash Screen */
-        #splashScreen {
-            position: fixed; inset: 0;
-            background: linear-gradient(135deg, #0e0e1a 0%, #1a1226 50%, #0e0e1a 100%);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        #splashScreen.hidden { opacity: 0; visibility: hidden; }
-        .splash-logo { animation: pulse 2s ease-in-out infinite; }
-        @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 3px rgba(251,91,27,0.4)); }
-            50% { filter: drop-shadow(0 0 12px rgba(251,91,27,0.7)); }
-        }
-        .splash-logo svg { animation: logoGlow 2s ease-in-out infinite; }
-
         /* Hide scrollbar */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -244,43 +229,6 @@
 </head>
 
 <body class="min-h-screen">
-    <!-- Splash Screen -->
-    <div id="splashScreen">
-        <div class="text-center">
-            <div class="splash-logo mb-8">
-                <svg viewBox="0 0 280 70" class="w-64 mx-auto">
-                    <defs>
-                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ff7a3d"/>
-                            <stop offset="50%" stop-color="#fb5b1b"/>
-                            <stop offset="100%" stop-color="#ec4509"/>
-                        </linearGradient>
-                        <linearGradient id="logoTextGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#ff7a3d"/>
-                            <stop offset="100%" stop-color="#fb5b1b"/>
-                        </linearGradient>
-                    </defs>
-                    <g transform="translate(5, 8)">
-                        <path d="M8 12 L8 50 Q8 54 12 54 L48 54 Q52 54 52 50 L52 12 Q52 8 48 8 L12 8 Q8 8 8 12 Z" fill="url(#logoGrad)"/>
-                        <path d="M18 8 Q18 -2 30 -2 Q42 -2 42 8" fill="none" stroke="url(#logoGrad)" stroke-width="4" stroke-linecap="round"/>
-                        <path d="M18 22 L38 22 M18 35 L32 35 M18 48 L38 48 M18 22 L18 48" fill="none" stroke="#0a0a12" stroke-width="4" stroke-linecap="round"/>
-                        <g transform="translate(52, 6)">
-                            <path d="M0 0 L2 6 L8 8 L2 10 L0 16 L-2 10 L-8 8 L-2 6 Z" fill="#ff7a3d"/>
-                        </g>
-                    </g>
-                    <text x="70" y="48" font-family="'Sora', sans-serif" font-size="38" font-weight="800" fill="url(#logoTextGradient)">Cellex</text>
-                    <text x="72" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#8a8a9a" letter-spacing="2">ONE APP. EVERY DEAL.</text>
-                </svg>
-            </div>
-            <div class="flex items-center justify-center gap-2">
-                <div class="w-3 h-3 bg-brand-400 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
-                <div class="w-3 h-3 bg-brand-500 rounded-full animate-bounce" style="animation-delay: 0.15s;"></div>
-                <div class="w-3 h-3 bg-brand-600 rounded-full animate-bounce" style="animation-delay: 0.3s;"></div>
-            </div>
-            <p class="text-gray-400 mt-4 text-sm">Loading amazing deals...</p>
-        </div>
-    </div>
-
     <!-- Header -->
     <header id="mainHeader" class="glass sticky top-0 z-50 border-b border-ink-100 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
@@ -920,11 +868,6 @@
             startCountdown();
             startFlashCountdown();
             setupHeroCarousel();
-
-            const splash = document.getElementById('splashScreen');
-            if (splash) {
-                setTimeout(() => splash.classList.add('hidden'), 1500);
-            }
         }
 
         // ===== Auth Functions (via edge function) =====
