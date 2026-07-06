@@ -1,4 +1,5 @@
-// Supabase client is already initialized in supabase.js
+// Product detail page logic — uses EdgeFunctions (cookie-based auth, no Supabase SDK).
+// Requires: ../js/config/edge-functions.js and ../js/cart.js loaded before this file.
 
 // Get product ID from URL
 function getProductIdFromUrl() {
@@ -6,7 +7,7 @@ function getProductIdFromUrl() {
     return urlParams.get('id');
 }
 
-// Load product details from Supabase
+// Load product details via edge function
 async function loadProductDetails() {
     const productId = getProductIdFromUrl();
     if (!productId) {
@@ -23,18 +24,16 @@ async function loadProductDetails() {
         document.getElementById('priceSection').classList.add('hidden');
         document.getElementById('descriptionSection').classList.add('hidden');
 
-        // Fetch product from Supabase
-        const { data: product, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('id', productId)
-            .single();
+        // Fetch product via edge function
+        const result = await window.EdgeFunctions.products.byId(productId);
 
-        if (error || !product) {
-            console.error('Error loading product:', error);
+        if (!result.success || !result.product) {
+            console.error('Error loading product:', result.error);
             window.location.href = '/index.html';
             return;
         }
+
+        const product = result.product;
 
         // Hide loading states
         document.getElementById('loadingSkeleton').classList.add('hidden');
@@ -50,7 +49,7 @@ async function loadProductDetails() {
         document.getElementById('productCategory').textContent = product.category || 'General';
         document.getElementById('productPrice').textContent = `₦${product.price.toFixed(2)}`;
         document.getElementById('productDescription').textContent = product.description;
-        
+
         // Handle optional fields
         if (product.original_price) {
             document.getElementById('originalPrice').textContent = `₦${product.original_price.toFixed(2)}`;
@@ -60,18 +59,18 @@ async function loadProductDetails() {
             document.getElementById('originalPrice').classList.add('hidden');
             document.getElementById('discountBadge').classList.add('hidden');
         }
-        
+
         // Update page title
         document.title = `${product.name} - Eesha`;
-        
+
         // Handle product images
         const thumbnailContainer = document.getElementById('thumbnailContainer');
         thumbnailContainer.innerHTML = ''; // Clear existing thumbnails
-        
+
         // Add main image to thumbnails
         const mainThumbnail = createThumbnail(product.image_url, product.name, true);
         thumbnailContainer.appendChild(mainThumbnail);
-        
+
         // Add additional images if available
         if (product.additional_images && Array.isArray(product.additional_images)) {
             product.additional_images.forEach(imgUrl => {
@@ -115,56 +114,25 @@ function updateQuantityDisplay() {
     document.getElementById('quantity').textContent = quantity;
 }
 
-// Add to cart functionality - Supabase ONLY (requires login)
+// Add to cart functionality — uses Cart module (requires login, cookie-based)
 async function addToCart() {
     const productId = getProductIdFromUrl();
     if (!productId) return;
 
     try {
-        // Check if user is logged in
-        const { data: { session } } = await supabase.auth.getSession();
-        const user = session?.user;
+        // Cart module handles auth check + cart upsert internally
+        const result = await window.Cart.addToCart(productId, quantity);
 
-        if (!user) {
-            // Redirect to login
-            if (confirm('Please login to add items to your cart. Go to login page?')) {
-                window.location.href = `login.html?redirect=product&id=${productId}`;
+        if (!result.success) {
+            if (result.requiresAuth) {
+                // Redirect to login
+                if (confirm('Please login to add items to your cart. Go to login page?')) {
+                    window.location.href = `login.html?redirect=product&id=${productId}`;
+                }
+                return;
             }
+            alert(result.message || 'Failed to add to cart. Please try again.');
             return;
-        }
-
-        // Check if item already exists in cart
-        const { data: existingItem, error: fetchError } = await supabase
-            .from('cart_items')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('product_id', productId)
-            .single();
-
-        if (fetchError && fetchError.code !== 'PGRST116') {
-            throw fetchError;
-        }
-
-        if (existingItem) {
-            // Update quantity
-            const { error: updateError } = await supabase
-                .from('cart_items')
-                .update({ quantity: existingItem.quantity + quantity })
-                .eq('id', existingItem.id);
-            if (updateError) throw updateError;
-        } else {
-            // Insert new item
-            const { error: insertError } = await supabase
-                .from('cart_items')
-                .insert([{ user_id: user.id, product_id: productId, quantity }]);
-            if (insertError) throw insertError;
-        }
-
-        // Update cart count UI using shared Cart module
-        if (window.Cart) {
-            await window.Cart.updateCartCountUI();
-        } else {
-            await updateCartCount();
         }
 
         // Visual feedback
@@ -185,28 +153,11 @@ async function addToCart() {
     }
 }
 
-// Update cart count in header - Supabase ONLY
+// Update cart count in header — delegates to shared Cart module
 async function updateCartCount() {
     try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const user = session?.user;
-        
-        let total = 0;
-
-        if (user) {
-            const { data: cartItems, error } = await supabase
-                .from('cart_items')
-                .select('quantity')
-                .eq('user_id', user.id);
-            if (!error && Array.isArray(cartItems)) {
-                total = cartItems.reduce((s, it) => s + (it.quantity || 0), 0);
-            }
-        }
-
-        const cartCountEl = document.getElementById('cartCount');
-        if (cartCountEl) {
-            cartCountEl.textContent = total;
-            cartCountEl.style.display = total > 0 ? 'flex' : 'none';
+        if (window.Cart && window.Cart.updateCartCountUI) {
+            await window.Cart.updateCartCountUI();
         }
     } catch (err) {
         console.error('Error updating cart count:', err);
@@ -217,18 +168,18 @@ async function updateCartCount() {
 function createThumbnail(imageUrl, altText, isActive = false) {
     const div = document.createElement('div');
     div.className = `cursor-pointer rounded-lg overflow-hidden border-2 ${isActive ? 'border-brand-500' : 'border-transparent'}`;
-    
+
     const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = altText;
     img.className = 'w-full h-full object-cover aspect-square';
-    
+
     div.appendChild(img);
-    
+
     div.addEventListener('click', () => {
         // Update main image
         updateMainImage(imageUrl);
-        
+
         // Update active state of thumbnails
         document.querySelectorAll('#thumbnailContainer > div').forEach(thumb => {
             thumb.classList.remove('border-brand-500');
@@ -237,7 +188,7 @@ function createThumbnail(imageUrl, altText, isActive = false) {
         div.classList.remove('border-transparent');
         div.classList.add('border-brand-500');
     });
-    
+
     return div;
 }
 
@@ -246,48 +197,14 @@ function updateMainImage(imageUrl) {
     mainImage.src = imageUrl;
 }
 
-// Global user state
+// Global user state (kept in memory only — no localStorage)
 let currentUser = null;
 
-// Merge guest cart into user cart after sign-in
-async function mergeGuestCartAfterSignIn(user) {
-    try {
-        const guestCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        if (!guestCart || guestCart.length === 0) return;
-
-        for (const item of guestCart) {
-            const { data: existingItem, error: fetchError } = await supabase
-                .from('cart_items')
-                .select('*')
-                .eq('user_id', user.id)
-                .eq('product_id', item.productId)
-                .single();
-
-            if (fetchError && fetchError.code !== 'PGRST116') {
-                console.error('Error checking existing cart item:', fetchError);
-                continue;
-            }
-
-            if (existingItem) {
-                const { error: updateError } = await supabase
-                    .from('cart_items')
-                    .update({ quantity: existingItem.quantity + item.quantity })
-                    .eq('id', existingItem.id);
-                if (updateError) console.error('Error updating existing cart item:', updateError);
-            } else {
-                const { error: insertError } = await supabase
-                    .from('cart_items')
-                    .insert([{ user_id: user.id, product_id: item.productId, quantity: item.quantity }]);
-                if (insertError) console.error('Error inserting guest cart item:', insertError);
-            }
-        }
-
-        // Clear canonical cart and refresh count
-        localStorage.removeItem('cart');
-        await updateCartCount();
-    } catch (err) {
-        console.error('Error merging guest cart:', err);
-    }
+// With cookie-based auth there is no guest cart in localStorage to merge.
+// This function is retained as a no-op for backwards compatibility with the
+// existing init flow.
+async function mergeGuestCartAfterSignIn() {
+    return;
 }
 
 function updateUIforAuthState(user) {
@@ -319,33 +236,35 @@ function updateUIforAuthState(user) {
 
 // Initialize page and auth handling
 document.addEventListener('DOMContentLoaded', async () => {
-    // Setup auth state listener
+    // Restore session via cookie-based auth (no onAuthStateChange available)
     try {
-        const { data: { session } } = await supabase.auth.getSession();
-        currentUser = session?.user || null;
+        const { user } = await window.EdgeFunctions.auth.checkSession();
+        currentUser = user || null;
         updateUIforAuthState(currentUser);
         await updateCartCount();
     } catch (err) {
         console.error('Error checking initial session:', err);
     }
 
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('Auth event:', event);
-        currentUser = session?.user || null;
-        updateUIforAuthState(currentUser);
-
-        if (event === 'SIGNED_IN' && session?.user) {
-            // Merge guest cart into user cart on sign in
-            await mergeGuestCartAfterSignIn(session.user);
-        }
-        await updateCartCount();
-    });
-
-    // Wire up logout buttons if present
+    // Wire up logout buttons if present (cookie-based logout clears server cookie)
     const logoutButton = document.getElementById('logout-button');
     const mobileLogoutButton = document.getElementById('mobile-logout-button');
-    if (logoutButton) logoutButton.addEventListener('click', async (e) => { e.preventDefault(); await supabase.auth.signOut(); });
-    if (mobileLogoutButton) mobileLogoutButton.addEventListener('click', async (e) => { e.preventDefault(); await supabase.auth.signOut(); });
+    if (logoutButton) logoutButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await window.EdgeFunctions.auth.logout();
+        currentUser = null;
+        updateUIforAuthState(null);
+        await updateCartCount();
+        window.location.reload();
+    });
+    if (mobileLogoutButton) mobileLogoutButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await window.EdgeFunctions.auth.logout();
+        currentUser = null;
+        updateUIforAuthState(null);
+        await updateCartCount();
+        window.location.reload();
+    });
 
     // User menu toggle
     const userMenuButton = document.getElementById('user-menu-button');

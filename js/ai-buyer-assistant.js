@@ -53,7 +53,7 @@
     let isOpen = false;
     let isLoading = false;
     let conversationHistory = [];
-    let sessionId = localStorage.getItem(CONFIG.sessionKey) || `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    let sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     let container = null;
     let selectedImage = null;
     let context = {

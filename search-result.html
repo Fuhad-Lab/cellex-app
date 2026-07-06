@@ -511,7 +511,9 @@
 
     <!-- Scripts -->
     <script>
-        const supabaseClient = window.supabase;
+        // Edge function client + Cart module are loaded via <script> tags above.
+        // Use window.EdgeFunctions and window.Cart instead of supabaseClient.
+        // Recent searches are kept in memory only (no localStorage).
         let currentQuery = '';
         let currentSort = 'relevance';
         let currentPrice = '';
@@ -520,6 +522,8 @@
         let page = 0;
         const pageSize = 20;
         let searchTimeout = null;
+        // In-memory recent searches list (replaces localStorage usage)
+        let recentSearches = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
@@ -547,20 +551,20 @@
         // Auth State
         async function checkAuthState() {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
+                const { user } = await window.EdgeFunctions.auth.checkSession();
                 const authButtons = document.getElementById('authButtons');
                 const userMenu = document.getElementById('userMenu');
                 const mobileAccountBtn = document.getElementById('mobileAccountBtn');
                 const loggedInCheck = document.getElementById('loggedInCheck');
                 
-                if (session?.user) {
+                if (user) {
                     authButtons.classList.add('hidden');
                     userMenu.classList.remove('hidden');
                     userMenu.classList.add('block');
                     
-                    const fullName = session.user.user_metadata?.full_name || 
-                                   session.user.user_metadata?.name || 
-                                   session.user.email?.split('@')[0] || 'User';
+                    const fullName = user.user_metadata?.full_name || 
+                                   user.user_metadata?.name || 
+                                   user.email?.split('@')[0] || 'User';
                     const firstName = fullName.split(' ')[0];
                     const initial = firstName.charAt(0).toUpperCase();
                     
@@ -631,7 +635,7 @@
             const logoutBtn = document.getElementById('logoutBtn');
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', async () => {
-                    await supabaseClient.auth.signOut();
+                    await window.EdgeFunctions.auth.logout();
                     window.location.reload();
                 });
             }
@@ -668,19 +672,19 @@
             try {
                 console.log('Fetching suggestions for:', query);
                 
-                // Search for products (don't filter by status since field may not exist)
-                const searchPattern = `%${query}%`;
-                const { data: products, error } = await supabaseClient
-                    .from('products')
-                    .select('id, name, price, images, image_url, category')
-                    .or(`name.ilike.${searchPattern},category.ilike.${searchPattern}`)
-                    .limit(5);
+                // Use the edge function search to get product suggestions (limit 5 client-side)
+                const result = await window.EdgeFunctions.products.search(query);
                 
-                console.log('Suggestions result:', products, error);
+                if (!result.success) {
+                    console.error('Error fetching suggestions:', result.error);
+                    return;
+                }
                 
-                if (error) throw error;
+                const products = (result.products || []).slice(0, 5);
                 
-                renderSuggestions(products || [], query, isMobile);
+                console.log('Suggestions result:', products);
+                
+                renderSuggestions(products, query, isMobile);
             } catch (error) {
                 console.error('Error fetching suggestions:', error);
             }
@@ -751,17 +755,16 @@
             performSearch();
         }
 
-        // Recent Searches
+        // Recent Searches (kept in memory only — no localStorage)
         function loadRecentSearches() {
-            const recent = JSON.parse(localStorage.getItem('recentSearches') || '[]');
             const container = document.getElementById('recentSearchesList');
             
-            if (recent.length === 0) {
+            if (!recentSearches || recentSearches.length === 0) {
                 document.getElementById('recentSearches').style.display = 'none';
                 return;
             }
             
-            container.innerHTML = recent.map(term => `
+            container.innerHTML = recentSearches.map(term => `
                 <button onclick="searchSuggestion('${term}')" class="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600 hover:bg-gray-200">
                     <i class="fas fa-history text-xs mr-1"></i>${term}
                 </button>
@@ -769,15 +772,13 @@
         }
 
         function saveRecentSearch(query) {
-            let recent = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-            recent = recent.filter(t => t.toLowerCase() !== query.toLowerCase());
-            recent.unshift(query);
-            recent = recent.slice(0, 5);
-            localStorage.setItem('recentSearches', JSON.stringify(recent));
+            recentSearches = recentSearches.filter(t => t.toLowerCase() !== query.toLowerCase());
+            recentSearches.unshift(query);
+            recentSearches = recentSearches.slice(0, 5);
         }
 
         function clearRecentSearches() {
-            localStorage.removeItem('recentSearches');
+            recentSearches = [];
             document.getElementById('recentSearchesList').innerHTML = '';
             document.getElementById('recentSearches').style.display = 'none';
         }
@@ -867,62 +868,49 @@
             try {
                 console.log('Searching for:', currentQuery);
                 
-                // First try a simple query without join to check if products exist
-                const { data: allProducts, error: allError } = await supabaseClient
-                    .from('products')
-                    .select('*')
-                    .limit(5);
-                
-                console.log('All products test:', allProducts, allError);
-                
-                // Build search query - use textSearch or ilike
-                const searchPattern = `%${currentQuery}%`;
-                
-                let query = supabaseClient
-                    .from('products')
-                    .select('*', { count: 'exact' })
-                    .or(`name.ilike.${searchPattern},description.ilike.${searchPattern},category.ilike.${searchPattern}`);
-                
-                // Price filter
+                // Determine max price filter (edge function search supports a single maxPrice)
+                let maxPrice = null;
                 if (currentPrice) {
                     if (currentPrice === '50000+') {
-                        query = query.gte('price', 50000);
+                        maxPrice = 50000;
                     } else {
                         const [min, max] = currentPrice.split('-');
-                        query = query.gte('price', parseInt(min)).lte('price', parseInt(max));
+                        maxPrice = parseInt(max);
                     }
                 }
                 
-                // Sort
+                const result = await window.EdgeFunctions.products.search(currentQuery, maxPrice);
+                
+                console.log('Search result:', result);
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Search failed');
+                }
+                
+                let data = result.products || [];
+                const count = result.count || data.length;
+                
+                // Client-side sort fallback (edge function returns relevance order)
                 switch (currentSort) {
                     case 'newest':
-                        query = query.order('created_at', { ascending: false });
+                        data = data.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
                         break;
                     case 'popular':
-                        query = query.order('views', { ascending: false });
+                        data = data.sort((a, b) => (b.views || 0) - (a.views || 0));
                         break;
                     case 'price-low':
-                        query = query.order('price', { ascending: true });
+                        data = data.sort((a, b) => (a.price || 0) - (b.price || 0));
                         break;
                     case 'price-high':
-                        query = query.order('price', { ascending: false });
+                        data = data.sort((a, b) => (b.price || 0) - (a.price || 0));
                         break;
-                    default:
-                        query = query.order('created_at', { ascending: false });
                 }
                 
-                query = query.range(page * pageSize, (page + 1) * pageSize - 1);
+                // Paginate client-side
+                const start = page * pageSize;
+                data = data.slice(start, start + pageSize);
                 
-                const { data, count, error } = await query;
-                
-                console.log('Search results:', data, count, error);
-                
-                if (error) {
-                    console.error('Search error:', error);
-                    throw error;
-                }
-                
-                document.getElementById('resultsCount').textContent = `${count || 0} products found`;
+                document.getElementById('resultsCount').textContent = `${count} products found`;
                 
                 if (data && data.length > 0) {
                     products = [...products, ...data];
@@ -1038,30 +1026,16 @@
         // Add to Cart
         async function addToCart(productId) {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
+                const result = await window.Cart.addToCart(productId, 1);
                 
-                if (!session?.user) {
-                    document.getElementById('authModal').classList.remove('hidden');
-                    document.getElementById('authModal').classList.add('flex');
+                if (!result.success) {
+                    if (result.requiresAuth) {
+                        document.getElementById('authModal').classList.remove('hidden');
+                        document.getElementById('authModal').classList.add('flex');
+                        return;
+                    }
+                    showNotification(result.message || 'Error adding to cart', 'error');
                     return;
-                }
-                
-                const { data: existing } = await supabaseClient
-                    .from('cart_items')
-                    .select('*')
-                    .eq('user_id', session.user.id)
-                    .eq('product_id', productId)
-                    .single();
-                
-                if (existing) {
-                    await supabaseClient
-                        .from('cart_items')
-                        .update({ quantity: existing.quantity + 1 })
-                        .eq('id', existing.id);
-                } else {
-                    await supabaseClient
-                        .from('cart_items')
-                        .insert([{ user_id: session.user.id, product_id: productId, quantity: 1 }]);
                 }
                 
                 showNotification('Added to cart!');
@@ -1075,9 +1049,9 @@
         // Add to Wishlist
         async function addToWishlist(productId) {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
+                const { user } = await window.EdgeFunctions.auth.checkSession();
                 
-                if (!session?.user) {
+                if (!user) {
                     document.getElementById('authModal').classList.remove('hidden');
                     document.getElementById('authModal').classList.add('flex');
                     return;

@@ -298,20 +298,16 @@
     </footer>
 
     <script>
-        const supabaseClient = () => window.supabaseClient || window.supabase;
         let currentUser = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Wait for supabase to initialize
-            await new Promise(resolve => setTimeout(resolve, 200));
             await checkAuth();
             await loadCart();
         });
 
         async function checkAuth() {
-            const client = supabaseClient();
-            const { data: { session } } = await client.auth.getSession();
-            currentUser = session?.user || null;
+            const { user } = await window.EdgeFunctions.auth.checkSession();
+            currentUser = user || null;
         }
 
         async function loadCart() {
@@ -324,13 +320,7 @@
             }
 
             try {
-                const client = supabaseClient();
-                const { data: cartItems, error } = await client
-                    .from('cart_items')
-                    .select('id, quantity, product_id, products(*)')
-                    .eq('user_id', currentUser.id);
-
-                if (error) throw error;
+                const cartItems = await window.Cart.getCartItems();
 
                 if (!cartItems || cartItems.length === 0) {
                     renderEmptyCart();
@@ -581,14 +571,9 @@
             }
 
             try {
-                const client = supabaseClient();
-                const { error } = await client
-                    .from('cart_items')
-                    .update({ quantity: newQuantity })
-                    .eq('id', cartItemId)
-                    .eq('user_id', currentUser.id);
+                const result = await window.Cart.updateQuantity(cartItemId, newQuantity);
 
-                if (error) throw error;
+                if (!result.success) throw new Error(result.message || 'Failed to update quantity');
 
                 await loadCart();
             } catch (error) {
@@ -606,14 +591,9 @@
             }
 
             try {
-                const client = supabaseClient();
-                const { error } = await client
-                    .from('cart_items')
-                    .delete()
-                    .eq('id', cartItemId)
-                    .eq('user_id', currentUser.id);
+                const result = await window.Cart.removeFromCart(cartItemId);
 
-                if (error) throw error;
+                if (!result.success) throw new Error(result.message || 'Failed to remove item');
 
                 await loadCart();
             } catch (error) {
@@ -629,13 +609,7 @@
             }
 
             try {
-                const client = supabaseClient();
-                const { data: cartItems, error } = await client
-                    .from('cart_items')
-                    .select('*, products(*)')
-                    .eq('user_id', currentUser.id);
-
-                if (error) throw error;
+                const cartItems = await window.Cart.getCartItems();
 
                 if (!cartItems || cartItems.length === 0) {
                     alert('Your cart is empty!');

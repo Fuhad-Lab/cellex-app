@@ -132,7 +132,6 @@
     </footer>
 
     <script>
-        const supabaseClient = window.supabase;
         let currentUser = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -142,58 +141,35 @@
         });
 
         async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session?.user) {
+            const { success, user } = await window.EdgeFunctions.auth.checkSession();
+            if (!success || !user) {
                 window.location.href = 'login.html?redirect=wishlist';
                 return;
             }
-            currentUser = session.user;
+            currentUser = user;
         }
 
         async function loadWishlist() {
             if (!currentUser) return;
 
-            const { data: wishlist, error } = await supabaseClient
-                .from('buyers_wishlist')
-                .select(`
-                    id,
-                    created_at,
-                    products(id, name, price, image_url, image, category, stock)
-                `)
-                .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false });
+            const result = await window.EdgeFunctions.wishlist.get();
 
-            if (error) {
-                console.error('Error loading wishlist:', error);
-                
-                // Check if table doesn't exist
-                if (error.code === '42P01' || error.message?.includes('does not exist')) {
-                    document.getElementById('wishlistGrid').innerHTML = `
-                        <div class="col-span-full bg-white rounded-lg shadow p-8 text-center">
-                            <i class="fas fa-database text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-2">Wishlist Table Not Set Up</h3>
-                            <p class="text-gray-500 mb-4">The buyers_wishlist table needs to be created in Supabase.</p>
-                            <p class="text-sm text-gray-400 mb-6">Please run the migration SQL (007_buyers_tables.sql) in your Supabase SQL Editor.</p>
-                            <a href="../index.html" class="inline-block bg-brand-500 text-white px-6 py-2 rounded-lg hover:bg-brand-600">
-                                Continue Shopping
-                            </a>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('wishlistGrid').innerHTML = `
-                        <div class="col-span-full bg-white rounded-lg shadow p-8 text-center text-red-500">
-                            <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
-                            <p>Failed to load wishlist. Please try again.</p>
-                        </div>
-                    `;
-                }
+            if (!result.success) {
+                console.error('Error loading wishlist:', result.error);
+                document.getElementById('wishlistGrid').innerHTML = `
+                    <div class="col-span-full bg-white rounded-lg shadow p-8 text-center text-red-500">
+                        <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
+                        <p>Failed to load wishlist. Please try again.</p>
+                    </div>
+                `;
                 return;
             }
 
-            document.getElementById('wishlistCount').textContent = wishlist?.length || 0;
-            document.getElementById('clearAllBtn').classList.toggle('hidden', !wishlist?.length);
+            const wishlist = result.items || [];
+            document.getElementById('wishlistCount').textContent = wishlist.length;
+            document.getElementById('clearAllBtn').classList.toggle('hidden', !wishlist.length);
 
-            if (!wishlist || wishlist.length === 0) {
+            if (wishlist.length === 0) {
                 document.getElementById('wishlistGrid').innerHTML = `
                     <div class="col-span-full bg-white rounded-lg shadow p-8 text-center">
                         <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
@@ -257,12 +233,9 @@
         async function removeFromWishlist(wishlistId) {
             if (!confirm('Remove this item from your wishlist?')) return;
 
-            const { error } = await supabaseClient
-                .from('buyers_wishlist')
-                .delete()
-                .eq('id', wishlistId);
+            const result = await window.EdgeFunctions.wishlist.remove(wishlistId);
 
-            if (error) {
+            if (!result.success) {
                 alert('Failed to remove item. Please try again.');
                 return;
             }
@@ -274,29 +247,11 @@
             if (stock === '0') return;
 
             try {
-                // Check if item already in cart
-                const { data: existingItem } = await supabaseClient
-                    .from('cart_items')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .eq('product_id', productId)
-                    .single();
+                const result = await window.Cart.addToCart(productId, 1);
 
-                if (existingItem) {
-                    // Update quantity
-                    await supabaseClient
-                        .from('cart_items')
-                        .update({ quantity: existingItem.quantity + 1 })
-                        .eq('id', existingItem.id);
-                } else {
-                    // Insert new item
-                    await supabaseClient
-                        .from('cart_items')
-                        .insert([{
-                            user_id: currentUser.id,
-                            product_id: productId,
-                            quantity: 1
-                        }]);
+                if (!result.success) {
+                    alert(result.message || 'Failed to add to cart. Please try again.');
+                    return;
                 }
 
                 alert('Added to cart!');
@@ -310,34 +265,25 @@
         document.getElementById('clearAllBtn').addEventListener('click', async () => {
             if (!confirm('Are you sure you want to clear your entire wishlist?')) return;
 
-            const { error } = await supabaseClient
-                .from('buyers_wishlist')
-                .delete()
-                .eq('user_id', currentUser.id);
-
-            if (error) {
+            // The edge function only exposes single-item removal; loop over items.
+            const result = await window.EdgeFunctions.wishlist.get();
+            if (!result.success) {
                 alert('Failed to clear wishlist. Please try again.');
                 return;
+            }
+
+            const items = result.items || [];
+            for (const item of items) {
+                await window.EdgeFunctions.wishlist.remove(item.id);
             }
 
             loadWishlist();
         });
 
         async function updateCartCount() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            const user = session?.user;
-            let count = 0;
-
-            if (user) {
-                const { data: rows } = await supabaseClient
-                    .from('cart_items')
-                    .select('quantity')
-                    .eq('user_id', user.id);
-                if (rows) count = rows.reduce((s, r) => s + (r.quantity || 0), 0);
+            if (typeof window.Cart !== 'undefined' && window.Cart.updateCartCountUI) {
+                await window.Cart.updateCartCountUI();
             }
-
-            const el = document.getElementById('cartCount');
-            if (el) el.textContent = count;
         }
     </script>
 </body>

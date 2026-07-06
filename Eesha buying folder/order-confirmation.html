@@ -307,11 +307,17 @@
     </div>
 
     <script>
-        const supabaseClient = window.supabase;
-        
         document.addEventListener('DOMContentLoaded', async () => {
+            // Auth check — redirect to login if not logged in
+            const { success: sessOk, user } = await window.EdgeFunctions.auth.checkSession();
+            if (!sessOk || !user) {
+                window.location.href = 'login.html?redirect=order-confirmation' + window.location.search;
+                return;
+            }
+
+            // Accept ?orderId=, ?order_id=, or legacy ?id=
             const params = new URLSearchParams(window.location.search);
-            const orderId = params.get('id');
+            const orderId = params.get('orderId') || params.get('order_id') || params.get('id');
             
             if (!orderId) {
                 window.location.href = '../index.html';
@@ -319,22 +325,16 @@
             }
             
             try {
-                // Load order details
-                const { data: order, error } = await supabaseClient
-                    .from('orders')
-                    .select('*')
-                    .eq('id', orderId)
-                    .single();
-                
-                if (error) throw error;
-                
-                if (!order) {
-                    showError('Order not found');
+                // Load order details via edge function
+                const result = await window.EdgeFunctions.orders.details(orderId);
+
+                if (!result.success || !result.order) {
+                    showError(result.error || 'Order not found');
                     return;
                 }
                 
                 // Render order details
-                renderOrderDetails(order);
+                renderOrderDetails(result.order);
                 
                 // Create confetti
                 createConfetti();

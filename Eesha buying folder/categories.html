@@ -335,7 +335,8 @@
 
     <!-- Scripts -->
     <script>
-        const supabaseClient = window.supabase;
+        // Edge function client + Cart module are loaded via <script> tags above.
+        // Use window.EdgeFunctions and window.Cart instead of supabaseClient.
         let currentCategory = '';
         let currentSearch = '';
         let currentSort = 'newest';
@@ -392,13 +393,13 @@
         // Auth State
         async function checkAuthState() {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
+                const { user } = await window.EdgeFunctions.auth.checkSession();
                 const accountBtn = document.getElementById('accountBtn');
                 const mobileAccountBtn = document.getElementById('mobileAccountBtn');
                 const loggedInCheck = document.getElementById('loggedInCheck');
                 const mobileLoggedInCheck = document.getElementById('mobileLoggedInCheck');
                 
-                if (session?.user) {
+                if (user) {
                     accountBtn.href = 'profile.html';
                     mobileAccountBtn.href = 'profile.html';
                     loggedInCheck.classList.remove('hidden');
@@ -464,58 +465,34 @@
             emptyState.classList.add('hidden');
             
             try {
-                let query = supabaseClient
-                    .from('products')
-                    .select('*, sellers(name, seller_type)', { count: 'exact' });
-                
-                // Search filter - search in name and description
-                if (currentSearch) {
-                    query = query.or(`name.ilike.%${currentSearch}%,description.ilike.%${currentSearch}%,category.ilike.%${currentSearch}%`);
-                }
-                
-                // Category filter
-                if (currentCategory) {
-                    query = query.eq('category', currentCategory);
-                }
-                
-                // Price filter
+                let result;
+                // Determine max price filter (the edge function search supports a single maxPrice)
+                let maxPrice = null;
                 if (currentPrice) {
                     if (currentPrice === '50000+') {
-                        query = query.gte('price', 50000);
+                        maxPrice = 50000;
                     } else {
                         const [min, max] = currentPrice.split('-');
-                        query = query.gte('price', parseInt(min)).lte('price', parseInt(max));
+                        maxPrice = parseInt(max);
                     }
                 }
                 
-                // Seller type filter
-                if (currentSeller) {
-                    // This requires a join, handled differently
+                if (currentSearch) {
+                    // Search within all products (optionally capped by maxPrice)
+                    result = await window.EdgeFunctions.products.search(currentSearch, maxPrice);
+                } else {
+                    // Browse by category with sort + pagination
+                    result = await window.EdgeFunctions.products.category(currentCategory || '', currentSort, page + 1);
                 }
                 
-                // Sort
-                switch (currentSort) {
-                    case 'newest':
-                        query = query.order('created_at', { ascending: false });
-                        break;
-                    case 'popular':
-                        query = query.order('views', { ascending: false });
-                        break;
-                    case 'price-low':
-                        query = query.order('price', { ascending: true });
-                        break;
-                    case 'price-high':
-                        query = query.order('price', { ascending: false });
-                        break;
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to load products');
                 }
                 
-                query = query.range(page * pageSize, (page + 1) * pageSize - 1);
+                const data = result.products || [];
+                const count = result.count || data.length;
                 
-                const { data, count, error } = await query;
-                
-                if (error) throw error;
-                
-                document.getElementById('resultsCount').textContent = count || 0;
+                document.getElementById('resultsCount').textContent = count;
                 
                 if (data && data.length > 0) {
                     products = [...products, ...data];
@@ -600,34 +577,18 @@
         // Add to Cart
         async function addToCart(productId) {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
+                const result = await window.Cart.addToCart(productId, 1);
                 
-                if (!session?.user) {
-                    document.getElementById('authModal').classList.remove('hidden');
-                    document.getElementById('authModal').classList.add('flex');
+                if (!result.success) {
+                    if (result.requiresAuth) {
+                        document.getElementById('authModal').classList.remove('hidden');
+                        document.getElementById('authModal').classList.add('flex');
+                        return;
+                    }
+                    showNotification(result.message || 'Error adding to cart', 'error');
                     return;
                 }
                 
-                // Check if item exists in cart
-                const { data: existing } = await supabaseClient
-                    .from('cart_items')
-                    .select('*')
-                    .eq('user_id', session.user.id)
-                    .eq('product_id', productId)
-                    .single();
-                
-                if (existing) {
-                    await supabaseClient
-                        .from('cart_items')
-                        .update({ quantity: existing.quantity + 1 })
-                        .eq('id', existing.id);
-                } else {
-                    await supabaseClient
-                        .from('cart_items')
-                        .insert([{ user_id: session.user.id, product_id: productId, quantity: 1 }]);
-                }
-                
-                updateCartCount();
                 showNotification('Added to cart!');
                 
             } catch (error) {
@@ -639,9 +600,9 @@
         // Toggle Wishlist
         async function toggleWishlist(productId) {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
+                const { user } = await window.EdgeFunctions.auth.checkSession();
                 
-                if (!session?.user) {
+                if (!user) {
                     document.getElementById('authModal').classList.remove('hidden');
                     document.getElementById('authModal').classList.add('flex');
                     return;
@@ -658,16 +619,8 @@
         // Update Cart Count
         async function updateCartCount() {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session?.user) return;
-                
-                const { count } = await supabaseClient
-                    .from('cart_items')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', session.user.id);
-                
-                document.getElementById('cartCount').textContent = count || 0;
-                document.getElementById('mobileCartCount').textContent = count || 0;
+                // Cart module handles auth check + DOM updates internally
+                await window.Cart.updateCartCountUI();
             } catch (error) {
                 console.error('Cart count error:', error);
             }

@@ -246,8 +246,8 @@
     </footer>
 
     <script>
-        const supabaseClient = window.supabase;
         let currentUser = null;
+        let profileStats = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
             await checkAuth();
@@ -257,12 +257,12 @@
         });
 
         async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session?.user) {
+            const { success, user } = await window.EdgeFunctions.auth.checkSession();
+            if (!success || !user) {
                 window.location.href = 'login.html?redirect=profile';
                 return;
             }
-            currentUser = session.user;
+            currentUser = user;
         }
 
         async function loadProfile() {
@@ -284,14 +284,10 @@
                 document.getElementById('memberSince').textContent = new Date(currentUser.created_at).getFullYear();
             }
 
-            // Load additional profile from database
-            const { data: profile, error } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .eq('id', currentUser.id)
-                .single();
+            // Load additional profile + stats from edge function
+            const { success, profile, stats } = await window.EdgeFunctions.profile.get();
 
-            if (profile) {
+            if (success && profile) {
                 document.getElementById('phone').value = profile.phone || '';
                 document.getElementById('dob').value = profile.dob || '';
                 document.getElementById('address').value = profile.address || '';
@@ -299,58 +295,22 @@
                 document.getElementById('state').value = profile.state || '';
                 document.getElementById('zip').value = profile.zip || '';
             }
+            profileStats = stats;
         }
 
         async function loadStats() {
-            if (!currentUser) return;
+            if (!currentUser || !profileStats) return;
 
-            // Load orders count
-            const { count: ordersCount } = await supabaseClient
-                .from('buyers_orders')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', currentUser.id);
-            document.getElementById('totalOrders').textContent = ordersCount || 0;
-
-            // Load wishlist count
-            const { count: wishlistCount } = await supabaseClient
-                .from('buyers_wishlist')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', currentUser.id);
-            document.getElementById('totalWishlist').textContent = wishlistCount || 0;
-
-            // Load reviews count
-            const { count: reviewsCount } = await supabaseClient
-                .from('buyers_reviews')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', currentUser.id);
-            document.getElementById('totalReviews').textContent = reviewsCount || 0;
-
-            // Calculate total spent
-            const { data: orders } = await supabaseClient
-                .from('buyers_orders')
-                .select('total')
-                .eq('user_id', currentUser.id)
-                .eq('status', 'delivered');
-            
-            const totalSpent = orders?.reduce((sum, order) => sum + (order.total || 0), 0) || 0;
-            document.getElementById('totalSpent').textContent = '$' + totalSpent.toFixed(0);
+            document.getElementById('totalOrders').textContent = profileStats.ordersCount || 0;
+            document.getElementById('totalWishlist').textContent = profileStats.wishlistCount || 0;
+            document.getElementById('totalReviews').textContent = profileStats.reviewsCount || 0;
+            document.getElementById('totalSpent').textContent = '$' + (profileStats.totalSpent || 0).toFixed(0);
         }
 
         async function updateCartCount() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            const user = session?.user;
-            let count = 0;
-
-            if (user) {
-                const { data: rows } = await supabaseClient
-                    .from('cart_items')
-                    .select('quantity')
-                    .eq('user_id', user.id);
-                if (rows) count = rows.reduce((s, r) => s + (r.quantity || 0), 0);
+            if (window.Cart && window.Cart.updateCartCountUI) {
+                window.Cart.updateCartCountUI();
             }
-
-            const el = document.getElementById('cartCount');
-            if (el) el.textContent = count;
         }
 
         // Handle form submission
@@ -364,30 +324,14 @@
 
             try {
                 const fullName = document.getElementById('fullName').value;
-                const profileData = {
-                    id: currentUser.id,
-                    phone: document.getElementById('phone').value,
-                    dob: document.getElementById('dob').value,
-                    address: document.getElementById('address').value,
-                    city: document.getElementById('city').value,
-                    state: document.getElementById('state').value,
-                    zip: document.getElementById('zip').value,
-                    updated_at: new Date().toISOString()
-                };
 
-                // Update auth metadata
-                await supabaseClient.auth.updateUser({
-                    data: { full_name: fullName }
+                const { success } = await window.EdgeFunctions.profile.update({
+                    fullName,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value
                 });
 
-                // Upsert profile
-                const { error } = await supabaseClient
-                    .from('profiles')
-                    .upsert([profileData], { onConflict: 'id' });
-
-                if (error && error.code !== 'PGRST116') {
-                    throw error;
-                }
+                if (!success) throw new Error('Profile update failed');
 
                 alert('Profile updated successfully!');
                 document.getElementById('userName').textContent = fullName;
