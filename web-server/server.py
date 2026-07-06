@@ -55,7 +55,7 @@ EDGE_FUNCTIONS_URL = f"{SUPABASE_PROJECT_URL}/functions/v1"
 # Static files directory = repo root (parent of web-server/)
 STATIC_DIR = Path(__file__).resolve().parent.parent
 
-logger.info(f"🚀 Cellex Web Server starting")
+logger.info(f"🚀 EeshaMart Web Server starting")
 logger.info(f"📁 Static files: {STATIC_DIR}")
 logger.info(f"🔒 Edge functions: {EDGE_FUNCTIONS_URL}")
 logger.info(f"🔑 Anon key configured: {bool(SUPABASE_ANON_KEY)}")

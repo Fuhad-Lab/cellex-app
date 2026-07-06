@@ -1,8 +1,9 @@
 /**
- * Cellex Cart Module (Zero-Supabase Edition)
- * ------------------------------------------
- * All cart operations go through the Render proxy → Supabase Edge Function.
- * No Supabase JS SDK, no supabase.auth calls, no Supabase URL.
+ * Cellex Cart Module (Cookie-Based Auth Edition)
+ * ----------------------------------------------
+ * All cart operations go through the /api/cart proxy → Supabase Edge Function.
+ * No Supabase SDK, no localStorage, no tokens in JS.
+ * Auth is handled via HTTP-only cookies set by the server.
  *
  * Usage:
  *   <script src="js/config/edge-functions.js"></script>
@@ -13,16 +14,20 @@
 (function() {
     'use strict';
 
-    // Get current user from EdgeFunctions (replaces supabase.auth.getSession)
-    function getCurrentUser() {
-        return window.EdgeFunctions.auth.getCurrentUser();
+    /**
+     * Get current user (async — calls checkSession if needed).
+     * Replaces supabase.auth.getSession().
+     */
+    async function getCurrentUser() {
+        return await window.EdgeFunctions.auth.getCurrentUserAsync();
     }
 
     /**
      * Get total cart items count
      */
     async function getCartCount() {
-        if (!window.EdgeFunctions.auth.isLoggedIn()) return 0;
+        const user = await getCurrentUser();
+        if (!user) return 0;
 
         const result = await window.EdgeFunctions.cart.count();
         if (!result.success) {
@@ -58,7 +63,8 @@
      * Get all cart items with product details
      */
     async function getCartItems() {
-        if (!window.EdgeFunctions.auth.isLoggedIn()) {
+        const user = await getCurrentUser();
+        if (!user) {
             return [];
         }
 
@@ -75,7 +81,8 @@
      * Add item to cart
      */
     async function addToCart(productId, quantity = 1) {
-        if (!window.EdgeFunctions.auth.isLoggedIn()) {
+        const user = await getCurrentUser();
+        if (!user) {
             return {
                 success: false,
                 requiresAuth: true,
@@ -97,7 +104,8 @@
      * Remove item from cart
      */
     async function removeFromCart(cartItemId) {
-        if (!window.EdgeFunctions.auth.isLoggedIn()) {
+        const user = await getCurrentUser();
+        if (!user) {
             return { success: false, message: 'Please login' };
         }
 
@@ -115,7 +123,8 @@
      * Update item quantity
      */
     async function updateQuantity(cartItemId, newQuantity) {
-        if (!window.EdgeFunctions.auth.isLoggedIn()) {
+        const user = await getCurrentUser();
+        if (!user) {
             return { success: false, message: 'Please login' };
         }
 
@@ -137,7 +146,8 @@
      * Clear entire cart
      */
     async function clearCart() {
-        if (!window.EdgeFunctions.auth.isLoggedIn()) {
+        const user = await getCurrentUser();
+        if (!user) {
             return { success: false, message: 'Please login' };
         }
 

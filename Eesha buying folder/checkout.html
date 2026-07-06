@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Cellex | Nigeria's #1 Marketplace</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
+        <!-- Edge function client (no Supabase SDK) + Cart module -->
+    <script src="../js/config/edge-functions.js?v=3"></script>
+    <script src="../js/cart.js?v=11"></script>
+
+<script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -511,7 +514,6 @@
         </div>
     </div>
 
-    <script src="../../js/config/supabase.js"></script>
     <script>
         // Initialize Supabase
         const supabaseClient = window.supabase;

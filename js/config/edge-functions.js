@@ -1,75 +1,47 @@
 /**
- * Cellex Edge Function Client (Zero-Supabase Edition)
+ * Cellex Edge Function Client (Cookie-Based Auth Edition)
  * -------------------------------------------------------
- * The frontend has ZERO knowledge of Supabase:
- *   - No Supabase URL
- *   - No anon key
- *   - No Supabase JS SDK
- *   - No supabase.auth.* calls
+ * NO localStorage. NO tokens in JavaScript. NO Supabase references.
  *
- * All requests go through RELATIVE URLs (/api/*) which are proxied by the
- * Render server. The Render server adds the Supabase URL + anon key from
- * its environment variables before forwarding to the edge functions.
+ * Auth flow:
+ *   - Login: POST /api/auth/login → server sets HTTP-only cookie → returns {user}
+ *   - Session: POST /api/auth/session → server reads cookie → returns {user|null}
+ *   - Logout: POST /api/auth/logout → server clears cookie
+ *   - All other calls: browser sends cookie automatically, server adds Bearer header
  *
- * If someone clones the site with HTTrack/wget, they get:
- *   - HTML/CSS (UI shell)
- *   - This JS file (which only contains /api/* relative URLs)
- *   - No Supabase URL, no keys, no system prompts, no query logic
+ * The user object is stored in MEMORY ONLY (lost on page refresh).
+ * Each page must call checkSession() on load to restore the user.
  *
  * Usage:
  *   <script src="js/config/edge-functions.js"></script>
- *   const products = await EdgeFunctions.products.home();
- *   const result = await EdgeFunctions.cart.add(productId);
- *   const session = await EdgeFunctions.auth.login(email, password);
+ *   // On page load:
+ *   await window.EdgeFunctions.auth.checkSession();
+ *   // Then use:
+ *   window.EdgeFunctions.cart.add(productId);
  */
 
 (function() {
     'use strict';
 
-    // Auth token stored in memory (and localStorage for persistence across page loads)
-    let authToken = localStorage.getItem('eeshamart_auth_token') || null;
-    let currentUser = JSON.parse(localStorage.getItem('eeshamart_user') || 'null');
+    // User stored in MEMORY ONLY — not localStorage, not sessionStorage
+    let currentUser = null;
+    let sessionChecked = false;
 
     /**
-     * Get the current auth token (from memory/localStorage).
-     */
-    function getAuthToken() {
-        return authToken;
-    }
-
-    /**
-     * Get current user object (cached from login).
-     */
-    function getCurrentUser() {
-        return currentUser;
-    }
-
-    /**
-     * Check if user is logged in (has a token).
-     */
-    function isLoggedIn() {
-        return !!authToken;
-    }
-
-    /**
-     * Call an API endpoint via the Render proxy.
-     * All URLs are RELATIVE — no Supabase info anywhere.
+     * Call an API endpoint. Cookies are sent automatically by the browser.
+     * No Authorization header needed — the server reads the HTTP-only cookie.
      */
     async function call(path, body = {}) {
         const headers = {
             'Content-Type': 'application/json',
         };
 
-        // Attach auth token if we have one
-        if (authToken) {
-            headers['Authorization'] = `Bearer ${authToken}`;
-        }
-
         try {
             const resp = await fetch(`/api/${path}`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(body),
+                credentials: 'same-origin',  // Send cookies for same-origin requests
             });
 
             const data = await resp.json();
@@ -86,16 +58,15 @@
         }
     }
 
-    // ---- Auth operations (replaces supabase.auth.*) ----
+    // ---- Auth operations (cookie-based, no localStorage) ----
 
     async function login(email, password) {
         const result = await call('auth', { op: 'login', email, password });
 
-        if (result.success && result.access_token) {
-            authToken = result.access_token;
+        // Server sets HTTP-only cookie with the token.
+        // We only get the user object back (no token in response).
+        if (result.success && result.user) {
             currentUser = result.user;
-            localStorage.setItem('eeshamart_auth_token', authToken);
-            localStorage.setItem('eeshamart_user', JSON.stringify(currentUser));
         }
 
         return result;
@@ -104,60 +75,70 @@
     async function signup(email, password) {
         const result = await call('auth', { op: 'signup', email, password });
 
-        if (result.success && result.access_token) {
-            authToken = result.access_token;
+        if (result.success && result.user) {
             currentUser = result.user;
-            localStorage.setItem('eeshamart_auth_token', authToken);
-            localStorage.setItem('eeshamart_user', JSON.stringify(currentUser));
         }
 
         return result;
     }
 
     async function logout() {
-        const refreshToken = localStorage.getItem('eeshamart_refresh_token');
-        if (refreshToken) {
-            await call('auth', { op: 'logout', refresh_token: refreshToken });
-        }
-        authToken = null;
+        const result = await call('auth', { op: 'logout' });
+        // Server clears the cookie.
         currentUser = null;
-        localStorage.removeItem('eeshamart_auth_token');
-        localStorage.removeItem('eeshamart_user');
-        localStorage.removeItem('eeshamart_refresh_token');
-        return { success: true };
+        return result;
     }
 
     async function checkSession() {
-        if (!authToken) {
-            return { success: true, user: null };
+        // If we already checked this session and have a user, return cached
+        if (currentUser) {
+            return { success: true, user: currentUser };
         }
 
         const result = await call('auth', { op: 'session' });
+        sessionChecked = true;
 
         if (result.success && result.user) {
             currentUser = result.user;
-            localStorage.setItem('eeshamart_user', JSON.stringify(currentUser));
-            return { success: true, user: result.user };
+            return { success: true, user: currentUser };
         }
 
-        // Token is invalid/expired — clear it
-        authToken = null;
         currentUser = null;
-        localStorage.removeItem('eeshamart_auth_token');
-        localStorage.removeItem('eeshamart_user');
         return { success: true, user: null };
+    }
+
+    /**
+     * Get current user from memory (synchronous).
+     * Returns null if checkSession() hasn't been called or user isn't logged in.
+     */
+    function getCurrentUser() {
+        return currentUser;
+    }
+
+    /**
+     * Get current user (async — calls checkSession if needed).
+     * Use this when you need to guarantee the user object is available.
+     */
+    async function getCurrentUserAsync() {
+        if (currentUser) return currentUser;
+        await checkSession();
+        return currentUser;
+    }
+
+    function isLoggedIn() {
+        return !!currentUser;
     }
 
     // Expose the EdgeFunctions module globally
     window.EdgeFunctions = {
-        // Auth (replaces supabase.auth.*)
+        // Auth (cookie-based, no tokens in JS)
         auth: {
             login,
             signup,
             logout,
             checkSession,
-            getAuthToken,
             getCurrentUser,
+            getCurrentUserAsync,
             isLoggedIn,
         },
 
@@ -183,9 +164,34 @@
             all: (limit = 100) => call('products', { op: 'all', limit }),
         },
 
+        // Orders
+        orders: {
+            list: () => call('orders', { op: 'list' }),
+            details: (orderId) => call('orders', { op: 'details', orderId }),
+        },
+
+        // Profile
+        profile: {
+            get: () => call('profile', { op: 'get' }),
+            update: (data) => call('profile', { op: 'update', ...data }),
+        },
+
+        // Wishlist
+        wishlist: {
+            get: () => call('wishlist', { op: 'get' }),
+            add: (productId) => call('wishlist', { op: 'add', productId }),
+            remove: (wishlistItemId) => call('wishlist', { op: 'remove', wishlistItemId }),
+        },
+
+        // Checkout
+        checkout: {
+            prepare: () => call('checkout', { op: 'prepare' }),
+            placeOrder: (shippingAddress) => call('checkout', { op: 'place_order', shippingAddress }),
+        },
+
         // Raw call (for advanced use)
         call,
     };
 
-    console.log('[EdgeFunctions] Zero-Supabase client initialized');
+    console.log('[EdgeFunctions] Cookie-based auth client initialized (no localStorage)');
 })();

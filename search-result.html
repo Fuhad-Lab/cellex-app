@@ -12,9 +12,11 @@
     
     <!-- Tailwind & Supabase -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+        <!-- Edge function client (no Supabase SDK) + Cart module -->
+    <script src="js/config/edge-functions.js?v=3"></script>
+    <script src="js/cart.js?v=11"></script>
 
-    <script>
+<script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -508,7 +510,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/config/supabase.js"></script>
     <script>
         const supabaseClient = window.supabase;
         let currentQuery = '';
