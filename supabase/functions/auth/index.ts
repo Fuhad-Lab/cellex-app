@@ -1,21 +1,21 @@
 /// <reference lib="deno.ns" />
-// Cellex Auth Edge Function (Session-Based — NO cookies, NO localStorage)
+// Cellex Auth Edge Function (HTTP-Only Cookie + Supabase Session Store)
 // -----------------------------------------------------------------------
-// Auth tokens are stored IN SUPABASE (web_sessions table). The frontend only
-// receives a session_id (a random UUID) which it keeps in memory.
+// Auth tokens (JWT) are stored IN SUPABASE (web_sessions table).
+// The frontend receives NOTHING — just a user object.
+// The session_id is stored in an HTTP-only cookie (set by the web-server)
+// that JavaScript CANNOT read.
 //
 // Flow:
-//   1. login/signup → authenticate via Supabase Auth → store tokens in
-//      web_sessions table → return { session_id, user } (NO tokens in response)
-//   2. All other edge functions receive session_id → look up access_token in
-//      web_sessions → use it to identify the user
-//   3. logout → delete the session from web_sessions
-//   4. session → look up session_id → return user info
-//
-// The frontend stores session_id in MEMORY ONLY (a JS variable).
-// No localStorage, no cookies, no tokens in JavaScript.
+//   1. login/signup → authenticate via Supabase Auth → store JWT tokens in
+//      web_sessions table → return { session_id, user }
+//      (web-server sets session_id as HTTP-only cookie, strips it from response)
+//   2. session → read session_id from Authorization header (forwarded from
+//      cookie by web-server) → look up in web_sessions → verify JWT → return user
+//   3. logout → read session_id from Authorization header → delete from web_sessions
+//      (web-server clears the cookie)
 
-import { corsHeaders, jsonResponse, errorResponse } from '../_shared/cors.ts';
+import { corsHeaders, jsonResponse, errorResponse, getUser } from '../_shared/cors.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -33,6 +33,15 @@ function generateSessionId(): string {
   return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Extract session_id from Authorization header (set by web-server from cookie)
+function getSessionIdFromHeader(req: Request): string {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return '';
+  }
+  return authHeader.replace('Bearer ', '');
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return errorResponse('Method not allowed', 405);
@@ -47,9 +56,9 @@ Deno.serve(async (req: Request) => {
       case 'signup':
         return await handleSignup(body);
       case 'logout':
-        return await handleLogout(body);
+        return await handleLogout(req);
       case 'session':
-        return await handleSession(body);
+        return await handleSession(req);
       default:
         return errorResponse(`Unknown operation: ${op}`, 400);
     }
@@ -103,7 +112,7 @@ async function handleLogin(body: Record<string, unknown>): Promise<Response> {
     return errorResponse('Failed to create session', 500);
   }
 
-  // Step 3: Return ONLY session_id + user (NO tokens)
+  // Step 3: Return session_id + user (web-server sets cookie with session_id)
   return jsonResponse({
     success: true,
     session_id: sessionId,
@@ -166,13 +175,13 @@ async function handleSignup(body: Record<string, unknown>): Promise<Response> {
   });
 }
 
-// ---- Logout ----
+// ---- Logout (reads session_id from Authorization header) ----
 
-async function handleLogout(body: Record<string, unknown>): Promise<Response> {
-  const sessionId = (body.session_id as string) || '';
+async function handleLogout(req: Request): Promise<Response> {
+  const sessionId = getSessionIdFromHeader(req);
 
   if (!sessionId) {
-    return errorResponse('Missing session_id', 400);
+    return errorResponse('No session to logout', 400);
   }
 
   // Delete the session from web_sessions
@@ -184,85 +193,16 @@ async function handleLogout(body: Record<string, unknown>): Promise<Response> {
   return jsonResponse({ success: true });
 }
 
-// ---- Session Check ----
+// ---- Session Check (reads session_id from Authorization header) ----
 
-async function handleSession(body: Record<string, unknown>): Promise<Response> {
-  const sessionId = (body.session_id as string) || '';
+async function handleSession(req: Request): Promise<Response> {
+  // getUser() reads the Authorization header, looks up session_id in
+  // web_sessions, verifies the JWT, and returns the user
+  const user = await getUser(req);
 
-  if (!sessionId) {
+  if (!user) {
     return jsonResponse({ success: true, user: null });
   }
 
-  // Look up the session in web_sessions
-  const resp = await fetch(
-    `${SUPABASE_URL}/rest/v1/web_sessions?select=access_token,expires_at,user_id&session_id=eq.${encodeURIComponent(sessionId)}&limit=1`,
-    { headers: adminHeaders }
-  );
-
-  const sessions = await resp.json();
-
-  if (!sessions || sessions.length === 0) {
-    return jsonResponse({ success: true, user: null });
-  }
-
-  const session = sessions[0];
-
-  // Check if expired
-  if (new Date(session.expires_at) < new Date()) {
-    // Delete expired session
-    await fetch(`${SUPABASE_URL}/rest/v1/web_sessions?session_id=eq.${encodeURIComponent(sessionId)}`, {
-      method: 'DELETE',
-      headers: adminHeaders,
-    });
-    return jsonResponse({ success: true, user: null });
-  }
-
-  // Verify the access token with Supabase Auth
-  const userResp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: {
-      'apikey': SERVICE_KEY,
-      'Authorization': `Bearer ${session.access_token}`,
-    },
-  });
-
-  if (!userResp.ok) {
-    return jsonResponse({ success: true, user: null });
-  }
-
-  const user = await userResp.json();
   return jsonResponse({ success: true, user });
-}
-
-// ---- Helper: Get user from session_id (used by other edge functions) ----
-
-export async function getUserFromSession(sessionId: string): Promise<{ id: string; email?: string } | null> {
-  if (!sessionId) return null;
-
-  // Look up the session
-  const resp = await fetch(
-    `${SUPABASE_URL}/rest/v1/web_sessions?select=access_token,expires_at&session_id=eq.${encodeURIComponent(sessionId)}&limit=1`,
-    { headers: adminHeaders }
-  );
-
-  const sessions = await resp.json();
-
-  if (!sessions || sessions.length === 0) return null;
-
-  const session = sessions[0];
-
-  // Check expiry
-  if (new Date(session.expires_at) < new Date()) return null;
-
-  // Verify the token and get user
-  const userResp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-    headers: {
-      'apikey': SERVICE_KEY,
-      'Authorization': `Bearer ${session.access_token}`,
-    },
-  });
-
-  if (!userResp.ok) return null;
-
-  const user = await userResp.json();
-  return user?.id ? { id: user.id, email: user.email } : null;
 }

@@ -1,55 +1,57 @@
 /**
- * Cellex Edge Function Client (Supabase Session-Based Auth)
- * ----------------------------------------------------------
- * NO localStorage. NO cookies. NO tokens in JavaScript.
+ * Cellex Edge Function Client (HTTP-Only Cookie Auth — Production Standard)
+ * --------------------------------------------------------------------------
+ * NO localStorage. NO sessionStorage. NO cookies in JavaScript. NO tokens.
  *
- * The session_id (a random UUID, NOT a token) is stored in sessionStorage.
- * sessionStorage survives page refreshes and navigations within the same tab,
- * but is automatically cleared when the tab closes — more secure than localStorage.
+ * This is the same approach used by AliExpress, Temu, Alibaba, Amazon,
+ * Gmail, and Netflix — HTTP-only cookies that JavaScript CANNOT read.
  *
- * Auth flow:
- *   - Login: POST /api/auth → edge function stores JWT tokens in web_sessions
- *     table in Supabase → returns { session_id, user }
- *   - Frontend stores session_id in sessionStorage (just a UUID, useless without DB)
- *   - Each page load: checkSession() reads session_id from sessionStorage,
- *     sends it to the edge function which looks up the real tokens in Supabase
- *   - Each API request: session_id sent via X-Session-Id header
- *   - Logout: deletes session from web_sessions + clears sessionStorage
+ * How it works:
+ *   - Login: POST /api/auth → server creates session in Supabase → sets
+ *     HTTP-only cookie with session_id → returns { user } (no session_id in JS)
+ *   - All requests: browser AUTOMATICALLY sends the HTTP-only cookie →
+ *     server reads it → forwards as Authorization: Bearer <session_id>
+ *   - checkSession(): POST /api/auth { op: 'session' } → server reads cookie
+ *     → edge function verifies → returns { user }
+ *   - Logout: POST /api/auth { op: 'logout' } → server clears cookie
  *
  * Security:
- *   - No JWT tokens in the browser (they're in Supabase web_sessions table)
- *   - sessionStorage only has a random UUID — useless if stolen via XSS
- *   - Session is cleared when tab closes
+ *   - HTTP-only cookie: JavaScript CANNOT read it (document.cookie returns nothing)
+ *   - Secure: only sent over HTTPS
+ *   - SameSite=Lax: CSRF protection
+ *   - 7-day expiry: persists across tabs, browser restarts, and 7 days
+ *   - The cookie only contains a random UUID (session_id), NOT a JWT token
+ *   - The actual JWT tokens live in Supabase web_sessions table
+ *   - NO localStorage. NO sessionStorage. NO tokens in JavaScript.
+ *
+ * The frontend has ZERO knowledge of the session_id. It just calls API
+ * endpoints and the browser handles the cookie automatically.
  */
 
 (function() {
     'use strict';
 
-    const SESSION_KEY = 'cellex_session_id';
-
-    // Get session_id from sessionStorage (survives navigation, cleared on tab close)
-    let sessionId = sessionStorage.getItem(SESSION_KEY) || null;
+    // User cached in memory (NOT in localStorage/sessionStorage)
+    // This is just a cache so we don't call checkSession() on every render.
+    // The actual auth state is determined by the HTTP-only cookie.
     let currentUser = null;
+    let sessionVerified = false;
 
     /**
-     * Call an API endpoint. Sends X-Session-Id header for auth.
+     * Call an API endpoint. The browser automatically sends the HTTP-only
+     * cookie with every request — we don't need to attach anything.
      */
     async function call(path, body = {}) {
         const headers = {
             'Content-Type': 'application/json',
         };
 
-        // Attach session_id if we have one
-        if (sessionId) {
-            headers['X-Session-Id'] = sessionId;
-        }
-
         try {
             const resp = await fetch(`/api/${path}`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(body),
-                credentials: 'same-origin',
+                credentials: 'same-origin',  // Send cookies for same-origin
             });
 
             const data = await resp.json();
@@ -71,10 +73,10 @@
     async function login(email, password) {
         const result = await call('auth', { op: 'login', email, password });
 
-        if (result.success && result.session_id) {
-            sessionId = result.session_id;
-            sessionStorage.setItem(SESSION_KEY, sessionId);
+        // Server sets HTTP-only cookie. We just cache the user.
+        if (result.success && result.user) {
             currentUser = result.user;
+            sessionVerified = true;
         }
 
         return result;
@@ -83,56 +85,47 @@
     async function signup(email, password) {
         const result = await call('auth', { op: 'signup', email, password });
 
-        if (result.success && result.session_id) {
-            sessionId = result.session_id;
-            sessionStorage.setItem(SESSION_KEY, sessionId);
+        if (result.success && result.user) {
             currentUser = result.user;
+            sessionVerified = true;
         }
 
         return result;
     }
 
     async function logout() {
-        if (sessionId) {
-            await call('auth', { op: 'logout', session_id: sessionId });
-        }
-        sessionId = null;
+        const result = await call('auth', { op: 'logout' });
+        // Server clears the HTTP-only cookie.
         currentUser = null;
-        sessionStorage.removeItem(SESSION_KEY);
-        return { success: true };
+        sessionVerified = false;
+        return result;
     }
 
     /**
-     * Check if user is logged in by sending session_id to the server.
-     * The edge function looks up the session_id in web_sessions table,
-     * verifies the JWT token, and returns the user object.
+     * Check if user is logged in by asking the server.
+     * The server reads the HTTP-only cookie (which JS can't see) and
+     * verifies the session with the edge function.
      *
      * Call this on EVERY page load to restore the user session.
+     * The browser auto-sends the cookie, so this works across tabs and
+     * browser restarts.
      */
     async function checkSession() {
-        // If no session_id stored, user is not logged in
-        if (!sessionId) {
-            currentUser = null;
-            return { success: true, user: null };
-        }
-
-        // If we already have the user cached, return it
-        if (currentUser) {
+        // If we already verified this session and have a user, return cached
+        if (sessionVerified && currentUser) {
             return { success: true, user: currentUser };
         }
 
-        // Ask the server to verify the session_id and return the user
-        const result = await call('auth', { op: 'session', session_id: sessionId });
+        // Ask the server to check the HTTP-only cookie
+        const result = await call('auth', { op: 'session' });
+        sessionVerified = true;
 
         if (result.success && result.user) {
             currentUser = result.user;
             return { success: true, user: currentUser };
         }
 
-        // Session is invalid or expired — clear it
-        sessionId = null;
         currentUser = null;
-        sessionStorage.removeItem(SESSION_KEY);
         return { success: true, user: null };
     }
 
@@ -150,10 +143,6 @@
         return !!currentUser;
     }
 
-    function getSessionId() {
-        return sessionId;
-    }
-
     // Expose the EdgeFunctions module globally
     window.EdgeFunctions = {
         auth: {
@@ -164,7 +153,6 @@
             getCurrentUser,
             getCurrentUserAsync,
             isLoggedIn,
-            getSessionId,
         },
 
         aiChat: (message, context = {}) => call('ai-chat', { message, context }),
@@ -210,5 +198,5 @@
         call,
     };
 
-    console.log('[EdgeFunctions] Session-based auth client initialized (sessionStorage for session_id only)');
+    console.log('[EdgeFunctions] HTTP-only cookie auth initialized (no localStorage, no sessionStorage, no tokens in JS)');
 })();
