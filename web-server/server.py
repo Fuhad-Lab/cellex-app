@@ -157,6 +157,30 @@ async def proxy_auth(request: Request):
     return await _proxy_to_edge_function("auth", request)
 
 
+@app.post("/api/orders")
+async def proxy_orders(request: Request):
+    """Proxy for order history."""
+    return await _proxy_to_edge_function("orders", request)
+
+
+@app.post("/api/profile")
+async def proxy_profile(request: Request):
+    """Proxy for profile operations."""
+    return await _proxy_to_edge_function("profile", request)
+
+
+@app.post("/api/wishlist")
+async def proxy_wishlist(request: Request):
+    """Proxy for wishlist operations."""
+    return await _proxy_to_edge_function("wishlist", request)
+
+
+@app.post("/api/checkout")
+async def proxy_checkout(request: Request):
+    """Proxy for checkout operations."""
+    return await _proxy_to_edge_function("checkout", request)
+
+
 @app.get("/api/health")
 async def proxy_health():
     """Health check for the proxy."""
