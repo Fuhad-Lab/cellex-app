@@ -86,16 +86,18 @@ async def _proxy_to_edge_function(edge_name: str, request: Request):
             status_code=500
         )
 
-    # Get the user's auth token from the incoming request
-    auth_header = request.headers.get("Authorization", "")
+    # Get session_id from the X-Session-Id header (sent by frontend, stored in memory)
+    session_id = request.headers.get("X-Session-Id", "")
 
-    # Build outgoing headers
+    # Build outgoing headers for the edge function
     outgoing_headers = {
         "apikey": SUPABASE_ANON_KEY,
         "Content-Type": "application/json",
     }
-    if auth_header:
-        outgoing_headers["Authorization"] = auth_header
+    if session_id:
+        # Send session_id as Bearer token — edge function will look it up
+        # in the web_sessions table to get the actual access_token
+        outgoing_headers["Authorization"] = f"Bearer {session_id}"
 
     # Read the request body
     try:
