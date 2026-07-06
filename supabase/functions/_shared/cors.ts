@@ -17,8 +17,18 @@ export function errorResponse(message: string, status = 400): Response {
 }
 
 /**
- * Extract the user's JWT from the Authorization header and verify it.
- * Returns the user object or null if not authenticated.
+ * Get the user from a session_id.
+ *
+ * The web-server sends the session_id in the Authorization header as:
+ *   Authorization: Bearer <session_id>
+ *
+ * This function:
+ *   1. Extracts the session_id from the header
+ *   2. Looks up the access_token in the web_sessions table
+ *   3. Verifies the access_token with Supabase Auth
+ *   4. Returns the user object
+ *
+ * NO cookies, NO localStorage — the session is stored IN SUPABASE.
  */
 export async function getUser(req: Request): Promise<{ id: string; email?: string } | null> {
   const authHeader = req.headers.get('Authorization');
@@ -26,23 +36,46 @@ export async function getUser(req: Request): Promise<{ id: string; email?: strin
     return null;
   }
 
-  const token = authHeader.replace('Bearer ', '');
+  const sessionId = authHeader.replace('Bearer ', '');
 
-  // Use Supabase admin to verify the JWT
+  if (!sessionId) return null;
+
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+  const adminHeaders = {
+    'apikey': serviceKey,
+    'Authorization': `Bearer ${serviceKey}`,
+    'Content-Type': 'application/json',
+  };
+
   try {
-    const resp = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    // Step 1: Look up the session in web_sessions
+    const sessionResp = await fetch(
+      `${supabaseUrl}/rest/v1/web_sessions?select=access_token,expires_at&session_id=eq.${encodeURIComponent(sessionId)}&limit=1`,
+      { headers: adminHeaders }
+    );
+
+    const sessions = await sessionResp.json();
+
+    if (!sessions || sessions.length === 0) return null;
+
+    const session = sessions[0];
+
+    // Step 2: Check if expired
+    if (new Date(session.expires_at) < new Date()) return null;
+
+    // Step 3: Verify the access_token with Supabase Auth
+    const userResp = await fetch(`${supabaseUrl}/auth/v1/user`, {
       headers: {
         'apikey': serviceKey,
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${session.access_token}`,
       },
     });
 
-    if (!resp.ok) return null;
+    if (!userResp.ok) return null;
 
-    const user = await resp.json();
+    const user = await userResp.json();
     return user?.id ? { id: user.id, email: user.email } : null;
   } catch {
     return null;
