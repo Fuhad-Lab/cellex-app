@@ -1,0 +1,7 @@
+# Sensitive - don't commit
+.env
+.env.local
+*.secret
+__pycache__/
+*.pyc
+.git/
