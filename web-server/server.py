@@ -150,8 +150,92 @@ async def proxy_products(request: Request):
 
 @app.post("/api/auth")
 async def proxy_auth(request: Request):
-    """Proxy for auth operations. Frontend calls POST /api/auth."""
-    return await _proxy_to_edge_function("auth", request)
+    """Auth proxy with HTTP-only cookie management.
+
+    Makes a DIRECT HTTP call to the auth edge function (not via _proxy_to_edge_function)
+    so we can intercept the response, set cookies, and strip tokens.
+
+    - login/signup: sets cellex_access_token + cellex_refresh_token HTTP-only cookies,
+      strips tokens from JSON response (frontend only gets user object)
+    - logout: clears cookies
+    - session: reads cookie, forwards to edge function for verification
+    """
+    if not SUPABASE_ANON_KEY:
+        return JSONResponse({"success": False, "error": "SUPABASE_ANON_KEY not set"}, status_code=500)
+
+    # Read the request body ONCE
+    body_bytes = await request.body()
+    try:
+        body = json.loads(body_bytes) if body_bytes else {}
+    except Exception:
+        body = {}
+
+    op = body.get("op", "")
+
+    # Build outgoing headers for the edge function
+    outgoing_headers = {
+        "apikey": SUPABASE_ANON_KEY,
+        "Content-Type": "application/json",
+    }
+
+    # For session check, send the access token from cookie
+    cookie_token = request.cookies.get(COOKIE_ACCESS_NAME, "")
+    if cookie_token:
+        outgoing_headers["Authorization"] = f"Bearer {cookie_token}"
+
+    # Call the auth edge function directly
+    target_url = f"{EDGE_FUNCTIONS_URL}/auth"
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            resp = await client.post(target_url, content=body_bytes, headers=outgoing_headers)
+        data = resp.json()
+    except Exception as e:
+        logger.error(f"Auth proxy error: {e}")
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+
+    # Handle login/signup: set cookies BEFORE stripping tokens
+    if op in ("login", "signup") and isinstance(data, dict) and data.get("success"):
+        # Create response with the FULL data (including tokens, for now)
+        response = JSONResponse(data, status_code=resp.status_code)
+
+        # Set HTTP-only cookies with the tokens
+        if data.get("access_token"):
+            response.set_cookie(
+                key=COOKIE_ACCESS_NAME,
+                value=data["access_token"],
+                httponly=True,
+                secure=True,
+                samesite="lax",
+                max_age=COOKIE_MAX_AGE_ACCESS,
+                path="/"
+            )
+        if data.get("refresh_token"):
+            response.set_cookie(
+                key=COOKIE_REFRESH_NAME,
+                value=data["refresh_token"],
+                httponly=True,
+                secure=True,
+                samesite="lax",
+                max_age=COOKIE_MAX_AGE_REFRESH,
+                path="/"
+            )
+
+        # NOW strip tokens from the response body (frontend doesn't need them)
+        data.pop("access_token", None)
+        data.pop("refresh_token", None)
+        data.pop("expires_at", None)
+        response.body = json.dumps(data).encode("utf-8")
+        return response
+
+    # Handle logout: clear cookies
+    if op == "logout":
+        response = JSONResponse(data, status_code=resp.status_code)
+        response.delete_cookie(COOKIE_ACCESS_NAME, path="/")
+        response.delete_cookie(COOKIE_REFRESH_NAME, path="/")
+        return response
+
+    # Default (session check, etc.): return as-is
+    return JSONResponse(data, status_code=resp.status_code)
 
 
 @app.get("/api/health")
