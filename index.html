@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cellex — Nigeria's #1 Marketplace for Everything</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cellex — One App. Every Deal.</title>
     <meta name="description" content="Shop millions of products from trusted merchants and local farmers. Best prices, fast delivery, secure payments.">
 
     <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind only - NO Supabase SDK in frontend -->
@@ -19,80 +21,53 @@
                 extend: {
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-                        display: ['Sora', 'Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Sora', 'system-ui', 'sans-serif'],
                     },
                     colors: {
                         brand: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            200: '#fed7aa',
-                            300: '#fdba74',
-                            400: '#fb923c',
-                            500: '#f97316',
-                            600: '#ea580c',
-                            700: '#c2410c',
-                            800: '#9a3412',
-                            900: '#7c2d12',
+                            50: '#fff5f0',
+                            100: '#ffe6d9',
+                            200: '#ffc8a8',
+                            300: '#ffa377',
+                            400: '#ff7a3d',
+                            500: '#fb5b1b',
+                            600: '#ec4509',
+                            700: '#c3330a',
+                            800: '#9b2a10',
+                            900: '#7d2611',
                         },
-                        urgency: {
-                            500: '#ef4444',
-                            600: '#dc2626',
-                            700: '#b91c1c',
-                        },
-                        trust: {
-                            500: '#22c55e',
-                            600: '#16a34a',
-                        },
-                        dark: {
+                        ink: {
                             900: '#0a0a12',
                             800: '#15151f',
                             700: '#22222e',
+                            600: '#3a3a48',
+                            500: '#5a5a6a',
+                            400: '#8a8a9a',
+                            300: '#b8b8c4',
+                            200: '#e3e3ea',
+                            100: '#f4f4f7',
                         },
-                        peach: {
-                            50: '#fff5f2',
-                            100: '#ffe4dc',
-                        },
+                        urgency: { 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c' },
+                        trust: { 500: '#22c55e', 600: '#16a34a' },
+                        dark: { 900: '#0a0a12', 800: '#15151f', 700: '#22222e' },
+                    },
+                    boxShadow: {
+                        'glow': '0 10px 40px -10px rgba(251,91,27,0.45)',
+                        'card': '0 4px 20px -6px rgba(10,10,18,0.08)',
+                        'pop': '0 8px 30px -8px rgba(10,10,18,0.18)',
                     },
                     animation: {
                         'float': 'float 3s ease-in-out infinite',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'slide-up': 'slideUp 0.5s ease-out',
-                        'slide-in-right': 'slideInRight 0.5s ease-out',
                         'fade-in': 'fadeIn 0.5s ease-out',
-                        'bounce-slow': 'bounce 2s infinite',
                         'shimmer': 'shimmer 2s linear infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                        'slide-banner': 'slideBanner 20s linear infinite',
                     },
                     keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        slideInRight: {
-                            '0%': { opacity: '0', transform: 'translateX(20px)' },
-                            '100%': { opacity: '1', transform: 'translateX(0)' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        shimmer: {
-                            '0%': { backgroundPosition: '-200% 0' },
-                            '100%': { backgroundPosition: '200% 0' },
-                        },
-                        glow: {
-                            '0%': { boxShadow: '0 0 20px rgba(249, 115, 22, 0.3)' },
-                            '100%': { boxShadow: '0 0 40px rgba(249, 115, 22, 0.6)' },
-                        },
-                        slideBanner: {
-                            '0%': { transform: 'translateX(0)' },
-                            '100%': { transform: 'translateX(-50%)' },
-                        },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-4px)' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
                     }
                 }
             }
@@ -100,212 +75,171 @@
     </script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
+        html, body { font-family: 'Plus Jakarta Sans', sans-serif; }
         body {
-            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-            background: #f8fafc;
-            color: #1f2937;
+            background: #f4f4f7;
+            color: #0a0a12;
             overflow-x: hidden;
         }
+        .font-display { font-family: 'Sora', sans-serif; }
 
         /* Splash Screen */
         #splashScreen {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #0a0a12 0%, #15151f 50%, #1e1b4b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #0e0e1a 0%, #1a1226 50%, #0e0e1a 100%);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         #splashScreen.hidden { opacity: 0; visibility: hidden; }
         .splash-logo { animation: pulse 2s ease-in-out infinite; }
         @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 3px rgba(249, 115, 22, 0.4)); }
-            50% { filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.7)); }
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(251,91,27,0.4)); }
+            50% { filter: drop-shadow(0 0 12px rgba(251,91,27,0.7)); }
         }
         .splash-logo svg { animation: logoGlow 2s ease-in-out infinite; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Gradient Text */
-        .gradient-text {
-            background: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        /* Snap scroll */
+        .snap-x-mandatory { scroll-snap-type: x mandatory; }
+        .snap-center { scroll-snap-align: center; }
 
-        /* Glass Effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
+        /* Gradients */
+        .grad-flame { background: linear-gradient(135deg, #fb5b1b 0%, #ec4509 50%, #c3330a 100%); }
+        .grad-sunset { background: linear-gradient(135deg, #ff7a3d 0%, #fb5b1b 50%, #e91e63 100%); }
+        .grad-royal { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%); }
+        .grad-mint { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); }
+        .grad-gold { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+        .grad-night { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+        .grad-flash { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); }
 
-        /* Product Card */
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Pulse for live countdown */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
         }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.12);
-        }
-        .product-card:hover .product-image {
-            transform: scale(1.08);
-        }
-        .product-card .product-image {
-            transition: transform 0.5s ease;
-        }
+        .pulse-dot { animation: pulse-dot 1s ease-in-out infinite; }
 
-        /* Category Card */
-        .category-card {
-            transition: all 0.3s ease;
+        /* Slide up animation */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .category-card:hover {
-            transform: translateY(-3px);
+        .reveal { animation: slideUp 0.5s ease-out both; }
+
+        /* Toast */
+        @keyframes toastIn {
+            from { opacity: 0; transform: translate(-50%, 30px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
-        .category-card:hover .category-icon {
-            transform: scale(1.1);
-        }
-        .category-card .category-icon {
-            transition: all 0.3s ease;
+        .toast-anim { animation: toastIn 0.3s ease-out; }
+
+        /* Progress bar fill */
+        .progress-fill {
+            background: linear-gradient(90deg, #fb5b1b, #f59e0b);
+            transition: width 0.6s ease-out;
         }
 
-        /* Flash Deal Badge */
+        /* Heart pop */
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .heart-pop { animation: heartPop 0.4s ease-out; }
+
+        /* Card hover/active */
+        .lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .lift:active { transform: scale(0.97); }
+        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.12); }
+        .product-card:hover .product-image { transform: scale(1.08); }
+        .product-card .product-image { transition: transform 0.5s ease; }
+
+        /* Glow ring for active nav */
+        .nav-active { position: relative; }
+        .nav-active::before {
+            content: ''; position: absolute; inset: -8px -10px;
+            background: linear-gradient(135deg, rgba(251,91,27,0.18), rgba(236,72,9,0.05));
+            border-radius: 16px; z-index: -1;
+        }
+
+        /* Star rating */
+        .stars {
+            background: linear-gradient(90deg, #fbbf24 var(--p, 100%), #d1d5db var(--p, 100%));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+
+        /* Tab active */
+        .tab-active { color: #0a0a12; font-weight: 700; }
+        .tab-active::after {
+            content: ''; display: block; height: 3px;
+            background: linear-gradient(90deg, #fb5b1b, #ec4509);
+            border-radius: 2px; margin-top: 6px;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+
+        /* Skeleton shimmer */
+        @keyframes shimmerBg {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmerBg 1.5s infinite;
+        }
+
+        /* Header shadow on scroll */
+        header.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+        /* Search focus */
+        .search-box:focus-within { box-shadow: 0 0 0 3px rgba(251,91,27,0.2); }
+
+        /* Mobile bottom nav safe area */
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
+
+        /* Quick action */
+        .quick-action { opacity: 0; transform: translateY(10px); transition: all 0.3s ease; }
+        .product-card:hover .quick-action { opacity: 1; transform: translateY(0); }
+
+        /* Seller badges */
+        .seller-badge { background: linear-gradient(135deg, #059669, #10b981); }
+        .farmer-badge { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+
+        /* Flash badge */
         .flash-badge {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             animation: pulse 2s infinite;
         }
 
-        /* Discount Badge - Circular (Jumia style) */
-        .discount-circle {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #ff7a3d 0%, #fb5b1b 50%, #ec4509 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
-        /* Stock Progress Bar (Jumia style) */
-        .stock-bar {
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .stock-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #f97316, #ef4444);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
+        /* Glass */
+        .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
-        /* Skeleton Loading */
-        .skeleton {
-            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        /* Quick Action Button */
-        .quick-action {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-        }
-        .product-card:hover .quick-action {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Seller Badge */
-        .seller-badge {
-            background: linear-gradient(135deg, #059669, #10b981);
-        }
-        .farmer-badge {
-            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-        }
-
-        /* Cellex Logo Styles */
-        .logo-icon {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .logo-icon:hover {
-            transform: scale(1.05) rotate(5deg);
-        }
-
-        /* Marquee */
-        .marquee-content {
-            display: flex;
-            animation: marquee 25s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* Header shadow on scroll */
-        header.scrolled {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Search focus */
-        .search-box:focus-within {
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
-        }
-
-        /* Hero gradient */
-        .hero-orange {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
-        }
-        .hero-purple {
-            background: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #4f46e5 100%);
-        }
-        .hero-red {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
-        }
-
-        /* Mobile Bottom Nav */
-        .mobile-nav {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        /* Trust badge checkmark */
-        .trust-check {
-            background: #22c55e;
-            color: white;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Scroll snap for horizontal product rows */
-        .scroll-snap-x {
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-        .scroll-snap-x > * {
-            scroll-snap-align: start;
-        }
-
-        /* Hide scrollbar for horizontal scroll */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        /* Cart drawer transition */
+        .cart-drawer { transition: transform 0.3s ease; }
     </style>
 </head>
 
@@ -317,32 +251,25 @@
                 <svg viewBox="0 0 280 70" class="w-64 mx-auto">
                     <defs>
                         <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#fb923c"/>
-                            <stop offset="50%" stop-color="#f97316"/>
-                            <stop offset="100%" stop-color="#ea580c"/>
+                            <stop offset="0%" stop-color="#ff7a3d"/>
+                            <stop offset="50%" stop-color="#fb5b1b"/>
+                            <stop offset="100%" stop-color="#ec4509"/>
                         </linearGradient>
                         <linearGradient id="logoTextGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#fb923c"/>
-                            <stop offset="100%" stop-color="#f97316"/>
+                            <stop offset="0%" stop-color="#ff7a3d"/>
+                            <stop offset="100%" stop-color="#fb5b1b"/>
                         </linearGradient>
-                        <filter id="logoGlow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
                     </defs>
-                    <g class="logo-icon" transform="translate(5, 8)">
-                        <path d="M8 12 L8 50 Q8 54 12 54 L48 54 Q52 54 52 50 L52 12 Q52 8 48 8 L12 8 Q8 8 8 12 Z" fill="url(#logoGrad)" filter="url(#logoGlow)"/>
+                    <g transform="translate(5, 8)">
+                        <path d="M8 12 L8 50 Q8 54 12 54 L48 54 Q52 54 52 50 L52 12 Q52 8 48 8 L12 8 Q8 8 8 12 Z" fill="url(#logoGrad)"/>
                         <path d="M18 8 Q18 -2 30 -2 Q42 -2 42 8" fill="none" stroke="url(#logoGrad)" stroke-width="4" stroke-linecap="round"/>
                         <path d="M18 22 L38 22 M18 35 L32 35 M18 48 L38 48 M18 22 L18 48" fill="none" stroke="#0a0a12" stroke-width="4" stroke-linecap="round"/>
                         <g transform="translate(52, 6)">
-                            <path d="M0 0 L2 6 L8 8 L2 10 L0 16 L-2 10 L-8 8 L-2 6 Z" fill="#fb923c"/>
+                            <path d="M0 0 L2 6 L8 8 L2 10 L0 16 L-2 10 L-8 8 L-2 6 Z" fill="#ff7a3d"/>
                         </g>
                     </g>
-                    <text x="70" y="48" font-family="'Sora', system-ui, sans-serif" font-size="38" font-weight="800" fill="url(#logoTextGradient)">Cellex</text>
-                    <text x="72" y="62" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="10" fill="#94a3b8" letter-spacing="2">NIGERIA'S #1 MARKETPLACE</text>
+                    <text x="70" y="48" font-family="'Sora', sans-serif" font-size="38" font-weight="800" fill="url(#logoTextGradient)">Cellex</text>
+                    <text x="72" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#8a8a9a" letter-spacing="2">ONE APP. EVERY DEAL.</text>
                 </svg>
             </div>
             <div class="flex items-center justify-center gap-2">
@@ -355,81 +282,60 @@
     </div>
 
     <!-- Header -->
-    <header id="mainHeader" class="glass sticky top-0 z-50 border-b border-gray-100 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4">
-            <!-- Main Header -->
-            <div class="flex items-center justify-between h-16 lg:h-20">
+    <header id="mainHeader" class="glass sticky top-0 z-50 border-b border-ink-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+            <!-- Main Header Row -->
+            <div class="flex items-center justify-between h-14 sm:h-16 lg:h-20">
                 <!-- Logo -->
-                <a href="/" class="flex items-center gap-2 group">
-                    <div class="logo-icon w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
-                        <svg viewBox="0 0 60 60" class="w-full h-full">
-                            <defs>
-                                <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#fb923c"/>
-                                    <stop offset="50%" stop-color="#f97316"/>
-                                    <stop offset="100%" stop-color="#ea580c"/>
-                                </linearGradient>
-                                <filter id="headerLogoGlow" x="-50%" y="-50%" width="200%" height="200%">
-                                    <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
-                                    <feMerge>
-                                        <feMergeNode in="coloredBlur"/>
-                                        <feMergeNode in="SourceGraphic"/>
-                                    </feMerge>
-                                </filter>
-                            </defs>
-                            <path d="M8 15 L8 50 Q8 54 12 54 L48 54 Q52 54 52 50 L52 15 Q52 11 48 11 L12 11 Q8 11 8 15 Z" fill="url(#headerLogoGrad)" filter="url(#headerLogoGlow)"/>
-                            <path d="M18 11 Q18 2 30 2 Q42 2 42 11" fill="none" stroke="url(#headerLogoGrad)" stroke-width="4" stroke-linecap="round"/>
-                            <path d="M18 24 L38 24 M18 36 L32 36 M18 48 L38 48 M18 24 L18 48" fill="none" stroke="#0a0a12" stroke-width="3.5" stroke-linecap="round"/>
-                            <g transform="translate(52, 8)">
-                                <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#fb923c"/>
-                            </g>
-                        </svg>
+                <a href="/" class="flex items-center gap-2 group shrink-0">
+                    <div class="w-9 h-9 lg:w-11 lg:h-11 grad-flame rounded-xl flex items-center justify-center shadow-glow">
+                        <span class="font-display font-extrabold text-white text-lg leading-none">C</span>
                     </div>
-                    <div class="hidden sm:flex flex-col">
-                        <span class="text-xl lg:text-2xl font-extrabold gradient-text leading-tight font-display">Cellex</span>
-                        <span class="text-[8px] lg:text-[10px] text-gray-400 tracking-widest uppercase -mt-1">Nigeria's #1</span>
+                    <div class="hidden sm:flex flex-col leading-tight">
+                        <div class="font-display font-extrabold text-base lg:text-lg tracking-tight gradient-text">Cellex</div>
+                        <div class="text-[8px] lg:text-[9px] font-semibold text-ink-400 -mt-0.5">One App. Every Deal.</div>
                     </div>
                 </a>
 
                 <!-- Search Bar -->
-                <div class="search-box flex-1 max-w-2xl mx-2 sm:mx-4 lg:mx-8 flex items-center bg-gray-100 rounded-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-transparent focus-within:border-brand-400 transition-all">
-                    <i class="fas fa-search text-gray-400 mr-2 sm:mr-3 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="Search products, brands..."
-                           class="flex-1 bg-transparent outline-none text-xs sm:text-sm min-w-0" onkeypress="handleSearchKeypress(event)">
-                    <div class="flex items-center gap-1.5 sm:gap-2 ml-1">
-                        <button class="p-1.5 hover:bg-gray-200 rounded-full transition-colors hidden sm:block" title="Search by Image">
-                            <i class="fas fa-camera text-gray-400 text-sm"></i>
-                        </button>
-                        <button onclick="performSearch()" class="bg-gradient-to-r from-brand-400 to-brand-500 text-white px-3 sm:px-6 py-1 sm:py-1.5 rounded-full font-semibold text-xs sm:text-sm hover:from-brand-500 hover:to-brand-600 transition-all">
-                            Search
+                <div class="flex items-center gap-2 flex-1 max-w-2xl mx-2 sm:mx-4 lg:mx-8">
+                    <div class="search-box flex-1 flex items-center gap-2 bg-ink-100 rounded-2xl px-3 h-10 sm:h-11">
+                        <i class="fas fa-search text-ink-500 text-sm shrink-0"></i>
+                        <input type="text" id="searchInput" placeholder="Search products, brands & categories"
+                               class="flex-1 bg-transparent outline-none text-xs sm:text-sm placeholder:text-ink-400 text-ink-900 min-w-0" onkeypress="handleSearchKeypress(event)">
+                        <button class="text-ink-500 shrink-0 hidden sm:block" title="Voice Search">
+                            <i class="fas fa-microphone text-sm"></i>
                         </button>
                     </div>
+                    <button onclick="performSearch()" class="w-10 h-10 sm:w-11 sm:h-11 grad-flame rounded-2xl flex items-center justify-center shadow-glow lift shrink-0">
+                        <i class="fas fa-search text-white text-sm"></i>
+                    </button>
                 </div>
 
                 <!-- Right Actions -->
-                <div class="flex items-center gap-2 lg:gap-4">
+                <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
                     <!-- Auth Buttons (Logged Out) -->
                     <div id="authButtons" class="hidden sm:flex items-center gap-2">
-                        <a href="Eesha buying folder/login.html" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
+                        <a href="Eesha buying folder/login.html" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
                             Login
                         </a>
-                        <a href="Eesha buying folder/signup.html" class="px-4 py-2 bg-gradient-to-r from-brand-400 to-brand-500 text-white rounded-full text-sm font-semibold hover:from-brand-500 hover:to-brand-600 transition-all hover:scale-105">
+                        <a href="Eesha buying folder/signup.html" class="px-4 py-2 grad-flame text-white rounded-full text-sm font-semibold hover:shadow-glow transition-all">
                             Sign Up
                         </a>
                     </div>
 
                     <!-- User Menu (Logged In) -->
                     <div id="userMenu" class="hidden relative">
-                        <button id="userAvatarBtn" class="flex items-center gap-2 p-1.5 pr-3 bg-gradient-to-r from-brand-400 to-brand-500 rounded-full hover:shadow-lg transition-all">
-                            <div id="userAvatar" class="w-8 h-8 bg-dark-900 rounded-full flex items-center justify-center text-brand-400 font-bold text-sm">
+                        <button id="userAvatarBtn" class="flex items-center gap-2 p-1 pr-2 sm:pr-3 grad-flame rounded-full hover:shadow-glow transition-all">
+                            <div id="userAvatar" class="w-7 h-7 sm:w-8 sm:h-8 bg-ink-900 rounded-full flex items-center justify-center text-brand-400 font-bold text-sm">
                                 U
                             </div>
                             <span id="userFirstName" class="text-white font-semibold text-sm hidden lg:block">User</span>
                             <i class="fas fa-chevron-down text-white text-xs"></i>
                         </button>
-                        <div id="userDropdown" class="hidden absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
-                            <div class="bg-gradient-to-br from-dark-900 to-dark-800 p-4 text-center">
-                                <div id="avatarLarge" class="w-14 h-14 bg-brand-400 rounded-full flex items-center justify-center text-dark-900 font-bold text-xl mx-auto mb-2">U</div>
+                        <div id="userDropdown" class="hidden absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-pop border border-ink-100 overflow-hidden z-50">
+                            <div class="grad-night p-4 text-center">
+                                <div id="avatarLarge" class="w-14 h-14 bg-brand-400 rounded-full flex items-center justify-center text-ink-900 font-bold text-xl mx-auto mb-2">U</div>
                                 <p class="text-white font-semibold">Welcome back!</p>
                                 <span class="inline-flex items-center gap-1 bg-brand-400/20 text-brand-400 text-xs px-3 py-1 rounded-full mt-1">
                                     <i class="fas fa-crown"></i> Premium Member
@@ -437,343 +343,360 @@
                             </div>
                             <div class="p-2">
                                 <a href="Eesha buying folder/profile.html" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 rounded-xl transition-colors">
-                                    <i class="fas fa-user text-gray-400 w-5"></i>
-                                    <span>My Profile</span>
+                                    <i class="fas fa-user text-gray-400 w-5"></i><span>My Profile</span>
                                 </a>
                                 <a href="Eesha buying folder/orders.html" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 rounded-xl transition-colors">
-                                    <i class="fas fa-box text-gray-400 w-5"></i>
-                                    <span>My Orders</span>
+                                    <i class="fas fa-box text-gray-400 w-5"></i><span>My Orders</span>
                                 </a>
                                 <a href="Eesha buying folder/wishlist.html" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 rounded-xl transition-colors">
-                                    <i class="fas fa-heart text-gray-400 w-5"></i>
-                                    <span>Wishlist</span>
+                                    <i class="fas fa-heart text-gray-400 w-5"></i><span>Wishlist</span>
                                 </a>
                                 <a href="Eesha buying folder/cart.html" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 rounded-xl transition-colors">
-                                    <i class="fas fa-shopping-cart text-gray-400 w-5"></i>
-                                    <span>My Cart</span>
+                                    <i class="fas fa-shopping-cart text-gray-400 w-5"></i><span>My Cart</span>
                                 </a>
                                 <a href="Eesha buying folder/settings.html" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 rounded-xl transition-colors">
-                                    <i class="fas fa-cog text-gray-400 w-5"></i>
-                                    <span>Settings</span>
+                                    <i class="fas fa-cog text-gray-400 w-5"></i><span>Settings</span>
                                 </a>
                                 <hr class="my-2">
                                 <button id="logoutBtn" class="flex items-center gap-3 px-4 py-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors w-full">
-                                    <i class="fas fa-sign-out-alt w-5"></i>
-                                    <span>Logout</span>
+                                    <i class="fas fa-sign-out-alt w-5"></i><span>Logout</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Notifications -->
+                    <button class="relative w-9 h-9 rounded-full bg-ink-100 flex items-center justify-center lift hidden sm:flex">
+                        <i class="fas fa-bell text-ink-700 text-sm"></i>
+                        <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brand-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">9</span>
+                    </button>
+
                     <!-- Cart -->
-                    <a href="Eesha buying folder/cart.html" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors group">
-                        <i class="fas fa-shopping-cart text-gray-600 text-lg group-hover:text-brand-600 transition-colors"></i>
-                        <span id="cartCount" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
+                    <a href="Eesha buying folder/cart.html" class="relative w-9 h-9 rounded-full bg-ink-100 flex items-center justify-center lift">
+                        <i class="fas fa-shopping-cart text-ink-700 text-sm"></i>
+                        <span id="cartCount" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brand-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
                     </a>
 
                     <!-- Mobile Menu -->
-                    <button id="mobileMenuBtn" class="lg:hidden p-2 hover:bg-gray-100 rounded-full">
-                        <i class="fas fa-bars text-gray-600 text-lg"></i>
+                    <button id="mobileMenuBtn" class="lg:hidden w-9 h-9 rounded-full bg-ink-100 flex items-center justify-center">
+                        <i class="fas fa-bars text-ink-700 text-sm"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Category Nav -->
-            <nav class="hidden lg:flex items-center gap-1 py-2 overflow-x-auto">
-                <a href="#" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-dark-900 bg-brand-50 hover:bg-brand-100 transition-colors whitespace-nowrap">
-                    <i class="fas fa-th-large text-brand-500"></i> All Categories
-                </a>
-                <a href="#flashDeals" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-bolt text-urgency-600"></i> Flash Deals
-                </a>
-                <a href="Eesha buying folder/categories.html?category=farm" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-leaf text-trust-500"></i> Farm Fresh
-                </a>
-                <a href="Eesha buying folder/categories.html?category=phones" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-mobile-alt text-blue-500"></i> Phones
-                </a>
-                <a href="Eesha buying folder/categories.html?category=electronics" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-laptop text-purple-500"></i> Electronics
-                </a>
-                <a href="Eesha buying folder/categories.html?category=fashion" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-tshirt text-pink-500"></i> Fashion
-                </a>
-                <a href="Eesha buying folder/categories.html?category=home" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-home text-indigo-500"></i> Home & Garden
-                </a>
-                <a href="Eesha buying folder/categories.html?category=baby" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors whitespace-nowrap">
-                    <i class="fas fa-baby text-cyan-500"></i> Baby & Kids
-                </a>
+            <!-- Category Tabs -->
+            <nav class="flex gap-4 sm:gap-5 overflow-x-auto no-scrollbar text-sm text-ink-500 pb-2">
+                <button class="tab-active shrink-0">Explore</button>
+                <a href="#flashDeals" class="shrink-0 hover:text-ink-900">Flash Deals</a>
+                <a href="Eesha buying folder/categories.html?category=farm" class="shrink-0 hover:text-ink-900">Farm Fresh</a>
+                <a href="Eesha buying folder/categories.html?category=phones" class="shrink-0 hover:text-ink-900">Phones</a>
+                <a href="Eesha buying folder/categories.html?category=electronics" class="shrink-0 hover:text-ink-900">Electronics</a>
+                <a href="Eesha buying folder/categories.html?category=fashion" class="shrink-0 hover:text-ink-900">Fashion</a>
+                <a href="Eesha buying folder/categories.html?category=home" class="shrink-0 hover:text-ink-900">Home</a>
+                <a href="Eesha buying folder/categories.html?category=baby" class="shrink-0 hover:text-ink-900">Kids</a>
             </nav>
         </div>
     </header>
 
     <!-- Bottom Navigation -->
-    <nav class="mobile-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div class="flex items-center justify-around py-2 max-w-lg mx-auto">
-            <a href="/" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-brand-500">
-                <i class="fas fa-home text-lg sm:text-xl"></i>
-                <span class="text-[10px] sm:text-xs font-medium">Home</span>
+    <nav class="mobile-nav fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-ink-100 z-50 safe-bottom">
+        <div class="flex items-end justify-around max-w-lg mx-auto px-2 pt-2 pb-3">
+            <a href="/" class="nav-active flex flex-col items-center gap-0.5 py-1 px-2">
+                <i class="fas fa-home text-xl text-brand-600"></i>
+                <span class="text-[10px] font-bold text-brand-600">Home</span>
             </a>
-            <a href="Eesha buying folder/categories.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <i class="fas fa-th-large text-lg sm:text-xl"></i>
-                <span class="text-[10px] sm:text-xs">Categories</span>
+            <a href="Eesha buying folder/categories.html" class="flex flex-col items-center gap-0.5 py-1 px-2">
+                <i class="fas fa-th-large text-xl text-ink-500"></i>
+                <span class="text-[10px] font-semibold text-ink-500">Shop</span>
             </a>
-            <a href="ai-chat.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-brand-500 relative">
-                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-500 rounded-full"></div>
-                <div class="w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-brand-400 to-brand-600 rounded-full flex items-center justify-center shadow-lg -mt-5">
-                    <i class="fas fa-robot text-white text-base sm:text-lg"></i>
+            <a href="ai-chat.html" class="flex flex-col items-center gap-0.5 -mt-3">
+                <div class="w-12 h-12 grad-gold rounded-2xl flex items-center justify-center shadow-glow lift">
+                    <i class="fas fa-robot text-white text-lg"></i>
                 </div>
-                <span class="text-[10px] sm:text-xs font-semibold text-brand-500">AI Shop</span>
+                <span class="text-[10px] font-bold text-amber-600">AI Shop</span>
             </a>
-            <a href="Eesha buying folder/cart.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
-                <i class="fas fa-shopping-cart text-lg sm:text-xl"></i>
-                <span class="text-[10px] sm:text-xs">Cart</span>
-                <span id="mobileCartCount" class="absolute top-0 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
+            <a href="Eesha buying folder/cart.html" class="relative flex flex-col items-center gap-0.5 py-1 px-2">
+                <i class="fas fa-shopping-cart text-xl text-ink-500"></i>
+                <span class="text-[10px] font-semibold text-ink-500">Cart</span>
+                <span id="mobileCartCount" class="absolute top-0 right-1 w-4 h-4 bg-brand-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
             </a>
-            <a id="mobileAccountBtn" href="Eesha buying folder/login.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors">
+            <a id="mobileAccountBtn" href="Eesha buying folder/login.html" class="flex flex-col items-center gap-0.5 py-1 px-2">
                 <div class="relative">
-                    <i class="fas fa-user text-lg sm:text-xl"></i>
+                    <i class="fas fa-user text-xl text-ink-500"></i>
                     <i id="loggedInCheck" class="fas fa-check-circle text-trust-500 text-xs absolute -bottom-0.5 -right-0.5 hidden"></i>
                 </div>
-                <span class="text-[10px] sm:text-xs">Account</span>
+                <span class="text-[10px] font-semibold text-ink-500">Account</span>
             </a>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pb-20">
-        <!-- Trust Bar (Temu style) -->
-        <section class="bg-white border-b border-gray-100">
-            <div class="max-w-7xl mx-auto px-4 py-2.5">
-                <div class="flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm">
-                    <div class="flex items-center gap-1.5">
-                        <span class="trust-check w-5 h-5 text-xs"><i class="fas fa-check text-[10px]"></i></span>
-                        <span class="text-gray-600 font-medium">Free Shipping</span>
+    <main class="pb-20 max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <!-- AI Search Badge (Alibaba inspired) -->
+        <div class="mt-3">
+            <a href="ai-chat.html" class="w-full flex items-center gap-3 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border border-purple-100 rounded-2xl px-4 py-2.5 lift">
+                <div class="w-8 h-8 grad-royal rounded-xl flex items-center justify-center shrink-0">
+                    <i class="fas fa-sparkles text-white text-xs"></i>
+                </div>
+                <div class="text-left flex-1">
+                    <div class="text-[13px] font-bold text-ink-900">AI Mode — Describe what you need</div>
+                    <div class="text-[11px] text-ink-500">"Show me drones", "phones under ₦50k", "something that flies"…</div>
+                </div>
+                <i class="fas fa-chevron-right text-ink-400 text-xs"></i>
+            </a>
+        </div>
+
+        <!-- Hero Carousel (Choice Day, Beauty Monday, BrandDay) -->
+        <div class="mt-3">
+            <div class="relative h-44 sm:h-52 lg:h-56 rounded-3xl overflow-hidden shadow-pop">
+                <div id="heroCarousel" class="flex h-full overflow-x-auto no-scrollbar snap-x-mandatory">
+                    <!-- Slide 1: Choice Day -->
+                    <div class="snap-center shrink-0 w-full grad-sunset relative">
+                        <div class="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="inline-flex items-center gap-1.5 bg-white/25 backdrop-blur px-2.5 py-1 rounded-full">
+                                    <span class="w-1.5 h-1.5 bg-yellow-300 rounded-full pulse-dot"></span>
+                                    <span class="text-[10px] font-bold text-white tracking-wide">CHOICE DAY • 1ST EVERY MONTH</span>
+                                </div>
+                                <div class="mt-2 font-display font-extrabold text-white text-2xl sm:text-3xl leading-none">Up to <span class="text-yellow-300">70%</span> OFF</div>
+                                <div class="text-white/90 text-xs mt-1.5">Hand-picked deals. Members only.</div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <div class="text-white/70 text-[10px] font-semibold uppercase tracking-wider">Ends in</div>
+                                    <div class="flex items-center gap-1 mt-1 font-display font-bold text-white text-lg">
+                                        <span class="bg-ink-900/40 backdrop-blur px-2 py-0.5 rounded-md" id="hours">12</span>:
+                                        <span class="bg-ink-900/40 backdrop-blur px-2 py-0.5 rounded-md" id="minutes">45</span>:
+                                        <span class="bg-ink-900/40 backdrop-blur px-2 py-0.5 rounded-md" id="seconds">30</span>
+                                    </div>
+                                </div>
+                                <a href="#flashDeals" class="bg-white text-brand-700 font-bold text-xs px-4 py-2 rounded-full shadow lift">Shop Now →</a>
+                            </div>
+                        </div>
+                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-yellow-300/30 rounded-full blur-2xl"></div>
+                        <div class="absolute right-4 top-4 text-5xl float">🛍️</div>
                     </div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="trust-check w-5 h-5 text-xs"><i class="fas fa-check text-[10px]"></i></span>
-                        <span class="text-gray-600 font-medium">Secure Checkout</span>
+
+                    <!-- Slide 2: Beauty Monday -->
+                    <div class="snap-center shrink-0 w-full grad-night relative">
+                        <div class="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="inline-flex items-center gap-1.5 bg-pink-500/30 backdrop-blur px-2.5 py-1 rounded-full">
+                                    <span class="text-[10px] font-bold text-pink-200 tracking-wide">BEAUTY MONDAY</span>
+                                </div>
+                                <div class="mt-2 font-display font-extrabold text-yellow-300 text-2xl sm:text-3xl leading-none">40% OFF</div>
+                                <div class="text-white/90 text-xs mt-1.5">Glow up. Limited time offer.</div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div class="flex -space-x-2">
+                                    <div class="w-10 h-10 rounded-full bg-pink-200 border-2 border-white"></div>
+                                    <div class="w-10 h-10 rounded-full bg-rose-300 border-2 border-white"></div>
+                                    <div class="w-10 h-10 rounded-full bg-fuchsia-300 border-2 border-white"></div>
+                                </div>
+                                <a href="Eesha buying folder/categories.html?category=beauty" class="bg-yellow-300 text-ink-900 font-bold text-xs px-4 py-2 rounded-full shadow lift">Get Glow →</a>
+                            </div>
+                        </div>
+                        <div class="absolute right-4 top-4 text-5xl float" style="animation-delay: -1s">💄</div>
                     </div>
-                    <div class="hidden sm:flex items-center gap-1.5">
-                        <span class="trust-check w-5 h-5 text-xs"><i class="fas fa-check text-[10px]"></i></span>
-                        <span class="text-gray-600 font-medium">7-Day Returns</span>
+
+                    <!-- Slide 3: Brand Day -->
+                    <div class="snap-center shrink-0 w-full grad-royal relative">
+                        <div class="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="inline-flex items-center gap-1.5 bg-white/25 backdrop-blur px-2.5 py-1 rounded-full">
+                                    <span class="text-[10px] font-bold text-white tracking-wide">BRAND DAY • FEATURED</span>
+                                </div>
+                                <div class="mt-2 font-display font-extrabold text-white text-2xl sm:text-3xl leading-none">From <span class="text-yellow-300">₦5,000</span></div>
+                                <div class="text-white/90 text-xs mt-1.5">Premium products. Official stores.</div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div class="text-white text-[10px]">
+                                    <div class="opacity-70">Brand Gallery</div>
+                                    <div class="font-bold">Best prices</div>
+                                </div>
+                                <a href="Eesha buying folder/categories.html" class="bg-white text-purple-700 font-bold text-xs px-4 py-2 rounded-full shadow lift">Visit Store →</a>
+                            </div>
+                        </div>
+                        <div class="absolute right-4 top-4 text-5xl float" style="animation-delay: -2s">🔦</div>
                     </div>
+                </div>
+                <!-- Dots -->
+                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5" id="heroDots">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Hero Banner (rotating gradient) -->
-        <section class="relative overflow-hidden">
-            <div class="hero-orange text-white">
-                <div class="max-w-7xl mx-auto px-4 py-6 lg:py-10">
-                    <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
-                        <div class="text-center lg:text-left">
-                            <div class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-3">
-                                <i class="fas fa-bolt"></i> MEGA SALE
-                            </div>
-                            <h1 class="font-display text-2xl lg:text-5xl font-extrabold mb-2 leading-tight">
-                                Up to 80% Off<br>Everything Today
-                            </h1>
-                            <p class="text-white/80 text-sm lg:text-lg mb-4">Shop millions of products at unbeatable prices</p>
-                            <div class="flex items-center gap-2 justify-center lg:justify-start">
-                                <div class="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 text-center">
-                                    <div id="hours" class="font-display text-lg lg:text-2xl font-bold">12</div>
-                                    <div class="text-[10px] text-white/70">HOURS</div>
-                                </div>
-                                <span class="font-bold text-xl">:</span>
-                                <div class="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 text-center">
-                                    <div id="minutes" class="font-display text-lg lg:text-2xl font-bold">45</div>
-                                    <div class="text-[10px] text-white/70">MIN</div>
-                                </div>
-                                <span class="font-bold text-xl">:</span>
-                                <div class="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 text-center">
-                                    <div id="seconds" class="font-display text-lg lg:text-2xl font-bold">30</div>
-                                    <div class="text-[10px] text-white/70">SEC</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hidden lg:flex items-center gap-4">
-                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 w-40 text-center">
-                                <i class="fas fa-gift text-3xl mb-2"></i>
-                                <p class="font-semibold text-sm">Daily Coins</p>
-                                <p class="text-xs text-white/70">Earn rewards</p>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 w-40 text-center">
-                                <i class="fas fa-medal text-3xl mb-2"></i>
-                                <p class="font-semibold text-sm">Brand Day</p>
-                                <p class="text-xs text-white/70">Exclusive deals</p>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Trust Banner (Temu) -->
+        <div class="mt-3">
+            <div class="grid grid-cols-3 gap-2">
+                <div class="flex flex-col items-center bg-emerald-50 rounded-2xl p-2.5 text-center">
+                    <i class="fas fa-check-circle text-emerald-600 mb-1 text-lg"></i>
+                    <div class="text-[10px] font-bold text-emerald-900 leading-tight">Free Shipping</div>
+                    <div class="text-[8px] text-emerald-700 leading-tight">Orders ₦20+</div>
+                </div>
+                <div class="flex flex-col items-center bg-blue-50 rounded-2xl p-2.5 text-center">
+                    <i class="fas fa-undo text-blue-600 mb-1 text-lg"></i>
+                    <div class="text-[10px] font-bold text-blue-900 leading-tight">Free Returns</div>
+                    <div class="text-[8px] text-blue-700 leading-tight">Up to 7 days</div>
+                </div>
+                <div class="flex flex-col items-center bg-purple-50 rounded-2xl p-2.5 text-center">
+                    <i class="fas fa-shield-alt text-purple-600 mb-1 text-lg"></i>
+                    <div class="text-[10px] font-bold text-purple-900 leading-tight">Secure Privacy</div>
+                    <div class="text-[8px] text-purple-700 leading-tight">Encrypted</div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Quick Actions (3-tile) -->
-        <section class="py-3 lg:py-4 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="grid grid-cols-3 gap-2 lg:gap-4">
-                    <a href="Eesha buying folder/categories.html" class="flex items-center gap-2 lg:gap-3 bg-brand-50 hover:bg-brand-100 rounded-xl lg:rounded-2xl p-2.5 lg:p-4 border border-brand-100 transition-colors group">
-                        <div class="w-8 h-8 lg:w-12 lg:h-12 bg-brand-100 rounded-lg lg:rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                            <i class="fas fa-th-large text-brand-500 text-sm lg:text-xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm font-semibold text-gray-800 truncate">Shop by Category</p>
-                            <p class="text-[10px] lg:text-xs text-gray-500 hidden sm:block">Browse all</p>
-                        </div>
-                    </a>
-                    <a href="ai-chat.html" class="flex items-center gap-2 lg:gap-3 bg-brand-50 hover:bg-brand-100 rounded-xl lg:rounded-2xl p-2.5 lg:p-4 border border-brand-100 transition-colors group">
-                        <div class="w-8 h-8 lg:w-12 lg:h-12 bg-gradient-to-br from-brand-400 to-brand-600 rounded-lg lg:rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md">
-                            <i class="fas fa-robot text-white text-sm lg:text-xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm font-semibold text-gray-800 truncate">AI Assistant</p>
-                            <p class="text-[10px] lg:text-xs text-brand-500 font-medium hidden sm:block">AI-powered</p>
-                        </div>
-                    </a>
-                    <a href="#flashDeals" class="flex items-center gap-2 lg:gap-3 bg-brand-50 hover:bg-brand-100 rounded-xl lg:rounded-2xl p-2.5 lg:p-4 border border-brand-100 transition-colors group">
-                        <div class="w-8 h-8 lg:w-12 lg:h-12 bg-brand-100 rounded-lg lg:rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                            <i class="fas fa-trophy text-brand-500 text-sm lg:text-xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm font-semibold text-gray-800 truncate">Top Deals</p>
-                            <p class="text-[10px] lg:text-xs text-gray-500 hidden sm:block">Up to 80% off</p>
-                        </div>
-                    </a>
+        <!-- Quick Features (AliExpress) -->
+        <div class="mt-4">
+            <div class="flex gap-3 overflow-x-auto no-scrollbar">
+                <a href="ai-chat.html" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="relative w-14 h-14 grad-gold rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-2xl">🪙</span>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-5 h-5 flex items-center justify-center">+20</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Coins</span>
+                </a>
+                <a href="#flashDeals" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-2xl">⚡</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Flash</span>
+                </a>
+                <a href="Eesha buying folder/categories.html" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="w-14 h-14 grad-royal rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-white font-display font-extrabold text-lg">B+</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Brand+</span>
+                </a>
+                <a href="Eesha buying folder/categories.html?sort=price_low" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="w-14 h-14 bg-gradient-to-br from-rose-500 to-red-600 rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-2xl">🏷️</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Clearance</span>
+                </a>
+                <a href="#trending" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="w-14 h-14 grad-flame rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-2xl">🔥</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Hot Sale</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="w-14 h-14 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-2xl">🎟️</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Vouchers</span>
+                </a>
+                <a href="Eesha buying folder/orders.html" class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+                    <div class="w-14 h-14 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center shadow-card lift">
+                        <span class="text-2xl">📦</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-ink-700">Track</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Flash Sales (Jumia) -->
+        <section id="flashDeals" class="mt-5 rounded-3xl overflow-hidden shadow-pop">
+            <div class="grad-flash px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">⚡</span>
+                    <div>
+                        <div class="font-display font-extrabold text-white text-base leading-none">FLASH SALES</div>
+                        <div class="text-white/80 text-[10px] mt-0.5">Hurry up!</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 font-display font-bold text-white text-sm">
+                    <span class="bg-ink-900/40 backdrop-blur px-1.5 py-1 rounded" id="fs-h">00</span>:
+                    <span class="bg-ink-900/40 backdrop-blur px-1.5 py-1 rounded" id="fs-m">02</span>:
+                    <span class="bg-ink-900/40 backdrop-blur px-1.5 py-1 rounded pulse-dot" id="fs-s">15</span>
                 </div>
             </div>
-        </section>
-
-        <!-- Flash Deals Section (with stock progress bars - Jumia style) -->
-        <section id="flashDeals" class="py-4 lg:py-6 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-gradient-to-br from-urgency-500 to-urgency-700 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-bolt text-white text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-display text-lg lg:text-2xl font-bold text-dark-900">Flash Deals</h2>
-                            <p class="text-gray-500 text-xs">Limited time — don't miss out!</p>
-                        </div>
-                    </div>
-                    <a href="#" class="text-brand-500 font-medium text-xs hover:text-brand-600 flex items-center gap-1">
-                        View All <i class="fas fa-arrow-right text-[10px]"></i>
-                    </a>
-                </div>
-
+            <div class="bg-white p-3">
                 <div id="flashDealsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
                     <!-- Products loaded dynamically -->
                 </div>
             </div>
         </section>
 
-        <!-- Category Grid (Jumia 5-tile style) -->
-        <section class="py-4 lg:py-6 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="font-display text-lg lg:text-2xl font-bold text-dark-900">Shop by Category</h2>
-                    <a href="Eesha buying folder/categories.html" class="text-brand-500 font-medium text-xs hover:text-brand-600 flex items-center gap-1">
-                        View All <i class="fas fa-arrow-right text-[10px]"></i>
-                    </a>
-                </div>
-
-                <div class="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-3">
-                    <a href="Eesha buying folder/categories.html?category=phones" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-blue-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-mobile-alt text-blue-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Phones</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=electronics" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-purple-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-laptop text-purple-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Electronics</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=fashion" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-pink-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-tshirt text-pink-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Fashion</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=farm" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-green-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-leaf text-green-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Farm Fresh</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=home" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-indigo-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-home text-indigo-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Home</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=beauty" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-red-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-heart text-red-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Beauty</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=baby" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-cyan-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-baby text-cyan-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Baby</p>
-                    </a>
-                    <a href="Eesha buying folder/categories.html?category=sports" class="category-card bg-white rounded-xl p-2 lg:p-3 text-center hover:shadow-md border border-gray-100">
-                        <div class="category-icon w-8 h-8 lg:w-12 lg:h-12 mx-auto bg-orange-50 rounded-lg flex items-center justify-center mb-1.5 lg:mb-2">
-                            <i class="fas fa-futbol text-orange-500 text-sm lg:text-lg"></i>
-                        </div>
-                        <p class="font-medium text-gray-700 text-[10px] lg:text-sm">Sports</p>
-                    </a>
-                </div>
+        <!-- Category Tiles (Jumia) -->
+        <section class="mt-5">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="font-display font-extrabold text-base">Shop by Category</h2>
+                <a href="Eesha buying folder/categories.html" class="text-xs font-semibold text-brand-600">See All →</a>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2.5">
+                <a href="Eesha buying folder/categories.html" class="aspect-square grad-flame rounded-2xl p-3 flex flex-col justify-between text-left lift relative overflow-hidden">
+                    <span class="text-white font-display font-extrabold text-sm leading-tight">Awoof of<br>the Month</span>
+                    <span class="text-3xl absolute -right-1 -bottom-1 opacity-80">🎁</span>
+                </a>
+                <a href="Eesha buying folder/categories.html?category=phones" class="aspect-square bg-ink-900 rounded-2xl p-3 flex flex-col justify-between text-left lift relative overflow-hidden">
+                    <div>
+                        <div class="text-white font-display font-extrabold text-base">₦5,000</div>
+                        <div class="text-white/70 text-[10px] font-semibold">Store</div>
+                    </div>
+                    <div class="text-yellow-400 font-display font-extrabold text-2xl">40%</div>
+                </a>
+                <a href="Eesha buying folder/categories.html?category=baby" class="aspect-square bg-gradient-to-br from-sky-400 to-blue-500 rounded-2xl p-3 flex flex-col justify-between text-left lift relative overflow-hidden">
+                    <span class="text-white font-display font-extrabold text-sm leading-tight">Kids, Baby<br>& More</span>
+                    <span class="text-3xl absolute -right-1 -bottom-1 opacity-80">🧸</span>
+                </a>
+                <a href="#flashDeals" class="aspect-square bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl p-3 flex flex-col justify-between text-left lift relative overflow-hidden">
+                    <div>
+                        <div class="text-white font-display font-extrabold text-sm">Up to</div>
+                        <div class="text-white font-display font-extrabold text-2xl">60% OFF</div>
+                    </div>
+                    <span class="text-2xl absolute right-2 bottom-1 opacity-80">🔥</span>
+                </a>
+                <a href="Eesha buying folder/categories.html" class="aspect-square bg-ink-900 rounded-2xl p-3 flex flex-col justify-between text-left lift relative overflow-hidden">
+                    <div>
+                        <div class="text-white font-display font-extrabold text-sm">BUY 2</div>
+                        <div class="text-white/80 text-[10px] font-semibold">PAY FOR 1</div>
+                    </div>
+                    <div class="text-yellow-400 font-display font-extrabold text-xl">50%</div>
+                </a>
+                <a href="#newArrivals" class="aspect-square bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl p-3 flex flex-col justify-between text-left lift relative overflow-hidden">
+                    <span class="text-white font-display font-extrabold text-sm leading-tight">New<br>Arrivals</span>
+                    <span class="text-3xl absolute -right-1 -bottom-1 opacity-80">✨</span>
+                </a>
             </div>
         </section>
 
         <!-- Trending Products -->
-        <section id="trending" class="py-4 lg:py-6 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-fire text-white text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-display text-lg lg:text-2xl font-bold text-dark-900">Trending Now</h2>
-                            <p class="text-gray-500 text-xs">Most popular this week</p>
-                        </div>
+        <section id="trending" class="mt-5">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 grad-flame rounded-xl flex items-center justify-center">
+                        <i class="fas fa-fire text-white text-lg"></i>
                     </div>
-                    <a href="#" class="text-brand-500 font-medium text-xs hover:text-brand-600 flex items-center gap-1">
-                        View All <i class="fas fa-arrow-right text-[10px]"></i>
-                    </a>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base">Trending Now</h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">Most popular this week</p>
+                    </div>
                 </div>
-
-                <div id="trendingProductsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
-                    <!-- Products loaded dynamically -->
-                </div>
+                <a href="#" class="text-xs font-semibold text-brand-600">See All →</a>
+            </div>
+            <div id="trendingProductsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
+                <!-- Products loaded dynamically -->
             </div>
         </section>
 
-        <!-- Farm Fresh Section -->
-        <section class="py-4 lg:py-6 bg-gradient-to-br from-green-50 to-emerald-50">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-seedling text-white text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-display text-lg lg:text-2xl font-bold text-dark-900">Farm Fresh</h2>
-                            <p class="text-gray-500 text-xs">Direct from local farmers</p>
-                        </div>
+        <!-- Farm Fresh -->
+        <section class="mt-5 rounded-3xl overflow-hidden">
+            <div class="grad-mint px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🌱</span>
+                    <div>
+                        <div class="font-display font-extrabold text-white text-base leading-none">FARM FRESH</div>
+                        <div class="text-white/80 text-[10px] mt-0.5">Direct from local farmers</div>
                     </div>
-                    <a href="Eesha buying folder/categories.html?category=farm" class="text-green-600 font-medium text-xs hover:text-green-700 flex items-center gap-1">
-                        View All <i class="fas fa-arrow-right text-[10px]"></i>
-                    </a>
                 </div>
-
+                <a href="Eesha buying folder/categories.html?category=farm" class="bg-white text-emerald-700 font-bold text-xs px-3 py-1.5 rounded-full lift">See All →</a>
+            </div>
+            <div class="bg-white p-3">
                 <div id="farmProductsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
                     <!-- Farm products loaded dynamically -->
                 </div>
@@ -781,173 +704,128 @@
         </section>
 
         <!-- New Arrivals -->
-        <section class="py-4 lg:py-6 bg-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-sparkles text-white text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-display text-lg lg:text-2xl font-bold text-dark-900">New Arrivals</h2>
-                            <p class="text-gray-500 text-xs">Fresh products just added</p>
-                        </div>
+        <section id="newArrivals" class="mt-5">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 grad-royal rounded-xl flex items-center justify-center">
+                        <i class="fas fa-sparkles text-white text-lg"></i>
                     </div>
-                    <a href="Eesha buying folder/categories.html?sort=newest" class="text-brand-500 font-medium text-xs hover:text-brand-600 flex items-center gap-1">
-                        View All <i class="fas fa-arrow-right text-[10px]"></i>
-                    </a>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base">New Arrivals</h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">Fresh products just added</p>
+                    </div>
                 </div>
-
-                <div id="newArrivalsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
-                    <!-- New arrivals loaded dynamically -->
-                </div>
+                <a href="Eesha buying folder/categories.html?sort=newest" class="text-xs font-semibold text-brand-600">See All →</a>
+            </div>
+            <div id="newArrivalsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
+                <!-- New arrivals loaded dynamically -->
             </div>
         </section>
 
-        <!-- Why Choose Us (trust signals) -->
-        <section class="py-6 lg:py-10 bg-dark-900 text-white">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="text-center mb-6">
-                    <h2 class="font-display text-xl lg:text-3xl font-bold mb-2">Why Shop With Cellex?</h2>
-                    <p class="text-gray-400 text-sm lg:text-base">The safest, fastest, and most rewarding marketplace in Nigeria</p>
+        <!-- Why Choose Cellex (Dark section) -->
+        <section class="mt-5 grad-night rounded-3xl p-5 lg:p-8">
+            <div class="text-center mb-5">
+                <h2 class="font-display text-xl lg:text-2xl font-bold text-white mb-1">Why Shop With Cellex?</h2>
+                <p class="text-gray-400 text-xs lg:text-sm">The safest, fastest marketplace in Nigeria</p>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 text-center">
+                    <div class="w-12 h-12 mx-auto bg-trust-500/20 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fas fa-shield-alt text-trust-500 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-sm text-white mb-1">Buyer Protection</h3>
+                    <p class="text-gray-400 text-[11px]">Full refund guarantee</p>
                 </div>
-
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
-                    <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-white/10">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 mx-auto bg-trust-500/20 rounded-xl flex items-center justify-center mb-3">
-                            <i class="fas fa-shield-alt text-trust-500 text-lg lg:text-2xl"></i>
-                        </div>
-                        <h3 class="font-semibold text-sm lg:text-base mb-1">Buyer Protection</h3>
-                        <p class="text-gray-400 text-xs lg:text-sm">Full refund guarantee</p>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 text-center">
+                    <div class="w-12 h-12 mx-auto bg-brand-500/20 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fas fa-truck text-brand-400 text-xl"></i>
                     </div>
-                    <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-white/10">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 mx-auto bg-brand-500/20 rounded-xl flex items-center justify-center mb-3">
-                            <i class="fas fa-truck text-brand-400 text-lg lg:text-2xl"></i>
-                        </div>
-                        <h3 class="font-semibold text-sm lg:text-base mb-1">Fast Delivery</h3>
-                        <p class="text-gray-400 text-xs lg:text-sm">Nationwide shipping</p>
+                    <h3 class="font-semibold text-sm text-white mb-1">Fast Delivery</h3>
+                    <p class="text-gray-400 text-[11px]">Nationwide shipping</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 text-center">
+                    <div class="w-12 h-12 mx-auto bg-blue-500/20 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fas fa-undo text-blue-400 text-xl"></i>
                     </div>
-                    <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-white/10">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 mx-auto bg-blue-500/20 rounded-xl flex items-center justify-center mb-3">
-                            <i class="fas fa-undo text-blue-400 text-lg lg:text-2xl"></i>
-                        </div>
-                        <h3 class="font-semibold text-sm lg:text-base mb-1">Easy Returns</h3>
-                        <p class="text-gray-400 text-xs lg:text-sm">7-day return policy</p>
+                    <h3 class="font-semibold text-sm text-white mb-1">Easy Returns</h3>
+                    <p class="text-gray-400 text-[11px]">7-day return policy</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 text-center">
+                    <div class="w-12 h-12 mx-auto bg-purple-500/20 rounded-xl flex items-center justify-center mb-2">
+                        <i class="fas fa-headset text-purple-400 text-xl"></i>
                     </div>
-                    <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-white/10">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 mx-auto bg-purple-500/20 rounded-xl flex items-center justify-center mb-3">
-                            <i class="fas fa-headset text-purple-400 text-lg lg:text-2xl"></i>
-                        </div>
-                        <h3 class="font-semibold text-sm lg:text-base mb-1">24/7 Support</h3>
-                        <p class="text-gray-400 text-xs lg:text-sm">Always here to help</p>
-                    </div>
+                    <h3 class="font-semibold text-sm text-white mb-1">24/7 Support</h3>
+                    <p class="text-gray-400 text-[11px]">Always here to help</p>
                 </div>
             </div>
         </section>
 
         <!-- Seller CTA -->
-        <section class="py-4 lg:py-8 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
-                    <div class="bg-white rounded-2xl p-4 lg:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <h3 class="font-display text-base lg:text-xl font-bold text-dark-900 mb-1">Start Selling Today</h3>
-                                <p class="text-gray-500 text-xs lg:text-sm mb-3">Join thousands of successful merchants</p>
-                                <a href="eesha selling folder/merchant/signup.html" class="inline-flex items-center gap-1 bg-brand-500 text-white px-4 py-2 rounded-lg text-xs lg:text-sm font-medium hover:bg-brand-600 transition-colors">
-                                    Become a Merchant <i class="fas fa-arrow-right text-[10px]"></i>
-                                </a>
-                            </div>
-                            <div class="text-brand-200">
-                                <i class="fas fa-store text-3xl lg:text-5xl"></i>
-                            </div>
+        <section class="mt-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 lg:p-5 border border-ink-100 shadow-card lift">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="font-display text-base font-bold text-ink-900 mb-1">Start Selling Today</h3>
+                            <p class="text-ink-500 text-xs mb-3">Join thousands of successful merchants</p>
+                            <a href="eesha selling folder/merchant/signup.html" class="inline-flex items-center gap-1 grad-flame text-white px-4 py-2 rounded-lg text-xs font-medium lift">
+                                Become a Merchant <i class="fas fa-arrow-right text-[10px]"></i>
+                            </a>
                         </div>
+                        <div class="text-brand-200"><i class="fas fa-store text-3xl"></i></div>
                     </div>
-                    <div class="bg-white rounded-2xl p-4 lg:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <div class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-[10px] font-medium px-2 py-0.5 rounded-full mb-2">
-                                    <i class="fas fa-leaf text-[8px]"></i> NEW
-                                </div>
-                                <h3 class="font-display text-base lg:text-xl font-bold text-dark-900 mb-1">Sell Your Harvest</h3>
-                                <p class="text-gray-500 text-xs lg:text-sm mb-3">Reach millions of buyers directly</p>
-                                <a href="eesha selling folder/farmers/signup.html" class="inline-flex items-center gap-1 bg-green-500 text-white px-4 py-2 rounded-lg text-xs lg:text-sm font-medium hover:bg-green-600 transition-colors">
-                                    Become a Farmer <i class="fas fa-arrow-right text-[10px]"></i>
-                                </a>
+                </div>
+                <div class="bg-white rounded-2xl p-4 lg:p-5 border border-ink-100 shadow-card lift">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-[10px] font-medium px-2 py-0.5 rounded-full mb-2">
+                                <i class="fas fa-leaf text-[8px]"></i> NEW
                             </div>
-                            <div class="text-green-200">
-                                <i class="fas fa-tractor text-3xl lg:text-5xl"></i>
-                            </div>
+                            <h3 class="font-display text-base font-bold text-ink-900 mb-1">Sell Your Harvest</h3>
+                            <p class="text-ink-500 text-xs mb-3">Reach millions of buyers directly</p>
+                            <a href="eesha selling folder/farmers/signup.html" class="inline-flex items-center gap-1 bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-emerald-600 lift">
+                                Become a Farmer <i class="fas fa-arrow-right text-[10px]"></i>
+                            </a>
                         </div>
+                        <div class="text-green-200"><i class="fas fa-tractor text-3xl"></i></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Sign-in CTA (Alibaba peach style) -->
-        <section class="py-6 lg:py-10 bg-peach-50">
-            <div class="max-w-3xl mx-auto px-4 text-center">
-                <div class="bg-white rounded-3xl p-6 lg:p-10 shadow-sm border border-peach-100">
-                    <div class="w-14 h-14 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-user-plus text-brand-500 text-2xl"></i>
-                    </div>
-                    <h2 class="font-display text-lg lg:text-2xl font-bold text-dark-900 mb-2">Join Cellex Today</h2>
-                    <p class="text-gray-500 text-sm lg:text-base mb-5">Sign up and get exclusive deals, faster checkout, and 10% off your first order!</p>
-                    <div class="flex flex-col sm:flex-row gap-2 justify-center">
-                        <a href="Eesha buying folder/login.html" class="px-6 py-3 border border-gray-300 rounded-full font-semibold text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            Login
-                        </a>
-                        <a href="Eesha buying folder/signup.html" class="px-6 py-3 bg-gradient-to-r from-brand-400 to-brand-500 text-white rounded-full font-semibold text-sm hover:from-brand-500 hover:to-brand-600 transition-all">
-                            Sign Up Free
-                        </a>
-                    </div>
+        <!-- Sign-in CTA -->
+        <section class="mt-5">
+            <div class="grad-night rounded-3xl px-5 py-4 flex items-center justify-between relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-32 h-32 bg-brand-500/30 rounded-full blur-2xl"></div>
+                <div class="relative">
+                    <div class="text-white font-display font-extrabold text-base leading-tight">Sign in for the<br>best experience</div>
+                    <div class="text-white/70 text-[11px] mt-1">Member prices • Early access • Coins</div>
                 </div>
+                <a href="Eesha buying folder/login.html" class="relative grad-flame text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-glow lift">Sign in</a>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark-900 text-white pt-10 pb-20 lg:pb-10">
+    <footer class="bg-ink-900 text-white pt-10 pb-20 lg:pb-10 mt-5">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
                 <div class="col-span-2 lg:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center">
-                            <svg viewBox="0 0 60 60" class="w-full h-full">
-                                <defs>
-                                    <linearGradient id="footerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#fb923c"/>
-                                        <stop offset="50%" stop-color="#f97316"/>
-                                        <stop offset="100%" stop-color="#ea580c"/>
-                                    </linearGradient>
-                                </defs>
-                                <path d="M8 15 L8 50 Q8 54 12 54 L48 54 Q52 54 52 50 L52 15 Q52 11 48 11 L12 11 Q8 11 8 15 Z" fill="url(#footerLogoGrad)"/>
-                                <path d="M18 11 Q18 2 30 2 Q42 2 42 11" fill="none" stroke="url(#footerLogoGrad)" stroke-width="4" stroke-linecap="round"/>
-                                <path d="M18 24 L38 24 M18 36 L32 36 M18 48 L38 48 M18 24 L18 48" fill="none" stroke="#0a0a12" stroke-width="3.5" stroke-linecap="round"/>
-                                <g transform="translate(52, 8)">
-                                    <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#fb923c"/>
-                                </g>
-                            </svg>
+                        <div class="w-10 h-10 grad-flame rounded-xl flex items-center justify-center shadow-glow">
+                            <span class="font-display font-extrabold text-white text-lg">C</span>
                         </div>
                         <div class="flex flex-col">
                             <span class="text-xl font-extrabold gradient-text leading-tight font-display">Cellex</span>
-                            <span class="text-[8px] text-gray-500 tracking-widest uppercase -mt-1">Nigeria's #1</span>
+                            <span class="text-[8px] text-gray-500 tracking-widest uppercase -mt-1">One App. Every Deal.</span>
                         </div>
                     </div>
                     <p class="text-gray-400 text-sm mb-4">Nigeria's #1 online marketplace connecting millions of buyers with trusted sellers.</p>
                     <div class="flex gap-3">
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-500 transition-colors"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
                 <div>
@@ -1013,15 +891,11 @@
             <div class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-user-lock text-brand-500 text-3xl"></i>
             </div>
-            <h3 class="font-display text-2xl font-bold text-dark-900 mb-2">Sign In Required</h3>
+            <h3 class="font-display text-2xl font-bold text-ink-900 mb-2">Sign In Required</h3>
             <p class="text-gray-500 mb-6">Please log in or create an account to add items to your cart</p>
             <div class="flex gap-3">
-                <a href="Eesha buying folder/login.html" class="flex-1 bg-dark-900 text-white py-3 rounded-full font-semibold hover:bg-dark-800 transition-colors">
-                    Login
-                </a>
-                <a href="Eesha buying folder/signup.html" class="flex-1 bg-brand-400 text-white py-3 rounded-full font-semibold hover:bg-brand-500 transition-colors">
-                    Sign Up
-                </a>
+                <a href="Eesha buying folder/login.html" class="flex-1 bg-ink-900 text-white py-3 rounded-full font-semibold hover:bg-ink-800 transition-colors">Login</a>
+                <a href="Eesha buying folder/signup.html" class="flex-1 grad-flame text-white py-3 rounded-full font-semibold hover:shadow-glow transition-all">Sign Up</a>
             </div>
         </div>
     </div>
@@ -1044,6 +918,8 @@
             await loadProducts();
             setupEventListeners();
             startCountdown();
+            startFlashCountdown();
+            setupHeroCarousel();
 
             const splash = document.getElementById('splashScreen');
             if (splash) {
@@ -1051,7 +927,7 @@
             }
         }
 
-        // ===== Auth Functions (via edge function — no supabase.auth) =====
+        // ===== Auth Functions (via edge function) =====
         async function updateAuthUI() {
             try {
                 const result = await window.EdgeFunctions.auth.checkSession();
@@ -1100,7 +976,7 @@
             }
         }
 
-        // ===== Load Products (via Supabase Edge Function) =====
+        // ===== Load Products (via Edge Function) =====
         async function loadProducts() {
             try {
                 const result = await window.EdgeFunctions.products.home();
@@ -1150,21 +1026,18 @@
                 '<span class="seller-badge text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fas fa-store text-xs"></i> Merchant</span>';
 
             const flashBadge = isFlashDeal ?
-                `<div class="discount-circle absolute top-2 left-2 w-12 h-12 text-xs z-10">
-                    -${discount}%
-                </div>` : '';
+                `<div class="flash-badge absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg z-10">-${discount}%</div>` : '';
 
-            // Stock progress bar for flash deals (Jumia style)
             const stockBar = isFlashDeal ?
                 `<div class="mt-2">
-                    <div class="stock-bar">
-                        <div class="stock-bar-fill" style="width: ${Math.random() * 60 + 20}%"></div>
+                    <div class="h-1.5 bg-ink-100 rounded-full overflow-hidden">
+                        <div class="h-full progress-fill" style="width: ${Math.random() * 60 + 20}%"></div>
                     </div>
                     <p class="text-[10px] text-urgency-600 font-medium mt-1"><i class="fas fa-fire"></i> Selling fast!</p>
                 </div>` : '';
 
             return `
-                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer relative group" onclick="viewProduct('${product.id}')">
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-card border border-ink-100 cursor-pointer relative group" onclick="viewProduct('${product.id}')">
                     ${flashBadge}
                     <div class="relative overflow-hidden">
                         <img src="${image}" alt="${name}" class="product-image w-full h-40 sm:h-48 object-cover"
@@ -1175,16 +1048,14 @@
                         </button>
                         <div class="quick-action absolute bottom-2 left-2 right-2">
                             <button onclick="event.stopPropagation(); addToCart('${product.id}')"
-                                    class="w-full bg-dark-900 text-white py-2 rounded-xl font-medium text-sm hover:bg-brand-500 transition-colors">
+                                    class="w-full bg-ink-900 text-white py-2 rounded-xl font-medium text-sm hover:bg-brand-500 transition-colors">
                                 <i class="fas fa-cart-plus mr-1"></i> Add to Cart
                             </button>
                         </div>
                     </div>
                     <div class="p-3">
-                        <div class="flex items-center gap-2 mb-1">
-                            ${sellerBadge}
-                        </div>
-                        <h3 class="font-medium text-dark-900 text-sm line-clamp-2 mb-1">${name}</h3>
+                        <div class="flex items-center gap-2 mb-1">${sellerBadge}</div>
+                        <h3 class="font-medium text-ink-900 text-sm line-clamp-2 mb-1">${name}</h3>
                         <div class="flex items-center gap-1 mb-2">
                             <div class="flex text-brand-400 text-xs">
                                 ${'<i class="fas fa-star"></i>'.repeat(Math.floor(rating))}
@@ -1193,7 +1064,7 @@
                             <span class="text-gray-400 text-xs">(${reviews})</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-lg font-bold text-dark-900">₦${discountedPrice.toLocaleString()}</span>
+                            <span class="text-lg font-bold text-ink-900">₦${discountedPrice.toLocaleString()}</span>
                             ${discount > 0 ? `<span class="text-sm text-gray-400 line-through">₦${originalPrice.toLocaleString()}</span>` : ''}
                         </div>
                         ${stockBar}
@@ -1207,7 +1078,7 @@
             let html = '';
             for (let i = 0; i < count; i++) {
                 html += `
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-card border border-ink-100">
                         <div class="skeleton w-full h-40 sm:h-48"></div>
                         <div class="p-3">
                             <div class="skeleton h-4 w-3/4 rounded mb-2"></div>
@@ -1223,9 +1094,7 @@
         function showPlaceholderProducts() {
             ['flashDealsContainer', 'trendingProductsContainer', 'farmProductsContainer', 'newArrivalsContainer'].forEach(id => {
                 const container = document.getElementById(id);
-                if (container) {
-                    container.innerHTML = getPlaceholderProducts(5);
-                }
+                if (container) container.innerHTML = getPlaceholderProducts(5);
             });
         }
 
@@ -1233,11 +1102,8 @@
         function setupEventListeners() {
             window.addEventListener('scroll', () => {
                 const header = document.getElementById('mainHeader');
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
+                if (window.scrollY > 50) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
             });
 
             const userAvatarBtn = document.getElementById('userAvatarBtn');
@@ -1247,10 +1113,7 @@
                     e.stopPropagation();
                     userDropdown.classList.toggle('hidden');
                 });
-
-                document.addEventListener('click', () => {
-                    userDropdown.classList.add('hidden');
-                });
+                document.addEventListener('click', () => userDropdown.classList.add('hidden'));
             }
 
             const logoutBtn = document.getElementById('logoutBtn');
@@ -1271,28 +1134,54 @@
             }
         }
 
-        // ===== Countdown Timer =====
+        // ===== Hero Countdown (hours, minutes, seconds) =====
         function startCountdown() {
             let hours = 12, minutes = 45, seconds = 30;
-
             setInterval(() => {
                 seconds--;
                 if (seconds < 0) {
-                    seconds = 59;
-                    minutes--;
+                    seconds = 59; minutes--;
                     if (minutes < 0) {
-                        minutes = 59;
-                        hours--;
-                        if (hours < 0) {
-                            hours = 23;
-                        }
+                        minutes = 59; hours--;
+                        if (hours < 0) hours = 23;
                     }
                 }
-
                 document.getElementById('hours').textContent = String(hours).padStart(2, '0');
                 document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
                 document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
             }, 1000);
+        }
+
+        // ===== Flash Sales Countdown =====
+        function startFlashCountdown() {
+            let flashSec = 2 * 60 + 15;
+            function pad(n) { return String(n).padStart(2, '0'); }
+            setInterval(() => {
+                if (flashSec <= 0) flashSec = 2 * 60 + 15;
+                flashSec--;
+                const fsH = document.getElementById('fs-h');
+                const fsM = document.getElementById('fs-m');
+                const fsS = document.getElementById('fs-s');
+                if (fsH) fsH.textContent = pad(Math.floor(flashSec / 3600));
+                if (fsM) fsM.textContent = pad(Math.floor((flashSec % 3600) / 60));
+                if (fsS) fsS.textContent = pad(flashSec % 60);
+            }, 1000);
+        }
+
+        // ===== Hero Carousel Auto-rotate =====
+        function setupHeroCarousel() {
+            const carousel = document.getElementById('heroCarousel');
+            if (!carousel) return;
+            const dots = document.querySelectorAll('#heroDots span');
+            carousel.addEventListener('scroll', () => {
+                const idx = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+                dots.forEach((d, i) => d.className = `w-1.5 h-1.5 rounded-full ${i === idx ? 'bg-white' : 'bg-white/40'}`);
+            });
+            let autoIdx = 0;
+            setInterval(() => {
+                autoIdx = (autoIdx + 1) % 3;
+                carousel.scrollTo({ left: autoIdx * carousel.offsetWidth, behavior: 'smooth' });
+            }, 4500);
         }
 
         // ===== Product Actions =====
@@ -1307,19 +1196,15 @@
                 authModal.classList.add('flex');
                 return;
             }
-
             try {
                 if (window.Cart) {
                     const result = await window.Cart.addToCart(productId, 1);
-                    if (result.success) {
-                        showNotification('Added to cart!', 'success');
-                    } else if (result.requiresAuth) {
+                    if (result.success) showNotification('Added to cart!', 'success');
+                    else if (result.requiresAuth) {
                         const authModal = document.getElementById('authModal');
                         authModal.classList.remove('hidden');
                         authModal.classList.add('flex');
-                    } else {
-                        alert(result.message || 'Failed to add to cart');
-                    }
+                    } else alert(result.message || 'Failed to add to cart');
                 } else {
                     console.error('Cart module not loaded');
                     alert('Cart service unavailable. Please refresh the page.');
@@ -1332,17 +1217,11 @@
 
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
-            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all transform translate-y-0 ${
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-pop z-50 transition-all transform translate-y-0 ${
                 type === 'success' ? 'bg-trust-500 text-white' : 'bg-red-500 text-white'
             }`;
-            notification.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
+            notification.innerHTML = `<div class="flex items-center gap-2"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i><span>${message}</span></div>`;
             document.body.appendChild(notification);
-
             setTimeout(() => {
                 notification.classList.add('translate-y-20', 'opacity-0');
                 setTimeout(() => notification.remove(), 300);
@@ -1356,27 +1235,18 @@
                 authModal.classList.add('flex');
                 return;
             }
-
-            try {
-                alert('Added to wishlist!');
-            } catch (error) {
-                console.error('Error adding to wishlist:', error);
-            }
+            try { alert('Added to wishlist!'); } catch (error) { console.error('Error:', error); }
         }
 
-        // ===== Search Functions =====
+        // ===== Search =====
         function handleSearchKeypress(event) {
-            if (event.key === 'Enter') {
-                performSearch();
-            }
+            if (event.key === 'Enter') performSearch();
         }
 
         function performSearch() {
             const searchInput = document.getElementById('searchInput');
             const query = searchInput.value.trim();
-            if (query) {
-                window.location.href = `search-result.html?q=${encodeURIComponent(query)}`;
-            }
+            if (query) window.location.href = `search-result.html?q=${encodeURIComponent(query)}`;
         }
     </script>
 </body>
