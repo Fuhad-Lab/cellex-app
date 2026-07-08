@@ -14,19 +14,16 @@ h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
 #error { color: #ef4444; font-size: 1rem; padding: 20px; display: none; }
 .instructions { color: #aaa; font-size: 0.85rem; margin-top: 1.5rem; line-height: 1.6; }
 .warning { color: #fb5b1b; font-size: 0.85rem; margin-top: 0.5rem; }
-.btn { background: #fb5b1b; color: white; border: none; padding: 12px 32px; border-radius: 30px; font-size: 1rem; cursor: pointer; margin-top: 1.5rem; text-decoration: none; display: inline-block; }
-.btn:hover { background: #ec4509; }
+.btn { background: #fb5b1b; color: white; border: none; padding: 12px 32px; border-radius: 30px; font-size: 1rem; cursor: pointer; margin-top: 1.5rem; }
 </style>
 </head>
 <body>
 <div class="container">
 <h1>📱 WhatsApp QR Code</h1>
 <p class="subtitle">Scan to connect your WhatsApp number to Cellex</p>
-
 <div id="loading">⏳ Generating QR code...</div>
 <div id="error"></div>
 <img id="qr-img" alt="WhatsApp QR Code" />
-
 <div class="instructions">
     <strong>How to connect:</strong><br>
     1. Open WhatsApp on your phone<br>
@@ -37,11 +34,10 @@ h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
 <p class="warning">⏰ QR expires in 60 seconds. Click refresh if it expires.</p>
 <button class="btn" onclick="loadQR()">🔄 Refresh QR Code</button>
 </div>
-
 <script>
 const GATEWAY_URL = 'https://eesha-search.onrender.com';
-const API_KEY = 'EeshaMartSuperSecretToken123';
-const INSTANCE_NAME = 'eeshamart_main';
+const API_KEY = 'CellexWA2024';
+const SESSION_NAME = 'eeshamart-main';
 
 async function loadQR() {
     document.getElementById('loading').style.display = 'block';
@@ -49,56 +45,54 @@ async function loadQR() {
     document.getElementById('qr-img').style.display = 'none';
 
     try {
-        // First, try to connect directly
-        let resp = await fetch(`${GATEWAY_URL}/instance/connect/${INSTANCE_NAME}`, {
-            headers: { 'apikey': API_KEY }
-        });
-        let data = await resp.json();
+        const headers = { 'X-API-Key': API_KEY, 'Content-Type': 'application/json' };
 
-        // If instance doesn't exist, create it first
-        if (resp.status === 404 || (data.status === 404)) {
-            console.log('Instance not found, creating...');
-            await fetch(`${GATEWAY_URL}/instance/create`, {
+        // Step 1: List sessions to find existing one
+        let resp = await fetch(`${GATEWAY_URL}/api/sessions`, { headers });
+        let sessions = await resp.json();
+        let session = sessions.find(s => s.name === SESSION_NAME);
+
+        // Step 2: If no session, create one
+        if (!session) {
+            console.log('Creating new session...');
+            resp = await fetch(`${GATEWAY_URL}/api/sessions`, {
                 method: 'POST',
-                headers: { 'apikey': API_KEY, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    instanceName: INSTANCE_NAME,
-                    token: 'EeshaInstanceSecureToken789',
-                    qrcode: true
-                })
+                headers,
+                body: JSON.stringify({ name: SESSION_NAME })
             });
-
-            // Now try to connect again
-            resp = await fetch(`${GATEWAY_URL}/instance/connect/${INSTANCE_NAME}`, {
-                headers: { 'apikey': API_KEY }
-            });
-            data = await resp.json();
+            session = await resp.json();
         }
 
-        if (data.base64 && data.base64.length > 100) {
-            document.getElementById('qr-img').src = data.base64;
+        const sessionId = session.id;
+        console.log('Session ID:', sessionId);
+
+        // Step 3: Start the session
+        await fetch(`${GATEWAY_URL}/api/sessions/${sessionId}/start`, {
+            method: 'POST',
+            headers
+        });
+
+        // Step 4: Wait a moment for QR to generate
+        await new Promise(r => setTimeout(r, 3000));
+
+        // Step 5: Get QR code
+        resp = await fetch(`${GATEWAY_URL}/api/sessions/${sessionId}/qr`, { headers });
+        const data = await resp.json();
+
+        const qrCode = data.qrCode || data.qr || data.base64;
+        if (qrCode && qrCode.length > 100) {
+            document.getElementById('qr-img').src = qrCode;
             document.getElementById('qr-img').style.display = 'block';
             document.getElementById('loading').style.display = 'none';
-        } else if (data.code) {
-            // Show pairing code as alternative
-            document.getElementById('loading').innerHTML = 
-                `📋 Pairing Code: <strong style="font-size:1.5rem;color:#fb5b1b;letter-spacing:3px">${data.pairingCode || data.code}</strong><br><br>Or scan the QR code below:`;
-            if (data.base64) {
-                document.getElementById('qr-img').src = data.base64;
-                document.getElementById('qr-img').style.display = 'block';
-            }
         } else {
-            throw new Error('No QR code in response');
+            throw new Error('QR code not ready yet. Click refresh.');
         }
     } catch (err) {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('error').style.display = 'block';
-        document.getElementById('error').innerHTML = 
-            `❌ Error: ${err.message}<br><br>Try refreshing. If it keeps failing, the gateway might be sleeping.<br><a href="${GATEWAY_URL}/" target="_blank" style="color:#fb5b1b">Click here to wake up the gateway</a>, then refresh.`;
+        document.getElementById('error').innerHTML = `❌ ${err.message}<br><br>Try refreshing. If it keeps failing, <a href="${GATEWAY_URL}" target="_blank" style="color:#fb5b1b">click here to wake the gateway</a>, then refresh.`;
     }
 }
-
-// Auto-load on page open
 loadQR();
 </script>
 </body>
