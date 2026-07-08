@@ -303,5 +303,36 @@ async def serve_static(filename: str):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    import asyncio
+    import logging
+    
+    logger = logging.getLogger("cellex-web")
+    logging.basicConfig(level=logging.INFO)
+    
+    # ---- Keep Render services alive (ping every 4 minutes) ----
+    # Render free tier sleeps after 15 min of inactivity.
+    # The HF Space runs 24/7, so it can keep both Render services awake.
+    GATEWAY_URL = os.environ.get("GATEWAY_PING_URL", "https://eesha-search.onrender.com")
+    BOT_URL = os.environ.get("BOT_PING_URL", "https://eesha-shop-buying-and-selling.onrender.com")
+    
+    async def keep_services_alive():
+        """Ping both Render services every 4 minutes to prevent sleeping."""
+        while True:
+            for name, url in [("gateway", GATEWAY_URL), ("bot", BOT_URL)]:
+                try:
+                    async with httpx.AsyncClient(timeout=15.0) as client:
+                        resp = await client.get(url)
+                    logger.info(f"🔄 Ping {name}: HTTP {resp.status_code}")
+                except Exception as e:
+                    logger.warning(f"🔄 Ping {name} failed: {e}")
+            await asyncio.sleep(240)  # 4 minutes
+    
+    # Start the ping task
+    config = uvicorn.Config(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
+    server = uvicorn.Server(config)
+    
+    # Run both uvicorn and the ping task
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.create_task(keep_services_alive())
+    loop.run_until_complete(server.serve())
