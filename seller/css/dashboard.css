@@ -1,17 +1,16 @@
-/* Cellex Seller Dashboard Styles — Phase 1
+/* Cellex Seller Dashboard Styles — Phase 4
    ------------------------------------------
-   Matches the Cellex brand (amber/gold + clean white) used on the buyer site.
-   Sidebar layout, responsive. No external CSS framework required. */
+   Cyan + white futuristic theme. Sidebar layout, responsive. */
 
 :root {
-  --seller-primary: #f59e0b;
-  --seller-primary-dark: #d97706;
+  --seller-primary: #00d4ff;
+  --seller-primary-dark: #0891b2;
   --seller-bg: #f8fafc;
   --seller-card-bg: #ffffff;
   --seller-text: #0f172a;
   --seller-text-muted: #64748b;
   --seller-border: #e2e8f0;
-  --seller-success: #10b981;
+  --seller-success: #0891b2;
   --seller-danger: #ef4444;
   --seller-sidebar-w: 260px;
 }
@@ -48,11 +47,11 @@ body.seller-page {
 }
 .seller-brand-logo {
   width: 36px; height: 36px; border-radius: 8px;
-  background: linear-gradient(135deg, #fbbf24, #d97706);
+  background: linear-gradient(135deg, #00d4ff, #0891b2);
   display: flex; align-items: center; justify-content: center;
   font-weight: 800; color: #0f172a; font-size: 1.2rem;
 }
-.seller-brand-name { font-weight: 700; font-size: 1.15rem; color: #fbbf24; }
+.seller-brand-name { font-weight: 700; font-size: 1.15rem; color: #00d4ff; }
 .seller-brand-tag { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; }
 
 .seller-nav { display: flex; flex-direction: column; gap: 0.25rem; }
@@ -68,7 +67,7 @@ body.seller-page {
 .seller-nav-item i { width: 18px; text-align: center; }
 .seller-nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
 .seller-nav-item.active {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #00d4ff, #0891b2);
   color: #0f172a; font-weight: 600;
 }
 
@@ -102,7 +101,7 @@ body.seller-page {
 }
 .seller-user-pill .avatar {
   width: 32px; height: 32px; border-radius: 50%;
-  background: linear-gradient(135deg, #fbbf24, #d97706);
+  background: linear-gradient(135deg, #00d4ff, #0891b2);
   color: #0f172a; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -127,7 +126,7 @@ body.seller-page {
   width: 40px; height: 40px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem;
-  background: #fef3c7; color: #d97706;
+  background: #cffafe; color: #0891b2;
   margin-bottom: 0.75rem;
 }
 .stat-card .stat-icon.green { background: #d1fae5; color: #059669; }
@@ -173,7 +172,7 @@ body.seller-page {
 .btn-seller {
   display: inline-flex; align-items: center; gap: 0.4rem;
   padding: 0.55rem 1rem;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #00d4ff, #0891b2);
   color: #0f172a; font-weight: 600;
   border: none; border-radius: 8px;
   cursor: pointer; text-decoration: none; font-size: 0.9rem;
@@ -220,7 +219,7 @@ body.seller-page {
   border-radius: 999px; font-size: 0.75rem; font-weight: 600;
 }
 .badge.green  { background: #d1fae5; color: #065f46; }
-.badge.amber  { background: #fef3c7; color: #92400e; }
+.badge.amber  { background: #cffafe; color: #0e7490; }
 .badge.red    { background: #fee2e2; color: #991b1b; }
 .badge.gray   { background: #f1f5f9; color: #475569; }
 .badge.blue   { background: #dbeafe; color: #1e40af; }
@@ -278,7 +277,7 @@ body.seller-page {
 .seller-mobile-toggle {
   display: none;
   position: fixed; top: 1rem; left: 1rem; z-index: 110;
-  background: #0f172a; color: #fbbf24;
+  background: #0f172a; color: #00d4ff;
   border: none; border-radius: 8px;
   width: 40px; height: 40px;
   font-size: 1.2rem; cursor: pointer;

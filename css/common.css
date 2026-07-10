@@ -1,12 +1,12 @@
-/* Base styles and variables */
+/* Base styles and variables — cyan + white futuristic theme */
 :root {
-    --primary-color: #f0474a;
-    --secondary-color: #2c3e50;
-    --success-color: #28a745;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
+    --primary-color: #00d4ff;
+    --secondary-color: #0891b2;
+    --success-color: #0891b2;
+    --warning-color: #00d4ff;
+    --danger-color: #ef4444;
     --light-color: #f8f9fa;
-    --dark-color: #343a40;
+    --dark-color: #0f172a;
     --gray-100: #f8f9fa;
     --gray-200: #e9ecef;
     --gray-300: #dee2e6;

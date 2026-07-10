@@ -25,16 +25,16 @@
                     },
                     colors: {
                         brand: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            200: '#fed7aa',
-                            300: '#fdba74',
-                            400: '#fb923c',
-                            500: '#f97316',
-                            600: '#ea580c',
-                            700: '#c2410c',
-                            800: '#9a3412',
-                            900: '#7c2d12',
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#00d4ff',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
                         },
                         ink: {
                             900: '#0f172a',
@@ -47,13 +47,13 @@
                             200: '#e2e8f0',
                             100: '#f1f5f9',
                         },
-                        urgency: { 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c' },
-                        trust: { 500: '#22c55e', 600: '#16a34a' },
                     },
                     boxShadow: {
-                        'glow': '0 4px 24px -4px rgba(249,115,22,0.25)',
+                        'glow': '0 4px 24px -4px rgba(0,212,255,0.35)',
+                        'glow-lg': '0 0 32px rgba(0,212,255,0.25)',
                         'card': '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
                         'pop': '0 4px 16px -2px rgba(0,0,0,0.1)',
+                        'neon': '0 0 20px rgba(0,212,255,0.3), 0 0 40px rgba(0,212,255,0.1)',
                     },
                     animation: {
                         'float': 'float 3s ease-in-out infinite',
@@ -61,12 +61,18 @@
                         'slide-up': 'slideUp 0.5s ease-out',
                         'fade-in': 'fadeIn 0.5s ease-out',
                         'shimmer': 'shimmer 2s linear infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'scan': 'scan 3s linear infinite',
+                        'neon-flicker': 'neonFlicker 4s ease-in-out infinite',
                     },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-4px)' } },
                         slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+                        glowPulse: { '0%, 100%': { boxShadow: '0 0 20px rgba(0,212,255,0.2)' }, '50%': { boxShadow: '0 0 40px rgba(0,212,255,0.5)' } },
+                        scan: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
+                        neonFlicker: { '0%, 100%': { opacity: '1' }, '45%': { opacity: '0.85' }, '50%': { opacity: '1' }, '55%': { opacity: '0.9' } },
                     }
                 }
             }
@@ -92,12 +98,12 @@
         .snap-x-mandatory { scroll-snap-type: x mandatory; }
         .snap-center { scroll-snap-align: center; }
 
-        /* Gradients — used SPARINGLY for futuristic accent only */
-        .grad-flame { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+        /* Gradients — single cyan accent, futuristic */
+        .grad-flame { background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%); }
         .grad-night { background: #0f172a; }
-        .grad-flash { background: #dc2626; }
-        .grad-mint { background: #10b981; }
-        .grad-gold { background: #f59e0b; }
+        .grad-flash { background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%); }
+        .grad-mint { background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%); }
+        .grad-gold { background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%); }
 
         /* Pulse for live countdown */
         @keyframes pulse-dot {
@@ -120,10 +126,11 @@
         }
         .toast-anim { animation: toastIn 0.3s ease-out; }
 
-        /* Progress bar fill */
+        /* Progress bar fill — cyan with glow */
         .progress-fill {
-            background: linear-gradient(90deg, #f97316, #ea580c);
+            background: linear-gradient(90deg, #00d4ff, #0891b2);
             transition: width 0.6s ease-out;
+            box-shadow: 0 0 12px rgba(0,212,255,0.4);
         }
 
         /* Heart pop */
@@ -142,26 +149,27 @@
         .product-card:hover .product-image { transform: scale(1.08); }
         .product-card .product-image { transition: transform 0.5s ease; }
 
-        /* Glow ring for active nav */
+        /* Glow ring for active nav — cyan */
         .nav-active { position: relative; }
         .nav-active::before {
             content: ''; position: absolute; inset: -8px -10px;
-            background: rgba(249,115,22,0.08);
+            background: rgba(0,212,255,0.10);
             border-radius: 16px; z-index: -1;
         }
 
-        /* Star rating */
+        /* Star rating — cyan */
         .stars {
-            background: linear-gradient(90deg, #fbbf24 var(--p, 100%), #d1d5db var(--p, 100%));
+            background: linear-gradient(90deg, #00d4ff var(--p, 100%), #d1d5db var(--p, 100%));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
 
-        /* Tab active */
+        /* Tab active — cyan with glow */
         .tab-active { color: #0f172a; font-weight: 700; }
         .tab-active::after {
             content: ''; display: block; height: 3px;
-            background: linear-gradient(90deg, #f97316, #ea580c);
+            background: linear-gradient(90deg, #00d4ff, #0891b2);
             border-radius: 2px; margin-top: 6px;
+            box-shadow: 0 0 8px rgba(0,212,255,0.5);
         }
 
         /* Floating animation */
@@ -185,8 +193,11 @@
         /* Header shadow on scroll */
         header.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
 
-        /* Search focus */
-        .search-box:focus-within { box-shadow: 0 0 0 2px rgba(249,115,22,0.15); }
+        /* Search focus — cyan glow */
+        .search-box:focus-within { 
+            box-shadow: 0 0 0 2px rgba(0,212,255,0.2), 0 0 20px rgba(0,212,255,0.15);
+            border-color: #00d4ff !important;
+        }
 
         /* Mobile bottom nav safe area */
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
@@ -195,13 +206,13 @@
         .quick-action { opacity: 0; transform: translateY(10px); transition: all 0.3s ease; }
         .product-card:hover .quick-action { opacity: 1; transform: translateY(0); }
 
-        /* Seller badges */
-        .seller-badge { background: linear-gradient(135deg, #059669, #10b981); }
-        .farmer-badge { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+        /* Seller badges — unified cyan */
+        .seller-badge { background: linear-gradient(135deg, #00d4ff, #0891b2); }
+        .farmer-badge { background: linear-gradient(135deg, #00d4ff, #0891b2); }
 
-        /* Flash badge */
+        /* Flash badge — cyan with pulse */
         .flash-badge {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #00d4ff, #0891b2);
             animation: pulse 2s infinite;
         }
 
@@ -211,9 +222,9 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Gradient text */
+        /* Gradient text — cyan */
         .gradient-text {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
@@ -222,6 +233,59 @@
 
         /* Cart drawer transition */
         .cart-drawer { transition: transform 0.3s ease; }
+
+        /* === FUTURISTIC ANIMATIONS === */
+        /* Neon border glow on focus/hover */
+        .neon-border { border: 1px solid rgba(0,212,255,0.3); transition: all 0.3s ease; }
+        .neon-border:hover { border-color: #00d4ff; box-shadow: 0 0 16px rgba(0,212,255,0.3), inset 0 0 8px rgba(0,212,255,0.05); }
+        
+        /* Holographic shimmer for cards */
+        .holo-card { position: relative; overflow: hidden; }
+        .holo-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,212,255,0.08), transparent);
+            transition: left 0.6s ease;
+        }
+        .holo-card:hover::before { left: 100%; }
+        
+        /* Scanline effect for live elements */
+        .scanline { position: relative; overflow: hidden; }
+        .scanline::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        
+        /* Glow pulse for CTAs */
+        .glow-pulse { animation: glowPulse 2s ease-in-out infinite; }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.2); }
+            50% { box-shadow: 0 0 40px rgba(0,212,255,0.5), 0 0 60px rgba(0,212,255,0.2); }
+        }
+        
+        /* Neon text flicker */
+        .neon-text {
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0,212,255,0.5), 0 0 20px rgba(0,212,255,0.3);
+        }
+        
+        /* Smooth reveal on scroll */
+        .reveal-up { opacity: 0; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-up.visible { opacity: 1; transform: translateY(0); }
+        
+        /* Card hover with cyan lift */
+        .lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .lift:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 24px rgba(0,212,255,0.15), 0 0 0 1px rgba(0,212,255,0.1);
+        }
+        .lift:active { transform: scale(0.97); }
     </style>
 </head>
 
