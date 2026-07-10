@@ -86,6 +86,45 @@
         <div class="seller-loading"><div class="spinner"></div>Loading activity…</div>
       </div>
     </div>
+
+    <!-- Cross-platform (Phase 4) -->
+    <div class="seller-panel">
+      <div class="seller-panel-header">
+        <h2>Cross-platform reach</h2>
+        <a href="../telegram.html" class="link">Telegram →</a>
+      </div>
+      <div class="stat-grid" style="margin-bottom:1rem;">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fab fa-telegram"></i></div>
+          <div class="stat-label">Telegram subs</div>
+          <div class="stat-value" id="stat-telegram-subs">—</div>
+          <div class="stat-sub">Across all users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fab fa-whatsapp"></i></div>
+          <div class="stat-label">WhatsApp links</div>
+          <div class="stat-value" id="stat-wa-links">—</div>
+          <div class="stat-sub">Total confirmed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i class="fas fa-bullhorn"></i></div>
+          <div class="stat-label">Broadcasts sent</div>
+          <div class="stat-value" id="stat-broadcasts">—</div>
+          <div class="stat-sub">All-time</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="../link-account.html" class="btn-seller secondary small">
+          <i class="fab fa-whatsapp"></i> Link WhatsApp
+        </a>
+        <a href="../telegram.html" class="btn-seller secondary small">
+          <i class="fab fa-telegram"></i> Telegram channel
+        </a>
+        <a href="../whatsapp.html" class="btn-seller secondary small">
+          <i class="fas fa-robot"></i> WhatsApp commands
+        </a>
+      </div>
+    </div>
   </main>
 
   <script>
@@ -181,6 +220,20 @@
           <div>No activity yet — add a product to post to your feed</div>
         </div>`;
       }
+
+      // Phase 4: Cross-platform stats (parallel fetch)
+      try {
+        const [tgInfo, recentBroadcasts] = await Promise.all([
+          window.EdgeFunctions.telegram.channelInfo(),
+          window.EdgeFunctions.telegram.recent(),
+        ]);
+        if (tgInfo.success) {
+          document.getElementById('stat-telegram-subs').textContent = tgInfo.subscriberCount;
+        }
+        if (recentBroadcasts.success) {
+          document.getElementById('stat-broadcasts').textContent = recentBroadcasts.broadcasts.length;
+        }
+      } catch (e) { /* silent */ }
     })();
   </script>
 </body>

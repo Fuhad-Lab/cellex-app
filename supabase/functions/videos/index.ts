@@ -244,13 +244,26 @@ async function handleGet(req: Request, body: Record<string, unknown>): Promise<R
     }),
   });
 
-  // Fetch the full video with relations
+  // Fetch the full video with product info (seller fetched separately)
   const fullResp = await fetch(
-    `${SUPABASE_URL}/rest/v1/product_videos?id=eq.${videoId}&select=*,products(id,name,price,image_url,category),sellers(id,business_name,profile_image,farm_name)`,
+    `${SUPABASE_URL}/rest/v1/product_videos?id=eq.${videoId}&select=*,products(id,name,price,image_url,category)`,
     { headers: adminHeaders }
   );
   const videos = await fullResp.json();
-  return jsonResponse({ success: true, video: videos?.[0] || null });
+  if (!videos || videos.length === 0) return jsonResponse({ success: true, video: null });
+  const video = videos[0];
+
+  // Fetch seller
+  let seller = null;
+  if (video.seller_id) {
+    const sellerResp = await fetch(
+      `${SUPABASE_URL}/rest/v1/sellers?id=eq.${encodeURIComponent(video.seller_id)}&select=id,business_name,profile_image,farm_name`,
+      { headers: adminHeaders }
+    );
+    seller = (await sellerResp.json())?.[0] || null;
+  }
+
+  return jsonResponse({ success: true, video: { ...video, sellers: seller } });
 }
 
 async function handleUploadUrl(userId: string, body: Record<string, unknown>): Promise<Response> {

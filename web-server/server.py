@@ -304,6 +304,15 @@ async def proxy_stories(request: Request):
 async def proxy_discover(request: Request):
     return await _proxy_to_edge_function("discover", request)
 
+# ---- Phase 4: Cross-platform integration ----
+@app.post("/api/cross-platform")
+async def proxy_cross_platform(request: Request):
+    return await _proxy_to_edge_function("cross-platform", request)
+
+@app.post("/api/telegram")
+async def proxy_telegram(request: Request):
+    return await _proxy_to_edge_function("telegram", request)
+
 # ---- Phase 3: Direct video upload to Supabase Storage ----
 # Sellers upload video files via PUT. The web-server reads the session cookie
 # to verify auth, then forwards the bytes to Supabase Storage using the

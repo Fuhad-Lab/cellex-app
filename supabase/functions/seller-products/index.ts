@@ -82,8 +82,28 @@ async function handleCreate(sellerId: string, body: Record<string, unknown>): Pr
   });
   const created = await resp.json();
   if (!resp.ok) return errorResponse(created?.message || 'Failed to create product', 500);
+  const product = created?.[0];
 
-  return jsonResponse({ success: true, product: created?.[0] });
+  // Phase 4: Auto-broadcast to Telegram (fire-and-forget)
+  broadcastToTelegram('new_product', String(product.id),
+    `🆕 <b>New product:</b> ${escapeHtml(name)}\n💵 $${Number(price).toFixed(2)}\n📦 ${payload.category}\n\n${SUPABASE_URL ? 'https://eeshaai-cellex-web.hf.space/Eesha buying folder/product.html?id=' + product.id : ''}`,
+    payload.image_url as string | undefined
+  ).catch(() => {});
+
+  return jsonResponse({ success: true, product });
+}
+
+// Helper: broadcast to Telegram via the telegram edge function (fire-and-forget)
+async function broadcastToTelegram(broadcastType: string, entityId: string, message: string, imageUrl?: string): Promise<void> {
+  await fetch(`${SUPABASE_URL}/functions/v1/telegram`, {
+    method: 'POST',
+    headers: { ...adminHeaders, 'X-Internal-Call': 'cellex-internal', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ op: 'broadcast', broadcastType, entityId, message, imageUrl }),
+  }).catch(() => {});
+}
+
+function escapeHtml(s: string): string {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 async function handleUpdate(sellerId: string, body: Record<string, unknown>): Promise<Response> {

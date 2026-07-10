@@ -186,7 +186,23 @@ async function handleStart(userId: string, body: Record<string, unknown>): Promi
   // System message
   await postSystemMessage(session.id, `🔴 Live now: ${title}`);
 
+  // Phase 4: Auto-broadcast to Telegram (fire-and-forget)
+  fetch(`${SUPABASE_URL}/functions/v1/telegram`, {
+    method: 'POST',
+    headers: { ...adminHeaders, 'X-Internal-Call': 'cellex-internal', 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      op: 'broadcast',
+      broadcastType: 'live_start',
+      entityId: session.id,
+      message: `🔴 <b>LIVE NOW:</b> ${escapeHtml(title)}\n${(body.description as string) || ''}\n\nWatch: https://eeshaai-cellex-web.hf.space/live-watch.html?id=${session.id}`,
+    }),
+  }).catch(() => {});
+
   return jsonResponse({ success: true, session });
+}
+
+function escapeHtml(s: string): string {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 async function handleEnd(userId: string, body: Record<string, unknown>): Promise<Response> {

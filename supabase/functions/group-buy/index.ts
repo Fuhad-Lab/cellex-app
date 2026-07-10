@@ -104,8 +104,26 @@ async function handleCreate(userId: string, body: Record<string, unknown>): Prom
     { headers: adminHeaders }
   );
   const freshRows = await refreshed.json();
+  const freshGroupBuy = freshRows?.[0] || created[0];
 
-  return jsonResponse({ success: true, groupBuy: freshRows?.[0] || created[0], product });
+  // Phase 4: Auto-broadcast to Telegram (fire-and-forget)
+  fetch(`${SUPABASE_URL}/functions/v1/telegram`, {
+    method: 'POST',
+    headers: { ...adminHeaders, 'X-Internal-Call': 'cellex-internal', 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      op: 'broadcast',
+      broadcastType: 'group_buy',
+      entityId: groupBuyId,
+      message: `🛍️ <b>New group buy!</b>\n${escapeHtml(product.name)} — $${Number(product.price).toFixed(2)}\nGet ${discountPct}% off when ${targetCount} friends join.\n\nJoin: https://eeshaai-cellex-web.hf.space/group-buy.html?id=${groupBuyId}`,
+      imageUrl: product.image_url || undefined,
+    }),
+  }).catch(() => {});
+
+  return jsonResponse({ success: true, groupBuy: freshGroupBuy, product });
+}
+
+function escapeHtml(s: string): string {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 async function handleJoin(userId: string, body: Record<string, unknown>): Promise<Response> {

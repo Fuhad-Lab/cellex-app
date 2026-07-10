@@ -323,6 +323,23 @@
             logView:   (productId)         => call('discover', { op: 'log_view', productId }),
         },
 
+        // ---- Phase 4: Cross-platform integration ----
+        crossPlatform: {
+            // Web-side (cookie auth)
+            generateLinkCode: (phone)      => call('cross-platform', { op: 'generate_link_code', phone }),
+            myPhoneLinks:     ()           => call('cross-platform', { op: 'my_phone_links' }),
+            unlinkPhone:      (phone)      => call('cross-platform', { op: 'unlink_phone', phone }),
+        },
+
+        telegram: {
+            channelInfo: ()                => call('telegram', { op: 'channel_info' }),
+            recent:     ()                 => call('telegram', { op: 'recent' }),
+            subscribe:  (chatId, username = null, userId = null) =>
+                call('telegram', { op: 'subscribe', chatId, username, userId }),
+            unsubscribe: (chatId)          => call('telegram', { op: 'unsubscribe', chatId }),
+            setWebhook:  (url)             => call('telegram', { op: 'set_webhook', url }),
+        },
+
         call,
     };
 
