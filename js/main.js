@@ -39,7 +39,7 @@ function viewProduct(productId) {
     // Check if user is logged in
     const isLoggedIn = checkLoginStatus();
     if (!isLoggedIn) {
-        window.location.href = 'Eesha buying folder/login.html';
+        window.location.href = 'login.html';
         return;
     }
     // If logged in, show product details

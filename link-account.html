@@ -100,7 +100,7 @@
     (async () => {
       const sess = await window.EdgeFunctions.auth.checkSession();
       if (!sess.success || !sess.user) {
-        window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent('/link-account.html');
+        window.location.href = 'login.html?next=' + encodeURIComponent('/link-account.html');
         return;
       }
       currentUser = sess.user;

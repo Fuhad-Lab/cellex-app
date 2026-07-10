@@ -194,7 +194,7 @@ async function handleAll(body: Record<string, unknown>): Promise<Response> {
   const limit = (body.limit as number) || 100;
 
   const products = await fetchFromSupabase(
-    `products?select=id,name,price,category,image_url&order=created_at.desc&limit=${limit}`
+    `products?select=id,name,price,category,image_url,seller_id,description,units_sold&order=created_at.desc&limit=${limit}`
   );
 
   return jsonResponse({ success: true, products: products || [] });

@@ -1,6 +1,6 @@
 /* Cellex Seller Shared Helpers — Phase 1
    ----------------------------------------
-   - Auth gate: redirect to /Eesha buying folder/login.html if not logged in
+   - Auth gate: redirect to /login.html if not logged in
    - Sidebar render (single source of truth)
    - Toast + small DOM utilities
    - ZERO direct Supabase calls — everything goes through EdgeFunctions */
@@ -13,7 +13,7 @@
     // Make sure EdgeFunctions has checked the session
     const { success, user } = await window.EdgeFunctions.auth.checkSession();
     if (!success || !user) {
-      window.location.href = '../Eesha buying folder/login.html?next=' + encodeURIComponent(window.location.pathname);
+      window.location.href = '../login.html?next=' + encodeURIComponent(window.location.pathname);
       return null;
     }
     return user;

@@ -456,7 +456,7 @@ Just talk to me naturally!<br>
             card.setAttribute('data-handled', 'true');
             card.addEventListener('click', e => {
                 if (!e.target.closest('.ai-action-btn')) {
-                    window.location.href = `Eesha buying folder/product.html?id=${card.dataset.productId}`;
+                    window.location.href = `product.html?id=${card.dataset.productId}`;
                 }
             });
         });
@@ -479,11 +479,11 @@ Just talk to me naturally!<br>
                     } else {
                         btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add';
                         if (result?.requiresAuth) {
-                            addMessage('assistant', 'Please <a href="Eesha buying folder/login.html" style="color:#f59e0b;font-weight:600;">login</a> to add items.');
+                            addMessage('assistant', 'Please <a href="login.html" style="color:#f59e0b;font-weight:600;">login</a> to add items.');
                         }
                     }
                 } else if (action === 'view') {
-                    window.location.href = `Eesha buying folder/product.html?id=${productId}`;
+                    window.location.href = `product.html?id=${productId}`;
                 }
             });
         });
@@ -874,7 +874,7 @@ Just talk to me naturally!<br>
         }
 
         if (type === 'checkout') {
-            window.location.href = 'Eesha buying folder/checkout.html';
+            window.location.href = 'checkout.html';
             return { success: true, message: 'Redirecting to checkout...' };
         }
 

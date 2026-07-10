@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login · Cellex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .login-card { background: #fff; border-radius: 24px; box-shadow: 0 4px 30px rgba(0,212,255,0.08); padding: 2.5rem; max-width: 420px; width: 100%; border: 1px solid rgba(0,212,255,0.1); }
+        .login-btn { background: linear-gradient(135deg, #00d4ff, #0891b2); color: #0f172a; font-weight: 700; transition: all 0.3s; }
+        .login-btn:hover { box-shadow: 0 0 30px rgba(0,212,255,0.4); transform: translateY(-1px); }
+        .login-input { border: 2px solid #e2e8f0; transition: all 0.3s; }
+        .login-input:focus { border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0,212,255,0.15); outline: none; }
+        .spinner { animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .logo-text { background: linear-gradient(135deg, #00d4ff, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .seller-link { background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.2); transition: all 0.3s; }
+        .seller-link:hover { background: rgba(0,212,255,0.1); border-color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-6">
+            <a href="index.html" class="inline-block">
+                <h1 class="text-4xl font-extrabold logo-text" style="font-family: 'Sora', sans-serif;">Cellex</h1>
+            </a>
+            <p class="text-gray-500 mt-1 text-sm">Nigeria's #1 Marketplace</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <h2 class="text-2xl font-bold text-gray-800 mb-1">Welcome back</h2>
+            <p class="text-gray-500 mb-6 text-sm">Sign in to your buyer account</p>
+
+            <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-600 rounded-lg p-3 mb-4 text-sm"></div>
+
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                    <input type="email" id="email" required
+                        class="login-input w-full px-4 py-3 rounded-xl"
+                        placeholder="you@example.com">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" required
+                        class="login-input w-full px-4 py-3 rounded-xl"
+                        placeholder="••••••••">
+                </div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="remember" class="rounded border-gray-300 text-cyan-500 focus:ring-cyan-400">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-cyan-600 hover:underline">Forgot password?</a>
+                </div>
+
+                <button type="submit" id="loginButton"
+                    class="login-btn w-full py-3 rounded-xl flex items-center justify-center gap-2">
+                    <svg class="spinner hidden h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sign in
+                </button>
+            </form>
+
+            <div class="mt-5 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account?
+                    <a href="signup.html" class="font-medium text-cyan-600 hover:underline">Sign up</a>
+                </p>
+            </div>
+
+            <!-- Seller login link -->
+            <a href="seller/login.html" class="seller-link mt-5 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium text-gray-700 no-underline">
+                <i class="fas fa-store text-cyan-500"></i>
+                Are you a seller? Login to seller dashboard
+            </a>
+        </div>
+    </div>
+
+    <script src="js/config/edge-functions.js?v=2"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingIcon = loginButton.querySelector('.spinner');
+
+        function showError(msg) { errorMessage.textContent = msg; errorMessage.classList.remove('hidden'); }
+        function hideError() { errorMessage.classList.add('hidden'); }
+        function setLoading(isLoading) { loadingIcon.classList.toggle('hidden', !isLoading); loginButton.disabled = isLoading; }
+
+        async function performLogin() {
+            hideError();
+            setLoading(true);
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                const result = await window.EdgeFunctions.auth.login(email, password);
+                if (!result.success) {
+                    showError(result.error || 'Incorrect email or password. New user? Please sign up.');
+                    return;
+                }
+                const params = new URLSearchParams(window.location.search);
+                const next = params.get('next');
+                window.location.href = next || 'index.html';
+            } catch (error) {
+                showError(error.message || 'Failed to sign in');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => { e.preventDefault(); await performLogin(); });
+
+        window.addEventListener('load', async () => {
+            try {
+                const result = await window.EdgeFunctions.auth.checkSession();
+                if (result.success && result.user) {
+                    const params = new URLSearchParams(window.location.search);
+                    const next = params.get('next');
+                    window.location.href = next || 'index.html';
+                }
+            } catch (e) {}
+        });
+    </script>
+</body>
+</html>

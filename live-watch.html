@@ -173,7 +173,7 @@
         document.getElementById('featuredImg').src = s.featured.image_url || '';
         document.getElementById('featuredName').textContent = s.featured.name;
         document.getElementById('featuredPrice').textContent = '$' + Number(s.featured.price).toFixed(2);
-        document.getElementById('featuredBuyLink').href = 'Eesha buying folder/product.html?id=' + s.featured.id + '&live=' + sessionId;
+        document.getElementById('featuredBuyLink').href = 'product.html?id=' + s.featured.id + '&live=' + sessionId;
       }
 
       // Auto-join if logged in
@@ -243,7 +243,7 @@
       if (!msg) return;
       if (!currentUser) {
         if (confirm('Please login to chat. Go to login page?')) {
-          window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent('/live-watch.html?id=' + sessionId);
+          window.location.href = 'login.html?next=' + encodeURIComponent('/live-watch.html?id=' + sessionId);
         }
         return;
       }

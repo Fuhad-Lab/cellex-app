@@ -242,7 +242,7 @@
       if (!viewerId) {
         followBtn.textContent = 'Login to follow';
         followBtn.addEventListener('click', () => {
-          window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+          window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
         });
       } else if (viewerId === sellerId) {
         followBtn.textContent = 'Your store';
@@ -280,7 +280,7 @@
         grid.innerHTML = '<div class="sp-loading">No products yet.</div>';
       } else {
         grid.innerHTML = sellerProducts.map(p => `
-          <a class="sp-product" href="Eesha buying folder/product.html?id=${p.id}">
+          <a class="sp-product" href="product.html?id=${p.id}">
             ${p.image_url
               ? `<img src="${p.image_url}" alt="">`
               : `<div class="ph"><i class="fas fa-box"></i></div>`}
@@ -357,7 +357,7 @@
           </div>
           <div class="activity-body">
             <div class="activity-title">
-              ${rev.product ? `<a href="Eesha buying folder/product.html?id=${rev.product.id}" style="color:#d97706;text-decoration:none;">${escapeHtml(rev.product.name)}</a>` : ''}
+              ${rev.product ? `<a href="product.html?id=${rev.product.id}" style="color:#d97706;text-decoration:none;">${escapeHtml(rev.product.name)}</a>` : ''}
               — ${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}
             </div>
             ${rev.title ? `<div style="font-weight:500;margin-top:0.15rem;">${escapeHtml(rev.title)}</div>` : ''}

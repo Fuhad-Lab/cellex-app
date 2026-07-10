@@ -182,7 +182,7 @@
             </div>
             <div class="caption">${escapeHtml(v.caption || '')}</div>
             ${v.product ? `
-              <a href="Eesha buying folder/product.html?id=${v.product.id}" class="product-card-overlay">
+              <a href="product.html?id=${v.product.id}" class="product-card-overlay">
                 ${v.product.image_url
                   ? `<img src="${escapeAttr(v.product.image_url)}" alt="">`
                   : `<div class="ph"><i class="fas fa-box"></i></div>`}
@@ -229,7 +229,7 @@
     async function toggleLike(videoId, btn) {
       if (!currentUser) {
         if (confirm('Login to like videos?')) {
-          window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent('/videos.html');
+          window.location.href = 'login.html?next=' + encodeURIComponent('/videos.html');
         }
         return;
       }

@@ -102,7 +102,7 @@
               ? `<img src="${product.image_url}" class="w-24 h-24 rounded-xl object-cover">`
               : `<div class="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center text-3xl text-gray-400"><i class="fas fa-box"></i></div>`}
             <div class="flex-1">
-              <a href="Eesha buying folder/product.html?id=${product.id}" class="font-bold text-lg hover:text-amber-600">${escapeHtml(product.name)}</a>
+              <a href="product.html?id=${product.id}" class="font-bold text-lg hover:text-amber-600">${escapeHtml(product.name)}</a>
               <div class="flex items-baseline gap-2 mt-1">
                 <span class="text-2xl font-extrabold text-amber-600">$${discountPrice}</span>
                 <span class="text-gray-400 line-through">$${Number(product.price).toFixed(2)}</span>
@@ -135,7 +135,7 @@
 
         <div class="flex gap-2 mt-4">
           ${isCompleted ? `
-            <a href="Eesha buying folder/product.html?id=${product?.id || ''}&gb=${gb.id}" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold text-center py-3 rounded-lg hover:opacity-90">
+            <a href="product.html?id=${product?.id || ''}&gb=${gb.id}" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold text-center py-3 rounded-lg hover:opacity-90">
               <i class="fas fa-shopping-cart"></i> Buy at $${discountPrice}
             </a>
           ` : isExpired ? `
@@ -160,7 +160,7 @@
       const sess = await window.EdgeFunctions.auth.checkSession();
       if (!sess.user) {
         if (confirm('Please login to join the group buy. Go to login page?')) {
-          window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent('/group-buy.html?id=' + gbId);
+          window.location.href = 'login.html?next=' + encodeURIComponent('/group-buy.html?id=' + gbId);
         }
         return;
       }
