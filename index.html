@@ -1157,7 +1157,7 @@
                     // Build 2x2 product grid
                     let productGridHtml = '';
                     if (sellerProducts.length > 0) {
-                        const gridItems = sellerProducts.map(p => {
+                        let gridItems = sellerProducts.map(p => {
                             const img = p.image_url
                                 ? `<img src="${p.image_url}" class="w-full aspect-square object-cover" alt="${escapeHtml(p.name)}">`
                                 : `<div class="w-full aspect-square bg-gray-100 flex items-center justify-center text-gray-400"><i class="fas fa-box text-2xl"></i></div>`;
