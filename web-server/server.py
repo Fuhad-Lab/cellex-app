@@ -247,6 +247,27 @@ async def proxy_wishlist(request: Request):
 async def proxy_checkout(request: Request):
     return await _proxy_to_edge_function("checkout", request)
 
+# ---- Seller & Social Edge Functions (Phase 1) ----
+@app.post("/api/seller-dashboard")
+async def proxy_seller_dashboard(request: Request):
+    return await _proxy_to_edge_function("seller-dashboard", request)
+
+@app.post("/api/seller-products")
+async def proxy_seller_products(request: Request):
+    return await _proxy_to_edge_function("seller-products", request)
+
+@app.post("/api/seller-orders")
+async def proxy_seller_orders(request: Request):
+    return await _proxy_to_edge_function("seller-orders", request)
+
+@app.post("/api/seller-profile")
+async def proxy_seller_profile(request: Request):
+    return await _proxy_to_edge_function("seller-profile", request)
+
+@app.post("/api/social")
+async def proxy_social(request: Request):
+    return await _proxy_to_edge_function("social", request)
+
 @app.get("/api/health")
 async def proxy_health():
     return {

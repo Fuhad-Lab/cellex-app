@@ -118,8 +118,10 @@
                     return;
                 }
 
-                // Login successful — redirect to home
-                window.location.href = '../index.html';
+                // Login successful — redirect to ?next= param if present, else home
+                const params = new URLSearchParams(window.location.search);
+                const next = params.get('next');
+                window.location.href = next || '../index.html';
             } catch (error) {
                 showError(error.message || 'Failed to sign in');
             } finally {
@@ -137,8 +139,10 @@
             try {
                 const result = await window.EdgeFunctions.auth.checkSession();
                 if (result.success && result.user) {
-                    // Already logged in — redirect to home
-                    window.location.href = '../index.html';
+                    // Already logged in — redirect to ?next= param if present, else home
+                    const params = new URLSearchParams(window.location.search);
+                    const next = params.get('next');
+                    window.location.href = next || '../index.html';
                 }
             } catch (e) {
                 // Not logged in — stay on login page

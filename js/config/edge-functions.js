@@ -195,6 +195,44 @@
             placeOrder: (shippingAddress) => call('checkout', { op: 'place_order', shippingAddress }),
         },
 
+        // ---- Seller dashboard (Phase 0 — migrated from "Eesha selling folder") ----
+        sellerDashboard: {
+            stats: () => call('seller-dashboard', { op: 'stats' }),
+            recent: () => call('seller-dashboard', { op: 'recent' }),
+            notifications: () => call('seller-dashboard', { op: 'notifications' }),
+        },
+
+        sellerProducts: {
+            list: () => call('seller-products', { op: 'list' }),
+            create: (data) => call('seller-products', { op: 'create', ...data }),
+            update: (id, data) => call('seller-products', { op: 'update', id, ...data }),
+            delete: (id) => call('seller-products', { op: 'delete', id }),
+        },
+
+        sellerOrders: {
+            list: () => call('seller-orders', { op: 'list' }),
+            details: (orderId) => call('seller-orders', { op: 'details', orderId }),
+        },
+
+        sellerProfile: {
+            get: () => call('seller-profile', { op: 'get' }),
+            update: (data) => call('seller-profile', { op: 'update', ...data }),
+        },
+
+        // ---- Social (Phase 1) ----
+        social: {
+            // Public — no auth required
+            publicProfile: (sellerId, viewerId = null) => call('social', { op: 'public_profile', sellerId, viewerId }),
+            sellerFeed: (sellerId, limit = 20) => call('social', { op: 'seller_feed', sellerId, limit }),
+            discover: (limit = 12) => call('social', { op: 'discover', limit }),
+
+            // Auth required
+            follow: (sellerId) => call('social', { op: 'follow', sellerId }),
+            unfollow: (sellerId) => call('social', { op: 'unfollow', sellerId }),
+            following: () => call('social', { op: 'following' }),
+            feed: (limit = 20, offset = 0) => call('social', { op: 'feed', limit, offset }),
+        },
+
         call,
     };
 

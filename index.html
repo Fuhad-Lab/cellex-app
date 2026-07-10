@@ -667,6 +667,42 @@
             </div>
         </section>
 
+        <!-- Following Activity Feed (only shown if user is logged in & follows sellers) -->
+        <section id="followingFeedSection" class="mt-5 hidden">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 grad-flame rounded-xl flex items-center justify-center shadow-glow">
+                        <i class="fas fa-stream text-white text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base">From Sellers You Follow</h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">Latest updates from your favourite stores</p>
+                    </div>
+                </div>
+            </div>
+            <div id="followingFeedContainer" class="bg-white rounded-2xl border border-ink-100 shadow-card p-3 lg:p-4">
+                <!-- Activity items loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Discover Sellers (social commerce — Phase 1) -->
+        <section id="discoverSellers" class="mt-5">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-glow">
+                        <i class="fas fa-store text-white text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base">Discover Sellers</h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">Follow your favourite stores for new drops</p>
+                    </div>
+                </div>
+            </div>
+            <div id="discoverSellersContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-3">
+                <!-- Seller cards loaded dynamically -->
+            </div>
+        </section>
+
         <!-- Why Choose Cellex (Dark section) -->
         <section class="mt-5 grad-night rounded-3xl p-5 lg:p-8">
             <div class="text-center mb-5">
@@ -713,7 +749,7 @@
                         <div>
                             <h3 class="font-display text-base font-bold text-ink-900 mb-1">Start Selling Today</h3>
                             <p class="text-ink-500 text-xs mb-3">Join thousands of successful merchants</p>
-                            <a href="eesha selling folder/merchant/signup.html" class="inline-flex items-center gap-1 grad-flame text-white px-4 py-2 rounded-lg text-xs font-medium lift">
+                            <a href="Eesha buying folder/signup.html?next=/seller/index.html" class="inline-flex items-center gap-1 grad-flame text-white px-4 py-2 rounded-lg text-xs font-medium lift">
                                 Become a Merchant <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
@@ -724,12 +760,12 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-[10px] font-medium px-2 py-0.5 rounded-full mb-2">
-                                <i class="fas fa-leaf text-[8px]"></i> NEW
+                                <i class="fas fa-leaf text-[8px]"></i> SELLER CENTER
                             </div>
-                            <h3 class="font-display text-base font-bold text-ink-900 mb-1">Sell Your Harvest</h3>
-                            <p class="text-ink-500 text-xs mb-3">Reach millions of buyers directly</p>
-                            <a href="eesha selling folder/farmers/signup.html" class="inline-flex items-center gap-1 bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-emerald-600 lift">
-                                Become a Farmer <i class="fas fa-arrow-right text-[10px]"></i>
+                            <h3 class="font-display text-base font-bold text-ink-900 mb-1">Open your dashboard</h3>
+                            <p class="text-ink-500 text-xs mb-3">Manage products, orders, and followers</p>
+                            <a href="seller/index.html" class="inline-flex items-center gap-1 bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-emerald-600 lift">
+                                Go to Dashboard <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
                         <div class="text-green-200"><i class="fas fa-tractor text-3xl"></i></div>
@@ -865,6 +901,9 @@
             startCountdown();
             startFlashCountdown();
             setupHeroCarousel();
+            // Phase 1 — social commerce
+            loadDiscoverSellers();
+            loadFollowingFeed();
         }
 
         // ===== Auth Functions (via edge function) =====
@@ -1187,6 +1226,106 @@
             const searchInput = document.getElementById('searchInput');
             const query = searchInput.value.trim();
             if (query) window.location.href = `search-result.html?q=${encodeURIComponent(query)}`;
+        }
+
+        // ====================================================================
+        // Phase 1 — Social commerce (Discover sellers, Following feed)
+        // ====================================================================
+        async function loadDiscoverSellers() {
+            const container = document.getElementById('discoverSellersContainer');
+            if (!container) return;
+            try {
+                const resp = await window.EdgeFunctions.social.discover(12);
+                if (!resp.success || !resp.sellers || resp.sellers.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-6 text-ink-500 text-sm">
+                            <i class="fas fa-store text-2xl block mb-2 text-ink-300"></i>
+                            No sellers yet. Be the first — <a href="seller/index.html" class="text-brand-600 font-semibold">open your store</a>.
+                        </div>`;
+                    return;
+                }
+                container.innerHTML = resp.sellers.map(s => {
+                    const name = s.business_name || s.farm_name || 'Unnamed store';
+                    const initial = (name || '?').charAt(0).toUpperCase();
+                    const img = s.profile_image
+                        ? `<img src="${s.profile_image}" alt="" class="w-full aspect-square object-cover rounded-xl bg-ink-100">`
+                        : `<div class="w-full aspect-square rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-3xl font-extrabold text-ink-900">${initial}</div>`;
+                    return `
+                        <a href="seller-profile.html?id=${s.id}" class="bg-white rounded-2xl border border-ink-100 shadow-card p-2 lg:p-3 lift block hover:border-amber-400 transition">
+                            ${img}
+                            <div class="mt-2 font-display font-bold text-sm truncate">${escapeHtml(name)}</div>
+                            <div class="text-[10px] text-ink-500 truncate">${escapeHtml(s.business_category || s.seller_type || 'Seller')}</div>
+                            <div class="mt-1 flex items-center justify-between text-[10px]">
+                                <span class="text-ink-500"><i class="fas fa-users"></i> ${s.followers || 0}</span>
+                                <span class="text-brand-600 font-semibold">View →</span>
+                            </div>
+                        </a>`;
+                }).join('');
+            } catch (e) {
+                console.error('discoverSellers error:', e);
+            }
+        }
+
+        async function loadFollowingFeed() {
+            const section = document.getElementById('followingFeedSection');
+            const container = document.getElementById('followingFeedContainer');
+            if (!section || !container) return;
+            // Only show if user is logged in
+            if (!window.currentUser) return;
+            try {
+                const resp = await window.EdgeFunctions.social.feed(15, 0);
+                if (!resp.success || !resp.items || resp.items.length === 0) return;
+                section.classList.remove('hidden');
+                const iconMap = {
+                    new_product:    { cls: 'bg-amber-100 text-amber-700',  icon: 'fa-box' },
+                    price_drop:     { cls: 'bg-pink-100 text-pink-700',   icon: 'fa-tag' },
+                    restock:        { cls: 'bg-green-100 text-green-700', icon: 'fa-truck' },
+                    sale_milestone: { cls: 'bg-blue-100 text-blue-700',   icon: 'fa-trophy' },
+                    announcement:   { cls: 'bg-amber-100 text-amber-700', icon: 'fa-bullhorn' },
+                };
+                container.innerHTML = resp.items.map(it => {
+                    const m = iconMap[it.activity_type] || iconMap.announcement;
+                    const sellerName = it.seller?.business_name || it.seller?.farm_name || 'Seller';
+                    const sellerImg = it.seller?.profile_image
+                        ? `<img src="${it.seller.profile_image}" class="w-8 h-8 rounded-full object-cover">`
+                        : `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-ink-900 text-sm">${(sellerName || '?').charAt(0).toUpperCase()}</div>`;
+                    return `
+                        <a href="seller-profile.html?id=${it.seller_id}" class="flex items-start gap-3 p-2 hover:bg-ink-50 rounded-xl transition border-b border-ink-100 last:border-0">
+                            ${sellerImg}
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-1.5 text-xs text-ink-500 mb-0.5">
+                                    <span class="font-semibold text-ink-800">${escapeHtml(sellerName)}</span>
+                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full ${m.cls} text-[9px] font-bold uppercase tracking-wide">
+                                        <i class="fas ${m.icon} text-[8px]"></i> ${it.activity_type.replace(/_/g, ' ')}
+                                    </span>
+                                    <span class="ml-auto text-[10px]">${timeAgo(it.created_at)}</span>
+                                </div>
+                                <div class="text-sm font-medium text-ink-900">${escapeHtml(it.title)}</div>
+                                ${it.body ? `<div class="text-xs text-ink-500 mt-0.5 line-clamp-2">${escapeHtml(it.body)}</div>` : ''}
+                            </div>
+                            ${it.image_url ? `<img src="${it.image_url}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0">` : ''}
+                        </a>`;
+                }).join('');
+            } catch (e) {
+                console.error('followingFeed error:', e);
+            }
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        function timeAgo(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            const diff = (Date.now() - d.getTime()) / 1000;
+            if (diff < 60) return 'just now';
+            if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+            if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+            return d.toLocaleDateString();
         }
     </script>
 </body>
