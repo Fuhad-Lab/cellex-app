@@ -324,6 +324,55 @@ async def proxy_cross_platform(request: Request):
 async def proxy_telegram(request: Request):
     return await _proxy_to_edge_function("telegram", request)
 
+# ---- Phase 4: OpenWA gateway proxy (avoids CORS issues from browser) ----
+OPENWA_BASE_URL = os.environ.get("OPENWA_BASE_URL", "https://eesha-search.onrender.com")
+OPENWA_API_KEY = os.environ.get("OPENWA_API_KEY", "CellexWA2024")
+
+@app.api_route("/api/openwa/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def proxy_openwa(path: str, request: Request):
+    """Proxy requests to the OpenWA gateway to avoid CORS issues.
+    The browser can't call eesha-search.onrender.com directly due to CORS,
+    so we proxy through here with the X-API-Key header injected server-side."""
+    target_url = f"{OPENWA_BASE_URL}/{path}"
+    
+    # Forward query params
+    if request.url.query:
+        target_url += f"?{request.url.query}"
+    
+    # Build headers — inject the API key
+    headers = {
+        "X-API-Key": OPENWA_API_KEY,
+        "Content-Type": "application/json",
+    }
+    
+    # Read body for POST/PUT
+    body = None
+    if request.method in ("POST", "PUT"):
+        body = await request.body()
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            if request.method == "GET":
+                resp = await client.get(target_url, headers=headers)
+            elif request.method == "POST":
+                resp = await client.post(target_url, content=body, headers=headers)
+            elif request.method == "PUT":
+                resp = await client.put(target_url, content=body, headers=headers)
+            elif request.method == "DELETE":
+                resp = await client.delete(target_url, headers=headers)
+            else:
+                return JSONResponse({"error": "Method not allowed"}, status_code=405)
+        
+        try:
+            data = resp.json()
+        except Exception:
+            data = {"_raw": resp.text[:500]}
+        return JSONResponse(data, status_code=resp.status_code)
+    except httpx.TimeoutException:
+        return JSONResponse({"error": "OpenWA gateway timeout"}, status_code=504)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 # ---- Phase 3: Direct video upload to Supabase Storage ----
 # Sellers upload video files via PUT. The web-server reads the session cookie
 # to verify auth, then forwards the bytes to Supabase Storage using the

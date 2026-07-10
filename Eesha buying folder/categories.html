@@ -480,9 +480,12 @@
                 if (currentSearch) {
                     // Search within all products (optionally capped by maxPrice)
                     result = await window.EdgeFunctions.products.search(currentSearch, maxPrice);
-                } else {
+                } else if (currentCategory) {
                     // Browse by category with sort + pagination
-                    result = await window.EdgeFunctions.products.category(currentCategory || '', currentSort, page + 1);
+                    result = await window.EdgeFunctions.products.category(currentCategory, currentSort, page + 1);
+                } else {
+                    // No category selected — load all products
+                    result = await window.EdgeFunctions.products.all(50);
                 }
                 
                 if (!result.success) {
