@@ -842,48 +842,16 @@
         }
 
         // ===== Auth Functions (via edge function) =====
+        // The new shared/navbar.html handles its own auth UI, so we just
+        // set window.currentUser for the home page's use.
         async function updateAuthUI() {
             try {
                 const result = await window.EdgeFunctions.auth.checkSession();
                 const user = result.user;
-
-                const authButtons = document.getElementById('authButtons');
-                const userMenu = document.getElementById('userMenu');
-                const mobileAccountBtn = document.getElementById('mobileAccountBtn');
-                const loggedInCheck = document.getElementById('loggedInCheck');
-
                 if (user) {
                     window.currentUser = user;
-                    authButtons.classList.add('hidden');
-                    userMenu.classList.remove('hidden');
-                    userMenu.classList.add('block');
-
-                    const fullName = user.user_metadata?.full_name ||
-                                   user.user_metadata?.name ||
-                                   user.email?.split('@')[0] || 'User';
-                    const firstName = fullName.split(' ')[0];
-                    const initial = firstName.charAt(0).toUpperCase();
-
-                    document.getElementById('userAvatar').textContent = initial;
-                    document.getElementById('avatarLarge').textContent = initial;
-                    document.getElementById('userFirstName').textContent = firstName;
-
-                    if (mobileAccountBtn) {
-                        mobileAccountBtn.href = 'profile.html';
-                        loggedInCheck.classList.remove('hidden');
-                        mobileAccountBtn.classList.add('text-green-600');
-                        mobileAccountBtn.classList.remove('text-gray-500');
-                    }
                 } else {
-                    authButtons.classList.remove('hidden');
-                    userMenu.classList.add('hidden');
-
-                    if (mobileAccountBtn) {
-                        mobileAccountBtn.href = 'login.html';
-                        loggedInCheck.classList.add('hidden');
-                        mobileAccountBtn.classList.remove('text-green-600');
-                        mobileAccountBtn.classList.add('text-gray-500');
-                    }
+                    window.currentUser = null;
                 }
             } catch (error) {
                 console.error('Auth error:', error);
