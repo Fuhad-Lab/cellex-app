@@ -101,6 +101,17 @@ async def _proxy_to_edge_function(edge_name: str, request: Request):
         # in the web_sessions table to get the actual JWT access_token
         outgoing_headers["Authorization"] = f"Bearer {session_id}"
 
+    # Phase 4: forward X-Bot-Api-Key so the WhatsApp bot can call cross-platform endpoints
+    # (used by the Render WhatsApp bot to add to cart, link accounts, etc.)
+    bot_api_key = request.headers.get("X-Bot-Api-Key")
+    if bot_api_key:
+        outgoing_headers["X-Bot-Api-Key"] = bot_api_key
+
+    # Phase 4: forward X-Internal-Call so edge functions can call each other (e.g. telegram broadcast)
+    internal_call = request.headers.get("X-Internal-Call")
+    if internal_call:
+        outgoing_headers["X-Internal-Call"] = internal_call
+
     # Read the request body
     try:
         body = await request.body()
