@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Stories · Cellex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="../js/config/edge-functions.js"></script>
+  <script src="js/shared.js"></script>
+  <style>
+    .story-type-pill {
+      display: inline-block; padding: 0.3rem 0.8rem;
+      border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--seller-border);
+      background: #fff; color: var(--seller-text-muted);
+      transition: all 0.15s;
+    }
+    .story-type-pill.active { background: var(--seller-primary); color: #0f172a; border-color: var(--seller-primary); }
+    .story-tile {
+      display: flex; gap: 1rem; padding: 0.75rem 0;
+      border-bottom: 1px solid var(--seller-border);
+    }
+    .story-tile img, .story-tile .ph {
+      width: 64px; height: 64px; border-radius: 8px; object-fit: cover;
+      background: #f1f5f9; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #94a3b8; font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body class="seller-page">
+  <button class="seller-mobile-toggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+  <aside class="seller-sidebar"></aside>
+
+  <main class="seller-main">
+    <div class="seller-topbar">
+      <div>
+        <h1>Seller Stories</h1>
+        <div class="subtitle">24-hour updates — Instagram-style</div>
+      </div>
+    </div>
+
+    <div class="seller-panel">
+      <div class="seller-panel-header"><h2>Post a new story</h2></div>
+      <form class="seller-form" id="storyForm" style="max-width:560px;">
+        <div class="form-group">
+          <label>Story type</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="typePills">
+            <span class="story-type-pill active" data-type="announcement">📢 Announcement</span>
+            <span class="story-type-pill" data-type="deal">🔥 Deal</span>
+            <span class="story-type-pill" data-type="product_spotlight">📦 Product spotlight</span>
+            <span class="story-type-pill" data-type="behind_scenes">🎬 Behind the scenes</span>
+          </div>
+          <input type="hidden" id="storyType" value="announcement">
+        </div>
+        <div class="form-group">
+          <label for="title">Title *</label>
+          <input type="text" id="title" placeholder="e.g. 'Flash sale — 30% off all electronics today!'" required>
+        </div>
+        <div class="form-group">
+          <label for="body">Body</label>
+          <textarea id="body" rows="3" placeholder="Add details — what's the deal? what's new? what's behind the scenes?"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="imageUrl">Image URL (optional)</label>
+          <input type="url" id="imageUrl" placeholder="https://…">
+        </div>
+        <div class="form-group">
+          <label for="productId">Link to a product (optional)</label>
+          <select id="productId">
+            <option value="">— None —</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-seller" style="margin-top:1rem;">
+          <i class="fas fa-paper-plane"></i> Post story (expires in 24h)
+        </button>
+      </form>
+    </div>
+
+    <div class="seller-panel">
+      <div class="seller-panel-header"><h2>Your active & recent stories</h2></div>
+      <div id="storiesList" class="seller-loading"><div class="spinner"></div>Loading…</div>
+    </div>
+  </main>
+
+  <script>
+    (async () => {
+      const user = await window.SellerUI.requireSeller();
+      if (!user) return;
+      window.SellerUI.mountSidebar('stories');
+
+      // Type pills
+      document.querySelectorAll('#typePills .story-type-pill').forEach(p => {
+        p.addEventListener('click', () => {
+          document.querySelectorAll('#typePills .story-type-pill').forEach(x => x.classList.remove('active'));
+          p.classList.add('active');
+          document.getElementById('storyType').value = p.dataset.type;
+        });
+      });
+
+      // Load products for the dropdown
+      const prodResp = await window.EdgeFunctions.sellerProducts.list();
+      const select = document.getElementById('productId');
+      if (prodResp.success && prodResp.products.length) {
+        select.innerHTML = '<option value="">— None —</option>' +
+          prodResp.products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      }
+
+      document.getElementById('storyForm').addEventListener('submit', handleSubmit);
+      await loadMyStories();
+    })();
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const data = {
+        storyType: document.getElementById('storyType').value,
+        title: document.getElementById('title').value.trim(),
+        body: document.getElementById('body').value.trim(),
+        imageUrl: document.getElementById('imageUrl').value.trim() || null,
+      };
+      const pid = document.getElementById('productId').value;
+      if (pid) data.productId = Number(pid);
+
+      const r = await window.EdgeFunctions.stories.create(data);
+      if (r.success) {
+        window.SellerUI.toast('Story posted — visible for 24 hours');
+        document.getElementById('storyForm').reset();
+        document.getElementById('storyType').value = 'announcement';
+        document.querySelectorAll('#typePills .story-type-pill').forEach(x => x.classList.remove('active'));
+        document.querySelector('#typePills .story-type-pill[data-type="announcement"]').classList.add('active');
+        await loadMyStories();
+      } else {
+        window.SellerUI.toast('Failed: ' + (r.error || ''), 'error');
+      }
+    }
+
+    async function loadMyStories() {
+      const list = document.getElementById('storiesList');
+      list.classList.remove('seller-loading');
+      const r = await window.EdgeFunctions.stories.mine();
+      if (!r.success || !r.stories || r.stories.length === 0) {
+        list.innerHTML = `<div class="seller-empty"><i class="fas fa-clock"></i><div>No stories yet.</div></div>`;
+        return;
+      }
+      const now = Date.now();
+      list.innerHTML = r.stories.map(s => {
+        const expired = new Date(s.expires_at).getTime() < now;
+        return `
+          <div class="story-tile">
+            ${s.image_url
+              ? `<img src="${escapeAttr(s.image_url)}" alt="">`
+              : `<div class="ph"><i class="fas fa-${storyIcon(s.story_type)}"></i></div>`}
+            <div style="flex:1;">
+              <div style="font-weight:600;">
+                <span class="badge ${expired ? 'gray' : 'amber'}">${s.story_type.replace(/_/g, ' ')}</span>
+                ${expired ? '<span style="color:var(--seller-text-muted);font-size:0.78rem;">expired</span>' : ''}
+              </div>
+              <div style="margin-top:0.25rem;">${escapeHtml(s.title)}</div>
+              ${s.body ? `<div style="font-size:0.85rem;color:var(--seller-text-muted);">${escapeHtml(s.body.slice(0, 100))}${s.body.length > 100 ? '…' : ''}</div>` : ''}
+              <div style="font-size:0.78rem;color:var(--seller-text-muted);margin-top:0.25rem;">
+                ▶ ${s.views_count || 0} views · ${window.SellerUI.timeAgo(s.created_at)} · expires ${new Date(s.expires_at).toLocaleString()}
+              </div>
+            </div>
+            <button class="btn-seller danger small" onclick="deleteStory(${s.id})"><i class="fas fa-trash"></i></button>
+          </div>`;
+      }).join('');
+    }
+
+    function storyIcon(type) {
+      return ({
+        announcement: 'bullhorn',
+        deal: 'fire',
+        product_spotlight: 'box',
+        behind_scenes: 'film',
+      })[type] || 'circle';
+    }
+
+    async function deleteStory(storyId) {
+      if (!confirm('Delete this story?')) return;
+      const r = await window.EdgeFunctions.stories.delete(storyId);
+      if (r.success) {
+        window.SellerUI.toast('Story deleted');
+        await loadMyStories();
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function escapeAttr(s) {
+      return escapeHtml(s).replace(/`/g, '&#96;');
+    }
+  </script>
+</body>
+</html>

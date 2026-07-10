@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Videos · Cellex Seller</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="../js/config/edge-functions.js"></script>
+  <script src="js/shared.js"></script>
+  <style>
+    .video-upload-zone {
+      border: 2px dashed var(--seller-border);
+      border-radius: 12px; padding: 2rem;
+      text-align: center; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .video-upload-zone:hover { border-color: var(--seller-primary); background: #fffbeb; }
+    .video-upload-zone.dragover { border-color: var(--seller-primary); background: #fef3c7; }
+    .video-upload-zone input { display: none; }
+    .video-upload-zone i { font-size: 2.5rem; color: var(--seller-primary); margin-bottom: 0.5rem; }
+    .video-preview {
+      width: 100%; max-height: 240px;
+      border-radius: 8px; margin-top: 1rem;
+      background: #000;
+    }
+    .video-tile {
+      display: flex; gap: 1rem; padding: 0.75rem 0;
+      border-bottom: 1px solid var(--seller-border);
+    }
+    .video-tile:last-child { border-bottom: none; }
+    .video-tile video {
+      width: 80px; height: 80px; object-fit: cover; border-radius: 8px;
+      background: #000;
+    }
+  </style>
+</head>
+<body class="seller-page">
+  <button class="seller-mobile-toggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+  <aside class="seller-sidebar"></aside>
+
+  <main class="seller-main">
+    <div class="seller-topbar">
+      <div>
+        <h1>Product Videos</h1>
+        <div class="subtitle">15-second showcase clips (TikTok-style)</div>
+      </div>
+      <a href="../videos.html" class="btn-seller secondary">
+        <i class="fas fa-play"></i> View public feed
+      </a>
+    </div>
+
+    <div class="seller-panel">
+      <div class="seller-panel-header"><h2>Upload a new video</h2></div>
+      <form class="seller-form" id="uploadForm">
+        <div class="form-group">
+          <label for="productId">Product *</label>
+          <select id="productId" required>
+            <option value="">Loading your products…</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="caption">Caption</label>
+          <input type="text" id="caption" placeholder="Why should buyers check out this product?" maxlength="200">
+        </div>
+        <div class="form-group">
+          <label>Video file (MP4/WebM, max 50MB, ~15 seconds)</label>
+          <div class="video-upload-zone" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <div><strong>Click to choose</strong> or drag & drop</div>
+            <div style="font-size:0.8rem;color:var(--seller-text-muted);margin-top:0.25rem;">MP4 / WebM / MOV</div>
+            <input type="file" id="videoFile" accept="video/mp4,video/webm,video/quicktime">
+          </div>
+          <video id="videoPreview" class="video-preview" style="display:none;" controls muted></video>
+        </div>
+        <div id="uploadProgress" style="display:none;margin:1rem 0;">
+          <div style="background:var(--seller-border);height:6px;border-radius:3px;overflow:hidden;">
+            <div id="progressBar" style="background:var(--seller-primary);height:100%;width:0%;transition:width 0.2s;"></div>
+          </div>
+          <div id="progressText" style="text-align:center;font-size:0.85rem;color:var(--seller-text-muted);margin-top:0.5rem;">Uploading…</div>
+        </div>
+        <button type="submit" class="btn-seller" id="submitBtn">
+          <i class="fas fa-upload"></i> Publish video
+        </button>
+      </form>
+    </div>
+
+    <div class="seller-panel">
+      <div class="seller-panel-header"><h2>Your videos</h2></div>
+      <div id="videosList" class="seller-loading"><div class="spinner"></div>Loading…</div>
+    </div>
+  </main>
+
+  <script>
+    let selectedFile = null;
+
+    (async () => {
+      const user = await window.SellerUI.requireSeller();
+      if (!user) return;
+      window.SellerUI.mountSidebar('videos');
+
+      // Load products
+      const prodResp = await window.EdgeFunctions.sellerProducts.list();
+      const select = document.getElementById('productId');
+      if (prodResp.success && prodResp.products.length) {
+        select.innerHTML = '<option value="">— Select a product —</option>' +
+          prodResp.products.map(p => `<option value="${p.id}">${p.name} — $${Number(p.price).toFixed(2)}</option>`).join('');
+      } else {
+        select.innerHTML = '<option value="">No products yet — add one first</option>';
+      }
+
+      // File picker
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('videoFile');
+      const preview = document.getElementById('videoPreview');
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+      });
+
+      document.getElementById('uploadForm').addEventListener('submit', handleSubmit);
+      await loadMyVideos();
+    })();
+
+    function handleFile(file) {
+      if (!file) return;
+      if (file.size > 50 * 1024 * 1024) {
+        window.SellerUI.toast('File too large — max 50MB', 'error');
+        return;
+      }
+      const allowed = ['video/mp4', 'video/webm', 'video/quicktime'];
+      if (!allowed.includes(file.type)) {
+        window.SellerUI.toast('Only MP4, WebM, or MOV allowed', 'error');
+        return;
+      }
+      selectedFile = file;
+      const preview = document.getElementById('videoPreview');
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+      window.SellerUI.toast('Video ready to upload');
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const productId = Number(document.getElementById('productId').value);
+      const caption = document.getElementById('caption').value.trim();
+      if (!productId) { window.SellerUI.toast('Select a product', 'error'); return; }
+      if (!selectedFile) { window.SellerUI.toast('Choose a video file', 'error'); return; }
+
+      const submitBtn = document.getElementById('submitBtn');
+      const progressBox = document.getElementById('uploadProgress');
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+      submitBtn.disabled = true;
+      progressBox.style.display = 'block';
+
+      try {
+        // Step 1: get presigned upload URL
+        progressText.textContent = 'Requesting upload URL…';
+        const urlResp = await window.EdgeFunctions.videos.uploadUrl(productId, selectedFile.name, selectedFile.type);
+        if (!urlResp.success) throw new Error(urlResp.error || 'Failed to get upload URL');
+
+        // Step 2: PUT the file directly to storage
+        progressText.textContent = 'Uploading video…';
+        const uploadResp = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('PUT', urlResp.uploadUrl);
+          xhr.setRequestHeader('Content-Type', selectedFile.type);
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const pct = (e.loaded / e.total) * 100;
+              progressBar.style.width = pct + '%';
+              progressText.textContent = `Uploading… ${Math.round(pct)}%`;
+            }
+          };
+          xhr.onload = () => resolve({ ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status });
+          xhr.onerror = () => reject(new Error('Network error during upload'));
+          xhr.send(selectedFile);
+        });
+        if (!uploadResp.ok) throw new Error(`Upload failed (HTTP ${uploadResp.status})`);
+
+        // Step 3: create the video record
+        progressBar.style.width = '100%';
+        progressText.textContent = 'Publishing…';
+        const createResp = await window.EdgeFunctions.videos.create({
+          productId,
+          videoUrl: urlResp.videoUrl,
+          caption,
+        });
+        if (!createResp.success) throw new Error(createResp.error || 'Failed to publish');
+
+        window.SellerUI.toast('🎉 Video published!');
+        document.getElementById('uploadForm').reset();
+        document.getElementById('videoPreview').style.display = 'none';
+        selectedFile = null;
+        progressBox.style.display = 'none';
+        progressBar.style.width = '0%';
+        await loadMyVideos();
+      } catch (err) {
+        window.SellerUI.toast('Upload failed: ' + err.message, 'error');
+        progressBox.style.display = 'none';
+        progressBar.style.width = '0%';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    async function loadMyVideos() {
+      const list = document.getElementById('videosList');
+      list.classList.remove('seller-loading');
+      const r = await window.EdgeFunctions.videos.mine();
+      if (!r.success || !r.videos || r.videos.length === 0) {
+        list.innerHTML = `<div class="seller-empty"><i class="fas fa-film"></i><div>No videos yet — upload your first above.</div></div>`;
+        return;
+      }
+      list.innerHTML = r.videos.map(v => `
+        <div class="video-tile">
+          <video src="${escapeAttr(v.video_url)}" muted></video>
+          <div style="flex:1;">
+            <div style="font-weight:600;">${escapeHtml(v.products?.name || 'Product')}</div>
+            <div style="font-size:0.85rem;color:var(--seller-text-muted);">${escapeHtml(v.caption || '(no caption)')}</div>
+            <div style="font-size:0.78rem;color:var(--seller-text-muted);margin-top:0.25rem;">
+              ▶ ${v.views_count || 0} views · ❤ ${v.likes_count || 0} · ${window.SellerUI.timeAgo(v.created_at)}
+            </div>
+          </div>
+          <button class="btn-seller danger small" onclick="deleteVideo(${v.id})"><i class="fas fa-trash"></i></button>
+        </div>`).join('');
+    }
+
+    async function deleteVideo(videoId) {
+      if (!confirm('Delete this video?')) return;
+      const r = await window.EdgeFunctions.videos.delete(videoId);
+      if (r.success) {
+        window.SellerUI.toast('Video deleted');
+        await loadMyVideos();
+      } else {
+        window.SellerUI.toast('Delete failed: ' + (r.error || ''), 'error');
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function escapeAttr(s) {
+      return escapeHtml(s).replace(/`/g, '&#96;');
+    }
+  </script>
+</body>
+</html>

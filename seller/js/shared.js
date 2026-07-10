@@ -24,6 +24,8 @@
     const items = [
       { key: 'dashboard', href: 'index.html',          icon: 'fa-gauge-high',     label: 'Dashboard' },
       { key: 'products',  href: 'products.html',       icon: 'fa-box',            label: 'Products' },
+      { key: 'videos',    href: 'videos.html',         icon: 'fa-film',           label: 'Product Videos' },
+      { key: 'stories',   href: 'stories.html',        icon: 'fa-clock',          label: 'Stories' },
       { key: 'orders',    href: 'orders.html',         icon: 'fa-receipt',        label: 'Orders' },
       { key: 'live',      href: 'go-live.html',        icon: 'fa-broadcast-tower',label: 'Go Live' },
       { key: 'profile',   href: 'profile.html',        icon: 'fa-store',          label: 'Seller Profile' },

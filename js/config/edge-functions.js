@@ -277,6 +277,52 @@
             myNext:  ()                    => call('live', { op: 'mynext' }),
         },
 
+        // ---- Phase 3: Short Product Videos (TikTok Shop) ----
+        videos: {
+            // Public
+            feed:       (limit = 20)       => call('videos', { op: 'feed', limit }),
+            byProduct:  (productId)        => call('videos', { op: 'by_product', productId }),
+            bySeller:   (sellerId)         => call('videos', { op: 'by_seller', sellerId }),
+            get:        (videoId)          => call('videos', { op: 'get', videoId }),
+
+            // Auth (seller)
+            uploadUrl:  (productId, filename, mime = 'video/mp4') => call('videos', { op: 'upload_url', productId, filename, mime }),
+            create:     (data)            => call('videos', { op: 'create', ...data }),
+            delete:     (videoId)          => call('videos', { op: 'delete', videoId }),
+            mine:       ()                 => call('videos', { op: 'mine' }),
+
+            // Auth (buyer)
+            like:       (videoId)          => call('videos', { op: 'like', videoId }),
+            unlike:     (videoId)          => call('videos', { op: 'unlike', videoId }),
+        },
+
+        // ---- Phase 3: Trending Feed ----
+        trending: {
+            list:     (limit = 20, hours = 24) => call('trending', { op: 'list', limit, hours }),
+            logView:  (productId, source = 'product_page') => call('trending', { op: 'log_view', productId, source }),
+            logShare: (productId, platform = 'whatsapp') => call('trending', { op: 'log_share', productId, platform }),
+        },
+
+        // ---- Phase 3: Seller Stories (Instagram-style) ----
+        stories: {
+            // Public
+            activeBar: ()                  => call('stories', { op: 'active_bar' }),
+            bySeller:  (sellerId)          => call('stories', { op: 'by_seller', sellerId }),
+            get:       (storyId)           => call('stories', { op: 'get', storyId }),
+
+            // Auth
+            markSeen:  (storyIds)          => call('stories', { op: 'mark_seen', storyIds }),
+            create:    (data)              => call('stories', { op: 'create', ...data }),
+            mine:      ()                  => call('stories', { op: 'mine' }),
+            delete:    (storyId)           => call('stories', { op: 'delete', storyId }),
+        },
+
+        // ---- Phase 3: AI-Powered Discovery ----
+        discover: {
+            recommend: (limit = 10)        => call('discover', { op: 'recommend', limit }),
+            logView:   (productId)         => call('discover', { op: 'log_view', productId }),
+        },
+
         call,
     };
 

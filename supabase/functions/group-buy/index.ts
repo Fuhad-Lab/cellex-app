@@ -36,6 +36,7 @@ Deno.serve(async (req: Request) => {
 
     // Public ops
     if (op === 'status') return await handleStatus(body);
+    if (op === 'active') return await handleActive(body);
 
     // Auth-required ops
     const user = await getUser(req);
@@ -44,7 +45,6 @@ Deno.serve(async (req: Request) => {
     switch (op) {
       case 'create': return await handleCreate(user.id, body);
       case 'join':   return await handleJoin(user.id, body);
-      case 'active': return await handleActive(body);
       case 'mine':   return await handleMine(user.id);
       case 'cancel': return await handleCancel(user.id, body);
       default:       return errorResponse(`Unknown op: ${op}`, 400);

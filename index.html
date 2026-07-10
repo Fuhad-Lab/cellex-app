@@ -354,6 +354,10 @@
                 <i class="fas fa-th-large text-xl text-ink-500"></i>
                 <span class="text-[10px] font-semibold text-ink-500">Shop</span>
             </a>
+            <a href="videos.html" class="flex flex-col items-center gap-0.5 py-1 px-2">
+                <i class="fas fa-play-circle text-xl text-ink-500"></i>
+                <span class="text-[10px] font-semibold text-ink-500">Videos</span>
+            </a>
             <a href="ai-chat.html" class="flex flex-col items-center gap-0.5 -mt-3">
                 <div class="w-12 h-12 grad-gold rounded-2xl flex items-center justify-center shadow-glow lift">
                     <i class="fas fa-robot text-white text-lg"></i>
@@ -390,6 +394,15 @@
                 <i class="fas fa-chevron-right text-ink-400 text-xs"></i>
             </a>
         </div>
+
+        <!-- Stories Bar (Phase 3 — Instagram-style, 24h stories) -->
+        <section id="storiesBarSection" class="mt-3 hidden">
+            <div class="bg-white rounded-2xl border border-ink-100 shadow-card p-3 overflow-x-auto">
+                <div id="storiesBarContainer" class="flex gap-3" style="min-width:max-content;">
+                    <!-- Stories loaded dynamically -->
+                </div>
+            </div>
+        </section>
 
         <!-- Hero Carousel (Choice Day, Beauty Monday, BrandDay) -->
         <div class="mt-3">
@@ -725,6 +738,59 @@
             </div>
         </section>
 
+        <!-- Trending Now (Phase 3 — most viewed/shared/purchased in last 24h) -->
+        <section id="trendingSection" class="mt-5 hidden">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-glow">
+                        <i class="fas fa-fire text-white text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base">🔥 Trending Now</h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">Most viewed, shared & purchased in the last 24 hours</p>
+                    </div>
+                </div>
+                <span class="text-[10px] text-ink-500" id="trendingRefreshedAt">—</span>
+            </div>
+            <div id="trendingContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
+                <!-- Trending products loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- AI Recommendations (Phase 3 — only for logged-in users) -->
+        <section id="discoverSection" class="mt-5 hidden">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center shadow-glow">
+                        <i class="fas fa-sparkles text-white text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base">✨ For You</h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">AI picks based on your purchases, follows & activity</p>
+                    </div>
+                </div>
+            </div>
+            <div id="discoverContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3">
+                <!-- AI recommendations loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Product Videos CTA (Phase 3 — TikTok-style feed) -->
+        <section class="mt-5">
+            <a href="videos.html" class="block bg-gradient-to-r from-pink-500 via-red-500 to-amber-500 rounded-3xl p-5 text-white relative overflow-hidden lift">
+                <div class="relative flex items-center gap-4">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-play-circle text-3xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-display font-extrabold text-lg">Shop what you see</div>
+                        <div class="text-white/80 text-sm">Swipe through 15-second product videos from sellers</div>
+                    </div>
+                    <i class="fas fa-arrow-right text-2xl"></i>
+                </div>
+            </a>
+        </section>
+
         <!-- Why Choose Cellex (Dark section) -->
         <section class="mt-5 grad-night rounded-3xl p-5 lg:p-8">
             <div class="text-center mb-5">
@@ -928,6 +994,10 @@
             loadFollowingFeed();
             // Phase 2 — live shopping
             loadLiveNow();
+            // Phase 3 — content & discovery
+            loadStoriesBar();
+            loadTrending();
+            loadDiscoverForYou();
         }
 
         // ===== Auth Functions (via edge function) =====
@@ -1387,6 +1457,133 @@
             } catch (e) {
                 console.error('liveNow error:', e);
             }
+        }
+
+        // ====================================================================
+        // Phase 3 — Stories bar, Trending, AI Discover
+        // ====================================================================
+        async function loadStoriesBar() {
+            const section = document.getElementById('storiesBarSection');
+            const container = document.getElementById('storiesBarContainer');
+            if (!section || !container) return;
+            try {
+                const resp = await window.EdgeFunctions.stories.activeBar();
+                if (!resp.success || !resp.stories || resp.stories.length === 0) return;
+                section.classList.remove('hidden');
+                container.innerHTML = resp.stories.slice(0, 12).map(s => {
+                    const name = s.business_name || 'Seller';
+                    const initial = (name || '?').charAt(0).toUpperCase();
+                    const ringClass = s.has_unseen ? 'ring-amber-400' : 'ring-gray-200';
+                    const img = s.profile_image
+                        ? `<img src="${s.profile_image}" class="w-16 h-16 rounded-full object-cover">`
+                        : `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-2xl text-ink-900">${initial}</div>`;
+                    return `
+                        <button onclick="openStoryViewer(${JSON.stringify(s.stories).replace(/"/g,'&quot;')}, 0)" class="flex flex-col items-center gap-1 flex-shrink-0" style="width:72px;">
+                            <div class="p-0.5 rounded-full ring-2 ${ringClass}">${img}</div>
+                            <div class="text-[10px] text-ink-700 truncate w-full text-center">${escapeHtml(name.slice(0, 10))}</div>
+                        </button>`;
+                }).join('');
+            } catch (e) {
+                console.error('storiesBar error:', e);
+            }
+        }
+
+        async function loadTrending() {
+            const section = document.getElementById('trendingSection');
+            const container = document.getElementById('trendingContainer');
+            if (!section || !container) return;
+            try {
+                const resp = await window.EdgeFunctions.trending.list(10, 24);
+                if (!resp.success || !resp.products || resp.products.length === 0) return;
+                section.classList.remove('hidden');
+                document.getElementById('trendingRefreshedAt').textContent = 'Updated ' + timeAgo(resp.refreshed_at);
+                container.innerHTML = resp.products.map(p => `
+                    <a href="Eesha buying folder/product.html?id=${p.id}" class="bg-white rounded-2xl border border-ink-100 shadow-card overflow-hidden lift block">
+                        ${p.image_url
+                            ? `<img src="${p.image_url}" class="w-full aspect-square object-cover">`
+                            : `<div class="w-full aspect-square bg-ink-100 flex items-center justify-center text-3xl text-ink-300"><i class="fas fa-box"></i></div>`}
+                        <div class="p-2">
+                            <div class="font-bold text-sm line-clamp-1">${escapeHtml(p.name)}</div>
+                            <div class="text-amber-600 font-extrabold text-sm mt-0.5">$${Number(p.price).toFixed(2)}</div>
+                            <div class="flex items-center gap-2 text-[10px] text-ink-500 mt-1">
+                                <span><i class="fas fa-eye"></i> ${p.trending.views}</span>
+                                <span><i class="fas fa-share"></i> ${p.trending.shares}</span>
+                                <span><i class="fas fa-shopping-bag"></i> ${p.trending.purchases}</span>
+                            </div>
+                        </div>
+                    </a>`).join('');
+            } catch (e) {
+                console.error('trending error:', e);
+            }
+        }
+
+        async function loadDiscoverForYou() {
+            const section = document.getElementById('discoverSection');
+            const container = document.getElementById('discoverContainer');
+            if (!section || !container) return;
+            // Only show for logged-in users
+            if (!window.currentUser) return;
+            try {
+                const resp = await window.EdgeFunctions.discover.recommend(10);
+                if (!resp.success || !resp.recommendations || resp.recommendations.length === 0) return;
+                section.classList.remove('hidden');
+                container.innerHTML = resp.recommendations.map(r => {
+                    const p = r.product;
+                    return `
+                        <a href="Eesha buying folder/product.html?id=${p.id}" onclick="logDiscoverView(${p.id})" class="bg-white rounded-2xl border border-violet-200 shadow-card overflow-hidden lift block relative">
+                            ${p.image_url
+                                ? `<img src="${p.image_url}" class="w-full aspect-square object-cover">`
+                                : `<div class="w-full aspect-square bg-violet-50 flex items-center justify-center text-3xl text-violet-300"><i class="fas fa-box"></i></div>`}
+                            <div class="absolute top-1 right-1 bg-violet-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">${escapeHtml(r.signal.replace(/_/g,' '))}</div>
+                            <div class="p-2">
+                                <div class="font-bold text-sm line-clamp-1">${escapeHtml(p.name)}</div>
+                                <div class="text-amber-600 font-extrabold text-sm mt-0.5">$${Number(p.price).toFixed(2)}</div>
+                                <div class="text-[10px] text-ink-500 mt-1 line-clamp-2">${escapeHtml(r.reason)}</div>
+                            </div>
+                        </a>`;
+                }).join('');
+            } catch (e) {
+                console.error('discover error:', e);
+            }
+        }
+
+        async function logDiscoverView(productId) {
+            window.EdgeFunctions.discover.logView(productId).catch(() => {});
+        }
+
+        // Story viewer (simple modal-like full-screen viewer)
+        function openStoryViewer(stories, startIndex) {
+            let idx = startIndex || 0;
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+            const render = () => {
+                const s = stories[idx];
+                if (!s) { overlay.remove(); return; }
+                overlay.innerHTML = `
+                    <button onclick="this.parentElement.remove()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;">×</button>
+                    <div style="max-width:420px;width:100%;text-align:center;">
+                        <div style="margin-bottom:0.5rem;color:#fff;font-size:0.85rem;">${idx + 1} / ${stories.length}</div>
+                        ${s.video_url
+                            ? `<video src="${s.video_url}" autoplay style="max-width:100%;max-height:70vh;border-radius:12px;" controls></video>`
+                            : s.image_url
+                                ? `<img src="${s.image_url}" style="max-width:100%;max-height:70vh;border-radius:12px;">`
+                                : `<div style="background:#fff;border-radius:12px;padding:2rem;"><i class="fas fa-bullhorn text-3xl text-amber-500"></i></div>`}
+                        <div style="color:#fff;margin-top:1rem;font-weight:600;">${escapeHtml(s.title || '')}</div>
+                        ${s.title ? `<div style="color:#cbd5e1;margin-top:0.25rem;font-size:0.85rem;">${escapeHtml(s.title)}</div>` : ''}
+                        <div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;">
+                            ${idx > 0 ? '<button onclick="window._storyPrev()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:0.5rem 1rem;border-radius:8px;cursor:pointer;">← Prev</button>' : ''}
+                            ${idx < stories.length - 1 ? '<button onclick="window._storyNext()" style="background:#f59e0b;color:#0f172a;border:none;padding:0.5rem 1rem;border-radius:8px;font-weight:700;cursor:pointer;">Next →</button>' : '<button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:0.5rem 1rem;border-radius:8px;cursor:pointer;">Done</button>'}
+                        </div>
+                    </div>`;
+                // Mark as seen
+                window.EdgeFunctions.stories.get(s.id).catch(() => {});
+            };
+            window._storyNext = () => { idx = Math.min(idx + 1, stories.length - 1); render(); };
+            window._storyPrev = () => { idx = Math.max(idx - 1, 0); render(); };
+            render();
+            document.body.appendChild(overlay);
+            // Click outside to close
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
         }
     </script>
 </body>

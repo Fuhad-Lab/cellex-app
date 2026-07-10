@@ -285,6 +285,23 @@ async def proxy_wishlist_share(request: Request):
 async def proxy_live(request: Request):
     return await _proxy_to_edge_function("live", request)
 
+# ---- Phase 3: Content & Discovery ----
+@app.post("/api/videos")
+async def proxy_videos(request: Request):
+    return await _proxy_to_edge_function("videos", request)
+
+@app.post("/api/trending")
+async def proxy_trending(request: Request):
+    return await _proxy_to_edge_function("trending", request)
+
+@app.post("/api/stories")
+async def proxy_stories(request: Request):
+    return await _proxy_to_edge_function("stories", request)
+
+@app.post("/api/discover")
+async def proxy_discover(request: Request):
+    return await _proxy_to_edge_function("discover", request)
+
 @app.get("/api/health")
 async def proxy_health():
     return {

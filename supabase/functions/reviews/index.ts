@@ -143,8 +143,18 @@ async function handleCreate(userId: string, body: Record<string, unknown>): Prom
   }
 
   // Verify the user purchased this product (must have an order item with this product_id)
+  // PostgREST does not support subqueries in in.() — fetch order IDs first
+  const ordersResp = await fetch(
+    `${SUPABASE_URL}/rest/v1/buyers_orders?user_id=eq.${encodeURIComponent(userId)}&select=id`,
+    { headers: adminHeaders }
+  );
+  const orders = await ordersResp.json();
+  const orderIds = (orders || []).map((o: Record<string, unknown>) => o.id);
+  if (orderIds.length === 0) {
+    return errorResponse('You can only review products you have purchased', 403);
+  }
   const verifyResp = await fetch(
-    `${SUPABASE_URL}/rest/v1/buyers_order_items?select=id&order_id=in.(SELECT id FROM buyers_orders WHERE user_id=eq.${encodeURIComponent(userId)})&product_id=eq.${productId}&limit=1`,
+    `${SUPABASE_URL}/rest/v1/buyers_order_items?order_id=in.(${orderIds.join(',')})&product_id=eq.${productId}&select=id&limit=1`,
     { headers: adminHeaders }
   );
   const purchased = await verifyResp.json();
