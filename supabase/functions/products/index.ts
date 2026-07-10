@@ -66,32 +66,38 @@ Deno.serve(async (req: Request) => {
 // ---- Home page products (single round-trip for index.html) ----
 
 async function handleHome(): Promise<Response> {
-  // Run all 4 queries in parallel for speed
-  const [flashDeals, trending, farmProducts, newArrivals] = await Promise.all([
-    // Flash deals: products with discount > 30%
-    fetchFromSupabase(
-      'products?select=*&discount_percentage=gt.30&limit=5'
-    ),
-    // Trending: newest products
-    fetchFromSupabase(
-      'products?select=*&order=created_at.desc&limit=10'
-    ),
-    // Farm products: from farmers (join with sellers)
-    fetchFromSupabase(
-      'products?select=*,sellers!inner(seller_type)&sellers.seller_type=eq.FARMER&limit=5'
-    ),
-    // New arrivals: also newest, but limited to 5
-    fetchFromSupabase(
-      'products?select=*&order=created_at.desc&limit=5'
-    ),
-  ]);
+  // Fetch all products once, then categorize client-side for reliability
+  const allProducts = await fetchFromSupabase(
+    'products?select=id,name,price,description,image_url,category,seller_id,units_sold,created_at&order=created_at.desc&limit=50'
+  );
+
+  const products = allProducts || [];
+
+  // Flash deals: products with units_sold > 0 (popular = "deal")
+  const flashDeals = products.filter((p: Record<string, unknown>) => Number(p.units_sold) > 0).slice(0, 5);
+  // If no products with sales, just use the first 5
+  const flashFinal = flashDeals.length > 0 ? flashDeals : products.slice(0, 5);
+
+  // Trending: newest 10
+  const trending = products.slice(0, 10);
+
+  // Farm products: try to filter by category containing "farm" or "food"
+  const farmProducts = products.filter((p: Record<string, unknown>) => {
+    const cat = String(p.category || '').toLowerCase();
+    return cat.includes('farm') || cat.includes('food') || cat.includes('agric');
+  });
+  // If no farm products, show 5 from the list
+  const farmFinal = farmProducts.length > 0 ? farmProducts.slice(0, 5) : products.slice(5, 10);
+
+  // New arrivals: first 5 (same as newest since we ordered by created_at desc)
+  const newArrivals = products.slice(0, 5);
 
   return jsonResponse({
     success: true,
-    flashDeals: flashDeals || [],
-    trending: trending || [],
-    farmProducts: farmProducts || [],
-    newArrivals: newArrivals || [],
+    flashDeals: flashFinal,
+    trending,
+    farmProducts: farmFinal,
+    newArrivals,
   });
 }
 

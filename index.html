@@ -552,20 +552,13 @@
             </div>
         </section>
 
-        <!-- Discover Sellers (social commerce — Phase 1) -->
+        <!-- Meet the Top Sellers (Depop-style: 2x2 product grid + avatar + Shop button) -->
         <section id="discoverSellers" class="mt-5">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-glow">
-                        <i class="fas fa-store text-white text-base"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-display font-extrabold text-base">Discover Sellers</h2>
-                        <p class="text-ink-500 text-[11px] -mt-0.5">Follow your favourite stores for new drops</p>
-                    </div>
-                </div>
+            <div class="mb-4">
+                <h2 class="text-xl font-extrabold text-gray-900">Meet the Top Sellers</h2>
+                <p class="text-gray-500 text-sm">Discover stores loved by shoppers</p>
             </div>
-            <div id="discoverSellersContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-3">
+            <div id="discoverSellersContainer" class="space-y-4">
                 <!-- Seller cards loaded dynamically -->
             </div>
         </section>
@@ -1138,31 +1131,69 @@
             const container = document.getElementById('discoverSellersContainer');
             if (!container) return;
             try {
-                const resp = await window.EdgeFunctions.social.discover(12);
-                if (!resp.success || !resp.sellers || resp.sellers.length === 0) {
+                // Fetch sellers + all products in parallel
+                const [sellersResp, productsResp] = await Promise.all([
+                    window.EdgeFunctions.social.discover(10),
+                    window.EdgeFunctions.products.all(100),
+                ]);
+
+                if (!sellersResp.success || !sellersResp.sellers || sellersResp.sellers.length === 0) {
                     container.innerHTML = `
-                        <div class="col-span-full text-center py-6 text-ink-500 text-sm">
-                            <i class="fas fa-store text-2xl block mb-2 text-ink-300"></i>
-                            No sellers yet. Be the first — <a href="seller/index.html" class="text-brand-600 font-semibold">open your store</a>.
+                        <div class="text-center py-8 text-gray-500 text-sm">
+                            <i class="fas fa-store text-3xl block mb-2 text-gray-300"></i>
+                            No sellers yet. <a href="seller/index.html" class="text-cyan-600 font-semibold">Open your store</a>
                         </div>`;
                     return;
                 }
-                container.innerHTML = resp.sellers.map(s => {
+
+                const allProducts = productsResp.success ? (productsResp.products || []) : [];
+
+                // Render each seller as a Depop-style card: 2x2 product grid + avatar + name + Shop button
+                container.innerHTML = sellersResp.sellers.map(s => {
                     const name = s.business_name || s.farm_name || 'Unnamed store';
                     const initial = (name || '?').charAt(0).toUpperCase();
-                    const img = s.profile_image
-                        ? `<img src="${s.profile_image}" alt="" class="w-full aspect-square object-cover rounded-xl bg-ink-100">`
-                        : `<div class="w-full aspect-square rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-3xl font-extrabold text-ink-900">${initial}</div>`;
+                    const sellerProducts = allProducts.filter(p => p.seller_id === s.id).slice(0, 4);
+
+                    // Build 2x2 product grid
+                    let productGridHtml = '';
+                    if (sellerProducts.length > 0) {
+                        const gridItems = sellerProducts.map(p => {
+                            const img = p.image_url
+                                ? `<img src="${p.image_url}" class="w-full aspect-square object-cover" alt="${escapeHtml(p.name)}">`
+                                : `<div class="w-full aspect-square bg-gray-100 flex items-center justify-center text-gray-400"><i class="fas fa-box text-2xl"></i></div>`;
+                            return `<a href="product.html?id=${p.id}" class="block rounded-lg overflow-hidden bg-gray-50">${img}</a>`;
+                        }).join('');
+                        // Pad with empty slots if less than 4 products
+                        const emptySlots = 4 - sellerProducts.length;
+                        for (let i = 0; i < emptySlots; i++) {
+                            gridItems += `<div class="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center text-gray-300"><i class="fas fa-box text-2xl"></i></div>`;
+                        }
+                        productGridHtml = `<div class="grid grid-cols-2 gap-1.5 mb-3">${gridItems}</div>`;
+                    } else {
+                        productGridHtml = `<div class="grid grid-cols-2 gap-1.5 mb-3">
+                            <div class="w-full aspect-square bg-gray-50 rounded-lg"></div>
+                            <div class="w-full aspect-square bg-gray-50 rounded-lg"></div>
+                            <div class="w-full aspect-square bg-gray-50 rounded-lg"></div>
+                            <div class="w-full aspect-square bg-gray-50 rounded-lg"></div>
+                        </div>`;
+                    }
+
+                    const avatar = s.profile_image
+                        ? `<img src="${s.profile_image}" class="w-10 h-10 rounded-full object-cover" alt="">`
+                        : `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 flex items-center justify-center text-white font-bold text-sm">${initial}</div>`;
+
                     return `
-                        <a href="seller-profile.html?id=${s.id}" class="bg-white rounded-2xl border border-ink-100 shadow-card p-2 lg:p-3 lift block hover:border-amber-400 transition">
-                            ${img}
-                            <div class="mt-2 font-display font-bold text-sm truncate">${escapeHtml(name)}</div>
-                            <div class="text-[10px] text-ink-500 truncate">${escapeHtml(s.business_category || s.seller_type || 'Seller')}</div>
-                            <div class="mt-1 flex items-center justify-between text-[10px]">
-                                <span class="text-ink-500"><i class="fas fa-users"></i> ${s.followers || 0}</span>
-                                <span class="text-brand-600 font-semibold">View →</span>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
+                            ${productGridHtml}
+                            <div class="flex items-center gap-3">
+                                <a href="seller-profile.html?id=${s.id}" class="shrink-0">${avatar}</a>
+                                <div class="flex-1 min-w-0">
+                                    <a href="seller-profile.html?id=${s.id}" class="font-bold text-sm text-gray-900 hover:text-cyan-600 truncate block">${escapeHtml(name)}</a>
+                                    <div class="text-xs text-gray-500">${s.followers || 0} followers · ${escapeHtml(s.business_category || s.seller_type || 'Seller')}</div>
+                                </div>
+                                <a href="seller-profile.html?id=${s.id}" class="bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition whitespace-nowrap">Shop</a>
                             </div>
-                        </a>`;
+                        </div>`;
                 }).join('');
             } catch (e) {
                 console.error('discoverSellers error:', e);

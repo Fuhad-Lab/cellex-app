@@ -1,11 +1,10 @@
 <!-- Cellex Universal Navbar — white + cyan theme -->
-<!-- Include with: <div id="nav-mount"></div> then fetch this file -->
 <style>
   .nav-glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid #e2e8f0; }
   .nav-link { color: #475569; font-weight: 600; font-size: 0.9rem; transition: color 0.2s; }
   .nav-link:hover { color: #00d4ff; }
   .nav-link.active { color: #00d4ff; }
-  .cat-link { color: #64748b; font-size: 0.82rem; font-weight: 500; padding: 0.35rem 0.75rem; border-radius: 999px; transition: all 0.2s; white-space: nowrap; }
+  .cat-link { color: #64748b; font-size: 0.82rem; font-weight: 500; padding: 0.35rem 0.75rem; border-radius: 999px; transition: all 0.2s; white-space: nowrap; text-decoration: none; }
   .cat-link:hover { background: rgba(0,212,255,0.08); color: #00d4ff; }
   .cat-link.active { background: linear-gradient(135deg, #00d4ff, #0891b2); color: #0f172a; font-weight: 700; }
   .search-box { border: 2px solid #e2e8f0; transition: all 0.3s; }
@@ -13,10 +12,13 @@
   .cart-badge { background: #00d4ff; color: #0f172a; font-weight: 700; }
   .logo-text { background: linear-gradient(135deg, #00d4ff, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .mobile-nav { background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); border-top: 1px solid #e2e8f0; }
-  .mobile-nav-link { color: #64748b; font-size: 0.65rem; font-weight: 600; }
+  .mobile-nav-link { color: #64748b; font-size: 0.65rem; font-weight: 600; text-decoration: none; }
   .mobile-nav-link.active { color: #00d4ff; }
   .cat-bar { overflow-x: auto; scrollbar-width: none; }
   .cat-bar::-webkit-scrollbar { display: none; }
+  .ai-cat { background: linear-gradient(135deg, #00d4ff, #0891b2); color: #0f172a !important; font-weight: 700; }
+  .ai-cat:hover { color: #0f172a !important; }
+  .logged-in-dot { position: absolute; bottom: -2px; right: -2px; width: 10px; height: 10px; background: #22c55e; border-radius: 50%; border: 2px solid #fff; }
 </style>
 
 <header class="nav-glass sticky top-0 z-50">
@@ -25,7 +27,7 @@
     <div class="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
       <!-- Logo -->
       <a href="index.html" class="flex items-center gap-2 shrink-0">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-700 flex items-center justify-center shadow-lg" style="box-shadow: 0 0 20px rgba(0,212,255,0.3);">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-700 flex items-center justify-center" style="box-shadow: 0 0 20px rgba(0,212,255,0.3);">
           <span class="text-white font-extrabold text-lg" style="font-family: 'Sora', sans-serif;">C</span>
         </div>
         <span class="text-xl font-extrabold logo-text hidden sm:block" style="font-family: 'Sora', sans-serif;">Cellex</span>
@@ -48,10 +50,11 @@
           <i class="fas fa-shopping-cart text-lg"></i>
           <span id="navCartCount" class="absolute -top-2 -right-3 cart-badge text-[10px] rounded-full w-5 h-5 flex items-center justify-center">0</span>
         </a>
+        <!-- Account: always links to profile.html. If logged in, show avatar + dropdown. If not, show "Account" text link. -->
         <div id="navAuthArea">
-          <!-- Logged out -->
-          <a href="login.html" id="navLoginBtn" class="nav-link">Account</a>
-          <!-- Logged in (hidden by default) -->
+          <!-- Logged out: simple link -->
+          <a href="profile.html" id="navLoginBtn" class="nav-link">Account</a>
+          <!-- Logged in: avatar + dropdown -->
           <div id="navUserMenu" class="hidden relative">
             <button onclick="document.getElementById('navUserDropdown').classList.toggle('hidden')" class="flex items-center gap-2 nav-link">
               <div id="navAvatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 text-white flex items-center justify-center font-bold text-sm">?</div>
@@ -85,8 +88,9 @@
       </div>
     </div>
 
-    <!-- Category bar (below search) -->
+    <!-- Category bar (below search) — AI Mode first, then Explore, etc. -->
     <div class="cat-bar flex items-center gap-1 py-2 -mx-1">
+      <a href="ai-chat.html" class="cat-link ai-cat"><i class="fas fa-sparkles mr-1"></i>AI Mode</a>
       <a href="categories.html" class="cat-link active">Explore</a>
       <a href="categories.html?sort=flash" class="cat-link">⚡ Flash Deals</a>
       <a href="categories.html?category=Farm" class="cat-link">🌱 Farm Fresh</a>
@@ -107,9 +111,9 @@
     <a href="index.html" class="block py-2 text-sm font-medium text-gray-700"><i class="fas fa-home w-5 text-cyan-500"></i> Home</a>
     <a href="categories.html" class="block py-2 text-sm font-medium text-gray-700"><i class="fas fa-th-large w-5 text-cyan-500"></i> Shops</a>
     <a href="cart.html" class="block py-2 text-sm font-medium text-gray-700"><i class="fas fa-shopping-cart w-5 text-cyan-500"></i> Cart</a>
-    <a href="login.html" class="block py-2 text-sm font-medium text-gray-700"><i class="fas fa-user w-5 text-cyan-500"></i> Account</a>
+    <a href="profile.html" class="block py-2 text-sm font-medium text-gray-700"><i class="fas fa-user w-5 text-cyan-500"></i> Account</a>
     <div class="border-t border-gray-100 pt-2 mt-2 space-y-1">
-      <a href="profile.html" class="block py-1.5 text-sm text-gray-600 pl-7">My Profile</a>
+      <a href="ai-chat.html" class="block py-1.5 text-sm text-gray-600 pl-7"><i class="fas fa-sparkles text-cyan-500 mr-1"></i> AI Shopping Assistant</a>
       <a href="orders.html" class="block py-1.5 text-sm text-gray-600 pl-7">My Orders</a>
       <a href="wishlist.html" class="block py-1.5 text-sm text-gray-600 pl-7">Wishlist</a>
       <a href="seller/login.html" class="block py-1.5 text-sm text-gray-600 pl-7">Seller Login</a>
@@ -133,8 +137,12 @@
       <i class="fas fa-shopping-cart text-xl"></i><span>Cart</span>
       <span id="navCartCountBottom" class="absolute top-0 right-2 cart-badge text-[9px] rounded-full w-4 h-4 flex items-center justify-center">0</span>
     </a>
-    <a href="login.html" class="mobile-nav-link flex flex-col items-center gap-0.5">
-      <i class="fas fa-user text-xl"></i><span>Account</span>
+    <a href="profile.html" class="mobile-nav-link flex flex-col items-center gap-0.5 relative" id="navAccountLink">
+      <div class="relative">
+        <i class="fas fa-user text-xl"></i>
+        <span id="navLoggedInDot" class="logged-in-dot hidden"></span>
+      </div>
+      <span>Account</span>
     </a>
   </div>
 </nav>
@@ -146,24 +154,35 @@
       // Check auth
       const sess = await window.EdgeFunctions.auth.checkSession();
       if (sess.success && sess.user) {
-        document.getElementById('navLoginBtn')?.classList.add('hidden');
-        document.getElementById('navUserMenu')?.classList.remove('hidden');
+        // Logged in: show avatar dropdown, hide login link
+        const loginBtn = document.getElementById('navLoginBtn');
+        if (loginBtn) loginBtn.classList.add('hidden');
+        const userMenu = document.getElementById('navUserMenu');
+        if (userMenu) userMenu.classList.remove('hidden');
         const name = sess.user.email?.split('@')[0] || 'User';
         const avatar = document.getElementById('navAvatar');
         if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
         const userName = document.getElementById('navUserName');
         if (userName) userName.textContent = name;
+        // Show green dot on mobile account icon
+        const dot = document.getElementById('navLoggedInDot');
+        if (dot) dot.classList.remove('hidden');
       }
-      // Cart count
+      // Cart count — fetch regardless of auth status
       const cart = await window.EdgeFunctions.cart.count();
       if (cart.success) {
         const count = cart.count || 0;
         ['navCartCount', 'navCartCountMobile', 'navCartCountBottom'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.textContent = count;
+          if (el) {
+            el.textContent = count;
+            el.style.display = count > 0 ? 'flex' : 'none';
+          }
         });
       }
-    } catch(e) {}
+    } catch(e) {
+      console.log('Navbar init error (expected if not logged in):', e.message);
+    }
     // Close dropdown on outside click
     document.addEventListener('click', (e) => {
       const menu = document.getElementById('navUserMenu');

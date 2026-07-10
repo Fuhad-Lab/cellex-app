@@ -97,12 +97,23 @@
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
         <!-- Back Link -->
-        <a href="index.html" class="inline-flex items-center text-gray-600 hover:text-brand-500 mb-6">
+        <a href="index.html" class="inline-flex items-center text-gray-600 hover:text-cyan-500 mb-6">
             <i class="fas fa-arrow-left mr-2"></i> Back to Home
         </a>
 
+        <!-- Login Prompt (shown when not logged in) -->
+        <div id="loginPrompt" class="hidden max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 flex items-center justify-center mb-4">
+                <i class="fas fa-user text-3xl text-white"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Your Account</h2>
+            <p class="text-gray-500 mb-6">Sign in to view your profile, orders, and wishlist</p>
+            <a href="login.html?next=profile.html" class="block w-full bg-gradient-to-r from-cyan-400 to-cyan-700 text-white font-bold py-3 rounded-xl hover:opacity-90 mb-3">Sign In</a>
+            <a href="signup.html?next=profile.html" class="block w-full border-2 border-cyan-500 text-cyan-600 font-bold py-3 rounded-xl hover:bg-cyan-50">Create Account</a>
+        </div>
+
         <!-- Profile Card -->
-        <div class="max-w-4xl mx-auto">
+        <div id="profileContent" class="max-w-4xl mx-auto" style="display:none;">
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                 <!-- Profile Header -->
                 <div class="bg-gradient-to-r from-primary to-red-400 p-8 text-white">
@@ -266,10 +277,15 @@
         async function checkAuth() {
             const { success, user } = await window.EdgeFunctions.auth.checkSession();
             if (!success || !user) {
-                window.location.href = 'login.html?redirect=profile';
-                return;
+                // Not logged in — show login/signup prompt instead of redirecting
+                document.getElementById('profileContent').style.display = 'none';
+                document.getElementById('loginPrompt').classList.remove('hidden');
+                return null;
             }
             currentUser = user;
+            document.getElementById('profileContent').style.display = 'block';
+            document.getElementById('loginPrompt')?.classList.add('hidden');
+            return user;
         }
 
         async function loadProfile() {
