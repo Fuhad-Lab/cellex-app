@@ -186,14 +186,18 @@ async function handleStart(userId: string, body: Record<string, unknown>): Promi
   // System message
   await postSystemMessage(session.id, `🔴 Live now: ${title}`);
 
-  // Phase 4: Auto-broadcast to Telegram (fire-and-forget)
-  fetch(`${SUPABASE_URL}/functions/v1/telegram`, {
+  // Phase 4: Auto-broadcast to Telegram via the Render bot (fire-and-forget)
+  const BOT_RENDER_URL = Deno.env.get('BOT_RENDER_URL') || 'https://eesha-shop-buying-and-selling.onrender.com';
+  const BOT_INTERNAL_KEY = Deno.env.get('BOT_INTERNAL_KEY') || 'CellexInternal2024';
+  fetch(`${BOT_RENDER_URL}/internal/broadcast`, {
     method: 'POST',
-    headers: { ...adminHeaders, 'X-Internal-Call': 'cellex-internal', 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Internal-Key': BOT_INTERNAL_KEY,
+    },
     body: JSON.stringify({
-      op: 'broadcast',
-      broadcastType: 'live_start',
-      entityId: session.id,
+      broadcast_type: 'live_start',
+      entity_id: session.id,
       message: `🔴 <b>LIVE NOW:</b> ${escapeHtml(title)}\n${(body.description as string) || ''}\n\nWatch: https://eeshaai-cellex-web.hf.space/live-watch.html?id=${session.id}`,
     }),
   }).catch(() => {});

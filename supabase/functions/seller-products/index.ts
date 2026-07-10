@@ -84,21 +84,26 @@ async function handleCreate(sellerId: string, body: Record<string, unknown>): Pr
   if (!resp.ok) return errorResponse(created?.message || 'Failed to create product', 500);
   const product = created?.[0];
 
-  // Phase 4: Auto-broadcast to Telegram (fire-and-forget)
+  // Phase 4: Auto-broadcast to Telegram via the Render bot (fire-and-forget)
   broadcastToTelegram('new_product', String(product.id),
-    `🆕 <b>New product:</b> ${escapeHtml(name)}\n💵 $${Number(price).toFixed(2)}\n📦 ${payload.category}\n\n${SUPABASE_URL ? 'https://eeshaai-cellex-web.hf.space/Eesha buying folder/product.html?id=' + product.id : ''}`,
+    `🆕 <b>New product:</b> ${escapeHtml(name)}\n💵 $${Number(price).toFixed(2)}\n📦 ${payload.category}\n\nhttps://eeshaai-cellex-web.hf.space/Eesha buying folder/product.html?id=${product.id}`,
     payload.image_url as string | undefined
   ).catch(() => {});
 
   return jsonResponse({ success: true, product });
 }
 
-// Helper: broadcast to Telegram via the telegram edge function (fire-and-forget)
+// Helper: broadcast to Telegram via the Render bot's /internal/broadcast endpoint
 async function broadcastToTelegram(broadcastType: string, entityId: string, message: string, imageUrl?: string): Promise<void> {
-  await fetch(`${SUPABASE_URL}/functions/v1/telegram`, {
+  const BOT_RENDER_URL = Deno.env.get('BOT_RENDER_URL') || 'https://eesha-shop-buying-and-selling.onrender.com';
+  const BOT_INTERNAL_KEY = Deno.env.get('BOT_INTERNAL_KEY') || 'CellexInternal2024';
+  await fetch(`${BOT_RENDER_URL}/internal/broadcast`, {
     method: 'POST',
-    headers: { ...adminHeaders, 'X-Internal-Call': 'cellex-internal', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ op: 'broadcast', broadcastType, entityId, message, imageUrl }),
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Internal-Key': BOT_INTERNAL_KEY,
+    },
+    body: JSON.stringify({ broadcast_type: broadcastType, entity_id: entityId, message, image_url: imageUrl }),
   }).catch(() => {});
 }
 

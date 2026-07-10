@@ -106,16 +106,20 @@ async function handleCreate(userId: string, body: Record<string, unknown>): Prom
   const freshRows = await refreshed.json();
   const freshGroupBuy = freshRows?.[0] || created[0];
 
-  // Phase 4: Auto-broadcast to Telegram (fire-and-forget)
-  fetch(`${SUPABASE_URL}/functions/v1/telegram`, {
+  // Phase 4: Auto-broadcast to Telegram via the Render bot (fire-and-forget)
+  const BOT_RENDER_URL = Deno.env.get('BOT_RENDER_URL') || 'https://eesha-shop-buying-and-selling.onrender.com';
+  const BOT_INTERNAL_KEY = Deno.env.get('BOT_INTERNAL_KEY') || 'CellexInternal2024';
+  fetch(`${BOT_RENDER_URL}/internal/broadcast`, {
     method: 'POST',
-    headers: { ...adminHeaders, 'X-Internal-Call': 'cellex-internal', 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Internal-Key': BOT_INTERNAL_KEY,
+    },
     body: JSON.stringify({
-      op: 'broadcast',
-      broadcastType: 'group_buy',
-      entityId: groupBuyId,
+      broadcast_type: 'group_buy',
+      entity_id: groupBuyId,
       message: `🛍️ <b>New group buy!</b>\n${escapeHtml(product.name)} — $${Number(product.price).toFixed(2)}\nGet ${discountPct}% off when ${targetCount} friends join.\n\nJoin: https://eeshaai-cellex-web.hf.space/group-buy.html?id=${groupBuyId}`,
-      imageUrl: product.image_url || undefined,
+      image_url: product.image_url || undefined,
     }),
   }).catch(() => {});
 
