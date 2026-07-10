@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group Buy · Cellex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/common.css">
+  <script src="js/config/edge-functions.js?v=2"></script>
+  <style>
+    body { background: #f8fafc; }
+    .gb-hero {
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #0f172a; padding: 3rem 1.5rem;
+    }
+    .gb-card {
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      padding: 1.5rem; margin: 1rem auto; max-width: 720px;
+    }
+    .gb-progress-track {
+      width: 100%; height: 12px; background: #fef3c7;
+      border-radius: 999px; overflow: hidden;
+    }
+    .gb-progress-fill {
+      height: 100%; background: linear-gradient(90deg, #f59e0b, #d97706);
+      transition: width 0.5s ease;
+    }
+    .gb-avatars { display: flex; }
+    .gb-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #fef3c7; color: #92400e;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem;
+      border: 2px solid #fff; margin-left: -8px;
+    }
+    .gb-avatar:first-child { margin-left: 0; }
+    .gb-avatar.empty { background: #e2e8f0; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div id="header-mount"></div>
+  <script>fetch('shared/header.html').then(r=>r.text()).then(h=>document.getElementById('header-mount').innerHTML=h);</script>
+
+  <div class="gb-hero">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 bg-ink-900 text-amber-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+        <i class="fas fa-users"></i> Group Buy
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold mt-3" id="gb-headline">Loading…</h1>
+      <p class="text-ink-900/80 mt-2">Get 20% off when 3 friends join</p>
+    </div>
+  </div>
+
+  <div class="gb-card" id="gb-card">
+    <div class="text-center py-8 text-gray-500">
+      <i class="fas fa-spinner fa-spin text-2xl"></i>
+      <div class="mt-2">Loading group buy…</div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const gbId = params.get('id');
+      if (!gbId) {
+        document.getElementById('gb-card').innerHTML = '<div class="text-center py-8 text-red-500">No group buy ID provided.</div>';
+        return;
+      }
+
+      // Load group buy status
+      const r = await window.EdgeFunctions.groupBuy.status(gbId);
+      if (!r.success || !r.groupBuy) {
+        document.getElementById('gb-card').innerHTML = '<div class="text-center py-8 text-red-500">Group buy not found.</div>';
+        return;
+      }
+
+      const gb = r.groupBuy;
+      const product = r.product;
+      const pct = Math.min(100, Math.round((gb.current_count / gb.target_count) * 100));
+      const discountPrice = product ? (Number(product.price) * (1 - Number(gb.discount_pct) / 100)).toFixed(2) : null;
+      const isCompleted = gb.status === 'completed';
+      const isExpired = gb.status === 'expired' || (gb.status === 'open' && new Date(gb.expires_at) < new Date());
+
+      document.getElementById('gb-headline').textContent =
+        isCompleted ? '🎉 Group complete!' :
+        isExpired ? 'Group buy expired' :
+        `${gb.target_count - gb.current_count} more friend${gb.target_count - gb.current_count > 1 ? 's' : ''} needed!`;
+
+      // Build member avatars
+      const memberAvatars = (r.members || []).map(m => `
+        <div class="gb-avatar">${(m.user_name || (m.user_id || '').slice(0, 2) || '?').charAt(0).toUpperCase()}</div>
+      `).join('');
+      const emptySlots = Math.max(0, gb.target_count - (r.members?.length || 0));
+      const emptyAvatars = Array.from({length: emptySlots}).map(() => `<div class="gb-avatar empty">?</div>`).join('');
+
+      document.getElementById('gb-card').innerHTML = `
+        ${product ? `
+          <div class="flex gap-4 mb-4">
+            ${product.image_url
+              ? `<img src="${product.image_url}" class="w-24 h-24 rounded-xl object-cover">`
+              : `<div class="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center text-3xl text-gray-400"><i class="fas fa-box"></i></div>`}
+            <div class="flex-1">
+              <a href="Eesha buying folder/product.html?id=${product.id}" class="font-bold text-lg hover:text-amber-600">${escapeHtml(product.name)}</a>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-extrabold text-amber-600">$${discountPrice}</span>
+                <span class="text-gray-400 line-through">$${Number(product.price).toFixed(2)}</span>
+                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">-${gb.discount_pct}%</span>
+              </div>
+              <div class="text-xs text-gray-500 mt-1">Category: ${escapeHtml(product.category || 'General')}</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="my-6">
+          <div class="flex justify-between text-sm font-medium text-gray-700 mb-2">
+            <span>${gb.current_count} / ${gb.target_count} joined</span>
+            <span>${pct}%</span>
+          </div>
+          <div class="gb-progress-track">
+            <div class="gb-progress-fill" style="width: ${pct}%"></div>
+          </div>
+          <div class="gb-avatars mt-3">${memberAvatars}${emptyAvatars}</div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-900">
+          <div class="font-semibold mb-1">
+            ${isCompleted ? '✅ Group complete — discount unlocked!' :
+              isExpired ? '⏰ This group buy has expired.' :
+              `⏳ Expires ${new Date(gb.expires_at).toLocaleString()}`}
+          </div>
+          ${isCompleted ? 'You and your friends can now check out at the discounted price.' : ''}
+        </div>
+
+        <div class="flex gap-2 mt-4">
+          ${isCompleted ? `
+            <a href="Eesha buying folder/product.html?id=${product?.id || ''}&gb=${gb.id}" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold text-center py-3 rounded-lg hover:opacity-90">
+              <i class="fas fa-shopping-cart"></i> Buy at $${discountPrice}
+            </a>
+          ` : isExpired ? `
+            <button disabled class="flex-1 bg-gray-200 text-gray-500 font-bold py-3 rounded-lg cursor-not-allowed">Expired</button>
+          ` : `
+            <button onclick="joinGroup('${gb.id}')" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold py-3 rounded-lg hover:opacity-90">
+              <i class="fas fa-plus"></i> Join group buy
+            </button>
+          `}
+          <button onclick="shareGroup('${gb.id}', '${escapeHtml(product?.name || 'this product')}')" class="px-4 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600">
+            <i class="fab fa-whatsapp text-lg"></i>
+          </button>
+          <button onclick="copyGroupLink('${gb.id}')" class="px-4 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200">
+            <i class="fas fa-link"></i>
+          </button>
+        </div>
+      `;
+    })();
+
+    async function joinGroup(gbId) {
+      // Check login
+      const sess = await window.EdgeFunctions.auth.checkSession();
+      if (!sess.user) {
+        if (confirm('Please login to join the group buy. Go to login page?')) {
+          window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent('/group-buy.html?id=' + gbId);
+        }
+        return;
+      }
+      const r = await window.EdgeFunctions.groupBuy.join(gbId);
+      if (r.success) {
+        // Reload to show updated state
+        window.location.reload();
+      } else {
+        alert('Failed to join: ' + (r.error || 'Unknown error'));
+      }
+    }
+
+    function shareGroup(gbId, productName) {
+      const url = `${window.location.origin}/group-buy.html?id=${gbId}`;
+      const text = `🛍️ Join my group buy for "${productName}" on Cellex! Get 20% off when 3 of us join. ${url}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    async function copyGroupLink(gbId) {
+      const url = `${window.location.origin}/group-buy.html?id=${gbId}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied! Share it with friends.');
+      } catch {
+        window.prompt('Copy this link:', url);
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+  </script>
+</body>
+</html>

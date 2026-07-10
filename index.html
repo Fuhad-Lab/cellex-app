@@ -685,6 +685,28 @@
             </div>
         </section>
 
+        <!-- Live Now (Phase 2 — Live shopping) -->
+        <section id="liveNowSection" class="mt-5 hidden">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center shadow-glow">
+                        <i class="fas fa-broadcast-tower text-white text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-extrabold text-base flex items-center gap-2">
+                            Live Now
+                            <span class="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        </h2>
+                        <p class="text-ink-500 text-[11px] -mt-0.5">Watch live demos & buy in real-time</p>
+                    </div>
+                </div>
+                <a href="live.html" class="text-xs font-semibold text-brand-600">All live →</a>
+            </div>
+            <div id="liveNowContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-3">
+                <!-- Live sessions loaded dynamically -->
+            </div>
+        </section>
+
         <!-- Discover Sellers (social commerce — Phase 1) -->
         <section id="discoverSellers" class="mt-5">
             <div class="flex items-center justify-between mb-3">
@@ -904,6 +926,8 @@
             // Phase 1 — social commerce
             loadDiscoverSellers();
             loadFollowingFeed();
+            // Phase 2 — live shopping
+            loadLiveNow();
         }
 
         // ===== Auth Functions (via edge function) =====
@@ -1326,6 +1350,43 @@
             if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
             if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
             return d.toLocaleDateString();
+        }
+
+        // ====================================================================
+        // Phase 2 — Live shopping "Live Now" carousel
+        // ====================================================================
+        async function loadLiveNow() {
+            const section = document.getElementById('liveNowSection');
+            const container = document.getElementById('liveNowContainer');
+            if (!section || !container) return;
+            try {
+                const resp = await window.EdgeFunctions.live.list('live');
+                if (!resp.success || !resp.sessions || resp.sessions.length === 0) return;
+                section.classList.remove('hidden');
+                container.innerHTML = resp.sessions.slice(0, 6).map(s => {
+                    const sellerName = s.seller?.business_name || 'Seller';
+                    const sellerImg = s.seller?.profile_image;
+                    return `
+                        <a href="live-watch.html?id=${s.id}" class="bg-white rounded-2xl border border-ink-100 shadow-card overflow-hidden lift block hover:border-red-400 transition">
+                            <div class="aspect-video bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white relative">
+                                <i class="fas fa-broadcast-tower text-3xl"></i>
+                                <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">● Live</span>
+                                <span class="absolute top-2 right-2 bg-black/40 text-white text-[10px] px-2 py-0.5 rounded-full">👁 ${s.viewer_count || 0}</span>
+                            </div>
+                            <div class="p-3">
+                                <div class="font-bold text-sm line-clamp-1">${escapeHtml(s.title)}</div>
+                                <div class="flex items-center gap-1.5 mt-1.5 text-xs text-ink-500">
+                                    ${sellerImg
+                                        ? `<img src="${sellerImg}" class="w-4 h-4 rounded-full">`
+                                        : `<div class="w-4 h-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-[8px] font-bold text-ink-900">${(sellerName||'?').charAt(0)}</div>`}
+                                    <span class="truncate">${escapeHtml(sellerName)}</span>
+                                </div>
+                            </div>
+                        </a>`;
+                }).join('');
+            } catch (e) {
+                console.error('liveNow error:', e);
+            }
         }
     </script>
 </body>

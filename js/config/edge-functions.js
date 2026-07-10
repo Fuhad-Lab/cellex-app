@@ -233,6 +233,50 @@
             feed: (limit = 20, offset = 0) => call('social', { op: 'feed', limit, offset }),
         },
 
+        // ---- Phase 2: Reviews & Ratings ----
+        reviews: {
+            byProduct: (productId) => call('reviews', { op: 'by_product', productId }),
+            bySeller:  (sellerId)  => call('reviews', { op: 'by_seller', sellerId }),
+            create:    (data)      => call('reviews', { op: 'create', ...data }),
+            helpful:   (reviewId)  => call('reviews', { op: 'helpful', reviewId }),
+            delete:    (reviewId)  => call('reviews', { op: 'delete', reviewId }),
+        },
+
+        // ---- Phase 2: Group Buying (Pinduoduo) ----
+        groupBuy: {
+            create: (productId, targetCount = 3, discountPct = 20) =>
+                call('group-buy', { op: 'create', productId, targetCount, discountPct }),
+            join:   (groupBuyId) => call('group-buy', { op: 'join', groupBuyId }),
+            status: (groupBuyId) => call('group-buy', { op: 'status', groupBuyId }),
+            active: (productId)  => call('group-buy', { op: 'active', productId }),
+            mine:   ()           => call('group-buy', { op: 'mine' }),
+            cancel: (groupBuyId) => call('group-buy', { op: 'cancel', groupBuyId }),
+        },
+
+        // ---- Phase 2: Wishlist Sharing ----
+        wishlistShare: {
+            share:     (title = null) => call('wishlist-share', { op: 'share', title }),
+            getShared: (token)        => call('wishlist-share', { op: 'get_shared', token }),
+            myShares:  ()             => call('wishlist-share', { op: 'my_shares' }),
+            revoke:    (token)        => call('wishlist-share', { op: 'revoke', token }),
+        },
+
+        // ---- Phase 2: Live Shopping (Whatnot) ----
+        live: {
+            // Public
+            list:     (status = 'live')    => call('live', { op: 'list', status }),
+            get:      (sessionId)          => call('live', { op: 'get', sessionId }),
+            messages: (sessionId, afterId = 0) => call('live', { op: 'messages', sessionId, afterId }),
+
+            // Auth
+            start:   (data)                => call('live', { op: 'start', ...data }),
+            end:     (sessionId)           => call('live', { op: 'end', sessionId }),
+            join:    (sessionId, name = null) => call('live', { op: 'join', sessionId, name }),
+            leave:   (sessionId)           => call('live', { op: 'leave', sessionId }),
+            message: (sessionId, message)  => call('live', { op: 'message', sessionId, message }),
+            myNext:  ()                    => call('live', { op: 'mynext' }),
+        },
+
         call,
     };
 

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live · Cellex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/common.css">
+  <script src="js/config/edge-functions.js?v=2"></script>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; margin: 0; }
+    .lw-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 1rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem;
+      min-height: calc(100vh - 60px);
+    }
+    @media (max-width: 900px) {
+      .lw-layout { grid-template-columns: 1fr; }
+    }
+    .lw-stream {
+      background: #000; border-radius: 12px; aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      color: #94a3b8; position: relative; overflow: hidden;
+    }
+    .lw-stream iframe { width: 100%; height: 100%; border: 0; }
+    .lw-chat {
+      background: #1e293b; border-radius: 12px;
+      display: flex; flex-direction: column;
+      height: calc(100vh - 120px); min-height: 400px;
+    }
+    .lw-messages { flex: 1; overflow-y: auto; padding: 0.75rem; }
+    .lw-msg { padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
+    .lw-msg.system { color: #94a3b8; font-style: italic; font-size: 0.75rem; }
+    .lw-msg.purchase { background: rgba(16, 185, 129, 0.1); color: #6ee7b7; font-weight: 600; }
+    .lw-msg.join { color: #94a3b8; font-size: 0.75rem; }
+    .lw-msg .name { font-weight: 600; color: #fbbf24; }
+    .lw-input { padding: 0.75rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 0.5rem; }
+    .lw-input input {
+      flex: 1; padding: 0.5rem 0.75rem;
+      background: #0f172a; border: 1px solid rgba(255,255,255,0.1);
+      color: #e2e8f0; border-radius: 8px; font-size: 0.85rem;
+    }
+    .lw-input button { padding: 0 1rem; background: #f59e0b; color: #0f172a; border: none; border-radius: 8px; font-weight: 700; }
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #ef4444; color: #fff;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+    }
+    .live-red-dot {
+      display: inline-block; width: 8px; height: 8px;
+      background: #fff; border-radius: 50%; animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lw-layout">
+    <!-- Stream + product -->
+    <div>
+      <div class="lw-stream" id="streamBox">
+        <div class="text-center">
+          <i class="fas fa-video text-4xl"></i>
+          <div class="mt-2 text-sm">Loading live session…</div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-ink-900 rounded-xl p-4" id="streamInfo">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="live-badge"><span class="live-red-dot"></span> LIVE</span>
+          <span class="text-gray-400 text-sm" id="viewerCount">👁 0 viewers</span>
+        </div>
+        <h1 class="text-xl font-bold text-white" id="streamTitle">Loading…</h1>
+        <div class="text-sm text-gray-400 mt-1" id="streamSeller"></div>
+        <p class="text-gray-400 text-sm mt-2" id="streamDesc"></p>
+      </div>
+
+      <!-- Featured product -->
+      <div class="mt-3 bg-gradient-to-br from-amber-900/40 to-ink-900 border border-amber-600/30 rounded-xl p-4 hidden" id="featuredCard">
+        <div class="text-xs font-bold text-amber-400 uppercase tracking-wide mb-2">
+          <i class="fas fa-star"></i> Featured product
+        </div>
+        <div class="flex gap-3">
+          <img id="featuredImg" src="" class="w-20 h-20 rounded-lg object-cover bg-gray-700" alt="">
+          <div class="flex-1">
+            <div class="font-bold text-white" id="featuredName"></div>
+            <div class="text-amber-400 text-xl font-bold mt-1" id="featuredPrice"></div>
+            <a href="#" id="featuredBuyLink" class="inline-block mt-2 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold text-sm px-4 py-1.5 rounded-lg hover:opacity-90">
+              <i class="fas fa-shopping-cart"></i> Buy now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat sidebar -->
+    <div class="lw-chat">
+      <div class="px-3 py-2 border-b border-white/5 text-sm font-bold text-white flex items-center gap-2">
+        <i class="fas fa-comments text-amber-400"></i> Live chat
+        <span class="ml-auto text-xs text-gray-400" id="chatCount">0</span>
+      </div>
+      <div class="lw-messages" id="chatMessages">
+        <div class="lw-msg system">Connecting to chat…</div>
+      </div>
+      <div class="lw-input">
+        <input type="text" id="chatInput" placeholder="Type a message…" maxlength="280">
+        <button onclick="sendMessage()" id="sendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let sessionId = null;
+    let lastMsgId = 0;
+    let pollTimer = null;
+    let currentUser = null;
+    let hasJoined = false;
+
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      sessionId = params.get('id');
+      if (!sessionId) {
+        alert('No session ID');
+        return;
+      }
+
+      // Check auth (optional — can watch anonymously)
+      const sess = await window.EdgeFunctions.auth.checkSession();
+      currentUser = sess.user || null;
+
+      // Load session details
+      const r = await window.EdgeFunctions.live.get(sessionId);
+      if (!r.success || !r.session) {
+        document.getElementById('streamBox').innerHTML = '<div class="text-red-400">Live session not found.</div>';
+        return;
+      }
+      const s = r.session;
+      document.title = s.title + ' · Cellex Live';
+      document.getElementById('streamTitle').textContent = s.title;
+      document.getElementById('streamDesc').textContent = s.description || '';
+      document.getElementById('streamSeller').textContent =
+        (s.seller?.business_name || 'Seller') + ' · started ' + (s.started_at ? new Date(s.started_at).toLocaleString() : '');
+      document.getElementById('viewerCount').textContent = '👁 ' + (s.viewer_count || 0) + ' viewers';
+
+      // Stream embed
+      const streamBox = document.getElementById('streamBox');
+      if (s.stream_url && s.stream_platform === 'youtube') {
+        const embed = s.stream_url.replace('watch?v=', 'embed/').split('&')[0];
+        streamBox.innerHTML = `<iframe src="${embed}" allowfullscreen></iframe>`;
+      } else if (s.stream_url && s.stream_platform === 'hls') {
+        streamBox.innerHTML = `<video src="${s.stream_url}" controls autoplay muted style="width:100%;height:100%;"></video>`;
+      } else {
+        streamBox.innerHTML = `
+          <div class="text-center">
+            <i class="fas fa-broadcast-tower text-5xl text-amber-400"></i>
+            <div class="mt-3 text-white font-bold">Audio/Text-only live</div>
+            <div class="text-gray-400 text-sm mt-1">The seller is broadcasting in text chat mode.</div>
+          </div>`;
+      }
+
+      // Featured product
+      if (s.featured) {
+        const card = document.getElementById('featuredCard');
+        card.classList.remove('hidden');
+        document.getElementById('featuredImg').src = s.featured.image_url || '';
+        document.getElementById('featuredName').textContent = s.featured.name;
+        document.getElementById('featuredPrice').textContent = '$' + Number(s.featured.price).toFixed(2);
+        document.getElementById('featuredBuyLink').href = 'Eesha buying folder/product.html?id=' + s.featured.id + '&live=' + sessionId;
+      }
+
+      // Auto-join if logged in
+      if (currentUser && !hasJoined) {
+        const name = currentUser.email ? currentUser.email.split('@')[0] : 'Guest';
+        await window.EdgeFunctions.live.join(sessionId, name);
+        hasJoined = true;
+      }
+
+      // Start polling messages
+      await pollMessages();
+      pollTimer = setInterval(pollMessages, 2500);
+
+      // Mark join in chat
+      document.getElementById('chatMessages').innerHTML = '<div class="lw-msg system">You joined the live session.</div>';
+
+      // Enter to send
+      document.getElementById('chatInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      // Cleanup on leave
+      window.addEventListener('beforeunload', async () => {
+        if (currentUser && hasJoined) {
+          // Fire-and-forget leave call
+          fetch('/api/live', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ op: 'leave', sessionId }),
+            credentials: 'same-origin',
+          });
+        }
+      });
+    })();
+
+    async function pollMessages() {
+      if (!sessionId) return;
+      const r = await window.EdgeFunctions.live.messages(sessionId, lastMsgId);
+      if (!r.success || !r.messages || r.messages.length === 0) return;
+
+      const container = document.getElementById('chatMessages');
+      r.messages.forEach(msg => {
+        if (msg.id <= lastMsgId) return;
+        lastMsgId = Math.max(lastMsgId, msg.id);
+        const div = document.createElement('div');
+        div.className = 'lw-msg ' + (msg.msg_type || 'chat');
+        if (msg.msg_type === 'system') {
+          div.textContent = msg.message;
+        } else if (msg.msg_type === 'join') {
+          div.textContent = '👥 ' + msg.message;
+        } else if (msg.msg_type === 'purchase') {
+          div.innerHTML = '🛍️ ' + escapeHtml(msg.message);
+        } else {
+          div.innerHTML = '<span class="name">' + escapeHtml(msg.user_name) + ':</span> ' + escapeHtml(msg.message);
+        }
+        container.appendChild(div);
+      });
+      // Auto-scroll
+      container.scrollTop = container.scrollHeight;
+      // Update count
+      document.getElementById('chatCount').textContent = lastMsgId;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      if (!currentUser) {
+        if (confirm('Please login to chat. Go to login page?')) {
+          window.location.href = 'Eesha buying folder/login.html?next=' + encodeURIComponent('/live-watch.html?id=' + sessionId);
+        }
+        return;
+      }
+      input.value = '';
+      // Optimistic append
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'lw-msg';
+      div.innerHTML = '<span class="name">' + escapeHtml(currentUser.email?.split('@')[0] || 'You') + ':</span> ' + escapeHtml(msg);
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+
+      await window.EdgeFunctions.live.message(sessionId, msg);
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+  </script>
+</body>
+</html>

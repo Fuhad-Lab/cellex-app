@@ -34,6 +34,7 @@ async function loadProductDetails() {
         }
 
         const product = result.product;
+        window._currentProduct = product;  // cache for share functions
 
         // Hide loading states
         document.getElementById('loadingSkeleton').classList.add('hidden');
@@ -286,6 +287,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Finally load product details and update cart count
     await loadProductDetails();
     await updateCartCount();
+
+    // Phase 2: load reviews + active group buys for this product
+    loadProductReviews();
+    loadActiveGroupBuys();
 });
 
 // Search bar behavior (navigate to search-result.html with query)
@@ -313,3 +318,219 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Search setup failed:', err);
     }
 })();
+
+// ====================================================================
+// Phase 2: Product sharing, group buy, reviews
+// ====================================================================
+function getCurrentProductId() {
+    return getProductIdFromUrl();
+}
+
+function getCurrentProduct() {
+    // Stored when loadProductDetails runs
+    return window._currentProduct || null;
+}
+
+// ---- Sharing ----
+function shareProduct(platform) {
+    const id = getCurrentProductId();
+    if (!id) return;
+    const url = `${window.location.origin}/Eesha%20buying%20folder/product.html?id=${id}`;
+    const product = getCurrentProduct();
+    const text = product
+        ? `Check out "${product.name}" on Cellex — $${Number(product.price).toFixed(2)}`
+        : 'Check out this product on Cellex';
+
+    if (platform === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+    } else if (platform === 'telegram') {
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+}
+
+async function copyShareLink() {
+    const id = getCurrentProductId();
+    if (!id) return;
+    const url = `${window.location.origin}/Eesha%20buying%20folder/product.html?id=${id}`;
+    try {
+        await navigator.clipboard.writeText(url);
+        const btn = event?.target?.closest('button');
+        if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => btn.innerHTML = orig, 1500);
+        }
+    } catch (e) {
+        window.prompt('Copy this link:', url);
+    }
+}
+
+// ---- Group buy ----
+async function startGroupBuy() {
+    const productId = getCurrentProductId();
+    if (!productId) return;
+    if (!currentUser) {
+        if (confirm('Please login to start a group buy. Go to login page?')) {
+            window.location.href = `login.html?next=${encodeURIComponent('/Eesha buying folder/product.html?id=' + productId)}`;
+        }
+        return;
+    }
+    if (!confirm('Start a group buy?\n\nGet 3 friends to join and everyone gets 20% off.\n\nWe will generate a share link for you.')) return;
+    const r = await window.EdgeFunctions.groupBuy.create(Number(productId), 3, 20);
+    if (r.success) {
+        const url = `${window.location.origin}/group-buy.html?id=${r.groupBuy.id}`;
+        const shareText = `🛍️ Join my group buy on Cellex! Get 20% off when 3 of us join. ${url}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+        // Also navigate to the group buy page
+        window.location.href = `/group-buy.html?id=${r.groupBuy.id}`;
+    } else {
+        alert('Failed to start group buy: ' + (r.error || 'Unknown error'));
+    }
+}
+
+async function loadActiveGroupBuys() {
+    const productId = getCurrentProductId();
+    if (!productId) return;
+    const container = document.getElementById('activeGroupBuys');
+    if (!container) return;
+    try {
+        const r = await window.EdgeFunctions.groupBuy.active(Number(productId));
+        if (!r.success || !r.groupBuys || r.groupBuys.length === 0) return;
+        container.classList.remove('hidden');
+        container.innerHTML = `
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <div class="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">
+                    <i class="fas fa-fire"></i> ${r.groupBuys.length} active group buy${r.groupBuys.length > 1 ? 's' : ''} — join & get 20% off!
+                </div>
+                ${r.groupBuys.map(gb => `
+                    <a href="/group-buy.html?id=${gb.id}" class="block text-sm text-amber-900 hover:underline">
+                        👥 ${gb.current_count}/${gb.target_count} joined · expires ${new Date(gb.expires_at).toLocaleString()}
+                    </a>
+                `).join('')}
+            </div>`;
+    } catch (e) { /* silent fail */ }
+}
+
+// ---- Reviews ----
+async function loadProductReviews() {
+    const productId = getCurrentProductId();
+    if (!productId) return;
+    try {
+        const r = await window.EdgeFunctions.reviews.byProduct(Number(productId));
+        if (!r.success) return;
+
+        // Summary
+        const summary = document.getElementById('reviewsSummary');
+        if (r.summary.count > 0) {
+            summary.classList.remove('hidden');
+            document.getElementById('reviewsAvg').textContent = Number(r.summary.avg).toFixed(1);
+            document.getElementById('reviewsStars').textContent =
+                '★'.repeat(Math.round(r.summary.avg)) + '☆'.repeat(5 - Math.round(r.summary.avg));
+            document.getElementById('reviewsCount').textContent = `${r.summary.count} review${r.summary.count > 1 ? 's' : ''}`;
+            document.getElementById('reviewsBlurb').textContent =
+                r.summary.avg >= 4 ? 'Buyers love this product!' :
+                r.summary.avg >= 3 ? 'Most buyers are satisfied.' :
+                'Mixed reviews — read below.';
+        }
+
+        // List
+        const list = document.getElementById('reviewsList');
+        if (!r.reviews || r.reviews.length === 0) {
+            list.innerHTML = '<div class="text-gray-500 text-sm">No reviews yet. Be the first to write one!</div>';
+            return;
+        }
+        list.innerHTML = r.reviews.map(rev => `
+            <div class="border-b pb-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">
+                            ${(rev.reviewer_name || 'B').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div class="font-medium text-sm">${escapeHtml(rev.reviewer_name || 'Buyer')}</div>
+                            <div class="text-xs text-gray-500">${new Date(rev.created_at).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                    <div class="text-yellow-400 text-sm">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</div>
+                </div>
+                ${rev.title ? `<div class="font-semibold mt-2">${escapeHtml(rev.title)}</div>` : ''}
+                ${rev.comment ? `<p class="text-gray-700 text-sm mt-1">${escapeHtml(rev.comment)}</p>` : ''}
+                ${rev.verified_purchase ? '<div class="text-xs text-green-600 mt-1"><i class="fas fa-check-circle"></i> Verified purchase</div>' : ''}
+                ${rev.images && rev.images.length ? `<div class="flex gap-2 mt-2">${rev.images.map(img => `<img src="${escapeHtml(img)}" class="w-16 h-16 object-cover rounded">`).join('')}</div>` : ''}
+                <button onclick="markHelpful('${rev.id}')" class="text-xs text-gray-500 hover:text-amber-600 mt-2">
+                    <i class="fas fa-thumbs-up"></i> Helpful (${rev.helpful_count || 0})
+                </button>
+            </div>`).join('');
+    } catch (e) {
+        console.error('reviews load error', e);
+    }
+}
+
+function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+// ---- Review modal ----
+function openReviewModal() {
+    if (!currentUser) {
+        if (confirm('Please login to write a review. Go to login page?')) {
+            const id = getCurrentProductId();
+            window.location.href = `login.html?next=${encodeURIComponent('/Eesha buying folder/product.html?id=' + id)}`;
+        }
+        return;
+    }
+    document.getElementById('reviewModal').classList.remove('hidden');
+    // Star picker
+    document.querySelectorAll('#starPicker button').forEach(btn => {
+        btn.onclick = () => {
+            const star = parseInt(btn.dataset.star);
+            document.getElementById('reviewRating').value = star;
+            document.querySelectorAll('#starPicker button').forEach(b => {
+                b.classList.remove('text-amber-400');
+                b.classList.add('text-gray-300');
+            });
+            for (let i = 1; i <= star; i++) {
+                const b = document.querySelector(`#starPicker button[data-star="${i}"]`);
+                if (b) { b.classList.add('text-amber-400'); b.classList.remove('text-gray-300'); }
+            }
+        };
+    });
+    document.getElementById('reviewForm').onsubmit = submitReview;
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').classList.add('hidden');
+}
+
+async function submitReview(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('reviewError');
+    errEl.classList.add('hidden');
+    const rating = parseInt(document.getElementById('reviewRating').value);
+    if (!rating || rating < 1 || rating > 5) {
+        errEl.textContent = 'Please select a rating (1-5 stars)';
+        errEl.classList.remove('hidden');
+        return;
+    }
+    const r = await window.EdgeFunctions.reviews.create({
+        productId: Number(getCurrentProductId()),
+        rating,
+        title: document.getElementById('reviewTitle').value.trim(),
+        comment: document.getElementById('reviewComment').value.trim(),
+    });
+    if (r.success) {
+        closeReviewModal();
+        await loadProductReviews();
+        alert('Thanks for your review!');
+    } else {
+        errEl.textContent = r.error || 'Failed to submit review';
+        errEl.classList.remove('hidden');
+    }
+}
+
+async function markHelpful(reviewId) {
+    const r = await window.EdgeFunctions.reviews.helpful(reviewId);
+    if (r.success) await loadProductReviews();
+}

@@ -268,6 +268,23 @@ async def proxy_seller_profile(request: Request):
 async def proxy_social(request: Request):
     return await _proxy_to_edge_function("social", request)
 
+# ---- Phase 2: Community Engagement ----
+@app.post("/api/reviews")
+async def proxy_reviews(request: Request):
+    return await _proxy_to_edge_function("reviews", request)
+
+@app.post("/api/group-buy")
+async def proxy_group_buy(request: Request):
+    return await _proxy_to_edge_function("group-buy", request)
+
+@app.post("/api/wishlist-share")
+async def proxy_wishlist_share(request: Request):
+    return await _proxy_to_edge_function("wishlist-share", request)
+
+@app.post("/api/live")
+async def proxy_live(request: Request):
+    return await _proxy_to_edge_function("live", request)
+
 @app.get("/api/health")
 async def proxy_health():
     return {

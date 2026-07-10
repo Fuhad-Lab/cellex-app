@@ -131,6 +131,7 @@
   <div class="sp-section">
     <div class="sp-tabs">
       <a class="sp-tab active" data-tab="products">Products</a>
+      <a class="sp-tab" data-tab="reviews">Reviews</a>
       <a class="sp-tab" data-tab="about">About</a>
       <a class="sp-tab" data-tab="activity">Activity</a>
     </div>
@@ -140,6 +141,11 @@
       <div id="products-grid" class="sp-product-grid">
         <div class="sp-loading">Loading products…</div>
       </div>
+    </div>
+
+    <div class="sp-card" id="tab-reviews" style="display:none;">
+      <h2>Customer reviews <span id="reviewsAvgBadge" class="text-sm font-normal text-gray-500"></span></h2>
+      <div id="reviews-list" class="sp-loading">Loading reviews…</div>
     </div>
 
     <div class="sp-card" id="tab-about" style="display:none;">
@@ -317,12 +323,49 @@
           e.preventDefault();
           document.querySelectorAll('.sp-tab').forEach(x => x.classList.remove('active'));
           t.classList.add('active');
-          ['products','about','activity'].forEach(name => {
+          ['products','reviews','about','activity'].forEach(name => {
             document.getElementById('tab-' + name).style.display = name === t.dataset.tab ? 'block' : 'none';
           });
+          // Lazy-load reviews
+          if (t.dataset.tab === 'reviews' && !window._reviewsLoaded) {
+            loadSellerReviews(sellerId);
+            window._reviewsLoaded = true;
+          }
         });
       });
     })();
+
+    async function loadSellerReviews(sellerId) {
+      const r = await window.EdgeFunctions.reviews.bySeller(sellerId);
+      const list = document.getElementById('reviews-list');
+      list.classList.remove('sp-loading');
+      if (!r.success) {
+        list.innerHTML = '<div class="sp-loading">Failed to load reviews.</div>';
+        return;
+      }
+      const summary = r.summary;
+      document.getElementById('reviewsAvgBadge').textContent =
+        summary.count > 0 ? `· ${summary.avg.toFixed(1)} ★ (${summary.count})` : '';
+      if (!r.reviews || r.reviews.length === 0) {
+        list.innerHTML = '<div class="sp-loading">No reviews yet.</div>';
+        return;
+      }
+      list.innerHTML = r.reviews.map(rev => `
+        <div class="activity-item">
+          <div class="activity-icon ${rev.rating >= 4 ? 'green' : rev.rating >= 3 ? '' : 'pink'}">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">
+              ${rev.product ? `<a href="Eesha buying folder/product.html?id=${rev.product.id}" style="color:#d97706;text-decoration:none;">${escapeHtml(rev.product.name)}</a>` : ''}
+              — ${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}
+            </div>
+            ${rev.title ? `<div style="font-weight:500;margin-top:0.15rem;">${escapeHtml(rev.title)}</div>` : ''}
+            ${rev.comment ? `<div style="color:#475569;font-size:0.9rem;margin-top:0.15rem;">${escapeHtml(rev.comment)}</div>` : ''}
+            <div class="activity-meta">${new Date(rev.created_at).toLocaleDateString()}${rev.verified_purchase ? ' · ✓ Verified purchase' : ''}</div>
+          </div>
+        </div>`).join('');
+    }
   </script>
 </body>
 </html>

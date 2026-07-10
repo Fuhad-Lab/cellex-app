@@ -25,6 +25,7 @@
       { key: 'dashboard', href: 'index.html',          icon: 'fa-gauge-high',     label: 'Dashboard' },
       { key: 'products',  href: 'products.html',       icon: 'fa-box',            label: 'Products' },
       { key: 'orders',    href: 'orders.html',         icon: 'fa-receipt',        label: 'Orders' },
+      { key: 'live',      href: 'go-live.html',        icon: 'fa-broadcast-tower',label: 'Go Live' },
       { key: 'profile',   href: 'profile.html',        icon: 'fa-store',          label: 'Seller Profile' },
       { key: 'academy',   href: 'academy.html',        icon: 'fa-graduation-cap', label: 'Academy' },
       { key: 'settings',  href: 'settings.html',       icon: 'fa-gear',           label: 'Settings' },

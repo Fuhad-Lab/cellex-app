@@ -108,9 +108,14 @@
                     <h1 class="text-3xl font-bold text-gray-900">My Wishlist</h1>
                     <p class="text-gray-500 mt-1"><span id="wishlistCount">0</span> items saved</p>
                 </div>
-                <button id="clearAllBtn" class="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg hidden">
-                    <i class="fas fa-trash mr-2"></i> Clear All
-                </button>
+                <div class="flex gap-2">
+                    <button id="shareWishlistBtn" onclick="shareMyWishlist()" class="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold rounded-lg hover:opacity-90 transition">
+                        <i class="fas fa-share-alt mr-1"></i> Share wishlist
+                    </button>
+                    <button id="clearAllBtn" class="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg hidden">
+                        <i class="fas fa-trash mr-2"></i> Clear All
+                    </button>
+                </div>
             </div>
 
             <!-- Wishlist Grid -->
@@ -283,6 +288,26 @@
         async function updateCartCount() {
             if (typeof window.Cart !== 'undefined' && window.Cart.updateCartCountUI) {
                 await window.Cart.updateCartCountUI();
+            }
+        }
+
+        // Phase 2 — share wishlist
+        async function shareMyWishlist() {
+            const r = await window.EdgeFunctions.wishlistShare.share('My Cellex Wishlist');
+            if (!r.success) {
+                alert('Failed to create share link: ' + (r.error || ''));
+                return;
+            }
+            const url = `${window.location.origin}${r.url}`;
+            // Open WhatsApp share
+            const text = `🛍️ Check out my wishlist on Cellex! ${url}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            // Also copy to clipboard
+            try {
+                await navigator.clipboard.writeText(url);
+                alert('Share link copied!\n\nShare it with friends: ' + url);
+            } catch {
+                window.prompt('Copy your share link:', url);
             }
         }
     </script>
