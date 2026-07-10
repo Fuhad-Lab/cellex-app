@@ -153,6 +153,11 @@
       if (!productId) { window.SellerUI.toast('Select a product', 'error'); return; }
       if (!selectedFile) { window.SellerUI.toast('Choose a video file', 'error'); return; }
 
+      // Need seller_id for the upload path — get it from the auth user
+      const sess = await window.EdgeFunctions.auth.checkSession();
+      if (!sess.user) { window.SellerUI.toast('Login required', 'error'); return; }
+      const sellerId = sess.user.id;
+
       const submitBtn = document.getElementById('submitBtn');
       const progressBox = document.getElementById('uploadProgress');
       const progressBar = document.getElementById('progressBar');
@@ -161,16 +166,13 @@
       progressBox.style.display = 'block';
 
       try {
-        // Step 1: get presigned upload URL
-        progressText.textContent = 'Requesting upload URL…';
-        const urlResp = await window.EdgeFunctions.videos.uploadUrl(productId, selectedFile.name, selectedFile.type);
-        if (!urlResp.success) throw new Error(urlResp.error || 'Failed to get upload URL');
-
-        // Step 2: PUT the file directly to storage
+        // Upload directly to the web-server proxy (which forwards to Supabase Storage
+        // using the service role key — the browser never sees the key)
         progressText.textContent = 'Uploading video…';
+        const uploadUrl = `/api/video-upload/${sellerId}/${productId}/${encodeURIComponent(selectedFile.name)}`;
         const uploadResp = await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
-          xhr.open('PUT', urlResp.uploadUrl);
+          xhr.open('PUT', uploadUrl);
           xhr.setRequestHeader('Content-Type', selectedFile.type);
           xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {
@@ -179,18 +181,23 @@
               progressText.textContent = `Uploading… ${Math.round(pct)}%`;
             }
           };
-          xhr.onload = () => resolve({ ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status });
+          xhr.onload = () => {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (xhr.status >= 200 && xhr.status < 300 && data.success) resolve(data);
+              else reject(new Error(data.error || `Upload failed (HTTP ${xhr.status})`));
+            } catch (err) { reject(new Error('Invalid response from server')); }
+          };
           xhr.onerror = () => reject(new Error('Network error during upload'));
           xhr.send(selectedFile);
         });
-        if (!uploadResp.ok) throw new Error(`Upload failed (HTTP ${uploadResp.status})`);
 
-        // Step 3: create the video record
+        // Step 2: create the video record via edge function
         progressBar.style.width = '100%';
         progressText.textContent = 'Publishing…';
         const createResp = await window.EdgeFunctions.videos.create({
           productId,
-          videoUrl: urlResp.videoUrl,
+          videoUrl: uploadResp.url,
           caption,
         });
         if (!createResp.success) throw new Error(createResp.error || 'Failed to publish');

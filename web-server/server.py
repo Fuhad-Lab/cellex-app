@@ -30,6 +30,8 @@ import httpx
 import os
 import json
 import logging
+import time
+from datetime import datetime
 from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -301,6 +303,91 @@ async def proxy_stories(request: Request):
 @app.post("/api/discover")
 async def proxy_discover(request: Request):
     return await _proxy_to_edge_function("discover", request)
+
+# ---- Phase 3: Direct video upload to Supabase Storage ----
+# Sellers upload video files via PUT. The web-server reads the session cookie
+# to verify auth, then forwards the bytes to Supabase Storage using the
+# service role key (which the frontend never sees).
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+
+@app.put("/api/video-upload/{seller_id}/{product_id}/{filename}")
+async def upload_video(seller_id: str, product_id: str, filename: str, request: Request):
+    """Receive a video file from the seller and store it in Supabase Storage.
+
+    The seller's browser PUTs the raw video bytes here. We verify the session
+    cookie matches seller_id, then forward to Supabase Storage using the
+    service role key (which the browser never sees).
+    """
+    if not SUPABASE_SERVICE_KEY:
+        return JSONResponse({"success": False, "error": "SUPABASE_SERVICE_ROLE_KEY not set"}, status_code=500)
+
+    # Verify the seller's session cookie
+    session_id = request.cookies.get(COOKIE_NAME, "")
+    if not session_id:
+        return JSONResponse({"success": False, "error": "Not authenticated"}, status_code=401)
+
+    # Look up the session to get the user_id
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            sess_resp = await client.get(
+                f"{SUPABASE_PROJECT_URL}/rest/v1/web_sessions?select=user_id,expires_at&session_id=eq.{session_id}&limit=1",
+                headers={
+                    "apikey": SUPABASE_SERVICE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+                }
+            )
+            sess_data = sess_resp.json()
+            if not sess_data or len(sess_data) == 0:
+                return JSONResponse({"success": False, "error": "Invalid session"}, status_code=401)
+            expires_at = sess_data[0].get("expires_at", "")
+            try:
+                exp = datetime.fromisoformat(expires_at.replace("Z", "+00:00")).replace(tzinfo=None)
+                if exp < datetime.utcnow():
+                    return JSONResponse({"success": False, "error": "Session expired"}, status_code=401)
+            except Exception:
+                pass  # If parsing fails, don't block — let it through
+            user_id = sess_data[0].get("user_id")
+            if user_id != seller_id:
+                return JSONResponse({"success": False, "error": "Not authorized"}, status_code=403)
+    except Exception as e:
+        logger.error(f"Video upload auth check failed: {e}")
+        return JSONResponse({"success": False, "error": "Auth check failed"}, status_code=500)
+
+    # Sanitize filename and build storage path
+    safe_filename = "".join(c for c in filename if c.isalnum() or c in ".-_")
+    if not safe_filename:
+        return JSONResponse({"success": False, "error": "Invalid filename"}, status_code=400)
+    storage_path = f"{seller_id}/{product_id}/{int(time.time() * 1000)}-{safe_filename}"
+
+    # Read the raw body
+    body_bytes = await request.body()
+    if len(body_bytes) > 50 * 1024 * 1024:  # 50MB limit
+        return JSONResponse({"success": False, "error": "File too large (max 50MB)"}, status_code=413)
+
+    content_type = request.headers.get("content-type", "video/mp4")
+
+    # Forward to Supabase Storage
+    storage_url = f"{SUPABASE_PROJECT_URL}/storage/v1/object/product-videos/{storage_path}"
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            resp = await client.put(
+                storage_url,
+                content=body_bytes,
+                headers={
+                    "apikey": SUPABASE_SERVICE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+                    "Content-Type": content_type,
+                    "x-upsert": "false",
+                }
+            )
+        if resp.status_code >= 400:
+            return JSONResponse({"success": False, "error": f"Storage error: {resp.text}"}, status_code=500)
+    except Exception as e:
+        logger.error(f"Video upload to storage failed: {e}")
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+
+    public_url = f"{SUPABASE_PROJECT_URL}/storage/v1/object/public/product-videos/{storage_path}"
+    return JSONResponse({"success": True, "url": public_url, "path": storage_path})
 
 @app.get("/api/health")
 async def proxy_health():

@@ -71,13 +71,13 @@ async function handleFeed(req: Request, body: Record<string, unknown>): Promise<
   const user = await getUser(req);
   const userId = user?.id;
 
-  // Fetch active videos with seller + product info
+  // Fetch active videos with product info (seller info fetched separately below)
   const videosResp = await fetch(
-    `${SUPABASE_URL}/rest/v1/product_videos?status=eq.active&select=*,products(id,name,price,image_url,category,seller_id),sellers!inner(id,business_name,profile_image,seller_type,farm_name)&order=created_at.desc&limit=200`,
+    `${SUPABASE_URL}/rest/v1/product_videos?status=eq.active&select=*,products(id,name,price,image_url,category,seller_id)&order=created_at.desc&limit=200`,
     { headers: adminHeaders }
   );
   const videos = await videosResp.json();
-  if (!videos || videos.length === 0) {
+  if (!videos || !Array.isArray(videos) || videos.length === 0) {
     return jsonResponse({ success: true, videos: [] });
   }
 
@@ -130,12 +130,23 @@ async function handleFeed(req: Request, body: Record<string, unknown>): Promise<
     }
   }
 
+  // Fetch seller info separately (no FK in DB → can't use !inner join)
+  const sellerIds = Array.from(new Set((videos as Record<string, unknown>[]).map(v => v.seller_id as string).filter(Boolean)));
+  let sellerMap = new Map<string, Record<string, unknown>>();
+  if (sellerIds.length > 0) {
+    const sellersResp = await fetch(
+      `${SUPABASE_URL}/rest/v1/sellers?id=in.(${sellerIds.join(',')})&select=id,business_name,profile_image,seller_type,farm_name`,
+      { headers: adminHeaders }
+    );
+    (await sellersResp.json()).forEach((s: Record<string, unknown>) => sellerMap.set(s.id as string, s));
+  }
+
   // Score each video
   const now = Date.now();
   const scored = (videos as Record<string, unknown>[]).map(v => {
     const sellerId = v.seller_id as string;
     const product = v.products as Record<string, unknown> | null;
-    const seller = v.sellers as Record<string, unknown> | null;
+    const seller = sellerMap.get(sellerId) || null;
     let score = 1;
     // Recency decay: videos < 24h old get a 2x boost; < 7d get 1.3x
     const ageHours = (now - new Date(v.created_at as string).getTime()) / 3600000;
@@ -151,7 +162,7 @@ async function handleFeed(req: Request, body: Record<string, unknown>): Promise<
     const likesCount = (v.likes_count as number) || 0;
     score += Math.min(likesCount / Math.max(1, ageHours), 5);
 
-    return { ...v, _score: score, _liked: likedVideoIds.has(v.id as number) };
+    return { ...v, _score: score, _liked: likedVideoIds.has(v.id as number), _seller: seller };
   });
 
   // Sort by score, randomize ties a bit
@@ -160,7 +171,7 @@ async function handleFeed(req: Request, body: Record<string, unknown>): Promise<
   // Slice + clean output
   const out = scored.slice(0, limit).map(v => {
     const product = v.products as Record<string, unknown> | null;
-    const seller = v.sellers as Record<string, unknown> | null;
+    const seller = v._seller as Record<string, unknown> | null;
     return {
       id: v.id,
       video_url: v.video_url,
