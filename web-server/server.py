@@ -673,9 +673,124 @@ if __name__ == "__main__":
     # Start the ping task
     config = uvicorn.Config(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
     server = uvicorn.Server(config)
-    
-    # Run both uvicorn and the ping task
+
+    # Run both uvicorn and the ping task + payment verifier
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.create_task(keep_services_alive())
+
+    # Payment verifier — runs in a thread every 30 seconds
+    # Checks Gmail for PalmPay emails matching pending orders
+    def payment_verifier_loop():
+        """Background thread that checks Gmail every 30 seconds for payment matches."""
+        import imaplib
+        import re as regex_mod
+        import urllib.request
+        import time as time_mod
+
+        while True:
+            try:
+                time_mod.sleep(30)  # Wait 30 seconds between checks
+
+                # Get all awaiting_verification orders
+                req = urllib.request.Request(
+                    f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?status=eq.awaiting_verification&select=order_id,expected_amount,buyer_name,buyer_bank_name",
+                    headers={"apikey": SUPABASE_SERVICE_KEY, "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"}
+                )
+                with urllib.request.urlopen(req, timeout=15) as r:
+                    orders = json.loads(r.read().decode())
+
+                if not orders or len(orders) == 0:
+                    continue
+
+                # Connect to Gmail via IMAP
+                mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+                mail.login(GMAIL_EMAIL, GMAIL_APP_PASSWORD)
+                mail.select("INBOX")
+
+                result, data = mail.search(None, "UNSEEN", "FROM", '"palmpay"')
+                email_ids = data[0].split() if data[0] else []
+
+                if not email_ids:
+                    mail.logout()
+                    continue
+
+                recent_ids = email_ids[-10:] if len(email_ids) > 10 else email_ids
+
+                for msg_id in recent_ids:
+                    result, msg_data = mail.fetch(msg_id, "(BODY.PEEK[TEXT])")
+                    raw = msg_data[0][1] if isinstance(msg_data[0], tuple) else b""
+                    text = raw.decode("utf-8", errors="ignore")
+
+                    # Parse amount
+                    amount = None
+                    for pattern in [r"NGN\s*([\d,]+\.?\d*)", r"₦\s*([\d,]+\.?\d*)"]:
+                        m = regex_mod.search(pattern, text, regex_mod.I)
+                        if m:
+                            try:
+                                amount = round(float(m.group(1).replace(",", "")), 2)
+                                break
+                            except:
+                                pass
+
+                    if amount is None:
+                        continue
+
+                    # Parse sender
+                    sender_match = regex_mod.search(r"Sender[:\s]*</strong>\s*([^<\n]+)", text, regex_mod.I)
+                    sender = sender_match.group(1).strip() if sender_match else "Unknown"
+
+                    # Match against orders
+                    for order in orders:
+                        expected = float(order["expected_amount"])
+                        if abs(amount - expected) < 0.01:
+                            email_uid = f"INBOX:{msg_id.decode()}"
+
+                            # Check if already used
+                            used_req = urllib.request.Request(
+                                f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?matched_email_id=eq.{email_uid}&select=id",
+                                headers={"apikey": SUPABASE_SERVICE_KEY, "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"}
+                            )
+                            with urllib.request.urlopen(used_req, timeout=10) as r:
+                                used = json.loads(r.read().decode())
+
+                            if used and len(used) > 0:
+                                break
+
+                            # Update order
+                            update_data = json.dumps({
+                                "status": "matched",
+                                "matched_at": datetime.utcnow().isoformat() + "Z",
+                                "matched_email_id": email_uid,
+                                "matched_sender_name": sender,
+                                "matched_amount": amount,
+                                "updated_at": datetime.utcnow().isoformat() + "Z",
+                            }).encode("utf-8")
+                            update_req = urllib.request.Request(
+                                f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?order_id=eq.{order['order_id']}",
+                                data=update_data, method='PATCH',
+                                headers={
+                                    "apikey": SUPABASE_SERVICE_KEY,
+                                    "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+                                    "Content-Type": "application/json",
+                                    "Prefer": "return=minimal",
+                                }
+                            )
+                            urllib.request.urlopen(update_req, timeout=10)
+
+                            # Mark email as read
+                            mail.store(msg_id, "+FLAGS", "\\Seen")
+                            logger.info(f"✅ Payment matched: order {order['order_id']} — ₦{amount} from {sender}")
+                            break
+
+                mail.logout()
+
+            except Exception as e:
+                logger.warning(f"Payment verifier error: {e}")
+
+    import threading
+    verifier_thread = threading.Thread(target=payment_verifier_loop, daemon=True)
+    verifier_thread.start()
+    logger.info("🔒 Payment verifier background thread started (checks Gmail every 30s)")
+
     loop.run_until_complete(server.serve())
