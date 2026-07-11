@@ -324,6 +324,11 @@ async def proxy_cross_platform(request: Request):
 async def proxy_telegram(request: Request):
     return await _proxy_to_edge_function("telegram", request)
 
+# ---- Payment Gateway (PalmPay verification) ----
+@app.post("/api/payment")
+async def proxy_payment(request: Request):
+    return await _proxy_to_edge_function("payment", request)
+
 # ---- Phase 4: OpenWA gateway proxy (avoids CORS issues from browser) ----
 OPENWA_BASE_URL = os.environ.get("OPENWA_BASE_URL", "https://eesha-search.onrender.com")
 OPENWA_API_KEY = os.environ.get("OPENWA_API_KEY", "CellexWA2024")

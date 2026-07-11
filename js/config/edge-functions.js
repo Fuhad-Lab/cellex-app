@@ -331,6 +331,13 @@
             unlinkPhone:      (phone)      => call('cross-platform', { op: 'unlink_phone', phone }),
         },
 
+        // ---- Payment Gateway (PalmPay verification) ----
+        payment: {
+            createOrder: (data)  => call('payment', { op: 'create_order', ...data }),
+            confirmSent: (orderId) => call('payment', { op: 'confirm_sent', orderId }),
+            checkStatus: (orderId) => call('payment', { op: 'check_status', orderId }),
+        },
+
         telegram: {
             channelInfo: ()                => call('telegram', { op: 'channel_info' }),
             recent:     ()                 => call('telegram', { op: 'recent' }),
