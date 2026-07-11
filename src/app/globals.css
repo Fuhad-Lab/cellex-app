@@ -43,40 +43,61 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ============================================================
+   Cellex Design System
+   ============================================================
+   PRIMARY action color = RED (#f23030) — used for prices, Buy Now
+   buttons, sale badges, urgency text. Matches Temu/AliExpress/Pinduoduo.
+   SECONDARY accent = CYAN (#00b8d4) — used for branding, links, info.
+   ============================================================ */
+
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
+  --foreground: #1a1a1a;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #1a1a1a;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #00d4ff;
-  --primary-foreground: #0f172a;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #ecfeff;
-  --accent-foreground: #0891b2;
-  --destructive: #ef4444;
+  --popover-foreground: #1a1a1a;
+  /* PRIMARY = red (commerce actions: prices, buy buttons, sale badges) */
+  --primary: #f23030;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f5f5f5;
+  --muted-foreground: #888;
+  --accent: #fff1f0;
+  --accent-foreground: #f23030;
+  --destructive: #f23030;
   --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #00d4ff;
-  --chart-1: #00d4ff;
-  --chart-2: #0891b2;
-  --chart-3: #67e8f9;
-  --chart-4: #cffafe;
-  --chart-5: #0e7490;
-  --radius: 0.75rem;
-  --sidebar: #0f172a;
+  --border: #eee;
+  --input: #eee;
+  --ring: #f23030;
+  /* Brand cyan — for logo, info icons, link accents only */
+  --brand: #00b8d4;
+  --brand-dark: #008ba3;
+  --chart-1: #f23030;
+  --chart-2: #ff7a00;
+  --chart-3: #00b8d4;
+  --chart-4: #00c853;
+  --chart-5: #9c27b0;
+  --radius: 0.5rem;
+  --sidebar: #1a1a1a;
   --sidebar-foreground: #e2e8f0;
-  --sidebar-primary: #00d4ff;
-  --sidebar-primary-foreground: #0f172a;
-  --sidebar-accent: #1e293b;
+  --sidebar-primary: #f23030;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a2a2a;
   --sidebar-accent-foreground: #e2e8f0;
-  --sidebar-border: #1e293b;
-  --sidebar-ring: #00d4ff;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #f23030;
+  /* Font sizes — Temu/AliExpress style (compact) */
+  --font-xs: 10px;
+  --font-sm: 11px;
+  --font-base: 12px;
+  --font-md: 13px;
+  --font-lg: 15px;
+  --font-xl: 17px;
+  --font-2xl: 20px;
+  --font-3xl: 24px;
 }
 
 .dark {
@@ -86,49 +107,67 @@
   --card-foreground: #e2e8f0;
   --popover: #1e293b;
   --popover-foreground: #e2e8f0;
-  --primary: #00d4ff;
-  --primary-foreground: #0f172a;
+  --primary: #f23030;
+  --primary-foreground: #ffffff;
   --secondary: #334155;
   --secondary-foreground: #e2e8f0;
   --muted: #334155;
   --muted-foreground: #94a3b8;
   --accent: #1e293b;
-  --accent-foreground: #00d4ff;
-  --destructive: #ef4444;
+  --accent-foreground: #f23030;
+  --destructive: #f23030;
   --destructive-foreground: #ffffff;
   --border: #334155;
   --input: #334155;
-  --ring: #00d4ff;
+  --ring: #f23030;
 }
 
 * {
   border-color: var(--border);
 }
 
+html {
+  font-size: 12px;  /* base font size — compact like Temu/AliExpress */
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-size: 12px;
+  line-height: 1.4;
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
-/* Cellex brand gradient */
+/* Cellex brand gradient — used only for logo + hero accents, NOT for buttons */
 .brand-gradient {
-  background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%);
+  background: linear-gradient(135deg, #00b8d4 0%, #008ba3 100%);
+}
+
+/* Red gradient — for Buy Now buttons, sale banners */
+.commerce-gradient {
+  background: linear-gradient(135deg, #f23030 0%, #d41616 100%);
 }
 
 .brand-text {
-  background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%);
+  background: linear-gradient(135deg, #00b8d4 0%, #008ba3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Price text — always red */
+.price {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* Glow effects */
 .glow {
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 16px rgba(242, 48, 48, 0.25);
 }
 
 .glow-hover:hover {
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 24px rgba(242, 48, 48, 0.35);
 }
 
 /* Hide scrollbar */
@@ -137,3 +176,44 @@ body {
 
 /* Smooth scroll */
 html { scroll-behavior: smooth; }
+
+/* Sale badge — red, for "Hot", "Flash Deal", "% off" */
+.sale-badge {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+/* Bestseller badge — gold/brown */
+.bestseller-badge {
+  background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px;
+}
+
+/* Buy Now button — solid red */
+.btn-buy-now {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-buy-now:hover { opacity: 0.9; }
+.btn-buy-now:active { opacity: 0.8; }
+
+/* Urgency text — red, for countdowns + "Ending soon" */
+.urgency {
+  color: var(--primary);
+  font-weight: 700;
+}
