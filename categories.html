@@ -76,51 +76,6 @@
 <script src="js/load-navbar.js"></script>
 
     <!-- Header -->
-    <header class="glass sticky top-0 z-50 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-3 lg:px-4">
-            <div class="flex items-center justify-between h-14 lg:h-16">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center gap-2">
-                    <div class="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
-                        <svg viewBox="0 0 60 60" class="w-full h-full">
-                            <defs>
-                                <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#00d4ff"/>
-                                    <stop offset="50%" stop-color="#00d4ff"/>
-                                    <stop offset="100%" stop-color="#0891b2"/>
-                                </linearGradient>
-                            </defs>
-                            <path d="M8 15 L8 50 Q8 54 12 54 L48 54 Q52 54 52 50 L52 15 Q52 11 48 11 L12 11 Q8 11 8 15 Z" fill="url(#headerLogoGrad)"/>
-                            <path d="M18 11 Q18 2 30 2 Q42 2 42 11" fill="none" stroke="url(#headerLogoGrad)" stroke-width="4" stroke-linecap="round"/>
-                            <path d="M18 24 L38 24 M18 36 L32 36 M18 48 L38 48 M18 24 L18 48" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"/>
-                        </svg>
-                    </div>
-                    <span class="text-base lg:text-lg font-bold text-gray-900">Cellex</span>
-                </a>
-
-                <!-- Search Bar -->
-                <div class="flex-1 max-w-xl mx-4 hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-2">
-                    <i class="fas fa-search text-gray-400 mr-2 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="Search products..." class="flex-1 bg-transparent outline-none text-sm">
-                </div>
-
-                <!-- Right Actions -->
-                <div class="flex items-center gap-2 lg:gap-4">
-                    <a href="cart.html" class="relative p-2 hover:bg-gray-100 rounded-lg">
-                        <i class="fas fa-shopping-cart text-gray-600"></i>
-                        <span id="cartCount" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
-                    </a>
-                    <a id="accountBtn" href="login.html" class="p-2 hover:bg-gray-100 rounded-lg flex items-center gap-1">
-                        <div class="relative">
-                            <i class="fas fa-user text-gray-600"></i>
-                            <i id="loggedInCheck" class="fas fa-check-circle text-green-500 text-[8px] absolute -bottom-0.5 -right-0.5 hidden"></i>
-                        </div>
-                        <span class="hidden lg:inline text-sm text-gray-700">Account</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
 
     <!-- Main Content -->
     <main class="max-w pb-20-7xl mx-auto px-3 lg:px-4 py-4 lg:py-6">

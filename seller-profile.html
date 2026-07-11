@@ -100,46 +100,27 @@
 
     <!-- Tabs -->
     <div class="sp-tabs">
-      <div class="sp-tab active" data-tab="shop" onclick="switchTab('shop')">Shop</div>
-      <div class="sp-tab" data-tab="reviews" onclick="switchTab('reviews')">Reviews</div>
-      <div class="sp-tab" data-tab="about" onclick="switchTab('about')">About</div>
+      <div class="sp-tab active" data-tab="all" onclick="switchTab('all')">All</div>
+      <div class="sp-tab" data-tab="videos" onclick="switchTab('videos')">Videos</div>
+      <div class="sp-tab" data-tab="products" onclick="switchTab('products')">Products</div>
     </div>
 
-    <!-- Shop tab: product grid -->
-    <div id="tab-shop">
+    <!-- All tab: shows both products and videos mixed -->
+    <div id="tab-all">
       <div id="sp-grid" class="sp-grid">
-        <div class="sp-loading">Loading products…</div>
+        <div class="sp-loading">Loading…</div>
       </div>
     </div>
 
-    <!-- Reviews tab -->
-    <div id="tab-reviews" style="display:none;">
-      <div id="sp-reviews" class="sp-loading">Loading reviews…</div>
+    <!-- Videos tab -->
+    <div id="tab-videos" style="display:none;">
+      <div id="sp-videos" class="sp-loading">Loading videos…</div>
     </div>
 
-    <!-- About tab -->
-    <div id="tab-about" style="display:none;">
-      <div class="space-y-3 pt-2">
-        <div>
-          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Store name</div>
-          <div id="about-name" class="text-sm text-gray-800">—</div>
-        </div>
-        <div>
-          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Category</div>
-          <div id="about-category" class="text-sm text-gray-800">—</div>
-        </div>
-        <div>
-          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Location</div>
-          <div id="about-location" class="text-sm text-gray-800">—</div>
-        </div>
-        <div>
-          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Member since</div>
-          <div id="about-joined" class="text-sm text-gray-800">—</div>
-        </div>
-        <div>
-          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Description</div>
-          <div id="about-desc" class="text-sm text-gray-800">—</div>
-        </div>
+    <!-- Products tab -->
+    <div id="tab-products" style="display:none;">
+      <div id="sp-products" class="sp-grid">
+        <div class="sp-loading">Loading products…</div>
       </div>
     </div>
   </main>
@@ -162,11 +143,11 @@
       const sess = await window.EdgeFunctions.auth.checkSession();
       if (sess.success && sess.user) viewerId = sess.user.id;
 
-      // Load seller profile + all products in parallel
-      const [profileResp, productsResp, reviewsResp] = await Promise.all([
+      // Load seller profile + all products + videos in parallel
+      const [profileResp, productsResp, videosResp] = await Promise.all([
         window.EdgeFunctions.social.publicProfile(sellerId, viewerId),
         window.EdgeFunctions.products.all(100),
-        window.EdgeFunctions.reviews.bySeller(sellerId),
+        window.EdgeFunctions.videos.bySeller(sellerId),
       ]);
 
       if (!profileResp.success || !profileResp.seller) {
@@ -215,70 +196,81 @@
       // Bio
       document.getElementById('sp-bio').textContent = s.business_description || '';
 
-      // About tab
-      document.getElementById('about-name').textContent = s.business_name || s.farm_name || '—';
-      document.getElementById('about-category').textContent = s.business_category || '—';
-      document.getElementById('about-location').textContent = s.business_location || '—';
-      document.getElementById('about-joined').textContent = s.created_at ? new Date(s.created_at).toLocaleDateString() : '—';
-      document.getElementById('about-desc').textContent = s.business_description || 'No description yet.';
-
       // Follow button
       const followBtn = document.getElementById('follow-btn');
       followBtn.disabled = false;
-      
+
       if (!viewerId) {
-        // Not logged in
         followBtn.textContent = 'Login to follow';
         followBtn.onclick = () => { window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search); };
       } else if (viewerId === sellerId) {
-        // Own store
         followBtn.textContent = 'Your store';
         followBtn.disabled = true;
         followBtn.style.opacity = '0.5';
       } else {
-        // Logged in, not own store
         renderFollowButton();
         followBtn.onclick = toggleFollow;
       }
 
-      // Render product grid
-      const grid = document.getElementById('sp-grid');
-      if (sellerProducts.length === 0) {
-        grid.innerHTML = '<div class="sp-loading">No products yet.</div>';
-      } else {
-        grid.innerHTML = sellerProducts.map(p => `
-          <a href="product.html?id=${p.id}" class="sp-product">
+      // Get seller's videos
+      const sellerVideos = (videosResp.success ? (videosResp.videos || []) : []).filter(v => v.seller_id === sellerId);
+
+      // Build product card HTML
+      function productCard(p) {
+        return `<a href="product.html?id=${p.id}" class="sp-product">
             ${p.image_url
               ? `<img src="${p.image_url}" alt="${escapeHtml(p.name)}">`
               : `<div class="ph"><i class="fas fa-box"></i></div>`}
             <div class="info">
               <div class="pname">${escapeHtml(p.name)}</div>
-              <div class="pprice">$${Number(p.price).toFixed(2)}</div>
+              <div class="pprice">₦${Number(p.price).toLocaleString('en-NG', {minimumFractionDigits: 0})}</div>
             </div>
-          </a>`).join('');
+          </a>`;
       }
 
-      // Render reviews
-      const reviewsEl = document.getElementById('sp-reviews');
-      if (reviewsResp.success && reviewsResp.reviews && reviewsResp.reviews.length > 0) {
-        reviewsEl.classList.remove('sp-loading');
-        reviewsEl.innerHTML = reviewsResp.reviews.map(r => `
-          <div class="sp-review">
-            <div class="sp-review-avatar">${(r.reviewer_name || 'B').charAt(0).toUpperCase()}</div>
-            <div class="flex-1">
-              <div class="flex items-center justify-between">
-                <span class="font-medium text-sm">${escapeHtml(r.reviewer_name || 'Buyer')}</span>
-                <span class="text-yellow-400 text-xs">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
-              </div>
-              ${r.title ? `<div class="font-medium text-sm mt-0.5">${escapeHtml(r.title)}</div>` : ''}
-              ${r.comment ? `<p class="text-sm text-gray-600 mt-0.5">${escapeHtml(r.comment)}</p>` : ''}
-              ${r.product ? `<div class="text-xs text-cyan-600 mt-1">on <a href="product.html?id=${r.product.id}" class="underline">${escapeHtml(r.product.name)}</a></div>` : ''}
-              <div class="text-xs text-gray-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}${r.verified_purchase ? ' · ✓ Verified' : ''}</div>
+      // Build video card HTML
+      function videoCard(v) {
+        return `<a href="videos.html" class="sp-product" style="position:relative;">
+            ${v.video_url
+              ? `<video src="${v.video_url}" muted preload="metadata" style="width:100%;aspect-ratio:1;object-fit:cover;background:#000;"></video>`
+              : `<div class="ph"><i class="fas fa-video"></i></div>`}
+            <div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;">▶ Video</div>
+            <div class="info">
+              <div class="pname">${escapeHtml(v.caption || v.product?.name || 'Product video')}</div>
+              <div class="pprice" style="color:#64748b;font-size:0.7rem;">${v.views_count || 0} views</div>
             </div>
-          </div>`).join('');
+          </a>`;
+      }
+
+      // All tab: mix of products and videos
+      const allGrid = document.getElementById('sp-grid');
+      const allItems = [
+        ...sellerProducts.map(p => ({type: 'product', html: productCard(p), sort: p.created_at})),
+        ...sellerVideos.map(v => ({type: 'video', html: videoCard(v), sort: v.created_at})),
+      ].sort((a, b) => new Date(b.sort) - new Date(a.sort));
+
+      if (allItems.length === 0) {
+        allGrid.innerHTML = '<div class="sp-loading">No items yet.</div>';
       } else {
-        reviewsEl.classList.remove('sp-loading');
-        reviewsEl.innerHTML = '<div class="sp-loading">No reviews yet.</div>';
+        allGrid.innerHTML = allItems.map(i => i.html).join('');
+      }
+
+      // Videos tab
+      const videosEl = document.getElementById('sp-videos');
+      if (sellerVideos.length === 0) {
+        videosEl.classList.remove('sp-loading');
+        videosEl.innerHTML = '<div class="sp-loading">No videos yet.</div>';
+      } else {
+        videosEl.classList.remove('sp-loading');
+        videosEl.innerHTML = `<div class="sp-grid">${sellerVideos.map(v => videoCard(v)).join('')}</div>`;
+      }
+
+      // Products tab
+      const productsEl = document.getElementById('sp-products');
+      if (sellerProducts.length === 0) {
+        productsEl.innerHTML = '<div class="sp-loading">No products yet.</div>';
+      } else {
+        productsEl.innerHTML = sellerProducts.map(p => productCard(p)).join('');
       }
     })();
 
@@ -306,7 +298,7 @@
     function switchTab(tab) {
       document.querySelectorAll('.sp-tab').forEach(t => t.classList.remove('active'));
       document.querySelector(`.sp-tab[data-tab="${tab}"]`).classList.add('active');
-      ['shop', 'reviews', 'about'].forEach(name => {
+      ['all', 'videos', 'products'].forEach(name => {
         document.getElementById('tab-' + name).style.display = name === tab ? 'block' : 'none';
       });
     }
