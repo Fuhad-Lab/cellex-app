@@ -374,6 +374,27 @@
                         </label>
                     </div>
 
+                    <!-- PalmPay Bank Transfer Option -->
+                    <div class="mb-4">
+                        <label class="payment-option block p-4 border-2 border-gray-200 rounded-xl cursor-pointer" onclick="selectPayment('palmpay')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-cyan-700 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-university text-white text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900">Bank Transfer (PalmPay)</p>
+                                        <p class="text-sm text-gray-500">Transfer to PalmPay · Auto-verified via AI</p>
+                                        <p class="text-xs text-cyan-600 mt-1">✓ Instant verification — no waiting!</p>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center" id="palmpay-check">
+                                    <i class="fas fa-check text-brand-500 hidden"></i>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
                     <!-- Cash on Delivery Option -->
                     <div class="mb-4">
                         <label class="payment-option block p-4 border-2 border-gray-200 rounded-xl cursor-pointer" onclick="selectPayment('cod')">
@@ -761,8 +782,10 @@
 
         // Place order
         async function placeOrder() {
-            // Validate card details if card payment
-            if (selectedPayment === 'card') {
+            // Skip validation for PalmPay (payment happens on the next page)
+            if (selectedPayment === 'palmpay') {
+                // Just proceed to place the order
+            } else if (selectedPayment === 'card') {
                 const cardNumber = document.getElementById('card-number').value;
                 const cardExpiry = document.getElementById('card-expiry').value;
                 const cardCvv = document.getElementById('card-cvv').value;
@@ -818,9 +841,17 @@
                 showLoading(false);
                 showToast('Order placed successfully!', 'success');
                 
-                // Redirect to confirmation
+                // Redirect to payment page (for PalmPay) or confirmation
                 setTimeout(() => {
-                    window.location.href = `order-confirmation.html?orderId=${result.orderId}`;
+                    if (selectedPayment === 'palmpay') {
+                        // Build the payment URL with order details
+                        const total = pendingOrder?.total || 0;
+                        const items = pendingOrder?.items?.map(i => `${i.quantity}x ${i.product?.name || i.product_name || 'Item'}`).join(', ') || 'Order items';
+                        const count = pendingOrder?.items?.length || 1;
+                        window.location.href = `payment.html?orderId=${result.orderId}&total=${total}&items=${encodeURIComponent(items)}&count=${count}`;
+                    } else {
+                        window.location.href = `order-confirmation.html?orderId=${result.orderId}`;
+                    }
                 }, 1000);
                 
             } catch (error) {

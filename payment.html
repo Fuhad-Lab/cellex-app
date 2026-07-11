@@ -171,6 +171,7 @@
     const cartTotal = parseFloat(params.get('total') || '0');
     const cartItems = params.get('items') || 'Items from cart';
     const cartCount = parseInt(params.get('count') || '1');
+    const orderId = params.get('orderId') || '';
 
     // Pre-fill
     if (cartTotal > 0) {
