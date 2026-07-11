@@ -6,9 +6,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies (use npm ci for reproducible builds)
-COPY package*.json ./
-RUN npm ci --no-audit --no-fund
+# Install dependencies (use npm install — repo uses bun.lock, not package-lock.json)
+COPY package.json ./
+RUN npm install --no-audit --no-fund --legacy-peer-deps
 
 # Copy source
 COPY . .
