@@ -61,7 +61,7 @@ class AIShoppingAssistant {
 
             .ai-modal-header {
                 padding: 1rem;
-                background-color: #f0474a;
+                background-color: #00d4ff;
                 color: white;
                 border-radius: 12px 12px 0 0;
                 display: flex;
@@ -116,7 +116,7 @@ class AIShoppingAssistant {
             }
 
             .user-message {
-                background-color: #f0474a;
+                background-color: #00d4ff;
                 color: white;
                 align-self: flex-end;
                 border-bottom-right-radius: 4px;
@@ -139,7 +139,7 @@ class AIShoppingAssistant {
             }
 
             .ai-input button {
-                background-color: #f0474a;
+                background-color: #00d4ff;
                 color: white;
                 border: none;
                 border-radius: 50%;
@@ -276,7 +276,7 @@ class AIShoppingAssistant {
             suggestionDiv.innerHTML = `
                 <strong>${product.name}</strong>
                 <p>${product.description}</p>
-                <p class="price">$${product.price}</p>
+                <p class="price">₦${product.price}</p>
             `;
             
             suggestionDiv.addEventListener('click', () => {

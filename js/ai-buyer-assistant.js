@@ -33,20 +33,20 @@
         style.id = 'ai-shared-styles';
         style.textContent = `
             .ai-product-card{background:white;border-radius:10px;padding:10px;margin-top:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;gap:10px;cursor:pointer;transition:all .2s;border:2px solid transparent}
-            .ai-product-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:#f59e0b}
+            .ai-product-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:#00d4ff}
             .ai-product-img{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#f1f5f9;flex-shrink:0}
             .ai-product-info{flex:1;min-width:0}
             .ai-product-name{font-weight:600;font-size:12px;margin-bottom:2px;color:#1e293b}
-            .ai-product-price{color:#d97706;font-weight:700;font-size:13px}
+            .ai-product-price{color:#0891b2;font-weight:700;font-size:13px}
             .ai-product-meta{font-size:10px;color:#64748b;margin-top:2px}
             .ai-product-actions{display:flex;gap:4px;margin-top:6px}
             .ai-action-btn{padding:4px 8px;border-radius:4px;border:none;font-size:10px;font-weight:600;cursor:pointer}
-            .ai-action-btn-primary{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f172a}
+            .ai-action-btn-primary{background:linear-gradient(135deg,#00d4ff,#00d4ff);color:#0f172a}
             .ai-action-btn-secondary{background:#f1f5f9;color:#475569}
             .ai-action-btn:hover{transform:scale(1.05)}
             .ai-action-result{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#f0fdf4;border-radius:8px;margin-top:8px;font-size:12px;color:#166534;border:1px solid #bbf7d0}
             .ai-action-result.error{background:#fef2f2;color:#991b1b;border-color:#fecaca}
-            .ai-action-result.warning{background:#fffbeb;color:#92400e;border-color:#fde68a}
+            .ai-action-result.warning{background:#fffbeb;color:#0e7490;border-color:#a5f3fc}
         `;
         document.head.appendChild(style);
     })();
@@ -125,7 +125,7 @@
         const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const isUser = role === 'user';
         const parsed = content
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>₦1</strong>')
             .replace(/\n/g, '<br>');
 
         // Build image HTML if provided
@@ -138,7 +138,7 @@
             const div = document.createElement('div');
             div.className = 'flex justify-end mb-3';
             div.innerHTML = `
-                <div class="message-bubble bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl rounded-tr-md p-3.5 shadow-sm max-w-[80%]">
+                <div class="message-bubble bg-gradient-to-br from-orange-400 to-cyan-600 rounded-2xl rounded-tr-md p-3.5 shadow-sm max-w-[80%]">
                     ${imageHtml}
                     <p class="text-sm text-white leading-relaxed">${parsed}</p>
                     <p class="text-[10px] text-orange-100 mt-1.5 text-right">${time}</p>
@@ -201,7 +201,7 @@
         if (indicator) {
             const bubble = indicator.querySelector('.bg-white');
             if (bubble) {
-                bubble.innerHTML = `<p class="text-sm text-orange-500">${text}</p>`;
+                bubble.innerHTML = `<p class="text-sm text-cyan-500">${text}</p>`;
             }
         }
     }
@@ -305,7 +305,7 @@
 
     function getWidgetStyles() {
         return `
-            .ai-toggle-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,0.4);z-index:9998;display:flex;align-items:center;justify-content:center;transition:all .3s;color:#0f172a;font-size:22px}
+            .ai-toggle-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#00d4ff);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,0.4);z-index:9998;display:flex;align-items:center;justify-content:center;transition:all .3s;color:#0f172a;font-size:22px}
             .ai-toggle-btn:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(245,158,11,0.5)}
             .ai-pulse{position:absolute;top:-2px;right:-2px;width:14px;height:14px;background:#22c55e;border-radius:50%;border:2px solid white;animation:pulse 2s infinite}
             @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:.7}}
@@ -313,7 +313,7 @@
             .ai-hidden{transform:translateY(20px);opacity:0;pointer-events:none}
             .ai-header{background:linear-gradient(135deg,#0f172a,#1e293b);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
             .ai-header-left{display:flex;align-items:center;gap:10px}
-            .ai-logo{width:36px;height:36px;background:linear-gradient(135deg,#fbbf24,#f59e0b);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0f172a}
+            .ai-logo{width:36px;height:36px;background:linear-gradient(135deg,#00d4ff,#00d4ff);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0f172a}
             .ai-header-info h3{margin:0;font-size:16px;font-weight:700}
             .ai-status{display:flex;align-items:center;gap:5px;font-size:11px;opacity:.8}
             .ai-status-dot{width:6px;height:6px;background:#22c55e;border-radius:50%}
@@ -325,11 +325,11 @@
             @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
             .ai-message-user{flex-direction:row-reverse}
             .ai-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
-            .ai-avatar-assistant{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f172a}
-            .ai-avatar-user{background:#0f172a;color:#fbbf24}
+            .ai-avatar-assistant{background:linear-gradient(135deg,#00d4ff,#00d4ff);color:#0f172a}
+            .ai-avatar-user{background:#0f172a;color:#00d4ff}
             .ai-bubble{max-width:260px;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5}
             .ai-bubble-assistant{background:white;color:#1e293b;border-bottom-left-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-            .ai-bubble-user{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f172a;border-bottom-right-radius:4px}
+            .ai-bubble-user{background:linear-gradient(135deg,#00d4ff,#00d4ff);color:#0f172a;border-bottom-right-radius:4px}
             .ai-bubble strong{font-weight:600}
             .ai-message-image{margin-bottom:8px}
             .ai-message-image img{max-width:200px;max-height:150px;border-radius:8px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.1)}
@@ -338,7 +338,7 @@
             .ai-quick-title{font-size:11px;color:#64748b;margin:0 0 6px 0}
             .ai-categories{display:flex;gap:6px;flex-wrap:wrap}
             .ai-category-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:16px;border:1px solid #e2e8f0;background:white;font-size:11px;cursor:pointer;color:#475569}
-            .ai-category-btn:hover{border-color:#f59e0b;background:#fffbeb;color:#b45309}
+            .ai-category-btn:hover{border-color:#00d4ff;background:#fffbeb;color:#b45309}
             .ai-image-preview{padding:10px 16px;background:#f8fafc;border-top:1px solid #e2e8f0}
             .ai-preview-container{position:relative;display:inline-block}
             .ai-preview-container img{max-width:80px;max-height:80px;border-radius:6px;object-fit:cover}
@@ -346,12 +346,12 @@
             .ai-input-area{padding:10px 16px;background:white;border-top:1px solid #e2e8f0}
             .ai-input-container{display:flex;gap:6px;align-items:center;background:#f1f5f9;border-radius:20px;padding:4px}
             .ai-upload-btn{width:36px;height:36px;border-radius:50%;border:none;background:transparent;color:#64748b;cursor:pointer}
-            .ai-upload-btn:hover{background:#e2e8f0;color:#f59e0b}
+            .ai-upload-btn:hover{background:#e2e8f0;color:#00d4ff}
             #ai-input{flex:1;border:none;background:transparent;padding:6px;font-size:13px;outline:none}
-            .ai-send-btn{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f172a;cursor:pointer}
+            .ai-send-btn{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,#00d4ff,#00d4ff);color:#0f172a;cursor:pointer}
             .ai-send-btn:hover{transform:scale(1.05)}
             .ai-loading{display:flex;gap:4px;padding:12px}
-            .ai-loading span{width:6px;height:6px;background:#f59e0b;border-radius:50%;animation:bounce 1.4s infinite}
+            .ai-loading span{width:6px;height:6px;background:#00d4ff;border-radius:50%;animation:bounce 1.4s infinite}
             .ai-loading span:nth-child(1){animation-delay:-.32s}
             .ai-loading span:nth-child(2){animation-delay:-.16s}
             @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
@@ -394,7 +394,7 @@ Just talk to me naturally!<br>
 
         const messagesContainer = document.getElementById('ai-messages');
         const isUser = role === 'user';
-        const parsed = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        const parsed = content.replace(/\*\*(.*?)\*\*/g, '<strong>₦1</strong>').replace(/\n/g, '<br>');
         
         let imageHtml = '';
         if (data.image) {
@@ -479,7 +479,7 @@ Just talk to me naturally!<br>
                     } else {
                         btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add';
                         if (result?.requiresAuth) {
-                            addMessage('assistant', 'Please <a href="login.html" style="color:#f59e0b;font-weight:600;">login</a> to add items.');
+                            addMessage('assistant', 'Please <a href="login.html" style="color:#00d4ff;font-weight:600;">login</a> to add items.');
                         }
                     }
                 } else if (action === 'view') {
@@ -922,7 +922,7 @@ Just talk to me naturally!<br>
                     <i class="fas fa-robot text-white text-xs"></i>
                 </div>
                 <div class="message-bubble bg-white rounded-2xl rounded-tl-md p-3.5 shadow-sm border border-gray-100">
-                    <p class="text-sm text-gray-700 leading-relaxed">Hi! I'm your <strong class="text-orange-500">Cellex AI Assistant</strong>. I can help you find products, compare prices, track deals, and more! What are you looking for today?</p>
+                    <p class="text-sm text-gray-700 leading-relaxed">Hi! I'm your <strong class="text-cyan-500">Cellex AI Assistant</strong>. I can help you find products, compare prices, track deals, and more! What are you looking for today?</p>
                     <p class="text-[10px] text-gray-400 mt-1.5">Just now</p>
                 </div>`;
             chatContainer.appendChild(welcomeDiv);
@@ -932,16 +932,16 @@ Just talk to me naturally!<br>
             chipsDiv.id = 'suggestionChips';
             chipsDiv.className = 'flex flex-wrap gap-2 mb-4 ml-10';
             chipsDiv.innerHTML = `
-                <button onclick="sendSuggestion('Show me phones under ₦50,000')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+                <button onclick="sendSuggestion('Show me phones under ₦50,000')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                     <i class="fas fa-mobile-alt text-orange-400"></i> Phones under ₦50k
                 </button>
-                <button onclick="sendSuggestion('Best deals today')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+                <button onclick="sendSuggestion('Best deals today')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                     <i class="fas fa-bolt text-orange-400"></i> Best deals today
                 </button>
-                <button onclick="sendSuggestion('Farm fresh produce')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+                <button onclick="sendSuggestion('Farm fresh produce')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                     <i class="fas fa-leaf text-orange-400"></i> Farm fresh produce
                 </button>
-                <button onclick="sendSuggestion('Electronics')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+                <button onclick="sendSuggestion('Electronics')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                     <i class="fas fa-laptop text-orange-400"></i> Electronics
                 </button>`;
             chatContainer.appendChild(chipsDiv);

@@ -21,12 +21,12 @@
                     colors: {
                         brand: {
                             50: '#fffbeb',
-                            100: '#fef3c7',
-                            200: '#fde68a',
-                            300: '#fcd34d',
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#00d4ff',
+                            500: '#00d4ff',
+                            600: '#0891b2',
                             700: '#b45309',
                         },
                         dark: {
@@ -88,7 +88,7 @@
         }
         
         .progress-step.active .step-circle {
-            background: #f59e0b;
+            background: #00d4ff;
             color: white;
         }
         
@@ -109,10 +109,15 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+
+<!-- Universal Navbar -->
+<div id="nav-mount"></div>
+<script src="js/load-navbar.js"></script>
+
     <!-- Loading State -->
     <div id="loading" class="flex items-center justify-center min-h-screen">
         <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-4 border-brand-500 border-t-transparent mx-auto mb-4"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mx-auto mb-4"></div>
             <p class="text-gray-500">Loading order details...</p>
         </div>
     </div>
@@ -128,9 +133,9 @@
                             <svg viewBox="0 0 60 60" class="w-full h-full">
                                 <defs>
                                     <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#fbbf24"/>
-                                        <stop offset="50%" stop-color="#f59e0b"/>
-                                        <stop offset="100%" stop-color="#d97706"/>
+                                        <stop offset="0%" stop-color="#00d4ff"/>
+                                        <stop offset="50%" stop-color="#00d4ff"/>
+                                        <stop offset="100%" stop-color="#0891b2"/>
                                     </linearGradient>
                                     <filter id="headerLogoGlow" x="-50%" y="-50%" width="200%" height="200%">
                                         <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
@@ -147,23 +152,23 @@
                                 <path d="M18 24 L38 24 M18 36 L32 36 M18 48 L38 48 M18 24 L18 48" 
                                       fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"/>
                                 <g transform="translate(52, 8)">
-                                    <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#fbbf24"/>
+                                    <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#00d4ff"/>
                                 </g>
                             </svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-xl font-extrabold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent leading-tight">Cellex</span>
+                            <span class="text-xl font-extrabold bg-gradient-to-r from-cyan-400 to-cyan-700 bg-clip-text text-transparent leading-tight">Cellex</span>
                             <span class="text-[8px] text-gray-400 tracking-widest uppercase -mt-1">Nigeria's #1</span>
                         </div>
                     </a>
-                    <a href="index.html" class="text-gray-600 hover:text-brand-500 transition-colors">
+                    <a href="index.html" class="text-gray-600 hover:text-cyan-500 transition-colors">
                         <i class="fas fa-home text-xl"></i>
                     </a>
                 </div>
             </nav>
         </header>
 
-        <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <main class="max-w pb-20-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <!-- Success Banner -->
             <div class="text-center mb-12 fade-in-up">
                 <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 bounce">
@@ -262,23 +267,23 @@
                         <div class="space-y-2">
                             <div class="flex justify-between text-gray-600">
                                 <span>Subtotal</span>
-                                <span id="subtotal">$0.00</span>
+                                <span id="subtotal">₦0.00</span>
                             </div>
                             <div class="flex justify-between text-gray-600">
                                 <span>Shipping</span>
-                                <span id="shipping">$0.00</span>
+                                <span id="shipping">₦0.00</span>
                             </div>
                             <div class="flex justify-between text-gray-600">
                                 <span>Tax</span>
-                                <span id="tax">$0.00</span>
+                                <span id="tax">₦0.00</span>
                             </div>
                             <div class="flex justify-between text-gray-600" id="cod-fee-row" style="display: none;">
                                 <span>COD Fee</span>
-                                <span id="cod-fee">$5.00</span>
+                                <span id="cod-fee">₦5.00</span>
                             </div>
                             <div class="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t">
                                 <span>Total</span>
-                                <span class="text-brand-500" id="total">$0.00</span>
+                                <span class="text-cyan-500" id="total">₦0.00</span>
                             </div>
                         </div>
                     </div>
@@ -291,7 +296,7 @@
                     <i class="fas fa-shopping-bag mr-2"></i>
                     Continue Shopping
                 </a>
-                <a href="orders.html" class="flex-1 bg-brand-500 text-white py-4 rounded-xl font-semibold text-center hover:bg-brand-600 transition-colors">
+                <a href="orders.html" class="flex-1 bg-cyan-500 text-white py-4 rounded-xl font-semibold text-center hover:bg-cyan-600 transition-colors">
                     <i class="fas fa-list mr-2"></i>
                     View All Orders
                 </a>
@@ -300,7 +305,7 @@
             <!-- Help Section -->
             <div class="mt-8 text-center fade-in-up" style="animation-delay: 0.6s">
                 <p class="text-gray-500 text-sm">
-                    Need help? <a href="#" class="text-brand-500 hover:underline">Contact Support</a> or call us at <a href="tel:+1234567890" class="text-brand-500 hover:underline">+1 234 567 890</a>
+                    Need help? <a href="#" class="text-cyan-500 hover:underline">Contact Support</a> or call us at <a href="tel:+1234567890" class="text-cyan-500 hover:underline">+1 234 567 890</a>
                 </p>
             </div>
         </main>
@@ -352,7 +357,7 @@
                         </div>
                         <h2 class="text-xl font-bold text-gray-900 mb-2">Order Not Found</h2>
                         <p class="text-gray-500 mb-4">We couldn't find your order details.</p>
-                        <a href="index.html" class="text-brand-500 hover:underline">Go to Homepage</a>
+                        <a href="index.html" class="text-cyan-500 hover:underline">Go to Homepage</a>
                     </div>
                 `;
             }
@@ -361,7 +366,7 @@
         function renderOrderDetails(order) {
             // Order number and date
             document.getElementById('order-number').textContent = `# ${order.id.substring(0, 8).toUpperCase()}`;
-            document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleDateString('en-US', {
+            document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleDateString('en-NG', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -378,7 +383,7 @@
                             <p class="font-medium text-gray-900">${item.name}</p>
                             <p class="text-sm text-gray-500">Qty: ${item.quantity}</p>
                         </div>
-                        <p class="font-semibold text-gray-900">$${(item.price * item.quantity).toFixed(2)}</p>
+                        <p class="font-semibold text-gray-900">₦${(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                 `).join('');
             }
@@ -396,7 +401,7 @@
             // Payment method
             let paymentText = '';
             if (order.payment_method === 'eeshapay') {
-                paymentText = '<p class="font-medium text-brand-500"><i class="fas fa-wallet mr-2"></i>EeshaPay</p>';
+                paymentText = '<p class="font-medium text-cyan-500"><i class="fas fa-wallet mr-2"></i>EeshaPay</p>';
             } else if (order.payment_method === 'card') {
                 paymentText = '<p class="font-medium"><i class="fas fa-credit-card mr-2"></i>Credit/Debit Card</p>';
             } else if (order.payment_method === 'cod') {
@@ -406,14 +411,14 @@
             document.getElementById('payment-method').innerHTML = paymentText;
             
             // Totals
-            document.getElementById('subtotal').textContent = `$${(order.subtotal || 0).toFixed(2)}`;
-            document.getElementById('shipping').textContent = order.shipping > 0 ? `$${order.shipping.toFixed(2)}` : 'Free';
-            document.getElementById('tax').textContent = `$${(order.tax || 0).toFixed(2)}`;
-            document.getElementById('total').textContent = `$${(order.total || 0).toFixed(2)}`;
+            document.getElementById('subtotal').textContent = `₦${(order.subtotal || 0).toFixed(2)}`;
+            document.getElementById('shipping').textContent = order.shipping > 0 ? `₦${order.shipping.toFixed(2)}` : 'Free';
+            document.getElementById('tax').textContent = `₦${(order.tax || 0).toFixed(2)}`;
+            document.getElementById('total').textContent = `₦${(order.total || 0).toFixed(2)}`;
         }
         
         function createConfetti() {
-            const colors = ['#f59e0b', '#22c55e', '#3b82f6', '#fbbf24', '#a855f7'];
+            const colors = ['#00d4ff', '#22c55e', '#3b82f6', '#00d4ff', '#a855f7'];
             
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {

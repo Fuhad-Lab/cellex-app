@@ -30,7 +30,7 @@
       transition: transform 0.15s, border-color 0.15s;
       display: block; color: inherit; text-decoration: none;
     }
-    .live-card:hover { transform: translateY(-2px); border-color: #f59e0b; }
+    .live-card:hover { transform: translateY(-2px); border-color: #00d4ff; }
     .live-thumb {
       width: 100%; aspect-ratio: 16/9; object-fit: cover;
       background: #0f172a; display: flex; align-items: center; justify-content: center;
@@ -59,7 +59,7 @@
       </div>
       <h1 class="text-3xl md:text-4xl font-extrabold mt-3 text-white">Shop in real-time with sellers</h1>
       <p class="text-gray-400 mt-2 max-w-2xl">Watch live demos, ask questions in chat, and buy the featured product with one click.</p>
-      <a href="seller/go-live.html" class="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold px-4 py-2 rounded-lg text-sm hover:opacity-90">
+      <a href="seller/go-live.html" class="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-cyan-400 to-cyan-700 text-ink-900 font-bold px-4 py-2 rounded-lg text-sm hover:opacity-90">
         <i class="fas fa-video"></i> Go live as a seller
       </a>
     </div>
@@ -120,7 +120,7 @@
             <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
               ${sellerImg
                 ? `<img src="${sellerImg}" class="w-5 h-5 rounded-full">`
-                : `<div class="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-[10px] font-bold text-ink-900">${(sellerName||'?').charAt(0)}</div>`}
+                : `<div class="w-5 h-5 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 flex items-center justify-center text-[10px] font-bold text-ink-900">${(sellerName||'?').charAt(0)}</div>`}
               <span>${escapeHtml(sellerName)}</span>
               ${isLive ? `<span class="ml-auto text-red-400">👁 ${s.viewer_count || 0}</span>` : ''}
             </div>

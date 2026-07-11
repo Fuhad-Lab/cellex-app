@@ -21,12 +21,12 @@
                     colors: {
                         brand: {
                             50: '#fffbeb',
-                            100: '#fef3c7',
-                            200: '#fde68a',
-                            300: '#fcd34d',
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#00d4ff',
+                            500: '#00d4ff',
+                            600: '#0891b2',
                             700: '#b45309',
                         },
                         dark: {
@@ -46,6 +46,11 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
+
+<!-- Universal Navbar -->
+<div id="nav-mount"></div>
+<script src="js/load-navbar.js"></script>
+
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -54,9 +59,9 @@
                     <svg viewBox="0 0 60 60" class="w-full h-full">
                         <defs>
                             <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#fbbf24"/>
-                                <stop offset="50%" stop-color="#f59e0b"/>
-                                <stop offset="100%" stop-color="#d97706"/>
+                                <stop offset="0%" stop-color="#00d4ff"/>
+                                <stop offset="50%" stop-color="#00d4ff"/>
+                                <stop offset="100%" stop-color="#0891b2"/>
                             </linearGradient>
                             <filter id="headerLogoGlow" x="-50%" y="-50%" width="200%" height="200%">
                                 <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
@@ -73,31 +78,31 @@
                         <path d="M18 24 L38 24 M18 36 L32 36 M18 48 L38 48 M18 24 L18 48" 
                               fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"/>
                         <g transform="translate(52, 8)">
-                            <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#fbbf24"/>
+                            <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#00d4ff"/>
                         </g>
                     </svg>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-xl font-extrabold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent leading-tight">Cellex</span>
+                    <span class="text-xl font-extrabold bg-gradient-to-r from-cyan-400 to-cyan-700 bg-clip-text text-transparent leading-tight">Cellex</span>
                     <span class="text-[8px] text-gray-400 tracking-widest uppercase -mt-1">Nigeria's #1</span>
                 </div>
             </a>
             <div class="flex items-center gap-4">
-                <a href="index.html" class="text-gray-600 hover:text-brand-500">
+                <a href="index.html" class="text-gray-600 hover:text-cyan-500">
                     <i class="fas fa-home text-xl"></i>
                 </a>
-                <a href="cart.html" class="text-gray-600 hover:text-brand-500 relative">
+                <a href="cart.html" class="text-gray-600 hover:text-cyan-500 relative">
                     <i class="fas fa-shopping-cart text-xl"></i>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-brand-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                 </a>
             </div>
         </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container pb-20 mx-auto px-4 py-8">
         <!-- Back Link -->
-        <a href="index.html" class="inline-flex items-center text-gray-600 hover:text-brand-500 mb-6">
+        <a href="index.html" class="inline-flex items-center text-gray-600 hover:text-cyan-500 mb-6">
             <i class="fas fa-arrow-left mr-2"></i> Back to Home
         </a>
 
@@ -109,7 +114,7 @@
                     <p class="text-gray-500 mt-1"><span id="wishlistCount">0</span> items saved</p>
                 </div>
                 <div class="flex gap-2">
-                    <button id="shareWishlistBtn" onclick="shareMyWishlist()" class="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold rounded-lg hover:opacity-90 transition">
+                    <button id="shareWishlistBtn" onclick="shareMyWishlist()" class="px-4 py-2 bg-gradient-to-r from-cyan-400 to-cyan-700 text-ink-900 font-bold rounded-lg hover:opacity-90 transition">
                         <i class="fas fa-share-alt mr-1"></i> Share wishlist
                     </button>
                     <button id="clearAllBtn" class="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg hidden">
@@ -122,7 +127,7 @@
             <div id="wishlistGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <!-- Loading state -->
                 <div class="col-span-full bg-white rounded-lg shadow p-8 text-center">
-                    <i class="fas fa-spinner loading text-4xl text-brand-500 mb-4"></i>
+                    <i class="fas fa-spinner loading text-4xl text-cyan-500 mb-4"></i>
                     <p class="text-gray-500">Loading your wishlist...</p>
                 </div>
             </div>
@@ -180,7 +185,7 @@
                         <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
                         <h3 class="text-xl font-semibold text-gray-700 mb-2">Your wishlist is empty</h3>
                         <p class="text-gray-500 mb-6">Save items you love to buy them later!</p>
-                        <a href="index.html" class="inline-block bg-brand-500 text-white px-6 py-2 rounded-lg hover:bg-brand-600">
+                        <a href="index.html" class="inline-block bg-cyan-500 text-white px-6 py-2 rounded-lg hover:bg-cyan-600">
                             Start Shopping
                         </a>
                     </div>
@@ -211,17 +216,17 @@
                         </div>
                         <div class="p-4">
                             <p class="text-xs text-gray-500 uppercase tracking-wide">${product.category || 'Category'}</p>
-                            <h3 class="font-semibold text-gray-900 mt-1 cursor-pointer hover:text-brand-500" onclick="viewProduct('${product.id}')">
+                            <h3 class="font-semibold text-gray-900 mt-1 cursor-pointer hover:text-cyan-500" onclick="viewProduct('${product.id}')">
                                 ${product.name}
                             </h3>
                             <div class="flex items-center justify-between mt-3">
-                                <span class="text-xl font-bold text-brand-500">$${(product.price || 0).toFixed(2)}</span>
+                                <span class="text-xl font-bold text-cyan-500">₦${(product.price || 0).toFixed(2)}</span>
                             </div>
                             <button onclick="addToCart('${product.id}', '${product.stock}')" 
                                     class="w-full mt-4 py-2 rounded-lg text-center font-medium transition
                                     ${product.stock === 0 
                                         ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                                        : 'bg-brand-500 text-white hover:bg-brand-600'}">
+                                        : 'bg-cyan-500 text-white hover:bg-cyan-600'}">
                                 <i class="fas fa-cart-plus mr-2"></i>
                                 ${product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                             </button>

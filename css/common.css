@@ -333,3 +333,28 @@ h6 { font-size: 1rem; }
 .slide-in {
     animation: slideIn 0.3s ease-in-out;
 }
+/* === PRODUCTION FONT SIZES (Temu/AliExpress/Amazon style) === */
+/* Smaller, denser text for better information density */
+html { font-size: 14px; }  /* Base size down from 16px */
+body { font-size: 0.875rem; }  /* 14px */
+h1 { font-size: 1.25rem; }  /* 20px — was 2.5rem */
+h2 { font-size: 1.125rem; }  /* 18px — was 2rem */
+h3 { font-size: 1rem; }  /* 16px — was 1.75rem */
+h4 { font-size: 0.9375rem; }  /* 15px — was 1.5rem */
+h5 { font-size: 0.875rem; }  /* 14px — was 1.25rem */
+h6 { font-size: 0.8125rem; }  /* 13px — was 1rem */
+p, span, div, a, button, input, select, textarea { font-size: 0.8125rem; }  /* 13px */
+.text-xs { font-size: 0.625rem !important; }  /* 10px — for badges, meta */
+.text-sm { font-size: 0.75rem !important; }  /* 12px */
+.text-base { font-size: 0.8125rem !important; }  /* 13px */
+.text-lg { font-size: 0.9375rem !important; }  /* 15px */
+.text-xl { font-size: 1.0625rem !important; }  /* 17px */
+.text-2xl { font-size: 1.25rem !important; }  /* 20px */
+.text-3xl { font-size: 1.5rem !important; }  /* 24px */
+
+@media (max-width: 768px) {
+    html { font-size: 13px; }
+    h1 { font-size: 1.125rem; }
+    h2 { font-size: 1rem; }
+    h3 { font-size: 0.9375rem; }
+}

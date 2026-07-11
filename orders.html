@@ -21,12 +21,12 @@
                     colors: {
                         brand: {
                             50: '#fffbeb',
-                            100: '#fef3c7',
-                            200: '#fde68a',
-                            300: '#fcd34d',
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#00d4ff',
+                            500: '#00d4ff',
+                            600: '#0891b2',
                             700: '#b45309',
                         },
                         dark: {
@@ -46,6 +46,11 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
+
+<!-- Universal Navbar -->
+<div id="nav-mount"></div>
+<script src="js/load-navbar.js"></script>
+
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -54,9 +59,9 @@
                     <svg viewBox="0 0 60 60" class="w-full h-full">
                         <defs>
                             <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#fbbf24"/>
-                                <stop offset="50%" stop-color="#f59e0b"/>
-                                <stop offset="100%" stop-color="#d97706"/>
+                                <stop offset="0%" stop-color="#00d4ff"/>
+                                <stop offset="50%" stop-color="#00d4ff"/>
+                                <stop offset="100%" stop-color="#0891b2"/>
                             </linearGradient>
                             <filter id="headerLogoGlow" x="-50%" y="-50%" width="200%" height="200%">
                                 <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
@@ -73,31 +78,31 @@
                         <path d="M18 24 L38 24 M18 36 L32 36 M18 48 L38 48 M18 24 L18 48" 
                               fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"/>
                         <g transform="translate(52, 8)">
-                            <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#fbbf24"/>
+                            <path d="M0 0 L1.5 4.5 L6 6 L1.5 7.5 L0 12 L-1.5 7.5 L-6 6 L-1.5 4.5 Z" fill="#00d4ff"/>
                         </g>
                     </svg>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-xl font-extrabold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent leading-tight">Cellex</span>
+                    <span class="text-xl font-extrabold bg-gradient-to-r from-cyan-400 to-cyan-700 bg-clip-text text-transparent leading-tight">Cellex</span>
                     <span class="text-[8px] text-gray-400 tracking-widest uppercase -mt-1">Nigeria's #1</span>
                 </div>
             </a>
             <div class="flex items-center gap-4">
-                <a href="index.html" class="text-gray-600 hover:text-brand-500">
+                <a href="index.html" class="text-gray-600 hover:text-cyan-500">
                     <i class="fas fa-home text-xl"></i>
                 </a>
-                <a href="cart.html" class="text-gray-600 hover:text-brand-500 relative">
+                <a href="cart.html" class="text-gray-600 hover:text-cyan-500 relative">
                     <i class="fas fa-shopping-cart text-xl"></i>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-brand-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                 </a>
             </div>
         </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container pb-20 mx-auto px-4 py-8">
         <!-- Back Link -->
-        <a href="index.html" class="inline-flex items-center text-gray-600 hover:text-brand-500 mb-6">
+        <a href="index.html" class="inline-flex items-center text-gray-600 hover:text-cyan-500 mb-6">
             <i class="fas fa-arrow-left mr-2"></i> Back to Home
         </a>
 
@@ -145,7 +150,7 @@
             <div id="ordersList" class="space-y-4">
                 <!-- Loading state -->
                 <div class="bg-white rounded-lg shadow p-8 text-center">
-                    <i class="fas fa-spinner loading text-4xl text-brand-500 mb-4"></i>
+                    <i class="fas fa-spinner loading text-4xl text-cyan-500 mb-4"></i>
                     <p class="text-gray-500">Loading your orders...</p>
                 </div>
             </div>
@@ -252,7 +257,7 @@
                         <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
                         <h3 class="text-xl font-semibold text-gray-700 mb-2">No orders found</h3>
                         <p class="text-gray-500 mb-6">You haven't placed any orders yet.</p>
-                        <a href="index.html" class="inline-block bg-brand-500 text-white px-6 py-2 rounded-lg hover:bg-brand-600">
+                        <a href="index.html" class="inline-block bg-cyan-500 text-white px-6 py-2 rounded-lg hover:bg-cyan-600">
                             Start Shopping
                         </a>
                     </div>
@@ -289,7 +294,7 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="font-bold text-lg">$${(order.total || 0).toFixed(2)}</p>
+                                    <p class="font-bold text-lg">₦${(order.total || 0).toFixed(2)}</p>
                                     <p class="text-sm text-gray-500">${new Date(order.created_at).toLocaleDateString()}</p>
                                 </div>
                             </div>
@@ -297,7 +302,7 @@
                                 <span class="px-3 py-1 rounded-full text-sm font-medium ${statusClass}">
                                     ${order.status || 'Pending'}
                                 </span>
-                                <span class="text-brand-500 text-sm font-medium">
+                                <span class="text-cyan-500 text-sm font-medium">
                                     View Details <i class="fas fa-chevron-right ml-1"></i>
                                 </span>
                             </div>
@@ -349,7 +354,7 @@
                                         <p class="font-medium">${item.product_name || item.products?.name || 'Unknown Product'}</p>
                                         <p class="text-sm text-gray-500">Qty: ${item.quantity}</p>
                                     </div>
-                                    <p class="font-semibold">$${(item.price * item.quantity).toFixed(2)}</p>
+                                    <p class="font-semibold">₦${(item.price * item.quantity).toFixed(2)}</p>
                                 </div>
                             `).join('')}
                         </div>
@@ -358,19 +363,19 @@
                     <div class="border-t pt-4 space-y-2">
                         <div class="flex justify-between">
                             <span class="text-gray-500">Subtotal</span>
-                            <span>$${(order.subtotal || order.total || 0).toFixed(2)}</span>
+                            <span>₦${(order.subtotal || order.total || 0).toFixed(2)}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Shipping</span>
-                            <span>$${(order.shipping || 0).toFixed(2)}</span>
+                            <span>₦${(order.shipping || 0).toFixed(2)}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Tax</span>
-                            <span>$${(order.tax || 0).toFixed(2)}</span>
+                            <span>₦${(order.tax || 0).toFixed(2)}</span>
                         </div>
                         <div class="flex justify-between font-bold text-lg pt-2 border-t">
                             <span>Total</span>
-                            <span>$${(order.total || 0).toFixed(2)}</span>
+                            <span>₦${(order.total || 0).toFixed(2)}</span>
                         </div>
                     </div>
 
@@ -382,7 +387,7 @@
                     ${order.tracking_number ? `
                         <div class="border-t pt-4">
                             <h4 class="font-semibold mb-2">Tracking Number</h4>
-                            <p class="font-mono text-brand-500">${order.tracking_number}</p>
+                            <p class="font-mono text-cyan-500">${order.tracking_number}</p>
                         </div>
                     ` : ''}
 
@@ -391,7 +396,7 @@
                             Close
                         </button>
                         ${order.status === 'delivered' ? `
-                            <button class="flex-1 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600">
+                            <button class="flex-1 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600">
                                 Write Review
                             </button>
                         ` : ''}

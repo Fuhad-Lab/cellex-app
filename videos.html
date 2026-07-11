@@ -57,7 +57,7 @@
     .side-btn i { font-size: 1.8rem; margin-bottom: 4px; }
     .side-btn .avatar-mini {
       width: 48px; height: 48px; border-radius: 50%;
-      background: linear-gradient(135deg, #fbbf24, #d97706);
+      background: linear-gradient(135deg, #00d4ff, #0891b2);
       border: 2px solid #fff;
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; color: #0f172a; font-size: 1.2rem;
@@ -68,7 +68,7 @@
     .seller-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
     .seller-row .name { font-weight: 700; font-size: 0.95rem; }
     .seller-row .follow-mini {
-      background: #f59e0b; color: #0f172a;
+      background: #00d4ff; color: #0f172a;
       border: none; padding: 3px 10px; border-radius: 4px;
       font-size: 0.75rem; font-weight: 700; cursor: pointer;
     }
@@ -86,8 +86,8 @@
       display: flex; align-items: center; justify-content: center;
     }
     .product-card-overlay .pname { font-weight: 600; font-size: 0.85rem; line-height: 1.2; }
-    .product-card-overlay .pprice { color: #d97706; font-weight: 700; font-size: 0.95rem; }
-    .product-card-overlay .pcta { color: #f59e0b; font-size: 0.75rem; margin-top: 2px; }
+    .product-card-overlay .pprice { color: #0891b2; font-weight: 700; font-size: 0.95rem; }
+    .product-card-overlay .pcta { color: #00d4ff; font-size: 0.75rem; margin-top: 2px; }
 
     .topbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
@@ -108,13 +108,18 @@
     }
     .empty-state i { font-size: 3rem; color: #475569; margin-bottom: 1rem; }
     .empty-state a {
-      margin-top: 1.5rem; background: #f59e0b; color: #0f172a;
+      margin-top: 1.5rem; background: #00d4ff; color: #0f172a;
       padding: 0.7rem 1.5rem; border-radius: 8px; text-decoration: none;
       font-weight: 700;
     }
   </style>
 </head>
 <body>
+
+<!-- Universal Navbar -->
+<div id="nav-mount"></div>
+<script src="js/load-navbar.js"></script>
+
   <div class="topbar">
     <a href="index.html"><i class="fas fa-arrow-left"></i> Back to home</a>
   </div>

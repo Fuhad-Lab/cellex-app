@@ -23,12 +23,12 @@
                     colors: {
                         brand: {
                             50: '#fffbeb',
-                            100: '#fef3c7',
-                            200: '#fde68a',
-                            300: '#fcd34d',
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#00d4ff',
+                            500: '#00d4ff',
+                            600: '#0891b2',
                             700: '#b45309',
                         },
                         dark: {
@@ -76,7 +76,7 @@
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            background: linear-gradient(135deg, #00d4ff 0%, #00d4ff 50%, #0891b2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -144,8 +144,8 @@
             transition: all 0.2s ease;
         }
         .chip:hover {
-            background: #fef3c7;
-            border-color: #f59e0b;
+            background: #cffafe;
+            border-color: #00d4ff;
         }
         .chip:active {
             transform: scale(0.97);
@@ -154,6 +154,11 @@
 </head>
 
 <body class="min-h-screen">
+
+<!-- Universal Navbar -->
+<div id="nav-mount"></div>
+<script src="js/load-navbar.js"></script>
+
     <!-- Header -->
     <header class="glass sticky top-0 z-50 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4">
@@ -194,26 +199,26 @@
                 <i class="fas fa-robot text-white text-xs"></i>
             </div>
             <div class="message-bubble bg-white rounded-2xl rounded-tl-md p-3.5 shadow-sm border border-gray-100">
-                <p class="text-sm text-gray-700 leading-relaxed">Hi! I'm your <strong class="text-orange-500">Cellex AI Assistant</strong>. I can help you find products, compare prices, track deals, and more! What are you looking for today?</p>
+                <p class="text-sm text-gray-700 leading-relaxed">Hi! I'm your <strong class="text-cyan-500">Cellex AI Assistant</strong>. I can help you find products, compare prices, track deals, and more! What are you looking for today?</p>
                 <p class="text-[10px] text-gray-400 mt-1.5">Just now</p>
             </div>
         </div>
 
         <!-- Quick Suggestion Chips -->
         <div id="suggestionChips" class="flex flex-wrap gap-2 mb-4 ml-10">
-            <button onclick="sendSuggestion('Show me phones under ₦50,000')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+            <button onclick="sendSuggestion('Show me phones under ₦50,000')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                 <i class="fas fa-mobile-alt text-orange-400"></i>
                 Phones under ₦50k
             </button>
-            <button onclick="sendSuggestion('Best deals today')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+            <button onclick="sendSuggestion('Best deals today')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                 <i class="fas fa-bolt text-orange-400"></i>
                 Best deals today
             </button>
-            <button onclick="sendSuggestion('Farm fresh produce')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+            <button onclick="sendSuggestion('Farm fresh produce')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                 <i class="fas fa-leaf text-orange-400"></i>
                 Farm fresh produce
             </button>
-            <button onclick="sendSuggestion('Electronics')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-orange-600 shadow-sm">
+            <button onclick="sendSuggestion('Electronics')" class="chip inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:text-cyan-600 shadow-sm">
                 <i class="fas fa-laptop text-orange-400"></i>
                 Electronics
             </button>
@@ -235,13 +240,13 @@
             </div>
             <div class="chat-input flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2 border-2 border-transparent transition-all">
                 <input type="file" id="ai-file-input" accept="image/*" hidden>
-                <button id="ai-upload-btn" onclick="document.getElementById('ai-file-input').click()" class="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all flex-shrink-0" title="Upload image">
+                <button id="ai-upload-btn" onclick="document.getElementById('ai-file-input').click()" class="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-cyan-500 hover:bg-orange-50 rounded-full transition-all flex-shrink-0" title="Upload image">
                     <i class="fas fa-plus text-lg"></i>
                 </button>
                 <input type="text" id="chatInput" placeholder="Ask me anything about products..." 
                        class="flex-1 bg-transparent outline-none text-sm" 
                        onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()" class="w-9 h-9 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full flex items-center justify-center hover:from-orange-500 hover:to-orange-600 transition-all shadow-md flex-shrink-0">
+                <button onclick="sendMessage()" class="w-9 h-9 bg-gradient-to-r from-orange-400 to-cyan-600 rounded-full flex items-center justify-center hover:from-cyan-500 hover:to-orange-600 transition-all shadow-md flex-shrink-0">
                     <i class="fas fa-paper-plane text-white text-sm"></i>
                 </button>
             </div>
@@ -260,12 +265,12 @@
                 <i class="fas fa-th-large text-lg sm:text-xl"></i>
                 <span class="text-[10px] sm:text-xs">Categories</span>
             </a>
-            <a href="ai-chat.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-orange-500 relative">
+            <a href="ai-chat.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-cyan-500 relative">
                 <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-orange-500 rounded-full"></div>
                 <div class="w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg -mt-5">
                     <i class="fas fa-robot text-white text-base sm:text-lg"></i>
                 </div>
-                <span class="text-[10px] sm:text-xs font-semibold text-orange-500">AI Shop</span>
+                <span class="text-[10px] sm:text-xs font-semibold text-cyan-500">AI Shop</span>
             </a>
             <a href="cart.html" class="flex flex-col items-center gap-0.5 p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
                 <i class="fas fa-shopping-cart text-lg sm:text-xl"></i>

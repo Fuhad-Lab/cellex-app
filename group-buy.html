@@ -11,7 +11,7 @@
   <style>
     body { background: #f8fafc; }
     .gb-hero {
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%);
       color: #0f172a; padding: 3rem 1.5rem;
     }
     .gb-card {
@@ -20,17 +20,17 @@
       padding: 1.5rem; margin: 1rem auto; max-width: 720px;
     }
     .gb-progress-track {
-      width: 100%; height: 12px; background: #fef3c7;
+      width: 100%; height: 12px; background: #cffafe;
       border-radius: 999px; overflow: hidden;
     }
     .gb-progress-fill {
-      height: 100%; background: linear-gradient(90deg, #f59e0b, #d97706);
+      height: 100%; background: linear-gradient(90deg, #00d4ff, #0891b2);
       transition: width 0.5s ease;
     }
     .gb-avatars { display: flex; }
     .gb-avatar {
       width: 36px; height: 36px; border-radius: 50%;
-      background: #fef3c7; color: #92400e;
+      background: #cffafe; color: #0e7490;
       display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 0.85rem;
       border: 2px solid #fff; margin-left: -8px;
@@ -46,7 +46,7 @@
 
   <div class="gb-hero">
     <div class="max-w-3xl mx-auto text-center">
-      <div class="inline-flex items-center gap-2 bg-ink-900 text-amber-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+      <div class="inline-flex items-center gap-2 bg-ink-900 text-cyan-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
         <i class="fas fa-users"></i> Group Buy
       </div>
       <h1 class="text-3xl md:text-4xl font-extrabold mt-3" id="gb-headline">Loading…</h1>
@@ -103,11 +103,11 @@
               ? `<img src="${product.image_url}" class="w-24 h-24 rounded-xl object-cover">`
               : `<div class="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center text-3xl text-gray-400"><i class="fas fa-box"></i></div>`}
             <div class="flex-1">
-              <a href="product.html?id=${product.id}" class="font-bold text-lg hover:text-amber-600">${escapeHtml(product.name)}</a>
+              <a href="product.html?id=${product.id}" class="font-bold text-lg hover:text-cyan-600">${escapeHtml(product.name)}</a>
               <div class="flex items-baseline gap-2 mt-1">
-                <span class="text-2xl font-extrabold text-amber-600">$${discountPrice}</span>
+                <span class="text-2xl font-extrabold text-cyan-600">$${discountPrice}</span>
                 <span class="text-gray-400 line-through">$${Number(product.price).toFixed(2)}</span>
-                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">-${gb.discount_pct}%</span>
+                <span class="bg-cyan-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">-${gb.discount_pct}%</span>
               </div>
               <div class="text-xs text-gray-500 mt-1">Category: ${escapeHtml(product.category || 'General')}</div>
             </div>
@@ -125,7 +125,7 @@
           <div class="gb-avatars mt-3">${memberAvatars}${emptyAvatars}</div>
         </div>
 
-        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-900">
+        <div class="bg-cyan-50 border border-cyan-200 rounded-lg p-3 text-sm text-amber-900">
           <div class="font-semibold mb-1">
             ${isCompleted ? '✅ Group complete — discount unlocked!' :
               isExpired ? '⏰ This group buy has expired.' :
@@ -136,13 +136,13 @@
 
         <div class="flex gap-2 mt-4">
           ${isCompleted ? `
-            <a href="product.html?id=${product?.id || ''}&gb=${gb.id}" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold text-center py-3 rounded-lg hover:opacity-90">
+            <a href="product.html?id=${product?.id || ''}&gb=${gb.id}" class="flex-1 bg-gradient-to-r from-cyan-400 to-cyan-700 text-ink-900 font-bold text-center py-3 rounded-lg hover:opacity-90">
               <i class="fas fa-shopping-cart"></i> Buy at $${discountPrice}
             </a>
           ` : isExpired ? `
             <button disabled class="flex-1 bg-gray-200 text-gray-500 font-bold py-3 rounded-lg cursor-not-allowed">Expired</button>
           ` : `
-            <button onclick="joinGroup('${gb.id}')" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-600 text-ink-900 font-bold py-3 rounded-lg hover:opacity-90">
+            <button onclick="joinGroup('${gb.id}')" class="flex-1 bg-gradient-to-r from-cyan-400 to-cyan-700 text-ink-900 font-bold py-3 rounded-lg hover:opacity-90">
               <i class="fas fa-plus"></i> Join group buy
             </button>
           `}

@@ -168,7 +168,7 @@ async function updateCartCount() {
 // Image gallery functionality
 function createThumbnail(imageUrl, altText, isActive = false) {
     const div = document.createElement('div');
-    div.className = `cursor-pointer rounded-lg overflow-hidden border-2 ${isActive ? 'border-brand-500' : 'border-transparent'}`;
+    div.className = `cursor-pointer rounded-lg overflow-hidden border-2 ${isActive ? 'border-cyan-500' : 'border-transparent'}`;
 
     const img = document.createElement('img');
     img.src = imageUrl;
@@ -183,11 +183,11 @@ function createThumbnail(imageUrl, altText, isActive = false) {
 
         // Update active state of thumbnails
         document.querySelectorAll('#thumbnailContainer > div').forEach(thumb => {
-            thumb.classList.remove('border-brand-500');
+            thumb.classList.remove('border-cyan-500');
             thumb.classList.add('border-transparent');
         });
         div.classList.remove('border-transparent');
-        div.classList.add('border-brand-500');
+        div.classList.add('border-cyan-500');
     });
 
     return div;
@@ -338,7 +338,7 @@ function shareProduct(platform) {
     const url = `${window.location.origin}/Eesha%20buying%20folder/product.html?id=${id}`;
     const product = getCurrentProduct();
     const text = product
-        ? `Check out "${product.name}" on Cellex — $${Number(product.price).toFixed(2)}`
+        ? `Check out "${product.name}" on Cellex — ₦${Number(product.price).toFixed(2)}`
         : 'Check out this product on Cellex';
 
     if (platform === 'whatsapp') {
@@ -398,8 +398,8 @@ async function loadActiveGroupBuys() {
         if (!r.success || !r.groupBuys || r.groupBuys.length === 0) return;
         container.classList.remove('hidden');
         container.innerHTML = `
-            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                <div class="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">
+            <div class="bg-cyan-50 border border-cyan-200 rounded-lg p-3">
+                <div class="text-xs font-bold text-cyan-700 uppercase tracking-wide mb-2">
                     <i class="fas fa-fire"></i> ${r.groupBuys.length} active group buy${r.groupBuys.length > 1 ? 's' : ''} — join & get 20% off!
                 </div>
                 ${r.groupBuys.map(gb => `
@@ -443,7 +443,7 @@ async function loadProductReviews() {
             <div class="border-b pb-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">
+                        <div class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-sm">
                             ${(rev.reviewer_name || 'B').charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -457,7 +457,7 @@ async function loadProductReviews() {
                 ${rev.comment ? `<p class="text-gray-700 text-sm mt-1">${escapeHtml(rev.comment)}</p>` : ''}
                 ${rev.verified_purchase ? '<div class="text-xs text-green-600 mt-1"><i class="fas fa-check-circle"></i> Verified purchase</div>' : ''}
                 ${rev.images && rev.images.length ? `<div class="flex gap-2 mt-2">${rev.images.map(img => `<img src="${escapeHtml(img)}" class="w-16 h-16 object-cover rounded">`).join('')}</div>` : ''}
-                <button onclick="markHelpful('${rev.id}')" class="text-xs text-gray-500 hover:text-amber-600 mt-2">
+                <button onclick="markHelpful('${rev.id}')" class="text-xs text-gray-500 hover:text-cyan-600 mt-2">
                     <i class="fas fa-thumbs-up"></i> Helpful (${rev.helpful_count || 0})
                 </button>
             </div>`).join('');
@@ -488,12 +488,12 @@ function openReviewModal() {
             const star = parseInt(btn.dataset.star);
             document.getElementById('reviewRating').value = star;
             document.querySelectorAll('#starPicker button').forEach(b => {
-                b.classList.remove('text-amber-400');
+                b.classList.remove('text-cyan-400');
                 b.classList.add('text-gray-300');
             });
             for (let i = 1; i <= star; i++) {
                 const b = document.querySelector(`#starPicker button[data-star="${i}"]`);
-                if (b) { b.classList.add('text-amber-400'); b.classList.remove('text-gray-300'); }
+                if (b) { b.classList.add('text-cyan-400'); b.classList.remove('text-gray-300'); }
             }
         };
     });
