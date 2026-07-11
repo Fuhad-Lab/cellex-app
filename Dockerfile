@@ -1,27 +1,38 @@
-FROM python:3.10-slim
+# Cellex — Hugging Face Space Deployment
+# Docker space that builds the Next.js standalone output and serves it on port 7860
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# ---- Stage 1: Build ----
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy requirements first for caching
-COPY web-server/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies (use npm ci for reproducible builds)
+COPY package*.json ./
+RUN npm ci --no-audit --no-fund
 
-# Copy everything else (frontend files + web-server)
+# Copy source
 COPY . .
 
-# HF Spaces expects port 7860
+# Build the Next.js standalone output
+RUN npm run build
+
+# ---- Stage 2: Run ----
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+# Set production env
+ENV NODE_ENV=production
 ENV PORT=7860
+ENV HOSTNAME=0.0.0.0
+
+# Copy standalone build + public assets + static
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# HF Spaces runs on port 7860 by default
 EXPOSE 7860
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:7860/api/health || exit 1
-
-# Run the web server
-CMD ["python", "web-server/server.py"]
+# Run the standalone Next.js server
+CMD ["node", "server.js"]

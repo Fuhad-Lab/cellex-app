@@ -1,0 +1,132 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/components/auth-provider';
+import {
+  LayoutDashboard, Package, ShoppingBag, User, Radio, Video, BookOpen,
+  Store, LogOut, Menu, X
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const navItems = [
+  { href: '/seller', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/seller/products', label: 'Products', icon: Package },
+  { href: '/seller/orders', label: 'Orders', icon: ShoppingBag },
+  { href: '/seller/profile', label: 'Profile', icon: User },
+  { href: '/seller/go-live', label: 'Go Live', icon: Radio },
+  { href: '/seller/videos', label: 'Videos', icon: Video },
+  { href: '/seller/stories', label: 'Stories', icon: BookOpen },
+];
+
+export default function SellerLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading: authLoading, logout } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login?next=/seller');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const SidebarContent = () => (
+    <>
+      <div className="flex items-center gap-2 px-4 py-5 mb-2">
+        <div className="w-9 h-9 rounded-xl brand-gradient flex items-center justify-center">
+          <Store className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <div className="font-extrabold text-sm" style={{ fontFamily: 'var(--font-geist-mono)' }}>Cellex</div>
+          <div className="text-[10px] text-slate-500">Seller Center</div>
+        </div>
+      </div>
+
+      <nav className="flex-1 px-2 space-y-0.5">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'brand-gradient text-primary-foreground'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="p-2 border-t border-slate-100">
+        <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100">
+          <Store className="w-4 h-4" /> Back to store
+        </Link>
+        <button
+          onClick={async () => { await logout(); router.push('/'); }}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 w-full"
+        >
+          <LogOut className="w-4 h-4" /> Logout
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex">
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex md:flex-col w-60 bg-white border-r border-slate-200 fixed inset-y-0 left-0 z-30">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center">
+            <Store className="w-4 h-4 text-white" />
+          </div>
+          <span className="font-bold text-sm">Seller Center</span>
+        </div>
+        <button onClick={() => setMobileOpen(true)}>
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Mobile sidebar drawer */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-40 flex">
+          <div className="w-64 bg-white flex flex-col">
+            <button onClick={() => setMobileOpen(false)} className="absolute top-3 right-3">
+              <X className="w-5 h-5" />
+            </button>
+            <SidebarContent />
+          </div>
+          <div className="flex-1 bg-black/40" onClick={() => setMobileOpen(false)} />
+        </div>
+      )}
+
+      {/* Main content */}
+      <main className="flex-1 md:ml-60 pt-14 md:pt-0">
+        <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}

@@ -1,0 +1,49 @@
+# Hugging Face Spaces deployment ignore file
+# Keep the Docker image build lean
+
+# Dependencies (rebuilt in Docker)
+node_modules
+.pnp
+.pnp.*
+.yarn/*
+
+# Build artifacts (rebuilt in Docker)
+.next
+out
+dist
+build
+
+# Python (this is a Node-only deployment)
+scripts
+skills
+examples
+mini-services
+
+# Prisma local DB
+db
+prisma
+
+# Logs & dev artifacts
+*.log
+dev.log
+server.log
+worklog.md
+agents.md
+
+# Caddy / reverse proxy (not needed inside HF Space)
+Caddyfile
+
+# Original upload / download folders (not part of web app)
+upload
+download
+tool-results
+
+# Git
+.git
+.gitignore
+.github
+
+# Local env files (HF Spaces has its own secrets UI)
+.env
+.env.local
+.env.*.local
