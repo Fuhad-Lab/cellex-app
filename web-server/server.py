@@ -329,6 +329,130 @@ async def proxy_telegram(request: Request):
 async def proxy_payment(request: Request):
     return await _proxy_to_edge_function("payment", request)
 
+# ---- Payment Verifier (Gmail IMAP check, triggered on-demand) ----
+# Called by the payment edge function's check_status OR by the frontend
+# when the user clicks "I've sent it". Runs a single Gmail IMAP check
+# and matches against all awaiting_verification orders.
+GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL", "fuhaddesmond7@gmail.com")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "mcvkgxktbfqzojlu")
+
+@app.post("/api/verify-payments")
+async def verify_payments(request: Request):
+    """Trigger a single Gmail IMAP check for pending payments.
+    Called when buyer clicks 'I've sent it' — checks Gmail once, matches amounts."""
+    import imaplib
+    import re as regex
+
+    try:
+        # Get all awaiting_verification orders from Supabase
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            orders_resp = await client.get(
+                f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?status=eq.awaiting_verification&select=order_id,expected_amount,buyer_name,buyer_bank_name",
+                headers={
+                    "apikey": SUPABASE_SERVICE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+                }
+            )
+            orders = orders_resp.json()
+
+        if not orders or len(orders) == 0:
+            return JSONResponse({"success": True, "message": "No orders awaiting verification", "matched": 0})
+
+        # Connect to Gmail via IMAP
+        mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+        mail.login(GMAIL_EMAIL, GMAIL_APP_PASSWORD)
+        mail.select("INBOX")
+
+        # Search for unread PalmPay emails
+        result, data = mail.search(None, "UNSEEN", "FROM", '"palmpay"')
+        email_ids = data[0].split() if data[0] else []
+
+        if not email_ids:
+            mail.logout()
+            return JSONResponse({"success": True, "message": "No unread PalmPay emails found", "matched": 0, "emails_checked": 0})
+
+        # Check the 10 most recent unread PalmPay emails
+        recent_ids = email_ids[-10:] if len(email_ids) > 10 else email_ids
+        matched_count = 0
+
+        for msg_id in recent_ids:
+            result, msg_data = mail.fetch(msg_id, "(BODY.PEEK[TEXT])")
+            raw = msg_data[0][1] if isinstance(msg_data[0], tuple) else b""
+            text = raw.decode("utf-8", errors="ignore")
+
+            # Parse amount from email
+            amount = None
+            for pattern in [r"NGN\s*([\d,]+\.?\d*)", r"₦\s*([\d,]+\.?\d*)", r"received.*?₦?\s*([\d,]+\.?\d*)"]:
+                m = regex.search(pattern, text, regex.I)
+                if m:
+                    try:
+                        amount = round(float(m.group(1).replace(",", "")), 2)
+                        break
+                    except:
+                        pass
+
+            if amount is None:
+                continue
+
+            # Parse sender name
+            sender_match = regex.search(r"Sender[:\s]*</strong>\s*([^<\n]+)", text, regex.I)
+            sender = sender_match.group(1).strip() if sender_match else "Unknown"
+
+            # Match against pending orders
+            for order in orders:
+                expected = float(order["expected_amount"])
+                if abs(amount - expected) < 0.01:
+                    email_uid = f"INBOX:{msg_id.decode()}"
+
+                    # Check if email already used
+                    async with httpx.AsyncClient(timeout=10.0) as client:
+                        used_resp = await client.get(
+                            f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?matched_email_id=eq.{email_uid}&select=id",
+                            headers={"apikey": SUPABASE_SERVICE_KEY, "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"}
+                        )
+                        used = used_resp.json()
+
+                    if used and len(used) > 0:
+                        break  # Email already used, skip
+
+                    # MATCH! Update the order
+                    async with httpx.AsyncClient(timeout=10.0) as client:
+                        await client.patch(
+                            f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?order_id=eq.{order['order_id']}",
+                            headers={
+                                "apikey": SUPABASE_SERVICE_KEY,
+                                "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+                                "Content-Type": "application/json",
+                                "Prefer": "return=minimal",
+                            },
+                            json={
+                                "status": "matched",
+                                "matched_at": datetime.utcnow().isoformat() + "Z",
+                                "matched_email_id": email_uid,
+                                "matched_sender_name": sender,
+                                "matched_amount": amount,
+                                "updated_at": datetime.utcnow().isoformat() + "Z",
+                            }
+                        )
+
+                    # Mark email as read
+                    mail.store(msg_id, "+FLAGS", "\\Seen")
+                    matched_count += 1
+                    logger.info(f"✅ Payment matched: order {order['order_id']} — ₦{amount} from {sender}")
+                    break
+
+        mail.logout()
+        return JSONResponse({
+            "success": True,
+            "message": f"Checked {len(recent_ids)} emails, matched {matched_count} payments",
+            "matched": matched_count,
+            "emails_checked": len(recent_ids),
+        })
+
+    except Exception as e:
+        logger.error(f"Payment verification error: {e}")
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+
 # ---- Phase 4: OpenWA gateway proxy (avoids CORS issues from browser) ----
 OPENWA_BASE_URL = os.environ.get("OPENWA_BASE_URL", "https://eesha-search.onrender.com")
 OPENWA_API_KEY = os.environ.get("OPENWA_API_KEY", "CellexWA2024")

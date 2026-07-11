@@ -263,8 +263,13 @@
           document.getElementById('step-verifying').classList.remove('hidden');
           document.getElementById('step2').classList.add('done');
           document.getElementById('step3').classList.add('active');
-          
-          // Start polling for status
+
+          // Trigger Gmail IMAP check immediately
+          try {
+            await fetch('/api/verify-payments', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+          } catch(e) {}
+
+          // Start polling for status (also triggers verify-payments on each poll)
           startStatusPolling();
         } else {
           alert('Failed: ' + (r.error || 'Unknown error'));
@@ -283,6 +288,9 @@
       statusPollTimer = setInterval(async () => {
         if (!currentOrderId) return;
         try {
+          // Trigger Gmail IMAP check on each poll
+          try { await fetch('/api/verify-payments', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' }); } catch(e) {}
+
           const r = await window.EdgeFunctions.payment.checkStatus(currentOrderId);
           if (!r.success) return;
 
