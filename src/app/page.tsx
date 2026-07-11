@@ -20,7 +20,7 @@ export default function HomePage() {
       try {
         const [homeResp, sellersResp] = await Promise.all([
           api.products.home(),
-          api.social.discover(6),
+          api.social.discover(12),
         ]);
 
         if (homeResp.success) {
@@ -99,9 +99,10 @@ export default function HomePage() {
         <Section
           icon={<Store className="w-5 h-5 text-primary" />}
           title="Meet the Top Sellers"
+          href="/sellers"
         >
-          <div className="space-y-4">
-            {sellers.map((seller) => {
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+            {sellers.slice(0, 3).map((seller) => {
               const sellerProducts = [...flashDeals, ...trending, ...newArrivals]
                 .filter(p => p.seller_id === seller.id)
                 .slice(0, 4);
@@ -109,7 +110,7 @@ export default function HomePage() {
               const initial = name.charAt(0).toUpperCase();
 
               return (
-                <Card key={seller.id} className="p-3 border-slate-100 shadow-sm">
+                <Card key={seller.id} className="p-3 border-slate-100 shadow-sm shrink-0 w-64 sm:w-72">
                   {/* 2x2 product grid */}
                   <div className="grid grid-cols-2 gap-1.5 mb-3">
                     {sellerProducts.length > 0 ? (
@@ -159,6 +160,19 @@ export default function HomePage() {
                 </Card>
               );
             })}
+
+            {/* See more card */}
+            <Link
+              href="/sellers"
+              className="shrink-0 w-32 sm:w-36 flex flex-col items-center justify-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 hover:border-primary hover:bg-primary/5 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-full brand-gradient flex items-center justify-center text-white font-bold mb-2">
+                →
+              </div>
+              <div className="text-xs font-bold text-slate-700 text-center px-2">
+                See all<br/>sellers
+              </div>
+            </Link>
           </div>
         </Section>
       )}
