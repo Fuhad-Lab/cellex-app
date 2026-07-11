@@ -824,6 +824,7 @@
             startFlashCountdown();
             setupHeroCarousel();
             // Phase 1 — social commerce
+            // loadDiscoverSellers needs to know if user is logged in, so wait for auth
             loadDiscoverSellers();
             loadFollowingFeed();
             // Phase 2 — live shopping
@@ -1131,28 +1132,51 @@
             const container = document.getElementById('discoverSellersContainer');
             if (!container) return;
             try {
-                // Fetch sellers + all products in parallel
-                const [sellersResp, productsResp] = await Promise.all([
-                    window.EdgeFunctions.social.discover(10),
-                    window.EdgeFunctions.products.all(100),
-                ]);
+                // Check if user is logged in — if so, show only followed sellers
+                // If not logged in, show all sellers
+                const sess = await window.EdgeFunctions.auth.checkSession();
+                const isLoggedIn = sess.success && sess.user;
+                window.currentUser = isLoggedIn ? sess.user : null;
 
-                if (!sellersResp.success || !sellersResp.sellers || sellersResp.sellers.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center py-8 text-gray-500 text-sm">
-                            <i class="fas fa-store text-3xl block mb-2 text-gray-300"></i>
-                            No sellers yet. <a href="seller/index.html" class="text-cyan-600 font-semibold">Open your store</a>
-                        </div>`;
-                    return;
+                let sellers = [];
+                if (isLoggedIn) {
+                    // Logged in: fetch followed sellers
+                    const followingResp = await window.EdgeFunctions.social.following();
+                    if (followingResp.success && followingResp.sellers && followingResp.sellers.length > 0) {
+                        sellers = followingResp.sellers;
+                    } else {
+                        // No followed sellers — show empty state
+                        container.innerHTML = `
+                            <div class="text-center py-8 text-gray-500 text-sm">
+                                <i class="fas fa-user-plus text-3xl block mb-2 text-gray-300"></i>
+                                You're not following any sellers yet. <a href="categories.html" class="text-cyan-600 font-semibold">Browse all sellers</a> to find stores you love.
+                            </div>`;
+                        return;
+                    }
+                } else {
+                    // Not logged in: show all sellers
+                    const sellersResp = await window.EdgeFunctions.social.discover(10);
+                    if (!sellersResp.success || !sellersResp.sellers || sellersResp.sellers.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-8 text-gray-500 text-sm">
+                                <i class="fas fa-store text-3xl block mb-2 text-gray-300"></i>
+                                No sellers yet. <a href="seller/index.html" class="text-cyan-600 font-semibold">Open your store</a>
+                            </div>`;
+                        return;
+                    }
+                    sellers = sellersResp.sellers;
                 }
 
+                // Fetch all products to build the 2x2 grids
+                const productsResp = await window.EdgeFunctions.products.all(100);
                 const allProducts = productsResp.success ? (productsResp.products || []) : [];
 
-                // Render each seller as a Depop-style card: 2x2 product grid + avatar + name + Shop button
-                container.innerHTML = sellersResp.sellers.map(s => {
+                // Render each seller as a Depop-style card
+                container.innerHTML = sellers.map(s => {
                     const name = s.business_name || s.farm_name || 'Unnamed store';
                     const initial = (name || '?').charAt(0).toUpperCase();
-                    const sellerProducts = allProducts.filter(p => p.seller_id === s.id).slice(0, 4);
+                    const sellerId = s.id || s.seller_id;
+                    const sellerProducts = allProducts.filter(p => p.seller_id === sellerId).slice(0, 4);
 
                     // Build 2x2 product grid
                     let productGridHtml = '';
@@ -1163,7 +1187,6 @@
                                 : `<div class="w-full aspect-square bg-gray-100 flex items-center justify-center text-gray-400"><i class="fas fa-box text-2xl"></i></div>`;
                             return `<a href="product.html?id=${p.id}" class="block rounded-lg overflow-hidden bg-gray-50">${img}</a>`;
                         }).join('');
-                        // Pad with empty slots if less than 4 products
                         const emptySlots = 4 - sellerProducts.length;
                         for (let i = 0; i < emptySlots; i++) {
                             gridItems += `<div class="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center text-gray-300"><i class="fas fa-box text-2xl"></i></div>`;
@@ -1186,12 +1209,12 @@
                         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
                             ${productGridHtml}
                             <div class="flex items-center gap-3">
-                                <a href="seller-profile.html?id=${s.id}" class="shrink-0">${avatar}</a>
+                                <a href="seller-profile.html?id=${sellerId}" class="shrink-0">${avatar}</a>
                                 <div class="flex-1 min-w-0">
-                                    <a href="seller-profile.html?id=${s.id}" class="font-bold text-sm text-gray-900 hover:text-cyan-600 truncate block">${escapeHtml(name)}</a>
+                                    <a href="seller-profile.html?id=${sellerId}" class="font-bold text-sm text-gray-900 hover:text-cyan-600 truncate block">${escapeHtml(name)}</a>
                                     <div class="text-xs text-gray-500">${s.followers || 0} followers · ${escapeHtml(s.business_category || s.seller_type || 'Seller')}</div>
                                 </div>
-                                <a href="seller-profile.html?id=${s.id}" class="bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition whitespace-nowrap">Shop</a>
+                                <a href="seller-profile.html?id=${sellerId}" class="bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition whitespace-nowrap">Shop</a>
                             </div>
                         </div>`;
                 }).join('');

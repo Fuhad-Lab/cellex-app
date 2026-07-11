@@ -5,366 +5,314 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seller · Cellex</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/common.css">
-  <link rel="stylesheet" href="css/index.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="js/config/edge-functions.js?v=2"></script>
   <style>
-    /* seller-profile page styling */
-    .sp-hero {
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-      color: #0f172a;
-      padding: 3rem 1.5rem 4.5rem;
-      position: relative;
-    }
-    .sp-hero-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .sp-avatar {
-      width: 96px; height: 96px; border-radius: 50%;
-      background: #0f172a; color: #fbbf24;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.2rem; font-weight: 800;
-      border: 4px solid #fff;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .sp-hero h1 { margin: 0; font-size: 1.8rem; color: #0f172a; }
-    .sp-meta { font-size: 0.95rem; opacity: 0.85; margin-top: 0.25rem; }
-    .sp-stats { display: flex; gap: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem; font-weight: 600; }
-    .sp-actions { margin-left: auto; display: flex; gap: 0.5rem; }
-
-    .sp-section {
-      max-width: 1100px; margin: -2rem auto 2rem;
-      padding: 0 1.5rem;
-      position: relative; z-index: 2;
-    }
-    .sp-card {
-      background: #fff; border-radius: 12px;
-      padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-      margin-bottom: 1.5rem;
-    }
-    .sp-card h2 { font-size: 1.1rem; margin: 0 0 1rem; }
-    .sp-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .sp-tab {
-      padding: 0.5rem 1rem; border-radius: 999px;
-      background: #fff; color: #64748b; text-decoration: none;
-      font-size: 0.9rem; font-weight: 500;
-      border: 1px solid #e2e8f0;
-    }
-    .sp-tab.active { background: #f59e0b; color: #0f172a; border-color: #f59e0b; }
-
-    .sp-product-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-    }
-    .sp-product {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      border: 1px solid #e2e8f0; cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      text-decoration: none; color: inherit;
-    }
-    .sp-product:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
-    .sp-product img, .sp-product .ph {
-      width: 100%; aspect-ratio: 1; object-fit: cover;
-      background: #f1f5f9; display: flex; align-items: center; justify-content: center;
-      color: #94a3b8; font-size: 2rem;
-    }
-    .sp-product .info { padding: 0.6rem; }
-    .sp-product .name { font-size: 0.88rem; font-weight: 500; line-height: 1.3; height: 2.3em; overflow: hidden; }
-    .sp-product .price { font-size: 0.95rem; font-weight: 700; color: #d97706; margin-top: 0.25rem; }
-
-    .activity-item {
-      display: flex; gap: 0.75rem; padding: 0.75rem 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      background: #fef3c7; color: #d97706;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .activity-icon.green { background: #d1fae5; color: #059669; }
-    .activity-icon.blue  { background: #dbeafe; color: #2563eb; }
-    .activity-icon.pink  { background: #fce7f3; color: #db2777; }
-    .activity-body { flex: 1; min-width: 0; }
-    .activity-title { font-weight: 500; }
-    .activity-meta { font-size: 0.8rem; color: #64748b; margin-top: 0.15rem; }
-
-    .follow-btn {
-      padding: 0.6rem 1.4rem; border-radius: 999px;
-      background: #0f172a; color: #fbbf24; border: none;
-      font-weight: 700; cursor: pointer; font-size: 0.95rem;
-      transition: transform 0.1s, background 0.15s;
-    }
-    .follow-btn:hover { transform: translateY(-1px); }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: #fff; color: #0f172a; }
+    
+    /* Profile header — Depop style */
+    .sp-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: linear-gradient(135deg, #00d4ff, #0891b2); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .sp-name { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+    .sp-meta { font-size: 0.8rem; color: #64748b; }
+    .sp-stats { display: flex; align-items: center; gap: 1rem; }
+    .sp-stat-num { font-weight: 700; font-size: 0.95rem; color: #0f172a; }
+    .sp-stat-label { font-size: 0.75rem; color: #64748b; }
+    .follow-btn { background: linear-gradient(135deg, #00d4ff, #0891b2); color: #0f172a; font-weight: 700; padding: 0.5rem 1.5rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+    .follow-btn:hover { box-shadow: 0 0 20px rgba(0,212,255,0.4); }
     .follow-btn.following { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; }
-    .follow-btn:disabled { opacity: 0.6; cursor: wait; }
-
-    .sp-loading { text-align: center; padding: 3rem; color: #64748b; }
+    .msg-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+    .msg-btn:hover { border-color: #00d4ff; color: #00d4ff; }
+    
+    /* Tabs */
+    .sp-tabs { display: flex; border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem; }
+    .sp-tab { padding: 0.75rem 1.25rem; font-weight: 600; font-size: 0.9rem; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .sp-tab:hover { color: #0f172a; }
+    .sp-tab.active { color: #0f172a; border-bottom-color: #00d4ff; }
+    
+    /* Product grid — 2 columns on mobile, 3 on tablet, 4 on desktop */
+    .sp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    @media (min-width: 640px) { .sp-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .sp-grid { grid-template-columns: repeat(4, 1fr); } }
+    .sp-product { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #f1f5f9; transition: transform 0.2s; text-decoration: none; color: inherit; }
+    .sp-product:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,212,255,0.1); }
+    .sp-product img, .sp-product .ph { width: 100%; aspect-ratio: 1; object-fit: cover; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #cbd5e1; font-size: 2rem; }
+    .sp-product .info { padding: 0.5rem; }
+    .sp-product .pname { font-size: 0.8rem; font-weight: 500; line-height: 1.3; height: 2.4em; overflow: hidden; color: #334155; }
+    .sp-product .pprice { font-size: 0.9rem; font-weight: 700; color: #00d4ff; margin-top: 0.2rem; }
+    
+    /* Reviews section */
+    .sp-review { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+    .sp-review:last-child { border-bottom: none; }
+    .sp-review-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #0891b2); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+    
+    .sp-loading { text-align: center; padding: 3rem; color: #94a3b8; }
   </style>
 </head>
 <body>
-  <!-- Same shared header as the rest of the site -->
-  <div id="header-mount"></div>
+  <!-- Universal Navbar -->
+  <div id="nav-mount"></div>
+  <script>fetch('shared/navbar.html').then(r=>r.text()).then(h=>{document.getElementById('nav-mount').innerHTML=h;});</script>
 
-  <div class="sp-hero">
-    <div class="sp-hero-inner">
-      <img id="sp-avatar" class="sp-avatar" alt="" style="display:none;">
-      <div id="sp-avatar-ph" class="sp-avatar">?</div>
-      <div style="flex:1;min-width:200px;">
-        <h1 id="sp-name">Loading…</h1>
-        <div class="sp-meta" id="sp-meta"></div>
-        <div class="sp-stats">
-          <div><span id="sp-followers">0</span> followers</div>
-          <div><span id="sp-products">0</span> products</div>
-          <div><span id="sp-posts">0</span> posts</div>
+  <!-- Seller Profile -->
+  <main class="max-w-4xl mx-auto px-4 py-6 pb-20 md:pb-6">
+    <!-- Profile Header (Depop style) -->
+    <div id="sp-header" class="mb-4">
+      <div class="flex items-start gap-4 mb-4">
+        <!-- Avatar -->
+        <div id="sp-avatar" class="sp-avatar">?</div>
+        
+        <!-- Name + stats -->
+        <div class="flex-1 min-w-0">
+          <div id="sp-name" class="sp-name">Loading…</div>
+          <div id="sp-meta" class="sp-meta mt-0.5"></div>
+          
+          <!-- Stats row -->
+          <div class="sp-stats mt-3">
+            <div>
+              <div id="sp-followers" class="sp-stat-num">0</div>
+              <div class="sp-stat-label">Followers</div>
+            </div>
+            <div>
+              <div id="sp-products" class="sp-stat-num">0</div>
+              <div class="sp-stat-label">Products</div>
+            </div>
+            <div>
+              <div id="sp-rating" class="sp-stat-num">—</div>
+              <div class="sp-stat-label">Rating</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Follow + Message buttons -->
+        <div class="flex items-center gap-2">
+          <button id="follow-btn" class="follow-btn" disabled>Follow</button>
+          <button class="msg-btn" onclick="alert('Messaging coming soon!')">
+            <i class="far fa-envelope text-sm"></i>
+          </button>
         </div>
       </div>
-      <div class="sp-actions">
-        <button class="follow-btn" id="follow-btn" disabled>Follow</button>
-      </div>
+      
+      <!-- Bio -->
+      <p id="sp-bio" class="text-sm text-gray-600 mb-2"></p>
     </div>
-  </div>
 
-  <div class="sp-section">
+    <!-- Tabs -->
     <div class="sp-tabs">
-      <a class="sp-tab active" data-tab="products">Products</a>
-      <a class="sp-tab" data-tab="reviews">Reviews</a>
-      <a class="sp-tab" data-tab="about">About</a>
-      <a class="sp-tab" data-tab="activity">Activity</a>
+      <div class="sp-tab active" data-tab="shop" onclick="switchTab('shop')">Shop</div>
+      <div class="sp-tab" data-tab="reviews" onclick="switchTab('reviews')">Reviews</div>
+      <div class="sp-tab" data-tab="about" onclick="switchTab('about')">About</div>
     </div>
 
-    <div class="sp-card" id="tab-products">
-      <h2>Products by this seller</h2>
-      <div id="products-grid" class="sp-product-grid">
+    <!-- Shop tab: product grid -->
+    <div id="tab-shop">
+      <div id="sp-grid" class="sp-grid">
         <div class="sp-loading">Loading products…</div>
       </div>
     </div>
 
-    <div class="sp-card" id="tab-reviews" style="display:none;">
-      <h2>Customer reviews <span id="reviewsAvgBadge" class="text-sm font-normal text-gray-500"></span></h2>
-      <div id="reviews-list" class="sp-loading">Loading reviews…</div>
+    <!-- Reviews tab -->
+    <div id="tab-reviews" style="display:none;">
+      <div id="sp-reviews" class="sp-loading">Loading reviews…</div>
     </div>
 
-    <div class="sp-card" id="tab-about" style="display:none;">
-      <h2>About</h2>
-      <p id="about-text" style="color:#475569;line-height:1.7;"></p>
-      <div id="about-meta" style="margin-top:1rem;font-size:0.9rem;color:#64748b;"></div>
-    </div>
-
-    <div class="sp-card" id="tab-activity" style="display:none;">
-      <h2>Recent activity</h2>
-      <div id="activity-list">
-        <div class="sp-loading">Loading activity…</div>
+    <!-- About tab -->
+    <div id="tab-about" style="display:none;">
+      <div class="space-y-3 pt-2">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Store name</div>
+          <div id="about-name" class="text-sm text-gray-800">—</div>
+        </div>
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Category</div>
+          <div id="about-category" class="text-sm text-gray-800">—</div>
+        </div>
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Location</div>
+          <div id="about-location" class="text-sm text-gray-800">—</div>
+        </div>
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Member since</div>
+          <div id="about-joined" class="text-sm text-gray-800">—</div>
+        </div>
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1">Description</div>
+          <div id="about-desc" class="text-sm text-gray-800">—</div>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- Load shared header -->
   <script>
-    fetch('shared/header.html').then(r => r.text()).then(html => {
-      document.getElementById('header-mount').innerHTML = html;
-      // adjust paths since we're at root level
-    });
-  </script>
-  <script src="js/config/edge-functions.js"></script>
-  <script>
+    let sellerId = null;
+    let viewerId = null;
+    let isFollowing = false;
+    let allProducts = [];
+
     (async () => {
-      // Parse seller id from URL
       const params = new URLSearchParams(location.search);
-      let sellerId = params.get('id');
-
-      // If no id, redirect to discover
+      sellerId = params.get('id');
       if (!sellerId) {
-        document.querySelector('.sp-section').innerHTML = '<div class="sp-card"><p>No seller selected. <a href="index.html#discover">Browse sellers</a></p></div>';
+        document.querySelector('main').innerHTML = '<div class="text-center py-12 text-gray-500">No seller selected. <a href="index.html" class="text-cyan-600">Browse sellers</a></div>';
         return;
       }
 
-      // Get current user (if any) for follow state
-      let viewerId = null;
+      // Get current user
       const sess = await window.EdgeFunctions.auth.checkSession();
       if (sess.success && sess.user) viewerId = sess.user.id;
 
-      // Load seller profile + seller's own products + activity feed in parallel
-      const [profileResp, productsResp, feedResp] = await Promise.all([
+      // Load seller profile + all products in parallel
+      const [profileResp, productsResp, reviewsResp] = await Promise.all([
         window.EdgeFunctions.social.publicProfile(sellerId, viewerId),
-        fetch('/api/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ op: 'all', limit: 100 }),
-          credentials: 'same-origin',
-        }).then(r => r.json()),
-        window.EdgeFunctions.social.sellerFeed(sellerId, 20),
+        window.EdgeFunctions.products.all(100),
+        window.EdgeFunctions.reviews.bySeller(sellerId),
       ]);
 
-      if (!profileResp.success) {
-        document.querySelector('.sp-section').innerHTML = '<div class="sp-card"><p>Seller not found.</p></div>';
+      if (!profileResp.success || !profileResp.seller) {
+        document.querySelector('main').innerHTML = '<div class="text-center py-12 text-gray-500">Seller not found.</div>';
         return;
       }
 
       const s = profileResp.seller;
       const stats = profileResp.stats;
+      isFollowing = profileResp.isFollowing;
+      allProducts = productsResp.success ? (productsResp.products || []) : [];
 
-      // Header
+      // Filter this seller's products
+      const sellerProducts = allProducts.filter(p => p.seller_id === sellerId);
+
+      // Set page title
       document.title = (s.business_name || s.farm_name || 'Seller') + ' · Cellex';
-      document.getElementById('sp-name').textContent = s.business_name || s.farm_name || 'Unnamed store';
-      const metaBits = [];
-      if (s.business_category) metaBits.push(s.business_category);
-      if (s.business_location) metaBits.push('📍 ' + s.business_location);
-      if (s.seller_type) metaBits.push(s.seller_type.toLowerCase());
-      document.getElementById('sp-meta').textContent = metaBits.join(' · ');
-      document.getElementById('sp-followers').textContent = stats.followers;
-      document.getElementById('sp-posts').textContent = stats.posts;
 
       // Avatar
+      const avatarEl = document.getElementById('sp-avatar');
       if (s.profile_image) {
-        const img = document.getElementById('sp-avatar');
-        img.src = s.profile_image;
-        img.style.display = 'block';
-        document.getElementById('sp-avatar-ph').style.display = 'none';
+        avatarEl.innerHTML = `<img src="${s.profile_image}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">`;
       } else {
-        document.getElementById('sp-avatar-ph').textContent =
-          (s.business_name || s.farm_name || '?').toString().charAt(0).toUpperCase();
+        avatarEl.textContent = (s.business_name || s.farm_name || '?').charAt(0).toUpperCase();
       }
 
-      // About tab content
-      document.getElementById('about-text').textContent =
-        s.business_description || 'This seller has not added a description yet.';
-      document.getElementById('about-meta').innerHTML =
-        `<div>Member since ${new Date(s.created_at).toLocaleDateString()}</div>` +
-        (s.phone ? `<div>📞 ${s.phone}</div>` : '');
+      // Name + meta
+      document.getElementById('sp-name').textContent = s.business_name || s.farm_name || 'Unnamed store';
+      const metaParts = [];
+      if (s.business_category) metaParts.push(s.business_category);
+      if (s.business_location) metaParts.push(s.business_location);
+      if (s.seller_type) metaParts.push(s.seller_type.toLowerCase());
+      document.getElementById('sp-meta').textContent = metaParts.join(' · ');
+
+      // Stats
+      document.getElementById('sp-followers').textContent = stats.followers;
+      document.getElementById('sp-products').textContent = sellerProducts.length;
+      
+      // Rating
+      if (reviewsResp.success && reviewsResp.summary && reviewsResp.summary.count > 0) {
+        document.getElementById('sp-rating').textContent = reviewsResp.summary.avg.toFixed(1) + '★';
+      } else {
+        document.getElementById('sp-rating').textContent = '—';
+      }
+
+      // Bio
+      document.getElementById('sp-bio').textContent = s.business_description || '';
+
+      // About tab
+      document.getElementById('about-name').textContent = s.business_name || s.farm_name || '—';
+      document.getElementById('about-category').textContent = s.business_category || '—';
+      document.getElementById('about-location').textContent = s.business_location || '—';
+      document.getElementById('about-joined').textContent = s.created_at ? new Date(s.created_at).toLocaleDateString() : '—';
+      document.getElementById('about-desc').textContent = s.business_description || 'No description yet.';
 
       // Follow button
       const followBtn = document.getElementById('follow-btn');
       followBtn.disabled = false;
+      
       if (!viewerId) {
+        // Not logged in
         followBtn.textContent = 'Login to follow';
-        followBtn.addEventListener('click', () => {
-          window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
-        });
+        followBtn.onclick = () => { window.location.href = 'login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search); };
       } else if (viewerId === sellerId) {
+        // Own store
         followBtn.textContent = 'Your store';
         followBtn.disabled = true;
+        followBtn.style.opacity = '0.5';
       } else {
-        let following = profileResp.isFollowing;
-        const renderBtn = () => {
-          followBtn.textContent = following ? '✓ Following' : '+ Follow';
-          followBtn.classList.toggle('following', following);
-        };
-        renderBtn();
-        followBtn.addEventListener('click', async () => {
-          followBtn.disabled = true;
-          const r = following
-            ? await window.EdgeFunctions.social.unfollow(sellerId)
-            : await window.EdgeFunctions.social.follow(sellerId);
-          if (r.success) {
-            following = !following;
-            document.getElementById('sp-followers').textContent =
-              Math.max(0, Number(document.getElementById('sp-followers').textContent) + (following ? 1 : -1));
-            renderBtn();
-          } else {
-            window.alert(r.error || 'Action failed');
-          }
-          followBtn.disabled = false;
-        });
+        // Logged in, not own store
+        renderFollowButton();
+        followBtn.onclick = toggleFollow;
       }
 
-      // Products tab — filter to this seller's products
-      const grid = document.getElementById('products-grid');
-      const sellerProducts = (productsResp.products || []).filter(p => p.seller_id === sellerId);
-      document.getElementById('sp-products').textContent = sellerProducts.length;
-
-      if (!sellerProducts.length) {
+      // Render product grid
+      const grid = document.getElementById('sp-grid');
+      if (sellerProducts.length === 0) {
         grid.innerHTML = '<div class="sp-loading">No products yet.</div>';
       } else {
         grid.innerHTML = sellerProducts.map(p => `
-          <a class="sp-product" href="product.html?id=${p.id}">
+          <a href="product.html?id=${p.id}" class="sp-product">
             ${p.image_url
-              ? `<img src="${p.image_url}" alt="">`
+              ? `<img src="${p.image_url}" alt="${escapeHtml(p.name)}">`
               : `<div class="ph"><i class="fas fa-box"></i></div>`}
             <div class="info">
-              <div class="name">${(p.name || '').replace(/</g,'&lt;')}</div>
-              <div class="price">$${Number(p.price || 0).toFixed(2)}</div>
+              <div class="pname">${escapeHtml(p.name)}</div>
+              <div class="pprice">$${Number(p.price).toFixed(2)}</div>
             </div>
           </a>`).join('');
       }
 
-      // Activity feed
-      const activityList = document.getElementById('activity-list');
-      const items = feedResp.items || [];
-      if (!items.length) {
-        activityList.innerHTML = '<div class="sp-loading">No activity yet.</div>';
-      } else {
-        const iconMap = {
-          new_product:       { cls: '',      icon: 'fa-box' },
-          price_drop:        { cls: 'pink',  icon: 'fa-tag' },
-          restock:           { cls: 'green', icon: 'fa-truck' },
-          sale_milestone:    { cls: 'blue',  icon: 'fa-trophy' },
-          announcement:      { cls: '',      icon: 'fa-bullhorn' },
-        };
-        activityList.innerHTML = items.map(it => {
-          const m = iconMap[it.activity_type] || iconMap.announcement;
-          return `<div class="activity-item">
-            <div class="activity-icon ${m.cls}"><i class="fas ${m.icon}"></i></div>
-            <div class="activity-body">
-              <div class="activity-title">${(it.title || '').replace(/</g,'&lt;')}</div>
-              ${it.body ? `<div style="color:#475569;font-size:0.88rem;margin-top:0.15rem;">${(it.body || '').replace(/</g,'&lt;')}</div>` : ''}
-              <div class="activity-meta">${new Date(it.created_at).toLocaleDateString()}</div>
+      // Render reviews
+      const reviewsEl = document.getElementById('sp-reviews');
+      if (reviewsResp.success && reviewsResp.reviews && reviewsResp.reviews.length > 0) {
+        reviewsEl.classList.remove('sp-loading');
+        reviewsEl.innerHTML = reviewsResp.reviews.map(r => `
+          <div class="sp-review">
+            <div class="sp-review-avatar">${(r.reviewer_name || 'B').charAt(0).toUpperCase()}</div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-sm">${escapeHtml(r.reviewer_name || 'Buyer')}</span>
+                <span class="text-yellow-400 text-xs">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+              </div>
+              ${r.title ? `<div class="font-medium text-sm mt-0.5">${escapeHtml(r.title)}</div>` : ''}
+              ${r.comment ? `<p class="text-sm text-gray-600 mt-0.5">${escapeHtml(r.comment)}</p>` : ''}
+              ${r.product ? `<div class="text-xs text-cyan-600 mt-1">on <a href="product.html?id=${r.product.id}" class="underline">${escapeHtml(r.product.name)}</a></div>` : ''}
+              <div class="text-xs text-gray-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}${r.verified_purchase ? ' · ✓ Verified' : ''}</div>
             </div>
-          </div>`;
-        }).join('');
+          </div>`).join('');
+      } else {
+        reviewsEl.classList.remove('sp-loading');
+        reviewsEl.innerHTML = '<div class="sp-loading">No reviews yet.</div>';
       }
-
-      // Tab switching
-      document.querySelectorAll('.sp-tab').forEach(t => {
-        t.addEventListener('click', (e) => {
-          e.preventDefault();
-          document.querySelectorAll('.sp-tab').forEach(x => x.classList.remove('active'));
-          t.classList.add('active');
-          ['products','reviews','about','activity'].forEach(name => {
-            document.getElementById('tab-' + name).style.display = name === t.dataset.tab ? 'block' : 'none';
-          });
-          // Lazy-load reviews
-          if (t.dataset.tab === 'reviews' && !window._reviewsLoaded) {
-            loadSellerReviews(sellerId);
-            window._reviewsLoaded = true;
-          }
-        });
-      });
     })();
 
-    async function loadSellerReviews(sellerId) {
-      const r = await window.EdgeFunctions.reviews.bySeller(sellerId);
-      const list = document.getElementById('reviews-list');
-      list.classList.remove('sp-loading');
-      if (!r.success) {
-        list.innerHTML = '<div class="sp-loading">Failed to load reviews.</div>';
-        return;
+    function renderFollowButton() {
+      const btn = document.getElementById('follow-btn');
+      btn.textContent = isFollowing ? 'Following' : 'Follow';
+      btn.classList.toggle('following', isFollowing);
+    }
+
+    async function toggleFollow() {
+      const btn = document.getElementById('follow-btn');
+      btn.disabled = true;
+      const r = isFollowing
+        ? await window.EdgeFunctions.social.unfollow(sellerId)
+        : await window.EdgeFunctions.social.follow(sellerId);
+      if (r.success) {
+        isFollowing = !isFollowing;
+        const followersEl = document.getElementById('sp-followers');
+        followersEl.textContent = Math.max(0, parseInt(followersEl.textContent) + (isFollowing ? 1 : -1));
+        renderFollowButton();
       }
-      const summary = r.summary;
-      document.getElementById('reviewsAvgBadge').textContent =
-        summary.count > 0 ? `· ${summary.avg.toFixed(1)} ★ (${summary.count})` : '';
-      if (!r.reviews || r.reviews.length === 0) {
-        list.innerHTML = '<div class="sp-loading">No reviews yet.</div>';
-        return;
-      }
-      list.innerHTML = r.reviews.map(rev => `
-        <div class="activity-item">
-          <div class="activity-icon ${rev.rating >= 4 ? 'green' : rev.rating >= 3 ? '' : 'pink'}">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="activity-body">
-            <div class="activity-title">
-              ${rev.product ? `<a href="product.html?id=${rev.product.id}" style="color:#d97706;text-decoration:none;">${escapeHtml(rev.product.name)}</a>` : ''}
-              — ${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}
-            </div>
-            ${rev.title ? `<div style="font-weight:500;margin-top:0.15rem;">${escapeHtml(rev.title)}</div>` : ''}
-            ${rev.comment ? `<div style="color:#475569;font-size:0.9rem;margin-top:0.15rem;">${escapeHtml(rev.comment)}</div>` : ''}
-            <div class="activity-meta">${new Date(rev.created_at).toLocaleDateString()}${rev.verified_purchase ? ' · ✓ Verified purchase' : ''}</div>
-          </div>
-        </div>`).join('');
+      btn.disabled = false;
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.sp-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.sp-tab[data-tab="${tab}"]`).classList.add('active');
+      ['shop', 'reviews', 'about'].forEach(name => {
+        document.getElementById('tab-' + name).style.display = name === tab ? 'block' : 'none';
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
   </script>
 </body>

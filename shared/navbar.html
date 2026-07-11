@@ -149,45 +149,62 @@
 
 <script>
   // Load navbar auth state + cart count
-  (async function() {
-    try {
-      // Check auth
-      const sess = await window.EdgeFunctions.auth.checkSession();
-      if (sess.success && sess.user) {
-        // Logged in: show avatar dropdown, hide login link
-        const loginBtn = document.getElementById('navLoginBtn');
-        if (loginBtn) loginBtn.classList.add('hidden');
-        const userMenu = document.getElementById('navUserMenu');
-        if (userMenu) userMenu.classList.remove('hidden');
-        const name = sess.user.email?.split('@')[0] || 'User';
-        const avatar = document.getElementById('navAvatar');
-        if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
-        const userName = document.getElementById('navUserName');
-        if (userName) userName.textContent = name;
-        // Show green dot on mobile account icon
-        const dot = document.getElementById('navLoggedInDot');
-        if (dot) dot.classList.remove('hidden');
-      }
-      // Cart count — fetch regardless of auth status
-      const cart = await window.EdgeFunctions.cart.count();
-      if (cart.success) {
-        const count = cart.count || 0;
-        ['navCartCount', 'navCartCountMobile', 'navCartCountBottom'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.textContent = count;
-            el.style.display = count > 0 ? 'flex' : 'none';
-          }
-        });
-      }
-    } catch(e) {
-      console.log('Navbar init error (expected if not logged in):', e.message);
+  // Wait for EdgeFunctions to be ready (it may not be loaded yet when navbar is injected)
+  function initNavbar() {
+    if (!window.EdgeFunctions) {
+      setTimeout(initNavbar, 200);
+      return;
     }
-    // Close dropdown on outside click
-    document.addEventListener('click', (e) => {
-      const menu = document.getElementById('navUserMenu');
-      const dropdown = document.getElementById('navUserDropdown');
-      if (menu && dropdown && !menu.contains(e.target)) dropdown.classList.add('hidden');
-    });
-  })();
+    (async function() {
+      try {
+        // Check auth
+        const sess = await window.EdgeFunctions.auth.checkSession();
+        if (sess.success && sess.user) {
+          window.currentUser = sess.user; // Make available to page scripts
+          // Logged in: show avatar dropdown, hide login link
+          const loginBtn = document.getElementById('navLoginBtn');
+          if (loginBtn) loginBtn.classList.add('hidden');
+          const userMenu = document.getElementById('navUserMenu');
+          if (userMenu) userMenu.classList.remove('hidden');
+          const name = sess.user.email?.split('@')[0] || 'User';
+          const avatar = document.getElementById('navAvatar');
+          if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+          const userName = document.getElementById('navUserName');
+          if (userName) userName.textContent = name;
+          // Show green dot on mobile account icon
+          const dot = document.getElementById('navLoggedInDot');
+          if (dot) dot.classList.remove('hidden');
+          // Cart count — only works when logged in
+          try {
+            const cart = await window.EdgeFunctions.cart.count();
+            if (cart.success) {
+              const count = cart.count || 0;
+              ['navCartCount', 'navCartCountMobile', 'navCartCountBottom'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                  el.textContent = count;
+                  el.style.display = count > 0 ? 'flex' : 'none';
+                }
+              });
+            }
+          } catch(e) {}
+        } else {
+          // Not logged in — hide cart badge
+          ['navCartCount', 'navCartCountMobile', 'navCartCountBottom'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+          });
+        }
+      } catch(e) {
+        console.log('Navbar init error:', e.message);
+      }
+      // Close dropdown on outside click
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('navUserMenu');
+        const dropdown = document.getElementById('navUserDropdown');
+        if (menu && dropdown && !menu.contains(e.target)) dropdown.classList.add('hidden');
+      });
+    })();
+  }
+  initNavbar();
 </script>
