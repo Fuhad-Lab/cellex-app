@@ -63,6 +63,11 @@
           <label class="block text-sm font-medium mb-1">Phone (optional)</label>
           <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:border-cyan-500 focus:outline-none" placeholder="+234 801 234 5678">
         </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Your bank name <span class="text-red-500">*</span></label>
+          <input type="text" id="bank-name" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:border-cyan-500 focus:outline-none" placeholder="e.g. GTBank, Access Bank, Zenith Bank" required>
+          <p class="text-xs text-gray-400 mt-1">Enter the name of the bank you're transferring from (as it appears on your receipt)</p>
+        </div>
       </div>
 
       <!-- Order summary -->
@@ -187,9 +192,10 @@
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
+      const bankName = document.getElementById('bank-name').value.trim();
 
-      if (!name || !email) {
-        alert('Please enter your name and email');
+      if (!name || !email || !bankName) {
+        alert('Please enter your name, email, and bank name');
         return;
       }
       if (cartTotal <= 0) {
@@ -206,6 +212,7 @@
           buyerName: name,
           buyerEmail: email,
           buyerPhone: phone || null,
+          buyerBankName: bankName,
           itemsSummary: cartItems,
           itemCount: cartCount,
           total: cartTotal,

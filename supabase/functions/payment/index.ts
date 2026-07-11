@@ -29,6 +29,9 @@ const GMAIL_APP_PASSWORD = Deno.env.get('GMAIL_APP_PASSWORD') || '';
 const PALMPAY_ACCOUNT_NAME = Deno.env.get('PALMPAY_ACCOUNT_NAME') || 'Cellex Store';
 const PALMPAY_ACCOUNT_NUMBER = Deno.env.get('PALMPAY_ACCOUNT_NUMBER') || '0000000000';
 const PALMPAY_BANK = Deno.env.get('PALMPAY_BANK') || 'PalmPay';
+const HF_ROUTER_URL = Deno.env.get('HF_ROUTER_URL') || 'https://router.huggingface.co/v1/chat/completions';
+const HF_INFERENCE_MODEL = Deno.env.get('HF_INFERENCE_MODEL') || 'Qwen/Qwen2.5-72B-Instruct';
+const HF_TOKEN = Deno.env.get('HF_TOKEN') || '';
 
 const adminHeaders = {
   'apikey': SERVICE_KEY,
@@ -81,6 +84,7 @@ async function handleCreateOrder(req: Request, body: Record<string, unknown>): P
   const buyerName = (body.buyerName as string)?.trim();
   const buyerEmail = (body.buyerEmail as string)?.trim();
   const buyerPhone = (body.buyerPhone as string)?.trim() || null;
+  const buyerBankName = (body.buyerBankName as string)?.trim() || null;
   const itemsSummary = (body.itemsSummary as string)?.trim();
   const itemCount = Number(body.itemCount) || 1;
   const total = Number(body.total);
@@ -106,6 +110,7 @@ async function handleCreateOrder(req: Request, body: Record<string, unknown>): P
       buyer_email: buyerEmail,
       buyer_name: buyerName,
       buyer_phone: buyerPhone,
+      buyer_bank_name: buyerBankName,
       expected_amount: expectedAmount,
       items_summary: itemsSummary,
       item_count: itemCount,
@@ -207,7 +212,7 @@ async function handleConfirmSent(req: Request, body: Record<string, unknown>): P
   });
 
   // Start Gmail IMAP polling in the background (don't await — return immediately)
-  pollGmailForPayment(orderId, Number(order.expected_amount)).catch((e) => {
+  pollGmailForPayment(orderId, Number(order.expected_amount), order.buyer_name, order.buyer_bank_name || '').catch((e) => {
     console.error(`Gmail polling failed for order ${orderId}:`, e);
   });
 
@@ -220,10 +225,9 @@ async function handleConfirmSent(req: Request, body: Record<string, unknown>): P
 // ---------------------------------------------------------------------------
 // 3. Gmail IMAP polling — runs in background for up to 10 minutes
 // ---------------------------------------------------------------------------
-async function pollGmailForPayment(orderId: string, expectedAmount: number): Promise<void> {
+async function pollGmailForPayment(orderId: string, expectedAmount: number, buyerName: string, buyerBankName: string): Promise<void> {
   if (!GMAIL_EMAIL || !GMAIL_APP_PASSWORD) {
     console.warn('GMAIL_EMAIL or GMAIL_APP_PASSWORD not set — cannot verify payment');
-    // Mark as expired after 1 minute
     await updateOrderStatus(orderId, 'expired', null);
     return;
   }
@@ -232,44 +236,230 @@ async function pollGmailForPayment(orderId: string, expectedAmount: number): Pro
   const intervalMs = 30000; // 30 seconds
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    // Check if order is still awaiting verification (might have been cancelled)
     const checkResp = await fetch(
       `${SUPABASE_URL}/rest/v1/payment_orders?order_id=eq.${encodeURIComponent(orderId)}&select=status`,
       { headers: adminHeaders }
     );
     const checkData = await checkResp.json();
     if (!checkData?.length || checkData[0].status !== 'awaiting_verification') {
-      return; // Order was cancelled or already matched
+      return;
     }
 
     try {
-      // Connect to Gmail via IMAP and search for PalmPay emails
-      const matched = await searchGmailForPayment(expectedAmount);
+      // Connect to Gmail via IMAP and fetch recent PalmPay emails
+      const emails = await fetchRecentPalmPayEmails();
       
-      if (matched) {
-        // Found a matching email! Mark the order as matched.
-        await fetch(`${SUPABASE_URL}/rest/v1/payment_orders?order_id=eq.${encodeURIComponent(orderId)}`, {
-          method: 'PATCH',
-          headers: { ...adminHeaders, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            status: 'matched',
-            matched_at: new Date().toISOString(),
-            matched_email_id: matched.messageId,
-            matched_sender_name: matched.senderName,
-            matched_amount: matched.amount,
-            updated_at: new Date().toISOString(),
-          }),
-        });
-        console.log(`✅ Payment matched for order ${orderId}: ${matched.senderName} sent ₦${matched.amount}`);
-        return;
+      if (emails.length > 0) {
+        // Use AI to match the email against the order (name + bank + amount)
+        const matched = await aiMatchPayment(emails, buyerName, buyerBankName, expectedAmount);
+        
+        if (matched) {
+          // Check that this email hasn't been used for another order
+          const usedCheck = await fetch(
+            `${SUPABASE_URL}/rest/v1/payment_orders?matched_email_id=eq.${encodeURIComponent(matched.messageId)}&select=id`,
+            { headers: adminHeaders }
+          );
+          const used = await usedCheck.json();
+          if (used?.length > 0) {
+            // Email already used — skip
+          } else {
+            // Mark email as read in Gmail
+            await markEmailAsRead(matched.gmailMsgId);
+            
+            // Mark the order as matched
+            await fetch(`${SUPABASE_URL}/rest/v1/payment_orders?order_id=eq.${encodeURIComponent(orderId)}`, {
+              method: 'PATCH',
+              headers: { ...adminHeaders, 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                status: 'matched',
+                matched_at: new Date().toISOString(),
+                matched_email_id: matched.messageId,
+                matched_sender_name: matched.senderName,
+                matched_amount: matched.amount,
+                updated_at: new Date().toISOString(),
+              }),
+            });
+            console.log(`✅ Payment matched for order ${orderId}: ${matched.senderName} sent ₦${matched.amount}`);
+            return;
+          }
+        }
       }
     } catch (e) {
       console.error(`Gmail check attempt ${attempt + 1} failed:`, e);
     }
 
-    // Wait before next attempt
     await new Promise(resolve => setTimeout(resolve, intervalMs));
   }
+
+  await updateOrderStatus(orderId, 'expired', null);
+  console.log(`⏰ Order ${orderId} expired — no matching payment found`);
+}
+
+// ---------------------------------------------------------------------------
+// AI-powered payment matching using Qwen2.5-72B
+// ---------------------------------------------------------------------------
+async function aiMatchPayment(emails: {msgId: string; rawContent: string}[], buyerName: string, buyerBankName: string, expectedAmount: number): Promise<{messageId: string; gmailMsgId: string; senderName: string; amount: number} | null> {
+  if (!HF_TOKEN) {
+    // Fallback: simple amount matching without AI
+    for (const email of emails) {
+      const amount = parseAmountFromEmail(email.rawContent);
+      const sender = parseSenderFromEmail(email.rawContent);
+      if (amount !== null && Math.abs(amount - expectedAmount) < 0.01) {
+        return { messageId: `INBOX:${email.msgId}`, gmailMsgId: email.msgId, senderName: sender, amount };
+      }
+    }
+    return null;
+  }
+
+  // Use AI to extract structured data from each email and match
+  const prompt = `You are a payment verification assistant. I will give you PalmPay transaction alert emails and the expected payment details. Determine which email (if any) matches the payment.
+
+Expected payment:
+- Buyer name: "${buyerName}"
+- Buyer bank: "${buyerBankName || 'any'}"
+- Expected amount: ₦${expectedAmount.toFixed(2)} (must match exactly, including decimals)
+
+Emails to check:
+${emails.map((e, i) => `---EMAIL ${i + 1} (ID: ${e.msgId})---\n${e.rawContent.substring(0, 1000)}`).join('\n\n')}
+
+Rules:
+1. The amount must match ₦${expectedAmount.toFixed(2)} exactly
+2. The sender name should be similar to "${buyerName}" (allow for minor variations)
+3. The sender bank should match "${buyerBankName}" if provided
+4. Only one email can match
+
+Respond with JSON: {"match": true/false, "email_index": 1-based-index-or-null, "sender_name": "extracted-name", "amount": extracted-amount}`;
+
+  try {
+    const resp = await fetch(HF_ROUTER_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${HF_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: HF_INFERENCE_MODEL,
+        messages: [
+          { role: 'system', content: 'You are a payment verification assistant. Respond ONLY with valid JSON.' },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0.1,
+        max_tokens: 300,
+      }),
+    });
+
+    if (!resp.ok) {
+      console.error('AI match failed:', resp.status);
+      // Fallback to simple amount matching
+      for (const email of emails) {
+        const amount = parseAmountFromEmail(email.rawContent);
+        const sender = parseSenderFromEmail(email.rawContent);
+        if (amount !== null && Math.abs(amount - expectedAmount) < 0.01) {
+          return { messageId: `INBOX:${email.msgId}`, gmailMsgId: email.msgId, senderName: sender, amount };
+        }
+      }
+      return null;
+    }
+
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content || '';
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      const result = JSON.parse(match[0]);
+      if (result.match && result.email_index) {
+        const emailIdx = result.email_index - 1;
+        if (emailIdx >= 0 && emailIdx < emails.length) {
+          const email = emails[emailIdx];
+          return {
+            messageId: `INBOX:${email.msgId}`,
+            gmailMsgId: email.msgId,
+            senderName: result.sender_name || 'Unknown',
+            amount: result.amount || expectedAmount,
+          };
+        }
+      }
+    }
+    return null;
+  } catch (e) {
+    console.error('AI match error:', e);
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Fetch recent PalmPay emails from Gmail (returns raw content for AI matching)
+// ---------------------------------------------------------------------------
+async function fetchRecentPalmPayEmails(): Promise<{msgId: string; rawContent: string}[]> {
+  const IMAP_HOST = 'imap.gmail.com';
+  const IMAP_PORT = 993;
+  const conn = await Deno.connectTls({ hostname: IMAP_HOST, port: IMAP_PORT });
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+
+  await readUntil(conn, decoder, '\r\n');
+
+  const tag = `A${Date.now()}`;
+  await writeLine(conn, encoder, `${tag} LOGIN ${GMAIL_EMAIL} ${GMAIL_APP_PASSWORD}\r\n`);
+  const loginResp = await readUntil(conn, decoder, `${tag} OK`);
+  if (loginResp.includes('BAD') || loginResp.includes('NO')) {
+    conn.close();
+    throw new Error('Gmail login failed');
+  }
+
+  const folderTag = `${tag}1`;
+  await writeLine(conn, encoder, `${folderTag} SELECT INBOX\r\n`);
+  await readUntil(conn, decoder, `${folderTag} OK`);
+
+  // Search for unread emails from PalmPay in last 24 hours
+  const searchTag = `${tag}2`;
+  const sinceDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  await writeLine(conn, encoder, `${searchTag} SEARCH UNSEEN FROM "palmpay" SINCE ${sinceDate}\r\n`);
+  const searchResp = await readUntil(conn, decoder, `${searchTag} OK`);
+
+  const searchMatch = searchResp.match(/\* SEARCH (.+)/);
+  if (!searchMatch) {
+    await logoutImap(conn, encoder, decoder, tag);
+    return [];
+  }
+
+  const messageIds = searchMatch[1].trim().split(/\s+/);
+  const emails: {msgId: string; rawContent: string}[] = [];
+
+  // Fetch each email's content (headers + body)
+  for (const msgId of messageIds.slice(0, 10)) { // Limit to 10 emails per check
+    const fetchTag = `${tag}3${msgId}`;
+    await writeLine(conn, encoder, `${fetchTag} FETCH ${msgId} (BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)] BODY.PEEK[TEXT])\r\n`);
+    const fetchResp = await readUntil(conn, decoder, `${fetchTag} OK`);
+    emails.push({ msgId, rawContent: fetchResp });
+  }
+
+  await logoutImap(conn, encoder, decoder, tag);
+  return emails;
+}
+
+// ---------------------------------------------------------------------------
+// Mark an email as read in Gmail
+// ---------------------------------------------------------------------------
+async function markEmailAsRead(msgId: string): Promise<void> {
+  const conn = await Deno.connectTls({ hostname: 'imap.gmail.com', port: 993 });
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+
+  await readUntil(conn, decoder, '\r\n');
+  const tag = `A${Date.now()}`;
+  await writeLine(conn, encoder, `${tag} LOGIN ${GMAIL_EMAIL} ${GMAIL_APP_PASSWORD}\r\n`);
+  await readUntil(conn, decoder, `${tag} OK`);
+
+  const folderTag = `${tag}1`;
+  await writeLine(conn, encoder, `${folderTag} SELECT INBOX\r\n`);
+  await readUntil(conn, decoder, `${folderTag} OK`);
+
+  const seenTag = `${tag}2`;
+  await writeLine(conn, encoder, `${seenTag} STORE ${msgId} +FLAGS (\\Seen)\r\n`);
+  await readUntil(conn, decoder, `${seenTag} OK`);
+
+  await logoutImap(conn, encoder, decoder, tag);
+}
 
   // No match found within 10 minutes — mark as expired
   await updateOrderStatus(orderId, 'expired', null);
