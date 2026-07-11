@@ -1132,53 +1132,33 @@
             const container = document.getElementById('discoverSellersContainer');
             if (!container) return;
             try {
-                // Check if user is logged in — if so, show only followed sellers
-                // If not logged in, show all sellers
-                const sess = await window.EdgeFunctions.auth.checkSession();
-                const isLoggedIn = sess.success && sess.user;
-                window.currentUser = isLoggedIn ? sess.user : null;
+                // Always show ALL sellers (both logged in and logged out)
+                const [sellersResp, productsResp, sess] = await Promise.all([
+                    window.EdgeFunctions.social.discover(10),
+                    window.EdgeFunctions.products.all(100),
+                    window.EdgeFunctions.auth.checkSession(),
+                ]);
 
-                let sellers = [];
-                if (isLoggedIn) {
-                    // Logged in: fetch followed sellers
-                    const followingResp = await window.EdgeFunctions.social.following();
-                    if (followingResp.success && followingResp.sellers && followingResp.sellers.length > 0) {
-                        sellers = followingResp.sellers;
-                    } else {
-                        // No followed sellers — show empty state
-                        container.innerHTML = `
-                            <div class="text-center py-8 text-gray-500 text-sm">
-                                <i class="fas fa-user-plus text-3xl block mb-2 text-gray-300"></i>
-                                You're not following any sellers yet. <a href="categories.html" class="text-cyan-600 font-semibold">Browse all sellers</a> to find stores you love.
-                            </div>`;
-                        return;
-                    }
-                } else {
-                    // Not logged in: show all sellers
-                    const sellersResp = await window.EdgeFunctions.social.discover(10);
-                    if (!sellersResp.success || !sellersResp.sellers || sellersResp.sellers.length === 0) {
-                        container.innerHTML = `
-                            <div class="text-center py-8 text-gray-500 text-sm">
-                                <i class="fas fa-store text-3xl block mb-2 text-gray-300"></i>
-                                No sellers yet. <a href="seller/index.html" class="text-cyan-600 font-semibold">Open your store</a>
-                            </div>`;
-                        return;
-                    }
-                    sellers = sellersResp.sellers;
+                // Set window.currentUser for other functions that need it
+                window.currentUser = (sess.success && sess.user) ? sess.user : null;
+
+                if (!sellersResp.success || !sellersResp.sellers || sellersResp.sellers.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500 text-sm">
+                            <i class="fas fa-store text-3xl block mb-2 text-gray-300"></i>
+                            No sellers yet. <a href="seller/index.html" class="text-cyan-600 font-semibold">Open your store</a>
+                        </div>`;
+                    return;
                 }
 
-                // Fetch all products to build the 2x2 grids
-                const productsResp = await window.EdgeFunctions.products.all(100);
                 const allProducts = productsResp.success ? (productsResp.products || []) : [];
 
-                // Render each seller as a Depop-style card
-                container.innerHTML = sellers.map(s => {
+                container.innerHTML = sellersResp.sellers.map(s => {
                     const name = s.business_name || s.farm_name || 'Unnamed store';
                     const initial = (name || '?').charAt(0).toUpperCase();
                     const sellerId = s.id || s.seller_id;
                     const sellerProducts = allProducts.filter(p => p.seller_id === sellerId).slice(0, 4);
 
-                    // Build 2x2 product grid
                     let productGridHtml = '';
                     if (sellerProducts.length > 0) {
                         let gridItems = sellerProducts.map(p => {
@@ -1332,18 +1312,33 @@
             try {
                 const resp = await window.EdgeFunctions.stories.activeBar();
                 if (!resp.success || !resp.stories || resp.stories.length === 0) return;
+
+                // If logged in, filter to only show stories from followed sellers
+                // If not logged in, show ALL sellers' stories
+                let storiesToShow = resp.stories;
+                if (window.currentUser) {
+                    // Fetch followed seller IDs
+                    const followingResp = await window.EdgeFunctions.social.following();
+                    if (followingResp.success && followingResp.sellers) {
+                        const followedIds = new Set(followingResp.sellers.map(s => s.id));
+                        storiesToShow = resp.stories.filter(s => followedIds.has(s.seller_id));
+                    }
+                    // If user follows no sellers with stories, don't show the section
+                    if (storiesToShow.length === 0) return;
+                }
+
                 section.classList.remove('hidden');
-                container.innerHTML = resp.stories.slice(0, 12).map(s => {
+                container.innerHTML = storiesToShow.slice(0, 12).map(s => {
                     const name = s.business_name || 'Seller';
                     const initial = (name || '?').charAt(0).toUpperCase();
-                    const ringClass = s.has_unseen ? 'ring-amber-400' : 'ring-gray-200';
+                    const ringClass = s.has_unseen ? 'ring-cyan-400' : 'ring-gray-200';
                     const img = s.profile_image
                         ? `<img src="${s.profile_image}" class="w-16 h-16 rounded-full object-cover">`
-                        : `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-2xl text-ink-900">${initial}</div>`;
+                        : `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-700 flex items-center justify-center font-bold text-2xl text-white">${initial}</div>`;
                     return `
                         <button onclick="openStoryViewer(${JSON.stringify(s.stories).replace(/"/g,'&quot;')}, 0)" class="flex flex-col items-center gap-1 flex-shrink-0" style="width:72px;">
                             <div class="p-0.5 rounded-full ring-2 ${ringClass}">${img}</div>
-                            <div class="text-[10px] text-ink-700 truncate w-full text-center">${escapeHtml(name.slice(0, 10))}</div>
+                            <div class="text-[10px] text-gray-700 truncate w-full text-center">${escapeHtml(name.slice(0, 10))}</div>
                         </button>`;
                 }).join('');
             } catch (e) {
