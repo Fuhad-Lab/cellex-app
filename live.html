@@ -46,12 +46,10 @@
   </style>
 </head>
 <body>
-  <div id="header-mount"></div>
+  <div id="nav-mount"></div>
   <script>
     // Dark-theme header injection
-    fetch('shared/header.html').then(r => r.text()).then(h => {
-      document.getElementById('header-mount').innerHTML = h;
-    });
+  <script src="js/load-navbar.js"></script>
   </script>
 
   <div class="live-hero">
