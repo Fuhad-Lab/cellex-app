@@ -339,24 +339,26 @@ GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "mcvkgxktbfqzojlu")
 @app.post("/api/verify-payments")
 async def verify_payments(request: Request):
     """Trigger a single Gmail IMAP check for pending payments.
-    Called when buyer clicks 'I've sent it' — checks Gmail once, matches amounts."""
+    Called when buyer clicks 'I've sent it' — checks Gmail once, matches amounts.
+    Uses run_in_executor to avoid blocking the async event loop (imaplib is synchronous)."""
+    import asyncio
     import imaplib
     import re as regex
 
-    try:
+    def do_gmail_check():
+        """Synchronous Gmail IMAP check — runs in a thread pool."""
+        import urllib.request
+
         # Get all awaiting_verification orders from Supabase
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            orders_resp = await client.get(
-                f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?status=eq.awaiting_verification&select=order_id,expected_amount,buyer_name,buyer_bank_name",
-                headers={
-                    "apikey": SUPABASE_SERVICE_KEY,
-                    "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
-                }
-            )
-            orders = orders_resp.json()
+        req = urllib.request.Request(
+            f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?status=eq.awaiting_verification&select=order_id,expected_amount,buyer_name,buyer_bank_name",
+            headers={"apikey": SUPABASE_SERVICE_KEY, "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"}
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            orders = json.loads(r.read().decode())
 
         if not orders or len(orders) == 0:
-            return JSONResponse({"success": True, "message": "No orders awaiting verification", "matched": 0})
+            return {"success": True, "message": "No orders awaiting verification", "matched": 0}
 
         # Connect to Gmail via IMAP
         mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
@@ -369,7 +371,7 @@ async def verify_payments(request: Request):
 
         if not email_ids:
             mail.logout()
-            return JSONResponse({"success": True, "message": "No unread PalmPay emails found", "matched": 0, "emails_checked": 0})
+            return {"success": True, "message": "No unread PalmPay emails found", "matched": 0, "emails_checked": 0}
 
         # Check the 10 most recent unread PalmPay emails
         recent_ids = email_ids[-10:] if len(email_ids) > 10 else email_ids
@@ -405,35 +407,36 @@ async def verify_payments(request: Request):
                     email_uid = f"INBOX:{msg_id.decode()}"
 
                     # Check if email already used
-                    async with httpx.AsyncClient(timeout=10.0) as client:
-                        used_resp = await client.get(
-                            f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?matched_email_id=eq.{email_uid}&select=id",
-                            headers={"apikey": SUPABASE_SERVICE_KEY, "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"}
-                        )
-                        used = used_resp.json()
+                    used_req = urllib.request.Request(
+                        f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?matched_email_id=eq.{email_uid}&select=id",
+                        headers={"apikey": SUPABASE_SERVICE_KEY, "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"}
+                    )
+                    with urllib.request.urlopen(used_req, timeout=10) as r:
+                        used = json.loads(r.read().decode())
 
                     if used and len(used) > 0:
                         break  # Email already used, skip
 
                     # MATCH! Update the order
-                    async with httpx.AsyncClient(timeout=10.0) as client:
-                        await client.patch(
-                            f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?order_id=eq.{order['order_id']}",
-                            headers={
-                                "apikey": SUPABASE_SERVICE_KEY,
-                                "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
-                                "Content-Type": "application/json",
-                                "Prefer": "return=minimal",
-                            },
-                            json={
-                                "status": "matched",
-                                "matched_at": datetime.utcnow().isoformat() + "Z",
-                                "matched_email_id": email_uid,
-                                "matched_sender_name": sender,
-                                "matched_amount": amount,
-                                "updated_at": datetime.utcnow().isoformat() + "Z",
-                            }
-                        )
+                    update_data = json.dumps({
+                        "status": "matched",
+                        "matched_at": datetime.utcnow().isoformat() + "Z",
+                        "matched_email_id": email_uid,
+                        "matched_sender_name": sender,
+                        "matched_amount": amount,
+                        "updated_at": datetime.utcnow().isoformat() + "Z",
+                    }).encode("utf-8")
+                    update_req = urllib.request.Request(
+                        f"{SUPABASE_PROJECT_URL}/rest/v1/payment_orders?order_id=eq.{order['order_id']}",
+                        data=update_data, method='PATCH',
+                        headers={
+                            "apikey": SUPABASE_SERVICE_KEY,
+                            "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+                            "Content-Type": "application/json",
+                            "Prefer": "return=minimal",
+                        }
+                    )
+                    urllib.request.urlopen(update_req, timeout=10)
 
                     # Mark email as read
                     mail.store(msg_id, "+FLAGS", "\\Seen")
@@ -442,13 +445,13 @@ async def verify_payments(request: Request):
                     break
 
         mail.logout()
-        return JSONResponse({
-            "success": True,
-            "message": f"Checked {len(recent_ids)} emails, matched {matched_count} payments",
-            "matched": matched_count,
-            "emails_checked": len(recent_ids),
-        })
+        return {"success": True, "message": f"Checked {len(recent_ids)} emails, matched {matched_count} payments", "matched": matched_count, "emails_checked": len(recent_ids)}
 
+    try:
+        # Run the synchronous IMAP check in a thread pool to avoid blocking
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, do_gmail_check)
+        return JSONResponse(result)
     except Exception as e:
         logger.error(f"Payment verification error: {e}")
         return JSONResponse({"success": False, "error": str(e)}, status_code=500)
