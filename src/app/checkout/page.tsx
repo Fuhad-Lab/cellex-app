@@ -27,6 +27,7 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
+  const [bankName, setBankName] = useState('');
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
@@ -63,28 +64,33 @@ export default function CheckoutPage() {
   const total = subtotal + shipping;
 
   const placeOrder = async () => {
-    if (!fullName || !phone || !address) {
-      toast({ title: 'Missing info', description: 'Please fill name, phone, and address', variant: 'destructive' });
+    if (!fullName || !phone || !address || !bankName) {
+      toast({ title: 'Missing info', description: 'Please fill name, phone, address, and bank', variant: 'destructive' });
       return;
     }
     setPlacing(true);
 
-    // Build shipping address object
-    const shippingAddress = {
-      full_name: fullName,
-      phone,
-      address,
-      city,
-      state,
-      notes,
-    };
+    // Save profile updates in parallel with order creation
+    api.profile.update({ fullName, phone, address }).catch(() => {});
 
-    const result = await api.checkout.placeOrder(shippingAddress);
+    // Build items summary for the payment order
+    const itemsSummary = items
+      .map((i) => `${i.products?.name || 'Item'} x${i.quantity}`)
+      .join(', ');
+
+    // Create a payment_order via the payment edge function (PalmPay flow)
+    const result = await api.payment.createOrder({
+      buyerName: fullName,
+      buyerEmail: user?.email || '',
+      buyerPhone: phone,
+      buyerBankName: bankName || undefined,  // used for name + bank + amount matching
+      itemsSummary,
+      itemCount: items.reduce((s, i) => s + i.quantity, 0),
+      total,
+    });
     setPlacing(false);
 
     if (result.success && result.orderId) {
-      // Save profile updates
-      await api.profile.update({ fullName, phone, address });
       toast({ title: 'Order placed!', description: 'Redirecting to payment...' });
       router.push(`/payment?order=${result.orderId}`);
     } else {
@@ -128,6 +134,35 @@ export default function CheckoutPage() {
               <div className="space-y-1.5">
                 <Label className="text-xs">State</Label>
                 <Input value={state} onChange={(e) => setState(e.target.value)} placeholder="Lagos" />
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs">Your bank (for payment verification) *</Label>
+                <select
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                  required
+                >
+                  <option value="">Select your bank</option>
+                  <option value="GTBank">GTBank</option>
+                  <option value="Access Bank">Access Bank</option>
+                  <option value="Zenith Bank">Zenith Bank</option>
+                  <option value="UBA">UBA</option>
+                  <option value="First Bank">First Bank</option>
+                  <option value="Kuda">Kuda Bank</option>
+                  <option value="Opay">Opay</option>
+                  <option value="PalmPay">PalmPay</option>
+                  <option value="Stanbic IBTC">Stanbic IBTC</option>
+                  <option value="Wema Bank">Wema Bank</option>
+                  <option value="Fidelity Bank">Fidelity Bank</option>
+                  <option value="Union Bank">Union Bank</option>
+                  <option value="Sterling Bank">Sterling Bank</option>
+                  <option value="Polaris Bank">Polaris Bank</option>
+                  <option value="EcoBank">EcoBank</option>
+                  <option value="FCMB">FCMB</option>
+                  <option value="Other">Other</option>
+                </select>
+                <p className="text-[10px] text-slate-400">Used to match your PalmPay transfer email — must match the bank you transfer from.</p>
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-xs">Street address *</Label>
