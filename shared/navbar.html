@@ -45,7 +45,7 @@
       <!-- Desktop nav links -->
       <div class="hidden md:flex items-center gap-5">
         <a href="index.html" class="nav-link active">Home</a>
-        <a href="categories.html" class="nav-link">Shops</a>
+        <a href="categories.html" class="nav-link">Category</a>
         <a href="cart.html" class="nav-link relative">
           <i class="fas fa-shopping-cart text-lg"></i>
           <span id="navCartCount" class="absolute -top-2 -right-3 cart-badge text-[10px] rounded-full w-5 h-5 flex items-center justify-center">0</span>
@@ -124,18 +124,25 @@
   </div>
 </header>
 
-<!-- Mobile bottom nav -->
+<!-- Mobile bottom nav: Home | Category | Discover (centered) | Cart | Account -->
 <nav class="mobile-nav fixed bottom-0 left-0 right-0 z-50 md:hidden">
-  <div class="flex items-center justify-around max-w-lg mx-auto py-2">
-    <a href="index.html" class="mobile-nav-link active flex flex-col items-center gap-0.5">
+  <div class="flex items-center justify-around max-w-lg mx-auto py-2 relative">
+    <a href="index.html" class="mobile-nav-link flex flex-col items-center gap-0.5">
       <i class="fas fa-home text-xl"></i><span>Home</span>
     </a>
     <a href="categories.html" class="mobile-nav-link flex flex-col items-center gap-0.5">
-      <i class="fas fa-th-large text-xl"></i><span>Shops</span>
+      <i class="fas fa-th-large text-xl"></i><span>Category</span>
+    </a>
+    <!-- Discover — centered, prominent -->
+    <a href="videos.html" class="mobile-nav-link flex flex-col items-center gap-0.5" style="transform:scale(1.15);">
+      <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#0891b2);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(0,212,255,0.4);">
+        <i class="fas fa-compass text-white text-lg"></i>
+      </div>
+      <span style="font-weight:700;color:#00d4ff;">Discover</span>
     </a>
     <a href="cart.html" class="mobile-nav-link flex flex-col items-center gap-0.5 relative">
       <i class="fas fa-shopping-cart text-xl"></i><span>Cart</span>
-      <span id="navCartCountBottom" class="absolute top-0 right-2 cart-badge text-[9px] rounded-full w-4 h-4 flex items-center justify-center">0</span>
+      <span id="navCartCountBottom" class="absolute top-0 right-2 cart-badge text-[9px] rounded-full w-4 h-4 flex items-center justify-center" style="display:none;">0</span>
     </a>
     <a href="profile.html" class="mobile-nav-link flex flex-col items-center gap-0.5 relative" id="navAccountLink">
       <div class="relative">
