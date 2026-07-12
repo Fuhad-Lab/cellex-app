@@ -161,8 +161,8 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Category bar */}
-        <div className="flex items-center gap-1 py-2 overflow-x-auto no-scrollbar">
+        {/* Category bar — hidden on home page (mobile + desktop layouts have their own) */}
+        <div className="flex items-center gap-1 py-2 overflow-x-auto no-scrollbar home-category-bar">
           {categories.map((cat) => (
             <Link
               key={cat.label}

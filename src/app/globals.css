@@ -175,6 +175,12 @@ h3 { font-size: 1.125rem; line-height: 1.4; }  /* 18px */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Hide navbar category bar on home page (mobile + desktop layouts have their own) */
+body:has(.home-mobile-layout) .home-category-bar,
+body:has(.home-desktop-layout) .home-category-bar {
+  display: none;
+}
+
 /* Sale badge — cyan for "Hot", "Flash Deal", "% off" */
 .sale-badge {
   background: var(--primary);
