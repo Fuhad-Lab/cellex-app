@@ -482,6 +482,7 @@ function SearchContent() {
             )}
           </div>
         )}
+      </div>
 
       {/* Follow-up question input (fixed at bottom, AI mode only) */}
       {tab === 'ai' && (
