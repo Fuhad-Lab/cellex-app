@@ -1,0 +1,42 @@
+name: Build iOS App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+      - name: Build static export
+        run: |
+          cp next.config.apk.ts next.config.ts
+          mv src/app/api /tmp/cellex-api-safe
+          rm -rf .next
+          npm run build
+          mv /tmp/cellex-api-safe src/app/api
+          cp next.config.web.ts next.config.ts
+      - name: Add iOS platform
+        run: npx cap add ios || true
+      - name: Sync Capacitor
+        run: npx cap sync ios
+      - name: Build iOS (no signing)
+        working-directory: ios
+        run: |
+          xcodebuild -workspace App/App.xcworkspace -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build 2>&1 || true
+      - name: Upload iOS build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cellex-ios-build
+          path: ios/build/
+          retention-days: 30
