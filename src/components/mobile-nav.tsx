@@ -8,7 +8,7 @@ import { useAuth } from '@/components/auth-provider';
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/ai-chat', label: 'Chat', icon: MessageCircle },
-  { href: '/videos', label: 'Discover', icon: Compass, center: true },
+  { href: '/', label: 'Discover', icon: Compass, center: true },
   { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
   { href: '/profile', label: 'Account', icon: User, showDot: true },
 ];
