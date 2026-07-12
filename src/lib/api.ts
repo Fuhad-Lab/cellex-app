@@ -1,7 +1,16 @@
 // Cellex API Client
-// Connects to existing Supabase Edge Functions via Next.js API routes.
-// All calls use relative paths (/api/) which are handled by
-// Next.js route handlers.
+// For web: uses relative paths (/api/) — handled by Next.js route handlers
+// For Capacitor (APK/IPA): uses absolute URL to the live HF Space
+// Detection: checks if running on localhost with Capacitor's native bridge
+
+import { Capacitor } from '@capacitor/core';
+
+const API_BASE = Capacitor.isNativePlatform()
+  ? 'https://eeshaai-cellex-web.hf.space'
+  : '';
+
+export { Capacitor };
+export { API_BASE };
 
 export interface Product {
   id: number;
@@ -49,7 +58,7 @@ export interface Review {
 }
 
 async function apiCall(path: string, body: Record<string, unknown> = {}) {
-  const resp = await fetch(`/api/${path}`, {
+  const resp = await fetch(`${API_BASE}/api/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -183,7 +192,7 @@ export const api = {
     recommend: (limit = 10) => apiCall('discover', { op: 'recommend', limit }),
   },
 
-  // ===== Cross-platform (WhatsApp bot integration) =====
+  // ===== Cross-platform =====
   crossPlatform: {
     generateLinkCode: (phone: string) => apiCall('cross-platform', { op: 'generate_link_code', phone }),
     myPhoneLinks: () => apiCall('cross-platform', { op: 'my_phone_links' }),

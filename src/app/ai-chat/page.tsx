@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/api';
 
 import { useEffect, useState, useRef } from 'react';
 import { api, formatPrice, type Product } from '@/lib/api';
@@ -62,7 +63,7 @@ export default function AiChatPage() {
       }
 
       // Call AI chat endpoint
-      const aiResp = await fetch('/api/ai-chat', {
+      const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

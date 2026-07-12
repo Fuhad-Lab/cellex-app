@@ -39,7 +39,7 @@ function SearchContent() {
     const [searchResp, vidResp, aiResp] = await Promise.all([
       api.products.search(q, null),
       api.videos.feed(50).catch(() => ({ success: false, videos: [] })),
-      fetch('/api/ai-chat', {
+      fetch(`${API_BASE}/api/ai-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -96,7 +96,7 @@ function SearchContent() {
     setFollowUpInput('');
     setFollowUpLoading(true);
     try {
-      const aiResp = await fetch('/api/ai-chat', {
+      const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

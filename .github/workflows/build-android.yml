@@ -8,6 +8,10 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    env:
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -26,6 +30,11 @@ jobs:
           packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
       - name: Install dependencies
         run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+      - name: Create .env file
+        run: |
+          echo "NVIDIA_API_KEY=${{ secrets.NVIDIA_API_KEY }}" > .env
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
       - name: Build static export
         run: |
           cp next.config.apk.ts next.config.ts
