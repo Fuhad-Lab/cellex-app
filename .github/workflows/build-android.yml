@@ -35,7 +35,7 @@ jobs:
           mv /tmp/cellex-api-safe src/app/api
           cp next.config.web.ts next.config.ts
       - name: Add Android platform
-        run: npx cap add android || true
+        run: npx cap add android
       - name: Sync Capacitor
         run: npx cap sync android
       - name: Build APK

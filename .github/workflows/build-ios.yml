@@ -26,7 +26,7 @@ jobs:
           mv /tmp/cellex-api-safe src/app/api
           cp next.config.web.ts next.config.ts
       - name: Add iOS platform
-        run: npx cap add ios || true
+        run: npx cap add ios
       - name: Sync Capacitor
         run: npx cap sync ios
       - name: Build iOS (no signing)
