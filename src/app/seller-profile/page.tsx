@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProductGrid } from '@/components/product-card';
 import {
   Store, MapPin, Users, Calendar, Star, UserPlus, UserCheck,
-  Activity, Package, MessageSquare
+  Package, Video as VideoIcon, LayoutGrid
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -26,8 +26,9 @@ function SellerProfileContent() {
   const [seller, setSeller] = useState<any>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [stats, setStats] = useState<any>({});
-  const [tab, setTab] = useState<'products' | 'about' | 'activity' | 'reviews'>('products');
+  const [tab, setTab] = useState<'all' | 'videos' | 'products'>('all');
   const [products, setProducts] = useState<Product[]>([]);
+  const [videos, setVideos] = useState<any[]>([]);
   const [feed, setFeed] = useState<any[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,8 @@ function SellerProfileContent() {
     }
     setLoading(false);
 
-    // Load feed and reviews in background
+    // Load videos + feed + reviews in background
+    api.videos.bySeller(sellerId).then((r) => r.success && setVideos(r.videos || []));
     api.social.sellerFeed(sellerId, 10).then((r) => r.success && setFeed(r.feed || []));
     api.reviews.bySeller(sellerId).then((r) => r.success && setReviews(r.reviews || []));
   }, [sellerId]);
@@ -159,122 +161,108 @@ function SellerProfileContent() {
           </Card>
         )}
 
-        {/* Tabs */}
+        {/* Tabs — only 3: All | Videos | Products */}
         <div className="flex gap-1 border-b border-slate-200 mb-4 overflow-x-auto no-scrollbar">
           {[
+            { key: 'all', label: `All (${products.length + videos.length})`, icon: LayoutGrid },
+            { key: 'videos', label: `Videos (${videos.length})`, icon: VideoIcon },
             { key: 'products', label: `Products (${products.length})`, icon: Package },
-            { key: 'about', label: 'About', icon: Store },
-            { key: 'activity', label: `Activity (${feed.length})`, icon: Activity },
-            { key: 'reviews', label: `Reviews (${reviews.length})`, icon: MessageSquare },
           ].map((t) => {
             const Icon = t.icon;
             return (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key as any)}
-                className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold whitespace-nowrap border-b-2 transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
                   tab === t.key
                     ? 'border-primary text-primary'
                     : 'border-transparent text-slate-500 hover:text-slate-700'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-4 h-4" />
                 {t.label}
               </button>
             );
           })}
         </div>
 
-        {/* Tab content */}
+        {/* Tab content — All: videos grid + products grid */}
+        {tab === 'all' && (
+          <div className="space-y-6">
+            {videos.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-slate-700 mb-2">Videos</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {videos.map((v) => (
+                    <Link key={v.id} href="/videos" className="block group">
+                      <Card className="overflow-hidden border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="aspect-[9/16] bg-slate-900 relative">
+                          {v.video_url ? (
+                            <video src={v.video_url} muted className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <VideoIcon className="w-8 h-8 text-white/50" />
+                            </div>
+                          )}
+                          <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                            ▶ {v.views_count || 0}
+                          </div>
+                        </div>
+                        <div className="p-2">
+                          <div className="text-xs font-medium line-clamp-2 h-8 leading-tight">{v.caption || 'Video'}</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">❤ {v.likes_count || 0}</div>
+                        </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div>
+              {videos.length > 0 && <h3 className="text-sm font-bold text-slate-700 mb-2">Products</h3>}
+              <ProductGrid products={products} loading={false} />
+            </div>
+          </div>
+        )}
+
+        {/* Tab content — Videos only */}
+        {tab === 'videos' && (
+          videos.length === 0 ? (
+            <Card className="p-8 text-center border-slate-100">
+              <VideoIcon className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+              <p className="text-sm text-slate-500">No videos yet</p>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {videos.map((v) => (
+                <Link key={v.id} href="/videos" className="block group">
+                  <Card className="overflow-hidden border-slate-100 hover:shadow-md transition-shadow">
+                    <div className="aspect-[9/16] bg-slate-900 relative">
+                      {v.video_url ? (
+                        <video src={v.video_url} muted className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <VideoIcon className="w-8 h-8 text-white/50" />
+                        </div>
+                      )}
+                      <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                        ▶ {v.views_count || 0}
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <div className="text-xs font-medium line-clamp-2 h-8 leading-tight">{v.caption || 'Video'}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">❤ {v.likes_count || 0}</div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )
+        )}
+
+        {/* Tab content — Products only */}
         {tab === 'products' && (
           <ProductGrid products={products} loading={false} />
-        )}
-
-        {tab === 'about' && (
-          <Card className="p-4 border-slate-100 space-y-3">
-            <div>
-              <div className="text-xs font-bold text-slate-500 mb-1">Business Name</div>
-              <div className="text-sm">{name}</div>
-            </div>
-            {seller.business_category && (
-              <div>
-                <div className="text-xs font-bold text-slate-500 mb-1">Category</div>
-                <Badge variant="secondary">{seller.business_category}</Badge>
-              </div>
-            )}
-            {seller.seller_type && (
-              <div>
-                <div className="text-xs font-bold text-slate-500 mb-1">Seller Type</div>
-                <div className="text-sm capitalize">{seller.seller_type}</div>
-              </div>
-            )}
-            {seller.business_location && (
-              <div>
-                <div className="text-xs font-bold text-slate-500 mb-1">Location</div>
-                <div className="text-sm">{seller.business_location}</div>
-              </div>
-            )}
-            {seller.business_description && (
-              <div>
-                <div className="text-xs font-bold text-slate-500 mb-1">About</div>
-                <p className="text-sm text-slate-700">{seller.business_description}</p>
-              </div>
-            )}
-          </Card>
-        )}
-
-        {tab === 'activity' && (
-          <div className="space-y-2">
-            {feed.length === 0 ? (
-              <Card className="p-6 text-center border-slate-100">
-                <Activity className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                <p className="text-sm text-slate-500">No recent activity</p>
-              </Card>
-            ) : (
-              feed.map((a) => (
-                <Card key={a.id} className="p-3 border-slate-100 flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg brand-gradient flex items-center justify-center text-white shrink-0">
-                    <Package className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-sm">{a.title}</div>
-                    {a.body && <p className="text-xs text-slate-500 mt-0.5">{a.body}</p>}
-                    <div className="text-[10px] text-slate-400 mt-1">{timeAgo(a.created_at)}</div>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-        )}
-
-        {tab === 'reviews' && (
-          <div className="space-y-2">
-            {reviews.length === 0 ? (
-              <Card className="p-6 text-center border-slate-100">
-                <MessageSquare className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                <p className="text-sm text-slate-500">No reviews yet</p>
-              </Card>
-            ) : (
-              reviews.map((r) => (
-                <Card key={r.id} className="p-3 border-slate-100">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-7 h-7 rounded-full brand-gradient flex items-center justify-center text-white text-xs font-bold">
-                      {(r.reviewer_name || 'A').charAt(0).toUpperCase()}
-                    </div>
-                    <span className="font-semibold text-xs">{r.reviewer_name || 'Anonymous'}</span>
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className={`w-3 h-3 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} />
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-slate-400 ml-auto">{timeAgo(r.created_at)}</span>
-                  </div>
-                  {r.title && <div className="font-bold text-sm">{r.title}</div>}
-                  {r.comment && <p className="text-xs text-slate-600 mt-1">{r.comment}</p>}
-                </Card>
-              ))
-            )}
-          </div>
         )}
       </div>
     </div>
