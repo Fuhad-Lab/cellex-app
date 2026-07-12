@@ -31,7 +31,15 @@ export async function POST(request: NextRequest) {
     const text = await resp.text();
     try {
       const data = JSON.parse(text);
-      return NextResponse.json(data, { status: resp.status });
+      // Map edge function response fields to what the frontend expects
+      const reply = data.response || data.reply || data.message || data.content || '';
+      return NextResponse.json({
+        success: data.success !== false,
+        reply,
+        message: reply,
+        content: reply,
+        products: data.products || null,
+      }, { status: resp.status });
     } catch {
       return NextResponse.json({ success: false, error: `Non-JSON response: ${text.substring(0, 200)}` }, { status: 500 });
     }
