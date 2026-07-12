@@ -35,10 +35,19 @@ function SearchContent() {
     setAllProducts([]);
     setVideos([]);
 
-    // Step 1: Fetch products + videos FIRST (fast, shows results immediately)
-    const [searchResp, vidResp] = await Promise.all([
+    // Search products + videos in parallel with AI
+    const [searchResp, vidResp, aiResp] = await Promise.all([
       api.products.search(q, null),
       api.videos.feed(50).catch(() => ({ success: false, videos: [] })),
+      fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `A user searched for "${q}" on Cellex (a Nigerian e-commerce marketplace). Provide a helpful, comprehensive answer about what's available. Mention types of products, price ranges, and shopping tips. Be friendly and informative (2-3 paragraphs).`,
+          context: 'Search overview',
+          history: [],
+        }),
+      }),
     ]);
 
     const products = searchResp.success
@@ -46,7 +55,6 @@ function SearchContent() {
       : [];
     setAllProducts(products);
     setAiProducts(products.slice(0, 4));
-    setLoading(false); // Stop loading — products are visible now
 
     // Filter videos
     if (vidResp.success) {
@@ -59,26 +67,15 @@ function SearchContent() {
       setVideos(filtered);
     }
 
-    // Step 2: Fetch AI response IN THE BACKGROUND (don't block product display)
-    try {
-      const aiResp = await fetch('/api/ai-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: `A user searched for "${q}" on Cellex (a Nigerian e-commerce marketplace). Provide a helpful, comprehensive answer about what's available. Mention types of products, price ranges, and shopping tips. Be friendly and informative (2-3 paragraphs).`,
-          context: 'Search overview',
-          history: [],
-        }),
-      });
-      if (aiResp.ok) {
-        const data = await aiResp.json();
-        setAiAnswer(data.reply || data.message || data.content || `Here's what I found for "${q}": ${products.length} products available on Cellex.`);
-      } else {
-        setAiAnswer(`Here's what I found for "${q}": ${products.length} products available on Cellex.`);
-      }
-    } catch {
+    // AI response
+    if (aiResp.ok) {
+      const data = await aiResp.json();
+      setAiAnswer(data.reply || data.message || data.content || `Here's what I found for "${q}": ${products.length} products available.`);
+    } else {
       setAiAnswer(`Here's what I found for "${q}": ${products.length} products available on Cellex.`);
     }
+
+    setLoading(false);
   }, []);
 
   useEffect(() => {
