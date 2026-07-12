@@ -91,7 +91,18 @@ function MobileHome({ flashDeals, trending, newArrivals, sellers, allProducts }:
   sellers: any[];
   allProducts: Product[];
 }) {
-  const categoryTabs = ['All', 'Phones', 'Food & Grocery', 'General Merchandise', 'Electronics', 'Fashion'];
+  const categoryTabs = [
+    { label: 'All', href: '/' },
+    { label: 'Electronics', href: '/categories?category=Electronics' },
+    { label: 'Fashion', href: '/categories?category=Fashion' },
+    { label: 'Home', href: '/categories?category=Home' },
+    { label: 'Beauty', href: '/categories?category=Beauty' },
+    { label: 'Farm', href: '/categories?category=Farm' },
+    { label: 'Sports', href: '/categories?category=Sports' },
+    { label: 'Food', href: '/categories?category=Food' },
+    { label: 'Toys', href: '/categories?category=Toys' },
+    { label: 'Books', href: '/categories?category=Books' },
+  ];
 
   const iconCategories = [
     { label: 'Flash Sale', icon: Zap, badge: 'Hot', href: '/categories?sort=flash', color: 'bg-primary' },
@@ -109,7 +120,7 @@ function MobileHome({ flashDeals, trending, newArrivals, sellers, allProducts }:
   return (
     <div className="bg-white min-h-screen">
       {/* Search bar — full width */}
-      <div className="px-3 pt-3 pb-2 bg-white sticky top-12 z-30">
+      <div className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30">
         <div className="flex items-center bg-slate-100 rounded-full px-3 py-2">
           <Search className="w-4 h-4 text-slate-400 mr-2" />
           <input
@@ -146,15 +157,15 @@ function MobileHome({ flashDeals, trending, newArrivals, sellers, allProducts }:
       <div className="flex items-center gap-4 px-3 py-2 overflow-x-auto no-scrollbar bg-white border-b border-slate-100">
         {categoryTabs.map((tab, i) => (
           <Link
-            key={tab}
-            href={tab === 'All' ? '/categories' : `/categories?category=${tab}`}
+            key={tab.label}
+            href={tab.href}
             className={`text-sm whitespace-nowrap pb-1 ${
               i === 0
                 ? 'text-primary font-bold border-b-2 border-primary'
-                : 'text-slate-600'
+                : 'text-black'
             }`}
           >
-            {tab}
+            {tab.label}
           </Link>
         ))}
       </div>

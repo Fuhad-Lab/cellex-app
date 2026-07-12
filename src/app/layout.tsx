@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { Navbar } from "@/components/navbar";
 import { MobileNav } from "@/components/mobile-nav";
 import { AuthProvider } from "@/components/auth-provider";
+import { LayoutShell } from "@/components/layout-shell";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -38,9 +38,9 @@ export default function RootLayout({
         className={`${jakarta.variable} ${sora.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1 pb-20 md:pb-0">{children}</main>
-          <MobileNav />
+          <LayoutShell>
+            {children}
+          </LayoutShell>
           <Toaster />
         </AuthProvider>
       </body>
