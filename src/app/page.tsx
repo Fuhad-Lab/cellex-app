@@ -119,24 +119,20 @@ function MobileHome({ flashDeals, trending, newArrivals, sellers, allProducts }:
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Search bar — full width */}
+      {/* Spotlight search trigger — taps open the glassmorphic spotlight */}
       <div className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30">
-        <div className="flex items-center bg-slate-100 rounded-full px-3 py-2">
-          <Search className="w-4 h-4 text-slate-400 mr-2" />
-          <input
-            type="text"
-            placeholder="Search for items you want"
-            className="flex-1 bg-transparent outline-none text-sm text-slate-700 placeholder:text-slate-400"
-            onChange={(e) => {
-              if (e.target.value.trim()) {
-                window.location.href = `/search?q=${encodeURIComponent(e.target.value.trim())}`;
-              }
-            }}
-          />
-          <Link href="/categories">
-            <Camera className="w-4 h-4 text-slate-500 ml-2" />
-          </Link>
-        </div>
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
+          className="w-full flex items-center bg-neutral-100 rounded-full px-4 py-2.5 hover:bg-neutral-200 transition-colors group"
+        >
+          <Search className="w-4 h-4 text-neutral-400 mr-2 group-hover:text-black transition-colors" />
+          <span className="flex-1 text-left text-sm text-neutral-400 group-hover:text-black transition-colors">
+            Search products, categories...
+          </span>
+          <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 bg-white rounded text-[9px] font-bold text-neutral-400 border border-neutral-200">
+            ⌘K
+          </kbd>
+        </button>
       </div>
 
       {/* AI Assistant banner */}

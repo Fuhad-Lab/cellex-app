@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { MobileNav } from "@/components/mobile-nav";
 import { AuthProvider } from "@/components/auth-provider";
 import { LayoutShell } from "@/components/layout-shell";
+import { SwipeBack } from "@/components/swipe-back";
+import { OptimisticUIProvider } from "@/components/optimistic-ui";
+import { GlobalSpotlight } from "@/components/global-spotlight";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -38,10 +41,15 @@ export default function RootLayout({
         className={`${jakarta.variable} ${sora.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         <AuthProvider>
-          <LayoutShell>
-            {children}
-          </LayoutShell>
-          <Toaster />
+          <OptimisticUIProvider>
+            <SwipeBack>
+              <LayoutShell>
+                {children}
+              </LayoutShell>
+            </SwipeBack>
+            <GlobalSpotlight />
+            <Toaster />
+          </OptimisticUIProvider>
         </AuthProvider>
       </body>
     </html>
