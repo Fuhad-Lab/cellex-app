@@ -31,7 +31,7 @@ jobs:
           cp next.config.apk.ts next.config.ts
           mv src/app/api /tmp/cellex-api-safe
           rm -rf .next
-          npm run build
+          npm run build:export
           mv /tmp/cellex-api-safe src/app/api
           cp next.config.web.ts next.config.ts
       - name: Add Android platform

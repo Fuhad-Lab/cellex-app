@@ -18,7 +18,8 @@
     "cap:add:android": "npx cap add android",
     "cap:add:ios": "npx cap add ios",
     "cap:update": "npx @capgo/cli bundle upload --channel production",
-    "build:apk": "cp next.config.apk.ts next.config.ts && mv src/app/api /tmp/cellex-api-safe && rm -rf .next && npm run build && mv /tmp/cellex-api-safe src/app/api && cp next.config.web.ts next.config.ts && npx cap sync"
+    "build:apk": "cp next.config.apk.ts next.config.ts && mv src/app/api /tmp/cellex-api-safe && rm -rf .next && npm run build && mv /tmp/cellex-api-safe src/app/api && cp next.config.web.ts next.config.ts && npx cap sync",
+    "build:export": "next build"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
