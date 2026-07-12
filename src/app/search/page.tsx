@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   Search, Camera, ChevronLeft, Store, Sparkles, Video as VideoIcon,
-  Star, ShoppingBag, Play, Heart, MessageCircle
+  Star, ShoppingBag, Play, Heart, MessageCircle, Paperclip, Send, ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -29,6 +29,11 @@ function SearchContent() {
 
   // Filter pills state
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  // AI chat state
+  const [showThoughtProcess, setShowThoughtProcess] = useState(false);
+  const [chatHistory, setChatHistory] = useState<{user: string; ai: string}[]>([]);
+  const [followUpInput, setFollowUpInput] = useState('');
+  const [followUpLoading, setFollowUpLoading] = useState(false);
 
   const FILTER_PILLS = [
     'Free shipping',
@@ -129,6 +134,35 @@ function SearchContent() {
     setActiveFilters(prev =>
       prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
     );
+  };
+
+  const sendFollowUp = async () => {
+    if (!followUpInput.trim() || followUpLoading) return;
+    const userMsg = followUpInput.trim();
+    setFollowUpInput('');
+    setFollowUpLoading(true);
+    try {
+      const aiResp = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMsg,
+          context: `User is searching for "${query}" on Cellex. Previous AI answer: ${aiAnswer}. Available products: ${products.slice(0, 5).map(p => `${p.name} (${formatPrice(p.price)})`).join(', ')}`,
+          history: chatHistory.map(m => [{ role: 'user', content: m.user }, { role: 'assistant', content: m.ai }]).flat(),
+        }),
+      });
+      let aiMsg = '';
+      if (aiResp.ok) {
+        const data = await aiResp.json();
+        aiMsg = data.reply || data.message || data.content || 'I can help with that. Could you be more specific?';
+      } else {
+        aiMsg = 'I can help with that. Try browsing the products below or refining your search.';
+      }
+      setChatHistory(prev => [...prev, { user: userMsg, ai: aiMsg }]);
+    } catch {
+      setChatHistory(prev => [...prev, { user: userMsg, ai: 'Sorry, I had trouble processing that. Please try again.' }]);
+    }
+    setFollowUpLoading(false);
   };
 
   // Apply client-side filters
@@ -247,38 +281,114 @@ function SearchContent() {
           </div>
         )}
 
-        {/* === AI MODE TAB === */}
+        {/* === AI MODE TAB — Conversational chat (Alibaba AI mode style) === */}
         {tab === 'ai' && (
-          <div className="space-y-4">
-            {/* AI Overview card */}
-            <Card className="p-4 border-slate-100 bg-gradient-to-br from-cyan-50 to-white">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-bold text-sm text-black">AI Overview</span>
+          <div className="space-y-4 pb-32">
+            {/* User query bubble */}
+            <div className="flex justify-end">
+              <div className="bg-primary text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[80%]">
+                <p className="text-sm">{query}</p>
               </div>
-              {aiLoading ? (
-                <div className="space-y-2">
-                  <div className="h-4 bg-slate-100 rounded animate-pulse" />
-                  <div className="h-4 bg-slate-100 rounded animate-pulse w-5/6" />
-                  <div className="h-4 bg-slate-100 rounded animate-pulse w-4/6" />
-                </div>
-              ) : (
-                <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {aiAnswer || 'Searching...'}
+            </div>
+
+            {/* AI response */}
+            <div className="space-y-3">
+              {/* "Show thought process" toggle */}
+              <button
+                onClick={() => setShowThoughtProcess(!showThoughtProcess)}
+                className="flex items-center gap-1 text-xs text-slate-500 hover:text-primary"
+              >
+                <ChevronDown className={`w-3 h-3 transition-transform ${showThoughtProcess ? 'rotate-180' : ''}`} />
+                Show thought process
+              </button>
+
+              {/* Thought process (collapsible) */}
+              {showThoughtProcess && (
+                <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3 space-y-1">
+                  <p>1. Searched for "{query}" across {products.length} products on Cellex</p>
+                  <p>2. Found {aiProducts.length} top matches based on relevance and popularity</p>
+                  <p>3. Generated overview using DeepSeek-V4 AI model via NVIDIA NIM</p>
                 </div>
               )}
-            </Card>
 
-            {/* AI-recommended products */}
-            {aiProducts.length > 0 && (
-              <div>
-                <h3 className="font-bold text-sm text-black mb-2">Top products for "{query}"</h3>
-                <div className="space-y-3">
-                  {aiProducts.map(p => (
-                    <GoogleStyleResult key={p.id} product={p} />
-                  ))}
+              {/* AI response text */}
+              <div className="flex items-start gap-2">
+                <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1">
+                  {aiLoading ? (
+                    <div className="space-y-2">
+                      <div className="h-4 bg-slate-100 rounded animate-pulse" />
+                      <div className="h-4 bg-slate-100 rounded animate-pulse w-5/6" />
+                      <div className="h-4 bg-slate-100 rounded animate-pulse w-4/6" />
+                    </div>
+                  ) : (
+                    <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {aiAnswer || 'Searching...'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Embedded product grid (within the AI response) */}
+              {aiProducts.length > 0 && !aiLoading && (
+                <div className="ml-9">
+                  <div className="inline-block bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded mb-2">
+                    {query}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {aiProducts.map(p => (
+                      <Link key={p.id} href={`/product?id=${p.id}`} className="block group">
+                        <Card className="overflow-hidden border-slate-100 hover:shadow-md transition-shadow">
+                          <div className="aspect-square bg-slate-50">
+                            {p.image_url ? (
+                              <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                <Store className="w-8 h-8" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-1.5">
+                            <div className="text-xs font-medium text-black line-clamp-1">{p.name}</div>
+                            <div className="text-sm font-bold price">{formatPrice(p.price)}</div>
+                          </div>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Follow-up chat history */}
+            {chatHistory.map((msg, i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex justify-end">
+                  <div className="bg-primary text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[80%]">
+                    <p className="text-sm">{msg.user}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center shrink-0">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                    {msg.ai}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {followUpLoading && (
+              <div className="flex items-start gap-2">
+                <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" />
+                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                  <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                 </div>
               </div>
             )}
@@ -372,7 +482,30 @@ function SearchContent() {
             )}
           </div>
         )}
-      </div>
+
+      {/* Follow-up question input (fixed at bottom, AI mode only) */}
+      {tab === 'ai' && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-4 py-3">
+          <div className="max-w-4xl mx-auto flex items-center gap-2 border-2 border-slate-200 rounded-full px-4 py-2 focus-within:border-primary">
+            <Paperclip className="w-4 h-4 text-slate-400 shrink-0" />
+            <input
+              type="text"
+              value={followUpInput}
+              onChange={(e) => setFollowUpInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendFollowUp()}
+              placeholder="ask follow-up..."
+              className="flex-1 bg-transparent outline-none text-sm text-black placeholder:text-slate-400"
+            />
+            <button
+              onClick={sendFollowUp}
+              disabled={!followUpInput.trim() || followUpLoading}
+              className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center disabled:opacity-30 shrink-0"
+            >
+              <Send className="w-4 h-4 text-white" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
