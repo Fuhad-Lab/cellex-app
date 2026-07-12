@@ -266,41 +266,39 @@ function ProductContent() {
         </div>
       </div>
 
-      {/* === 6. SELLER CARDS WITH COUNTDOWN === */}
-      {groupBuys.length > 0 && (
-        <div className="px-3 pt-3 space-y-2">
-          {groupBuys.slice(0, 2).map((gb) => (
-            <Card key={gb.id} className="p-3 border-slate-100">
-              <div className="flex items-center gap-2">
-                {/* Seller avatar */}
-                <Link href={`/seller-profile?id=${gb.seller_id || seller?.id}`}>
-                  <div className="w-9 h-9 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-sm shrink-0">
-                    {(seller?.business_name || 'S').charAt(0)}
-                  </div>
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-sm text-black truncate">{seller?.business_name || 'Seller'}</span>
-                    <span className="border border-primary text-primary text-[10px] font-bold px-1 py-0.5 rounded">Repeat customer</span>
-                  </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <span className="text-primary text-xs font-bold">Ending soon</span>
-                    <span className="text-black text-xs font-mono">{formatCountdown()}</span>
-                  </div>
+      {/* === 6. SELLER CARDS WITH COUNTDOWN (always show at least 1 card) === */}
+      <div className="px-3 pt-3 space-y-2">
+        {(groupBuys.length > 0 ? groupBuys.slice(0, 2) : [null, null]).map((gb, i) => (
+          <Card key={gb?.id || i} className="p-3 border-slate-100">
+            <div className="flex items-center gap-2">
+              {/* Seller avatar */}
+              <Link href={`/seller-profile?id=${gb?.seller_id || seller?.id || ''}`}>
+                <div className="w-9 h-9 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  {(seller?.business_name || 'S').charAt(0)}
                 </div>
-                <button
-                  onClick={buyNow}
-                  disabled={adding}
-                  className="relative brand-gradient text-white font-bold text-sm px-4 py-2 rounded-lg"
-                >
-                  Buy Now
-                  <span className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-primary text-[9px] font-bold px-1 py-0.5 rounded">Ready</span>
-                </button>
+              </Link>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-sm text-black truncate">{seller?.business_name || 'Seller'}</span>
+                  <span className="border border-primary text-primary text-[10px] font-bold px-1 py-0.5 rounded">Repeat customer</span>
+                </div>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="text-primary text-xs font-bold">Ending soon</span>
+                  <span className="text-black text-xs font-mono">{formatCountdown()}</span>
+                </div>
               </div>
-            </Card>
-          ))}
-        </div>
-      )}
+              <button
+                onClick={buyNow}
+                disabled={adding}
+                className="relative brand-gradient text-white font-bold text-sm px-4 py-2 rounded-lg"
+              >
+                Buy Now
+                <span className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-primary text-[9px] font-bold px-1 py-0.5 rounded">Ready</span>
+              </button>
+            </div>
+          </Card>
+        ))}
+      </div>
 
       {/* === 7. SHIPPING / RETURNS ROW === */}
       <div className="px-3 pt-3">

@@ -15,8 +15,8 @@ import { MobileNav } from '@/components/mobile-nav';
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Hide mobile nav on login page
-  const hideMobileNav = pathname === '/login';
+  // Hide mobile nav on login + product detail pages (they have their own bottom bars)
+  const hideMobileNav = pathname === '/login' || pathname.startsWith('/product');
 
   return (
     <>
