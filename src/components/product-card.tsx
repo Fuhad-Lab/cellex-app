@@ -23,19 +23,21 @@ export function ProductCard({ product, compact = false }: { product: Product; co
             </div>
           )}
           {typeof product.units_sold === 'number' && product.units_sold > 50 && (
-            <span className="absolute top-1.5 left-1.5 sale-badge">Hot</span>
+            <span className="absolute top-2 left-2 sale-badge">Hot</span>
           )}
         </div>
-        <div className="p-1.5 sm:p-2">
-          <div className="text-[11px] sm:text-xs font-medium text-slate-700 line-clamp-2 h-7 sm:h-8 overflow-hidden leading-tight">
+        <div className="p-2 sm:p-3">
+          {/* Product title — 14px secondary text */}
+          <div className="text-sm font-medium text-slate-700 line-clamp-2 h-10 overflow-hidden leading-tight">
             {product.name}
           </div>
-          <div className="flex items-center justify-between mt-1">
-            <div className="text-sm sm:text-base font-bold price">
+          {/* Price — prominent cyan, 18px */}
+          <div className="flex items-center justify-between mt-1.5">
+            <div className="text-lg font-bold price">
               {formatPrice(product.price)}
             </div>
             {typeof product.units_sold === 'number' && product.units_sold > 0 && (
-              <div className="text-[10px] text-slate-400">
+              <div className="text-xs text-slate-500">
                 {product.units_sold > 1000 ? `${(product.units_sold / 1000).toFixed(1)}k` : product.units_sold} sold
               </div>
             )}
@@ -49,7 +51,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
 export function ProductGrid({ products, loading }: { products: Product[]; loading?: boolean }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="bg-slate-100 rounded-lg animate-pulse aspect-[3/4]" />
         ))}
@@ -59,15 +61,15 @@ export function ProductGrid({ products, loading }: { products: Product[]; loadin
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Store className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-        <p className="text-slate-500 text-xs">No products found</p>
+      <div className="text-center py-16">
+        <Store className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+        <p className="text-slate-500 text-base">No products found</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-2">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
       {products.map((p) => (
         <ProductCard key={p.id} product={p} />
       ))}
@@ -77,12 +79,12 @@ export function ProductGrid({ products, loading }: { products: Product[]; loadin
 
 export function EmptyState({ icon, title, message, action }: { icon: React.ReactNode; title: string; message?: string; action?: React.ReactNode }) {
   return (
-    <div className="text-center py-12 px-4">
-      <div className="w-14 h-14 mx-auto bg-slate-100 rounded-full flex items-center justify-center mb-3 text-slate-400">
+    <div className="text-center py-16 px-4">
+      <div className="w-16 h-16 mx-auto bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-400">
         {icon}
       </div>
-      <h3 className="font-bold text-sm text-slate-800 mb-1">{title}</h3>
-      {message && <p className="text-xs text-slate-500 mb-4 max-w-sm mx-auto">{message}</p>}
+      <h3 className="font-bold text-base text-slate-800 mb-1">{title}</h3>
+      {message && <p className="text-sm text-slate-500 mb-4 max-w-sm mx-auto">{message}</p>}
       {action}
     </div>
   );
