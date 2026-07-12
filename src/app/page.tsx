@@ -247,7 +247,7 @@ export default function HomePage() {
       {liveCount > 0 && (
         <Link href="/live" className="block mx-3 mt-2">
           <div className="flex items-center gap-2 bg-black text-white rounded-xl px-4 py-2.5 hover:bg-neutral-800 transition-colors">
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-2">
               <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
               <span className="text-xs font-bold">LIVE NOW</span>
             </span>
@@ -356,13 +356,13 @@ function FeedPostCard({
             )}
           </div>
           {post.createdAt && (
-            <div className="text-[10px] text-neutral-400">{timeAgo(post.createdAt)}</div>
+            <div className="text-xs text-neutral-400">{timeAgo(post.createdAt)}</div>
           )}
         </div>
         {post.sellerId && (
           <button
             onClick={onFollow}
-            className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all ${
+            className={`text-sm font-bold px-4 py-2 rounded-full transition-all ${
               isFollowing ? 'bg-neutral-100 text-neutral-600' : 'bg-black text-white hover:bg-neutral-800'
             }`}
           >
@@ -390,26 +390,26 @@ function FeedPostCard({
 
         {/* FOMO overlay */}
         {fomoText && (
-          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white text-sm font-bold px-3 py-1.5 rounded-full">
             {fomoText}
           </div>
         )}
 
         {/* Product badge */}
         {post.product && (
-          <div className="absolute bottom-3 left-3 right-3 bg-white/90 backdrop-blur-md rounded-xl p-2.5 flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 shrink-0">
+          <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-2xl p-3 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 shrink-0">
               {post.product.image_url && (
                 <img src={post.product.image_url} alt="" className="w-full h-full object-cover" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-bold text-black truncate">{post.product.name}</div>
-              <div className="text-sm font-extrabold text-black">{formatPrice(post.product.price)}</div>
+              <div className="text-sm font-bold text-black truncate">{post.product.name}</div>
+              <div className="text-base font-extrabold text-black">{formatPrice(post.product.price)}</div>
             </div>
             <button
               onClick={onAddToCart}
-              className="bg-black text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-neutral-800 transition-colors shrink-0 active:scale-95"
+              className="bg-black text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-neutral-800 transition-colors shrink-0 active:scale-95 min-w-[80px]"
             >
               Buy Now
             </button>
@@ -418,33 +418,33 @@ function FeedPostCard({
       </div>
 
       {/* Action bar */}
-      <div className="flex items-center gap-4 px-3 py-2.5">
-        <button onClick={onLike} className="flex items-center gap-1.5 group">
+      <div className="flex items-center gap-5 px-4 py-3">
+        <button onClick={onLike} className="flex items-center gap-2 group">
           <motion.div whileTap={{ scale: 1.3 }}>
-            <Heart className={`w-6 h-6 transition-colors ${liked ? 'fill-black text-black' : 'text-black'}`} />
+            <Heart className={`w-7 h-7 transition-colors ${liked ? 'fill-black text-black' : 'text-black'}`} />
           </motion.div>
-          <span className="text-xs font-semibold text-black">{formatCount(likeCount)}</span>
+          <span className="text-sm font-semibold text-black">{formatCount(likeCount)}</span>
         </button>
-        <button className="flex items-center gap-1.5">
-          <MessageCircle className="w-6 h-6 text-black" />
-          <span className="text-xs font-semibold text-black">{formatCount(post.comments)}</span>
+        <button className="flex items-center gap-2">
+          <MessageCircle className="w-7 h-7 text-black" />
+          <span className="text-sm font-semibold text-black">{formatCount(post.comments)}</span>
         </button>
-        <button className="flex items-center gap-1.5">
-          <Share2 className="w-6 h-6 text-black" />
+        <button className="flex items-center gap-2">
+          <Share2 className="w-7 h-7 text-black" />
         </button>
         <button onClick={onSave} className="ml-auto">
-          <Bookmark className={`w-6 h-6 transition-colors ${saved ? 'fill-black text-black' : 'text-black'}`} />
+          <Bookmark className={`w-7 h-7 transition-colors ${saved ? 'fill-black text-black' : 'text-black'}`} />
         </button>
       </div>
 
       {/* Caption */}
-      <div className="px-3 pb-3">
+      <div className="px-4 pb-4">
         <p className="text-sm text-black">
           <span className="font-bold mr-1.5">{post.sellerName}</span>
           {post.caption}
         </p>
         {post.product?.category && (
-          <p className="text-xs text-neutral-400 mt-1">#{post.product.category.toLowerCase().replace(/\s+/g, '')}</p>
+          <p className="text-xs text-neutral-400 mt-1.5">#{post.product.category.toLowerCase().replace(/\s+/g, '')}</p>
         )}
         {post.comments > 0 && (
           <button className="text-xs text-neutral-400 mt-1.5 hover:text-black transition-colors">
