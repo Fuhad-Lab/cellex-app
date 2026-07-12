@@ -51,12 +51,21 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
-        const [vidResp, homeResp, storiesResp, liveResp] = await Promise.all([
+        const [vidResp, homeResp, storiesResp, liveResp, sellersResp] = await Promise.all([
           api.videos.feed(20),
           api.products.home(),
           api.stories.activeBar().catch(() => ({ success: false })),
           api.live.list('live').catch(() => ({ success: false })),
+          api.social.discover(60).catch(() => ({ success: false })),
         ]);
+
+        // Build seller name lookup
+        const sellerMap = new Map<string, { name: string; image?: string }>();
+        if (sellersResp.success) {
+          (sellersResp.sellers || []).forEach((s: any) => {
+            sellerMap.set(s.id, { name: s.business_name || s.farm_name || 'Seller', image: s.profile_image });
+          });
+        }
 
         const posts: FeedPost[] = [];
 
@@ -92,10 +101,13 @@ export default function HomePage() {
           ].filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i);
 
           allProducts.forEach((p: Product) => {
+            const sellerInfo = p.seller_id ? sellerMap.get(p.seller_id) : null;
             posts.push({
               type: 'product',
               id: `prod-${p.id}`,
-              sellerName: 'Cellex Seller',
+              sellerId: p.seller_id,
+              sellerName: sellerInfo?.name || 'Cellex Seller',
+              sellerImage: sellerInfo?.image,
               mediaUrl: p.image_url || '',
               caption: p.name,
               likes: Math.floor((p.units_sold || 0) * 0.3),
@@ -107,10 +119,16 @@ export default function HomePage() {
           });
         }
 
-        // Shuffle to create variable reward (slot machine effect)
-        posts.sort(() => Math.random() - 0.5);
-
-        setFeed(posts);
+        // Interleave videos and products for variable reward (slot machine effect)
+        const videoPosts = posts.filter(p => p.type === 'video');
+        const productPosts = posts.filter(p => p.type === 'product');
+        const interleaved: FeedPost[] = [];
+        const maxLen = Math.max(videoPosts.length, productPosts.length);
+        for (let i = 0; i < maxLen; i++) {
+          if (i < videoPosts.length) interleaved.push(videoPosts[i]);
+          if (i < productPosts.length) interleaved.push(productPosts[i]);
+        }
+        setFeed(interleaved);
 
         if (storiesResp.success) {
           setStories(storiesResp.stories || []);
@@ -300,10 +318,12 @@ function FeedPostCard({
 
   const isVideo = post.type === 'video';
   const likeCount = post.likes + (liked ? 1 : 0);
-  const fomoText = post.soldCount && post.soldCount > 10
-    ? `🔥 ${post.soldCount > 1000 ? `${(post.soldCount / 1000).toFixed(1)}k` : post.soldCount} people bought this`
-    : post.views && post.views > 100
-    ? `👀 ${post.views} people viewing now`
+  const fomoText = post.soldCount && post.soldCount > 5
+    ? `🔥 ${post.soldCount > 1000 ? `${(post.soldCount / 1000).toFixed(1)}k` : post.soldCount} bought this`
+    : post.views && post.views > 50
+    ? `👀 ${formatCount(post.views)} viewing now`
+    : post.soldCount && post.soldCount > 0
+    ? `✨ ${post.soldCount} bought this`
     : null;
 
   return (
