@@ -178,6 +178,14 @@ function ProductContent() {
 
   return (
     <div className="bg-white pb-20">
+      {/* Back arrow (top-left, overlays the image) */}
+      <button
+        onClick={() => router.back()}
+        className="fixed top-3 left-3 z-50 w-9 h-9 rounded-full bg-white/90 backdrop-blur shadow flex items-center justify-center"
+      >
+        <ChevronLeft className="w-5 h-5 text-black" />
+      </button>
+
       {/* === 1. IMAGE GALLERY (full-width, page indicator bottom-right) === */}
       <div className="relative aspect-square bg-slate-50">
         {images[activeImage] ? (
