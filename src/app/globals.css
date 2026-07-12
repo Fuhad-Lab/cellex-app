@@ -362,3 +362,41 @@ button, a {
 .smooth-pulse {
   animation: smoothPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* ============================================================
+   MOBILE WEBVIEW SIZING FIXES (Capacitor)
+   Fixes the "page appears zoomed in on first paint" bug by:
+   1. Pinning html/body width to 100vw (no horizontal overflow)
+   2. Disabling iOS text auto-inflation
+   3. Disabling tap-highlight + long-press callout (native feel)
+   4. Respecting the notch / dynamic island via env(safe-area-inset-*)
+   ============================================================ */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+/* Safe-area insets: applied on the body so every page gets them automatically. */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* The bottom mobile-nav should sit ABOVE the home-indicator bar on iPhone X+. */
+nav.fixed.bottom-0 {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* While the page is being dragged via swipe-back, add a subtle drop-shadow
+   to sell the "card sliding over the previous page" effect (iOS-like). */
+.page-shell.is-dragging {
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
+}

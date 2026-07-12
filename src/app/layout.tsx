@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -27,6 +27,24 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+};
+
+// -----------------------------------------------------------------------------
+// Viewport configuration — fixes the "page appears zoomed in on first paint"
+// bug inside the Capacitor WebView.
+//
+//   width=device-width               -> match the device's CSS pixel width
+//   initial-scale=1, maximum-scale=1 -> never auto-zoom on first paint
+//   user-scalable=no                 -> disable pinch-zoom (native app feel)
+//   viewport-fit=cover               -> render into the notch / punch-hole area
+// -----------------------------------------------------------------------------
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({

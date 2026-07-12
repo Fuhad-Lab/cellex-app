@@ -1,115 +1,167 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type TouchEvent as ReactTouchEvent } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate, AnimatePresence } from 'framer-motion';
 
 /**
  * SwipeBack — iOS-style edge swipe to go back.
- * 
- * Uses framer-motion's drag with spring physics.
- * - Touch starts within 40px of left edge → activates
- * - Drags the entire page to the right with rubber-band resistance
- * - Ghost chevron appears during drag
- * - If swipe > 30% of screen → navigates back with exit animation
- * - If < 30% → snaps back with spring physics
+ *
+ * Behaviour:
+ *   - Touch must start within the leftmost ~28px of the screen.
+ *   - After the first move, the gesture is classified as horizontal or
+ *     vertical. Vertical gestures are released to the browser (page scroll).
+ *   - Horizontal drags move the page rightward with the finger (clamped to
+ *     a sensible max so it doesn't fly off-screen).
+ *   - On release: if dragged past 120px → commit (animate off-screen + call
+ *     router.back()). Otherwise snap back to x=0.
+ *   - A `suppressNextEntrance` module flag tells the next page's entrance
+ *     animation to skip itself (the user already saw the page revealed by
+ *     the drag — replaying a slide-in would feel like a glitch).
+ *
+ * Implementation notes:
+ *   - Uses useMotionValue + animate() directly, so the touchmove handler
+ *     only updates a single mutable value — no React re-render per frame.
+ *   - Touch listeners are bound once per mount (not re-bound on every drag
+ *     change), which is a perf fix vs. the previous version.
  */
-export function SwipeBack({ children }: { children: React.ReactNode }) {
+
+// ---- Tunable constants ------------------------------------------------------
+const EDGE_ZONE_PX = 28;        // Touch must start within this many px of the left edge.
+const COMMIT_THRESHOLD_PX = 120; // Drag this far right to actually go back.
+const DRAG_MAX_PX = 280;         // Visual cap on how far the page will follow the finger.
+
+// Module-level flag — set to true right before a swipe-back commit so the
+// NEXT mount of any entrance-animation component knows to skip itself.
+export let suppressNextEntrance = false;
+function setSuppressNext(v: boolean) {
+  suppressNextEntrance = v;
+}
+
+export function SwipeBack({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const x = useMotionValue(0);
+  const opacity = useTransform(x, [0, DRAG_MAX_PX], [1, 0.7]);
+  const scale = useTransform(x, [0, DRAG_MAX_PX], [1, 0.96]);
+
   const [isDragging, setIsDragging] = useState(false);
-  const [dragX, setDragX] = useState(0);
-  const [exitX, setExitX] = useState<number | null>(null);
-  const startX = useRef(0);
-  const startY = useRef(0);
+  const [showChevron, setShowChevron] = useState(false);
+
+  const touchState = useRef<{
+    startX: number;
+    startY: number;
+    active: boolean;
+    horizontal: boolean | null;
+  } | null>(null);
 
   // Reset on path change
   useEffect(() => {
-    setDragX(0);
-    setExitX(null);
+    x.set(0);
     setIsDragging(false);
+    setShowChevron(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Only enable on pages that have a "back" (not homepage)
   const canSwipeBack = pathname !== '/';
 
-  useEffect(() => {
+  function onTouchStart(e: ReactTouchEvent<HTMLDivElement>) {
     if (!canSwipeBack) return;
+    const t = e.touches[0];
+    if (!t) return;
 
-    let active = false;
-    const threshold = window.innerWidth * 0.3;
+    if (t.clientX > EDGE_ZONE_PX) {
+      touchState.current = null;
+      return;
+    }
 
-    const onTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      if (touch.clientX < 40) {
-        active = true;
-        startX.current = touch.clientX;
-        startY.current = touch.clientY;
-        setIsDragging(true);
-        setExitX(null);
-      }
+    touchState.current = {
+      startX: t.clientX,
+      startY: t.clientY,
+      active: true,
+      horizontal: null,
     };
+  }
 
-    const onTouchMove = (e: TouchEvent) => {
-      if (!active) return;
-      const touch = e.touches[0];
-      const dx = touch.clientX - startX.current;
-      const dy = Math.abs(touch.clientY - startY.current);
+  function onTouchMove(e: ReactTouchEvent<HTMLDivElement>) {
+    const state = touchState.current;
+    if (!state || !state.active) return;
 
-      if (dy > 60 && dy > Math.abs(dx)) {
-        active = false;
-        setIsDragging(false);
-        setDragX(0);
+    const t = e.touches[0];
+    if (!t) return;
+    const dx = t.clientX - state.startX;
+    const dy = t.clientY - state.startY;
+
+    if (state.horizontal === null) {
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      if (absDx < 8 && absDy < 8) return;
+      if (absDy > absDx) {
+        // Vertical-dominant: release to browser
+        state.active = false;
         return;
       }
+      state.horizontal = true;
+      setIsDragging(true);
+    }
 
-      if (dx > 0) {
-        // Rubber-band resistance
-        const resistance = 0.4;
-        setDragX(dx * resistance);
-        if (dx > 10) e.preventDefault();
-      }
-    };
+    if (!state.horizontal) return;
 
-    const onTouchEnd = () => {
-      if (!active) return;
-      active = false;
+    if (e.cancelable) e.preventDefault();
+    const clamped = Math.max(0, Math.min(dx, DRAG_MAX_PX));
+    x.set(clamped);
+    setShowChevron(clamped > 15);
+  }
+
+  function onTouchEnd() {
+    const state = touchState.current;
+    touchState.current = null;
+    if (!state || !state.active || !state.horizontal) {
       setIsDragging(false);
+      setShowChevron(false);
+      return;
+    }
 
-      if (dragX > threshold) {
-        // Exit animation then navigate back
-        setExitX(window.innerWidth);
-        setTimeout(() => router.back(), 300);
-      } else {
-        // Snap back
-        setDragX(0);
-      }
-    };
-
-    document.addEventListener('touchstart', onTouchStart, { passive: true });
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onTouchEnd);
-
-    return () => {
-      document.removeEventListener('touchstart', onTouchStart);
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
-    };
-  }, [canSwipeBack, dragX, router]);
-
-  const currentX = exitX !== null ? exitX : dragX;
+    const current = x.get();
+    if (current >= COMMIT_THRESHOLD_PX) {
+      const target = typeof window !== 'undefined' ? window.innerWidth : DRAG_MAX_PX;
+      animate(x, target, {
+        duration: 0.22,
+        ease: [0.4, 0, 1, 1],
+        onComplete: () => {
+          // Tell the next entrance animation to skip itself
+          setSuppressNext(true);
+          router.back();
+          requestAnimationFrame(() => x.set(0));
+          setIsDragging(false);
+          setShowChevron(false);
+        },
+      });
+    } else {
+      animate(x, 0, {
+        duration: 0.24,
+        ease: [0.32, 0.72, 0, 1],
+        onComplete: () => {
+          setIsDragging(false);
+          setShowChevron(false);
+        },
+      });
+    }
+  }
 
   return (
     <>
-      {/* Ghost back indicator */}
+      {/* Ghost back chevron — fades in as the user drags */}
       <AnimatePresence>
-        {isDragging && dragX > 15 && (
+        {showChevron && (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: Math.min(dragX / 60, 1) }}
+            animate={{ opacity: Math.min(x.get() / 60, 1) }}
             exit={{ opacity: 0 }}
             className="fixed top-1/2 -translate-y-1/2 z-[9998] pointer-events-none"
-            style={{ left: `${dragX * 0.3}px` }}
+            style={{ left: `${Math.min(x.get() * 0.3, 60)}px` }}
           >
             <div className="w-12 h-12 rounded-full bg-black/10 backdrop-blur-md flex items-center justify-center">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -120,11 +172,14 @@ export function SwipeBack({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Page content */}
       <motion.div
-        animate={{ x: currentX }}
-        transition={isDragging || exitX !== null ? { duration: 0.3, ease: [0.32, 0.72, 0, 1] } : { type: 'spring', stiffness: 400, damping: 35 }}
-        style={{ willChange: 'transform' }}
+        className={`page-shell${isDragging ? ' is-dragging' : ''}`}
+        style={{ x, opacity, scale, willChange: 'transform, opacity' }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onTouchCancel={onTouchEnd}
+        data-swipe-back="true"
       >
         {children}
       </motion.div>
@@ -132,3 +187,9 @@ export function SwipeBack({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Export a helper so template.tsx (entrance animation) can check + clear the flag.
+export function consumeSuppressNextEntrance(): boolean {
+  const v = suppressNextEntrance;
+  setSuppressNext(false);
+  return v;
+}

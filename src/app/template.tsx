@@ -2,14 +2,39 @@
 
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { consumeSuppressNextEntrance } from '@/components/swipe-back';
 
 /**
  * Template — cinematic page transitions using framer-motion.
- * More dramatic: slides in from right + scales up slightly + fades in.
- * Re-triggers on every pathname change.
+ *
+ * Default behaviour: a new page slides in from the right (x: 30 → 0) with a
+ * subtle scale + fade. This is the "opening a new page" animation.
+ *
+ * Exception: if the user just performed a swipe-back gesture, the destination
+ * page is already visible underneath the dragging page — so we skip the
+ * slide-in animation that frame (just fade in instantly).
+ *
+ * Re-triggers on every pathname change because Next.js remounts `template.tsx`
+ * on every navigation.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [skipAnimation, setSkipAnimation] = useState(false);
+
+  useEffect(() => {
+    // If we just landed here via a swipe-back gesture, skip the slide-in.
+    if (consumeSuppressNextEntrance()) {
+      setSkipAnimation(true);
+    } else {
+      setSkipAnimation(false);
+    }
+  }, [pathname]);
+
+  if (skipAnimation) {
+    // No animation — just render the children at their final position.
+    return <>{children}</>;
+  }
 
   return (
     <motion.div
