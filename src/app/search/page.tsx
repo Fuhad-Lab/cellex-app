@@ -55,6 +55,7 @@ function SearchContent() {
       : [];
     setAllProducts(products);
     setAiProducts(products.slice(0, 4));
+    setLoading(false); // Products are ready — show them immediately
 
     // Filter videos
     if (vidResp.success) {
@@ -75,7 +76,6 @@ function SearchContent() {
       setAiAnswer(`Here's what I found for "${q}": ${products.length} products available on Cellex.`);
     }
 
-    setLoading(false);
   }, []);
 
   useEffect(() => {
