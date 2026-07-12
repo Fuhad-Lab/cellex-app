@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/components/auth-provider";
+import { OTABootstrap } from "@/components/ota-bootstrap";
 import { OptimisticUIProvider } from "@/components/optimistic-ui";
 import { GlobalSpotlight } from "@/components/global-spotlight";
 import { NavShell } from "@/components/nav-shell";
@@ -39,6 +40,7 @@ export default function RootLayout({
         className={`${jakarta.variable} ${sora.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         <AuthProvider>
+          <OTABootstrap />
           <OptimisticUIProvider>
             <NavShell>
               {children}
