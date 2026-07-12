@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { api, formatPrice, timeAgo } from '@/lib/api';
+import { api, formatPrice } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
   Heart, Share2, Play, Volume2, VolumeX, ChevronLeft,
-  MessageCircle, Send, ShoppingBag, Bookmark, Star
+  MessageCircle, ShoppingBag, Bookmark, Star, UserPlus, Gift
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
@@ -21,6 +21,7 @@ export default function VideosPage() {
   const [muted, setMuted] = useState(true);
   const [likes, setLikes] = useState<Record<number, boolean>>({});
   const [saved, setSaved] = useState<Record<number, boolean>>({});
+  const [following, setFollowing] = useState<Record<string, boolean>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,6 +65,18 @@ export default function VideosPage() {
     toast({ title: saved[videoId] ? 'Removed from saved' : 'Saved!' });
   };
 
+  const toggleFollow = async (sellerId: string) => {
+    if (!user) { toast({ title: 'Please login to follow sellers' }); return; }
+    const isFollowing = following[sellerId];
+    setFollowing({ ...following, [sellerId]: !isFollowing });
+    const result = isFollowing ? await api.social.unfollow(sellerId) : await api.social.follow(sellerId);
+    if (!result.success) {
+      setFollowing({ ...following, [sellerId]: isFollowing });
+    } else {
+      toast({ title: isFollowing ? 'Unfollowed' : 'Following!' });
+    }
+  };
+
   const share = (video: any) => {
     const url = `${window.location.origin}/videos`;
     if (navigator.share) {
@@ -98,159 +111,192 @@ export default function VideosPage() {
       onScroll={handleScroll}
       className="h-[calc(100vh-3.5rem)] md:h-[calc(100vh-4rem)] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black"
     >
-      {videos.map((video, idx) => (
-        <div
-          key={video.id}
-          className="h-full w-full snap-start relative flex items-center justify-center"
-        >
-          {video.video_url ? (
-            <video
-              src={video.video_url}
-              autoPlay={idx === activeIdx}
-              muted={muted}
-              loop
-              playsInline
-              className="max-h-full max-w-full object-cover"
-            />
-          ) : (
-            <div className="bg-slate-900 w-full h-full flex items-center justify-center text-white">
-              <Play className="w-12 h-12" />
-            </div>
-          )}
+      {videos.map((video, idx) => {
+        // API returns seller as nested object: { id, business_name, profile_image }
+        const seller = video.seller || {};
+        const sellerName = seller.business_name || 'Seller';
+        const sellerId = seller.id;
+        const sellerImg = seller.profile_image;
+        const product = video.product;
+        const isFollowing = following[sellerId] || false;
 
-          {/* Top gradient + back button */}
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
-          <Link href="/" className="absolute top-4 left-3 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-
-          {/* Top-left: video badge + seller name */}
-          <div className="absolute top-4 left-16 z-20 flex items-center gap-2">
-            <span className="bg-primary text-white text-xs font-bold px-2 py-1 rounded">VIDEO</span>
-            <span className="text-white text-sm font-bold">@{video.seller_name || 'seller'}</span>
-          </div>
-
-          {/* Mute toggle (top right) */}
-          <button
-            onClick={() => setMuted(!muted)}
-            className="absolute top-4 right-3 z-20 bg-black/40 backdrop-blur rounded-full p-2 text-white"
+        return (
+          <div
+            key={video.id}
+            className="h-full w-full snap-start relative flex items-center justify-center"
           >
-            {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </button>
-
-          {/* Right-side action rail (TikTok/live shopping style) */}
-          <div className="absolute right-3 bottom-28 flex flex-col items-center gap-4 z-20">
-            {/* Like */}
-            <button
-              onClick={() => toggleLike(video.id)}
-              className="flex flex-col items-center gap-1"
-            >
-              <div className={`w-12 h-12 rounded-full backdrop-blur flex items-center justify-center transition-colors ${likes[video.id] ? 'bg-primary' : 'bg-black/40'}`}>
-                <Heart className={`w-6 h-6 ${likes[video.id] ? 'fill-white text-white' : 'text-white'}`} />
+            {/* Video */}
+            {video.video_url ? (
+              <video
+                src={video.video_url}
+                autoPlay={idx === activeIdx}
+                muted={muted}
+                loop
+                playsInline
+                className="max-h-full max-w-full object-cover"
+              />
+            ) : (
+              <div className="bg-slate-900 w-full h-full flex items-center justify-center text-white">
+                <Play className="w-12 h-12" />
               </div>
-              <span className="text-xs text-white font-bold">{(video.likes_count || 0) + (likes[video.id] ? 1 : 0)}</span>
-            </button>
-
-            {/* Comments */}
-            <button className="flex flex-col items-center gap-1">
-              <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur flex items-center justify-center">
-                <MessageCircle className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs text-white font-bold">{Math.floor((video.views_count || 0) / 10)}</span>
-            </button>
-
-            {/* Share */}
-            <button
-              onClick={() => share(video)}
-              className="flex flex-col items-center gap-1"
-            >
-              <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur flex items-center justify-center">
-                <Share2 className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs text-white font-bold">Share</span>
-            </button>
-
-            {/* Save */}
-            <button
-              onClick={() => toggleSave(video.id)}
-              className="flex flex-col items-center gap-1"
-            >
-              <div className={`w-12 h-12 rounded-full backdrop-blur flex items-center justify-center transition-colors ${saved[video.id] ? 'bg-yellow-500' : 'bg-black/40'}`}>
-                <Bookmark className={`w-6 h-6 ${saved[video.id] ? 'fill-white text-white' : 'text-white'}`} />
-              </div>
-              <span className="text-xs text-white font-bold">Save</span>
-            </button>
-          </div>
-
-          {/* Bottom-left info block */}
-          <div className="absolute bottom-24 left-3 right-20 z-20">
-            {/* Seller row */}
-            <div className="flex items-center gap-2 mb-2">
-              <Link href={`/seller-profile?id=${video.seller_id}`}>
-                <div className="w-9 h-9 rounded-full brand-gradient flex items-center justify-center font-bold text-sm text-white border-2 border-white">
-                  {(video.seller_name || 'S').charAt(0)}
-                </div>
-              </Link>
-              <Link href={`/seller-profile?id=${video.seller_id}`}>
-                <span className="text-white text-sm font-bold">{video.seller_name || 'Seller'}</span>
-              </Link>
-              <span className="text-white/70 text-xs">·</span>
-              <span className="text-white/70 text-xs">{video.views_count || 0} views</span>
-            </div>
-
-            {/* Caption */}
-            {video.caption && (
-              <p className="text-white text-sm mb-2 line-clamp-2 leading-snug">{video.caption}</p>
             )}
 
-            {/* Product card — white with cyan price */}
-            {video.product_id && video.product && (
-              <Link href={`/product?id=${video.product_id}`} className="block max-w-xs">
-                <Card className="p-2 bg-white border-0 flex items-center gap-2 shadow-lg">
-                  <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden shrink-0">
-                    {video.product.image_url ? (
-                      <img src={video.product.image_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <ShoppingBag className="w-5 h-5 m-auto mt-3.5 text-slate-400" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="inline-block bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded mb-0.5">FEATURED</span>
-                    <div className="text-sm font-bold text-slate-900 truncate">{video.product.name}</div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-base font-extrabold price">{formatPrice(video.product.price)}</span>
-                      {typeof video.product.units_sold === 'number' && video.product.units_sold > 0 && (
-                        <span className="text-xs text-slate-400">{video.product.units_sold} sold</span>
+            {/* Top gradient */}
+            <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+
+            {/* Top-left: Follow / Recommend tabs */}
+            <div className="absolute top-4 left-3 z-20 flex items-center gap-4">
+              <span className="text-white text-sm font-medium opacity-80">Follow</span>
+              <span className="text-white text-sm font-bold border-b-2 border-white pb-0.5">Recommend</span>
+            </div>
+
+            {/* Top-right: mute toggle */}
+            <button
+              onClick={() => setMuted(!muted)}
+              className="absolute top-4 right-3 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"
+            >
+              {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+
+            {/* === RIGHT-SIDE ACTION RAIL (matches reference) === */}
+            <div className="absolute right-3 bottom-32 flex flex-col items-center gap-4 z-20">
+              {/* Seller avatar + Follow button (TOP of rail) */}
+              {sellerId && (
+                <div className="relative mb-1">
+                  <Link href={`/seller-profile?id=${sellerId}`}>
+                    <div className="w-12 h-12 rounded-full brand-gradient flex items-center justify-center text-white font-bold border-2 border-white overflow-hidden">
+                      {sellerImg ? (
+                        <img src={sellerImg} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        sellerName.charAt(0).toUpperCase()
                       )}
                     </div>
-                  </div>
-                  <Button size="sm" className="brand-gradient text-white h-8 shrink-0">
-                    Buy
-                  </Button>
-                </Card>
+                  </Link>
+                  <button
+                    onClick={() => toggleFollow(sellerId)}
+                    className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                      isFollowing ? 'bg-slate-500' : 'bg-primary'
+                    }`}
+                  >
+                    {isFollowing ? '✓' : '+'}
+                  </button>
+                </div>
+              )}
+
+              {/* Like button */}
+              <button
+                onClick={() => toggleLike(video.id)}
+                className="flex flex-col items-center gap-1"
+              >
+                <div className={`w-12 h-12 rounded-full backdrop-blur flex items-center justify-center transition-colors ${likes[video.id] ? 'bg-primary' : 'bg-black/40'}`}>
+                  <Heart className={`w-6 h-6 ${likes[video.id] ? 'fill-white text-white' : 'text-white'}`} />
+                </div>
+                <span className="text-xs text-white font-bold">{(video.likes_count || 0) + (likes[video.id] ? 1 : 0)}</span>
+              </button>
+
+              {/* Comment button */}
+              <button className="flex flex-col items-center gap-1">
+                <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-xs text-white font-bold">{Math.floor((video.views_count || 0) / 10)}</span>
+              </button>
+
+              {/* Share button */}
+              <button
+                onClick={() => share(video)}
+                className="flex flex-col items-center gap-1"
+              >
+                <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur flex items-center justify-center">
+                  <Share2 className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-xs text-white font-bold">Share</span>
+              </button>
+
+              {/* Save button */}
+              <button
+                onClick={() => toggleSave(video.id)}
+                className="flex flex-col items-center gap-1"
+              >
+                <div className={`w-12 h-12 rounded-full backdrop-blur flex items-center justify-center transition-colors ${saved[video.id] ? 'bg-yellow-500' : 'bg-black/40'}`}>
+                  <Bookmark className={`w-6 h-6 ${saved[video.id] ? 'fill-white text-white' : 'text-white'}`} />
+                </div>
+                <span className="text-xs text-white font-bold">Save</span>
+              </button>
+            </div>
+
+            {/* === BOTTOM-LEFT INFO (matches reference) === */}
+            <div className="absolute bottom-20 left-3 right-20 z-20">
+              {/* LIVE badge + @username */}
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-primary text-white text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                  VIDEO
+                </span>
+                <Link href={sellerId ? `/seller-profile?id=${sellerId}` : '#'}>
+                  <span className="text-white text-sm font-bold">@{sellerName}</span>
+                </Link>
+              </div>
+
+              {/* Caption */}
+              {video.caption && (
+                <p className="text-white text-sm mb-2 line-clamp-2 leading-snug">{video.caption}</p>
+              )}
+
+              {/* Product card — white with cyan price */}
+              {product && (
+                <Link href={`/product?id=${product.id}`} className="block max-w-xs">
+                  <Card className="p-2 bg-white border-0 flex items-center gap-2 shadow-lg">
+                    <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden shrink-0">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <ShoppingBag className="w-5 h-5 m-auto mt-3.5 text-slate-400" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="inline-block bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded mb-0.5">FEATURED</span>
+                      <div className="text-sm font-bold text-black truncate">{product.name}</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-base font-extrabold price">{formatPrice(product.price)}</span>
+                        {typeof product.units_sold === 'number' && product.units_sold > 0 && (  
+                          <span className="text-xs text-slate-400">
+                            {product.units_sold > 1000 ? `${(product.units_sold / 1000).toFixed(1)}k` : product.units_sold} sold
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Button size="sm" className="brand-gradient text-white h-8 shrink-0">
+                      Buy
+                    </Button>
+                  </Card>
+                </Link>
+              )}
+
+              {/* Trust badges — black background */}
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className="bg-black/70 backdrop-blur text-white text-xs px-2 py-0.5 rounded flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  Verified Seller
+                </span>
+                <span className="bg-black/70 backdrop-blur text-white text-xs px-2 py-0.5 rounded">
+                  7-Day Returns
+                </span>
+              </div>
+            </div>
+
+            {/* Bottom CTA — dark button */}
+            {product && (
+              <Link href={`/product?id=${product.id}`} className="absolute bottom-3 left-3 right-3 z-20 block">
+                <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-11 text-base">
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  Shop this product · {formatPrice(product.price)}
+                </Button>
               </Link>
             )}
-
-            {/* Trust badge */}
-            <div className="flex items-center gap-1.5 mt-2 text-white/80 text-xs">
-              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-              <span>Verified Seller</span>
-              <span>·</span>
-              <span>7-Day Returns</span>
-            </div>
           </div>
-
-          {/* Bottom CTA — full-width dark button */}
-          {video.product_id && video.product && (
-            <Link href={`/product?id=${video.product_id}`} className="absolute bottom-3 left-3 right-3 z-20 block">
-              <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-11 text-base">
-                <ShoppingBag className="w-4 h-4 mr-2" />
-                Shop this product · {formatPrice(video.product.price)}
-              </Button>
-            </Link>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
