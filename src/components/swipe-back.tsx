@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * SwipeBack — iOS-style edge swipe to go back.
@@ -132,4 +132,3 @@ export function SwipeBack({ children }: { children: React.ReactNode }) {
   );
 }
 
-import { useRef } from 'react';

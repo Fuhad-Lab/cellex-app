@@ -8,6 +8,7 @@ import { LayoutShell } from "@/components/layout-shell";
 import { SwipeBack } from "@/components/swipe-back";
 import { OptimisticUIProvider } from "@/components/optimistic-ui";
 import { GlobalSpotlight } from "@/components/global-spotlight";
+import { usePathname } from "next/navigation";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -30,6 +31,22 @@ export const metadata: Metadata = {
   },
 };
 
+function NavShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const hideMobileNav = pathname === '/login' || pathname.startsWith('/product');
+  
+  return (
+    <>
+      <SwipeBack>
+        <main className={`flex-1 ${hideMobileNav ? '' : 'pb-20 md:pb-0'}`}>
+          {children}
+        </main>
+      </SwipeBack>
+      {!hideMobileNav && <MobileNav />}
+    </>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,11 +59,9 @@ export default function RootLayout({
       >
         <AuthProvider>
           <OptimisticUIProvider>
-            <SwipeBack>
-              <LayoutShell>
-                {children}
-              </LayoutShell>
-            </SwipeBack>
+            <NavShell>
+              {children}
+            </NavShell>
             <GlobalSpotlight />
             <Toaster />
           </OptimisticUIProvider>
