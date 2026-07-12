@@ -32,10 +32,10 @@ export function MobileNav() {
                 className="flex flex-col items-center gap-0.5"
                 style={{ transform: 'scale(1.15)' }}
               >
-                <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center glow">
+                <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center glow">
                   <Icon className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-[10px] font-bold text-primary">{item.label}</span>
+                <span className="text-[10px] font-bold text-black">{item.label}</span>
               </Link>
             );
           }
@@ -45,13 +45,13 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center gap-0.5 relative ${
-                isActive ? 'text-primary' : 'text-black'
+                isActive ? 'text-black' : 'text-neutral-500'
               }`}
             >
               <div className="relative">
                 <Icon className="w-5 h-5" />
                 {item.showBadge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-primary text-primary-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2 bg-black text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
