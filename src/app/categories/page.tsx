@@ -62,10 +62,31 @@ function CategoriesContent() {
       if (result.success) {
         setProducts(result.results || result.products || []);
       }
-    } else {
+    } else if (category) {
+      // Specific category selected — use the category op
       const result = await api.products.category(category, sort, 1);
       if (result.success) {
         setProducts(result.products || []);
+      }
+    } else {
+      // "All" categories — use the all op (category op rejects empty string)
+      const result = await api.products.all(100);
+      if (result.success) {
+        let allProducts = result.products || [];
+        // Apply client-side sort since the 'all' op doesn't sort
+        if (sort === 'price_low') {
+          allProducts = [...allProducts].sort((a, b) => a.price - b.price);
+        } else if (sort === 'price_high') {
+          allProducts = [...allProducts].sort((a, b) => b.price - a.price);
+        } else if (sort === 'popular') {
+          allProducts = [...allProducts].sort((a, b) => (b.units_sold || 0) - (a.units_sold || 0));
+        } else {
+          // newest — sort by created_at descending
+          allProducts = [...allProducts].sort((a, b) =>
+            new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+          );
+        }
+        setProducts(allProducts);
       }
     }
     setLoading(false);
@@ -101,6 +122,19 @@ function CategoriesContent() {
     }
   };
 
+  // Search by subcategory label — sets the query and triggers a search.
+  // We can't rely on the load() callback because it captures the old searchQuery;
+  // instead we call the search API directly with the new value.
+  const searchBySubcategory = async (sub: string) => {
+    setLoading(true);
+    setSearchQuery(sub);
+    const result = await api.products.search(sub, null);
+    if (result.success) {
+      setProducts(result.results || result.products || []);
+    }
+    setLoading(false);
+  };
+
   const activeCategoryLabel = ALL_CATEGORIES.find(c => c.value === category)?.label || 'All';
   const subcats = category ? SUBCATEGORIES[category] || [] : [];
 
@@ -131,12 +165,12 @@ function CategoriesContent() {
         {/* Category tabs with underline */}
         <div className="flex items-center gap-5 px-3 py-2 overflow-x-auto no-scrollbar bg-white border-b border-slate-100">
           {ALL_CATEGORIES.map((cat) => {
-            // "All" navigates to homepage, others filter in-page
+            // "All" clears the category filter (stays on categories page)
             if (cat.value === '') {
               return (
-                <Link
+                <button
                   key={cat.value}
-                  href="/"
+                  onClick={() => handleCategoryChange('')}
                   className={`text-sm whitespace-nowrap pb-1.5 transition-colors ${
                     category === ''
                       ? 'text-primary font-bold border-b-2 border-primary'
@@ -144,7 +178,7 @@ function CategoriesContent() {
                   }`}
                 >
                   {cat.label}
-                </Link>
+                </button>
               );
             }
             return (
@@ -169,10 +203,7 @@ function CategoriesContent() {
             {subcats.map((sub, i) => (
               <button
                 key={sub}
-                onClick={() => {
-                  setSearchQuery(sub);
-                  load();
-                }}
+                onClick={() => searchBySubcategory(sub)}
                 className="flex flex-col items-center gap-1"
               >
                 <div className="w-11 h-11 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-lg">
@@ -319,12 +350,12 @@ function CategoriesContent() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
               {ALL_CATEGORIES.map((cat) => {
-                // "All" navigates to homepage
+                // "All" clears the category filter (stays on categories page)
                 if (cat.value === '') {
                   return (
-                    <Link
+                    <button
                       key={cat.value}
-                      href="/"
+                      onClick={() => handleCategoryChange('')}
                       className={`text-sm font-medium px-4 py-1.5 rounded-full whitespace-nowrap transition-all ${
                         category === ''
                           ? 'brand-gradient text-white font-bold'
@@ -332,7 +363,7 @@ function CategoriesContent() {
                       }`}
                     >
                       {cat.emoji} {cat.label}
-                    </Link>
+                    </button>
                   );
                 }
                 return (
@@ -389,7 +420,7 @@ function CategoriesContent() {
               {subcats.map((sub) => (
                 <button
                   key={sub}
-                  onClick={() => { setSearchQuery(sub); load(); }}
+                  onClick={() => searchBySubcategory(sub)}
                   className="shrink-0 text-xs font-medium text-black bg-slate-50 hover:bg-primary/10 hover:text-primary px-3 py-1.5 rounded-full border border-slate-100"
                 >
                   {sub}
