@@ -400,3 +400,19 @@ nav.fixed.bottom-0 {
 .page-shell.is-dragging {
   box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
 }
+
+/* ============================================================
+   iOS STACK NAVIGATION
+   The IOSStack renders a fixed full-screen container with absolute-
+   positioned Screen layers. These rules ensure the body doesn't
+   interfere with the stack's own scroll/overflow management.
+   ============================================================ */
+html, body {
+  overscroll-behavior-x: none; /* Disables browser 'Back' swipe */
+  touch-action: pan-y;         /* Allows vertical scroll, blocks horizontal interference */
+  -webkit-font-smoothing: antialiased;
+  /* The IOSStack container is position:fixed, so the body shouldn't scroll.
+     Without this, you'd get a double-scroll effect (body + inner Screen). */
+  overflow: hidden;
+}
+
