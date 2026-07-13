@@ -14,7 +14,19 @@ function LoginContent() {
   const { user, login, signup } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/';
+
+  // SECURITY: Validate the `next` parameter to prevent open redirect attacks.
+  // Only allow relative paths (must start with "/" but not "//" which is a
+  // protocol-relative URL that browsers treat as absolute).
+  // Reject anything that looks like a URL scheme (e.g. "https://evil.com").
+  const rawNext = searchParams.get('next') || '/';
+  const isSafeRedirect = (path: string): boolean => {
+    if (!path.startsWith('/')) return false;
+    if (path.startsWith('//')) return false;  // protocol-relative URL
+    if (path.startsWith('/\\')) return false; // backslash trick
+    return true;
+  };
+  const next = isSafeRedirect(rawNext) ? rawNext : '/';
 
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
