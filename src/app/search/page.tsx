@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { api, formatPrice, type Product } from '@/lib/api';
+import { api, formatPrice, type Product, API_BASE } from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import {
   Search, ChevronLeft, Store, Sparkles, Video as VideoIcon,

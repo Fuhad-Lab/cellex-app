@@ -50,6 +50,7 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
   const isBack = useRef(false);
   const isDragBack = useRef(false); // true when back was triggered by a drag (animation already done)
   const isAnimating = useRef(false); // prevent double-animation
+  const isFirstMount = useRef(true); // suppress animation on page reload / first load
 
   // Single shared MotionValue — the x position of the TOP page
   const dragX = useMotionValue(0);
@@ -62,6 +63,18 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
   // ---- Navigation handler — fires on every pathname change ----
   useEffect(() => {
     const ww = typeof window !== 'undefined' ? window.innerWidth : 375;
+
+    // ---- Skip animation on first mount / page reload ----
+    // On the very first render, the stack is empty and we're just adding the
+    // initial page. There's no "previous page" to animate from, so we set
+    // dragX to 0 instantly (no transition). This prevents the slide-in
+    // animation from firing when the user reloads the page.
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      setStack([{ key: pathname, component: children }]);
+      dragX.set(0);
+      return;
+    }
 
     if (isDragBack.current) {
       // Back was triggered by a drag — the Screen already animated dragX to W.
