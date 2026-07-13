@@ -28,8 +28,14 @@ import {
 const EDGE_ZONE_PX = 28;
 const COMMIT_THRESHOLD_PX = 120;
 const DRAG_MAX_PX = 320;
+// Match the IOSStack push/back durations for visual consistency.
+// Drag-commit is slightly faster (0.35s) because the user has already
+// visually "committed" by dragging past the threshold — a long animation
+// here would feel laggy.
 const SLIDE_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
 const SNAP_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
+const DRAG_COMMIT_DURATION = 0.35;
+const DRAG_CANCEL_DURATION = 0.3;
 
 interface ScreenProps {
   children: ReactNode;
@@ -119,7 +125,7 @@ export function Screen({ children, isTop, isExiting, xValue, overlayOpacity, onB
     if (current >= COMMIT_THRESHOLD_PX) {
       // COMMIT: animate the page all the way off-screen, THEN navigate back
       animate(xValue, windowWidth, {
-        duration: 0.3,
+        duration: DRAG_COMMIT_DURATION,
         ease: SLIDE_EASE,
         onComplete: () => {
           onBack();
@@ -128,7 +134,7 @@ export function Screen({ children, isTop, isExiting, xValue, overlayOpacity, onB
     } else {
       // CANCEL: snap back to 0
       animate(xValue, 0, {
-        duration: 0.24,
+        duration: DRAG_CANCEL_DURATION,
         ease: SNAP_EASE,
         onComplete: () => setIsDragging(false),
       });

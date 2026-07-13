@@ -34,7 +34,13 @@ interface StackItem {
 }
 
 const IOS_SPRING = { type: 'spring' as const, stiffness: 350, damping: 40, mass: 1 };
+// Slower "swag" ease — the page enters from the right and gradually decelerates
+// to a stop. Duration is 0.45s which feels intentional without being sluggish.
+// iOS uses ~0.35-0.5s for push transitions; we land at the upper end for "swag".
 const SLIDE_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
+const PUSH_DURATION = 0.45;   // seconds — push navigation (new page enters)
+const BACK_DURATION = 0.4;    // seconds — back navigation (top page exits)
+const DRAG_COMMIT_DURATION = 0.35; // seconds — drag-release commit (slightly faster than push)
 
 export function IOSStack({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -105,7 +111,7 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
       // Button back (not drag) — need to animate dragX from 0 to W
       isAnimating.current = true;
       animate(dragX, ww, {
-        duration: 0.3,
+        duration: BACK_DURATION,
         ease: SLIDE_EASE,
         onComplete: () => {
           isAnimating.current = false;
@@ -115,11 +121,12 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
         },
       });
     } else {
-      // Push — set dragX to W, then animate to 0
+      // Push — set dragX to W, then animate to 0 with the slower "swag" ease
       isAnimating.current = true;
       dragX.set(ww);
       animate(dragX, 0, {
-        ...IOS_SPRING,
+        duration: PUSH_DURATION,
+        ease: SLIDE_EASE,
         onComplete: () => {
           isAnimating.current = false;
         },

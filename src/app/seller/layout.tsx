@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import {
   LayoutDashboard, Package, ShoppingBag, User, Radio, Video, BookOpen,
-  Store, LogOut, Menu, X
+  Store, LogOut, Menu, X, Settings, GraduationCap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -18,6 +18,8 @@ const navItems = [
   { href: '/seller/go-live', label: 'Go Live', icon: Radio },
   { href: '/seller/videos', label: 'Videos', icon: Video },
   { href: '/seller/stories', label: 'Stories', icon: BookOpen },
+  { href: '/seller/academy', label: 'Academy', icon: GraduationCap },
+  { href: '/seller/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function SellerLayout({ children }: { children: React.ReactNode }) {
