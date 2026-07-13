@@ -286,6 +286,13 @@ button {
   animation: shimmer 1.5s infinite;
 }
 
+/* Shimmer utility — used by loading.tsx skeleton */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
 /* Hover lift effect */
 .hover-lift {
   transition: all 0.2s ease;

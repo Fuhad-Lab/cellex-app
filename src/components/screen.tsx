@@ -3,110 +3,168 @@
 /**
  * Screen — the interactive view layer for the IOSStack.
  *
- * Each Screen represents one page in the navigation stack.
+ * Each Screen is an absolutely-positioned layer. Its horizontal position
+ * is controlled by a MotionValue passed from IOSStack:
+ *   - TOP page: x = dragX (draggable via touch)
+ *   - BEHIND page: x = parallaxX (derived from dragX)
+ *   - EXITING page: x = dragX (animating to W)
  *
- *   - The TOP page is draggable (swipe right to go back).
- *   - The BEHIND page follows the top page's drag in parallax (0 → -30%).
- *   - A dark overlay dims the behind page; it fades as the top page is dragged away.
- *   - Uses framer-motion spring physics tuned to feel like iOS.
+ * Drag gesture:
+ *   - Touch must start within EDGE_ZONE_PX of the left edge
+ *   - Only horizontal-dominant gestures are intercepted (vertical = page scroll)
+ *   - On release: if past COMMIT_THRESHOLD → animate dragX to W, then onBack()
+ *                 otherwise → animate dragX back to 0 (snap back)
  */
 
-import { motion, useTransform, type MotionValue, type PanInfo } from 'framer-motion';
-import { type ReactNode, useMemo } from 'react';
+import { motion, animate, type MotionValue } from 'framer-motion';
+import {
+  type ReactNode,
+  useRef,
+  useState,
+  type TouchEvent as ReactTouchEvent,
+  useEffect,
+} from 'react';
 
-// Tuned Physics: High stiffness/damping for that "Apple" snap
-const IOS_SPRING = {
-  type: 'spring' as const,
-  stiffness: 350,
-  damping: 40,
-  mass: 1,
-};
+const EDGE_ZONE_PX = 28;
+const COMMIT_THRESHOLD_PX = 120;
+const DRAG_MAX_PX = 320;
+const SLIDE_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
+const SNAP_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
 
 interface ScreenProps {
   children: ReactNode;
-  index: number;
   isTop: boolean;
-  isBack: boolean;
-  dragX: MotionValue<number>;
+  isExiting: boolean;
+  xValue: MotionValue<number>;
+  overlayOpacity?: MotionValue<number>;
   onBack: () => void;
 }
 
-export function Screen({ children, index, isTop, isBack, dragX, onBack }: ScreenProps) {
-  // Calculate window width once (client-side only — this component is 'use client')
-  const windowWidth = useMemo(() => {
-    if (typeof window === 'undefined') return 375;
-    return window.innerWidth;
-  }, []);
+export function Screen({ children, isTop, isExiting, xValue, overlayOpacity, onBack }: ScreenProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const touchState = useRef<{
+    startX: number;
+    startY: number;
+    active: boolean;
+    horizontal: boolean | null;
+  } | null>(null);
 
-  // -- PARALLAX LOGIC --
-  // If we are the page BEHIND, we map the Top Page's drag (0px -> ScreenWidth)
-  // to our parallax movement (-30% -> 0%).
-  const parallaxX = useTransform(dragX, [0, windowWidth], [-windowWidth * 0.3, 0]);
+  // Get window width (cached)
+  const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 375;
 
-  // We also fade the black dimming overlay as the top page is dragged away
-  const overlayOpacity = useTransform(dragX, [0, windowWidth], [0.3, 0]);
+  // ---- Touch handlers (only for the TOP, non-exiting page) ----
+  function onTouchStart(e: ReactTouchEvent<HTMLDivElement>) {
+    if (!isTop || isExiting) return;
+    const t = e.touches[0];
+    if (!t) return;
 
-  // -- ANIMATION VARIANTS --
-  const variants = {
-    initial: (back: boolean) => ({
-      // If pushing: enter from right (100%)
-      // If popping: start at parallax position (-30%)
-      x: back ? '-30%' : '100%',
-      zIndex: index,
-    }),
-    animate: {
-      x: 0,
-      zIndex: index,
-      transition: IOS_SPRING,
-    },
-    exit: (back: boolean) => ({
-      // If pushing: move to parallax position (-30%)
-      // If popping: slide out to right (100%)
-      x: back ? '100%' : '-30%',
-      zIndex: index,
-      transition: IOS_SPRING,
-    }),
-  };
-
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    const velocity = info.velocity.x;
-    const offset = info.offset.x;
-    const threshold = windowWidth * 0.35;
-
-    // Trigger 'Back' if dragged 35% of screen OR flicked fast
-    if (offset > threshold || velocity > 400) {
-      onBack();
+    // Only start tracking if touch is in the left edge zone
+    if (t.clientX > EDGE_ZONE_PX) {
+      touchState.current = null;
+      return;
     }
-  };
 
+    touchState.current = {
+      startX: t.clientX,
+      startY: t.clientY,
+      active: true,
+      horizontal: null,
+    };
+  }
+
+  function onTouchMove(e: ReactTouchEvent<HTMLDivElement>) {
+    if (!isTop || isExiting) return;
+    const state = touchState.current;
+    if (!state || !state.active) return;
+
+    const t = e.touches[0];
+    if (!t) return;
+    const dx = t.clientX - state.startX;
+    const dy = t.clientY - state.startY;
+
+    // Decide gesture direction on first significant move
+    if (state.horizontal === null) {
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      if (absDx < 8 && absDy < 8) return;
+      // Vertical-dominant → let the browser handle it (page scroll)
+      if (absDy > absDx) {
+        state.active = false;
+        return;
+      }
+      state.horizontal = true;
+      setIsDragging(true);
+    }
+
+    if (!state.horizontal) return;
+
+    // Prevent vertical scroll while dragging horizontally
+    if (e.cancelable) e.preventDefault();
+
+    // Follow the finger, capped at DRAG_MAX_PX
+    const clamped = Math.max(0, Math.min(dx, DRAG_MAX_PX));
+    xValue.set(clamped);
+  }
+
+  function onTouchEnd() {
+    if (!isTop || isExiting) return;
+    const state = touchState.current;
+    touchState.current = null;
+    if (!state || !state.active || !state.horizontal) {
+      setIsDragging(false);
+      return;
+    }
+
+    const current = xValue.get();
+    if (current >= COMMIT_THRESHOLD_PX) {
+      // COMMIT: animate the page all the way off-screen, THEN navigate back
+      animate(xValue, windowWidth, {
+        duration: 0.3,
+        ease: SLIDE_EASE,
+        onComplete: () => {
+          onBack();
+        },
+      });
+    } else {
+      // CANCEL: snap back to 0
+      animate(xValue, 0, {
+        duration: 0.24,
+        ease: SNAP_EASE,
+        onComplete: () => setIsDragging(false),
+      });
+    }
+  }
+
+  // ---- Render ----
   return (
     <motion.div
       style={{
         position: 'absolute',
         inset: 0,
+        x: xValue,
         background: '#fff',
-        boxShadow: isTop ? '-10px 0 25px rgba(0,0,0,0.2)' : 'none',
-        // CRITICAL: If Top, use the raw drag value. If Behind, use the calculated parallax.
-        x: isTop ? dragX : parallaxX,
+        boxShadow: isTop && !isExiting ? '-10px 0 25px rgba(0,0,0,0.2)' : 'none',
+        zIndex: isExiting ? 2 : isTop ? 2 : 1,
       }}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={variants}
-      custom={isBack}
-      // Only enable gestures if this is the active top page
-      drag={isTop ? 'x' : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={{ left: 0, right: 1 }}
-      onDragEnd={handleDragEnd}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchEnd}
     >
-      {/* Page Content — each screen has its own scroll container */}
-      <div style={{ height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      {/* Page content — each screen has its own scroll container */}
+      <div
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          background: '#fff',
+        }}
+      >
         {children}
       </div>
 
-      {/* Dimming Overlay (Only for the page sitting behind) */}
-      {!isTop && (
+      {/* Dimming overlay for the BEHIND page */}
+      {overlayOpacity && (
         <motion.div
           style={{
             position: 'absolute',

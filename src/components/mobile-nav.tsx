@@ -2,13 +2,25 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageCircle, Compass, ShoppingCart, User } from 'lucide-react';
+import { Home, Search, Compass, ShoppingCart, User } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
+/**
+ * MobileNav — bottom navigation bar.
+ *
+ * Architecture (per user's "Hidden Engine" vision):
+ *   - Home: the immersive Instagram-style feed (/)
+ *   - Categories: the "hidden engine" — lightning-fast search & category tab
+ *   - [center] Discover: immersive video/content discovery (/videos)
+ *   - Cart: shopping cart
+ *   - Account: user profile
+ *
+ * No two buttons point to the same route.
+ */
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/ai-chat', label: 'Chat', icon: MessageCircle },
-  { href: '/', label: 'Discover', icon: Compass, center: true },
+  { href: '/categories', label: 'Categories', icon: Search },
+  { href: '/videos', label: 'Discover', icon: Compass, center: true },
   { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
   { href: '/profile', label: 'Account', icon: User, showDot: true },
 ];
@@ -18,7 +30,10 @@ export function MobileNav() {
   const { cartCount, user } = useAuth();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 md:hidden">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-slate-200 md:hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
       <div className="flex items-center justify-around max-w-lg mx-auto py-2 relative">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
