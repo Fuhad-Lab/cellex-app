@@ -6,7 +6,7 @@
 import { Capacitor } from '@capacitor/core';
 
 const API_BASE = Capacitor.isNativePlatform()
-  ? 'https://eeshaai-cellex-web.hf.space'
+  ? 'https://eesha-search.onrender.com'
   : '';
 
 export { Capacitor };
