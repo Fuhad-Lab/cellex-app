@@ -53,7 +53,7 @@ fi
 
 # Make sure NEXT_PUBLIC_API_BASE_URL is set so the mobile app knows where to
 # send API requests. Falls back to the live HF Space if not provided.
-: "${NEXT_PUBLIC_API_BASE_URL:=https://eesha-search.onrender.com}"
+: "${NEXT_PUBLIC_API_BASE_URL:=https://eesha-learn.onrender.com}"
 export NEXT_PUBLIC_API_BASE_URL
 
 echo "==> [3/6] Building Next.js static export (NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL)"
