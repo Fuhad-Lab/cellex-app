@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { Card } from '@/components/ui/card';
@@ -54,6 +54,24 @@ function CategoriesContent() {
   const [loading, setLoading] = useState(true);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+
+  // Ref for the top search bar — dispatches visibility events to GlobalSpotlight
+  const searchBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = searchBarRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        window.dispatchEvent(
+          new CustomEvent('searchbar-visibility', { detail: { visible: entry.isIntersecting } })
+        );
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -143,7 +161,7 @@ function CategoriesContent() {
       {/* === MOBILE LAYOUT === */}
       <div className="md:hidden">
         {/* Search bar — full width with back arrow */}
-        <div className="sticky top-0 z-30 bg-white px-3 pt-3 pb-2 border-b border-slate-100">
+        <div ref={searchBarRef} className="sticky top-0 z-30 bg-white px-3 pt-3 pb-2 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <Link href="/" className="shrink-0">
               <ChevronLeft className="w-5 h-5 text-black" />

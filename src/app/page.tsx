@@ -48,6 +48,31 @@ export default function HomePage() {
   const [following, setFollowing] = useState<Set<string>>(new Set());
   const [liveCount, setLiveCount] = useState(0);
 
+  // Ref for the top search bar — used to detect when it's scrolled out of view
+  // so the GlobalSpotlight floating search button can appear.
+  const searchBarRef = useRef<HTMLDivElement>(null);
+
+  // IntersectionObserver: when the top search bar leaves the viewport,
+  // dispatch an event that GlobalSpotlight listens for to show/hide the FAB.
+  useEffect(() => {
+    const el = searchBarRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        window.dispatchEvent(
+          new CustomEvent('searchbar-visibility', {
+            detail: { visible: entry.isIntersecting },
+          })
+        );
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     (async () => {
       try {
@@ -205,16 +230,38 @@ export default function HomePage() {
 
   return (
     <div className="bg-white min-h-screen max-w-xl mx-auto">
-      {/* Search trigger */}
-      <div className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30">
+      {/* Top bar: Logo + Search + Messenger (Google-style) */}
+      <div
+        ref={searchBarRef}
+        className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30 flex items-center gap-2"
+      >
+        {/* Logo (left side) */}
+        <Link href="/" className="shrink-0 flex items-center gap-1.5">
+          <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
+            <span className="text-white font-extrabold text-base" style={{ fontFamily: 'var(--font-geist-mono)' }}>C</span>
+          </div>
+        </Link>
+
+        {/* Search bar (center, flex-1) */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-          className="w-full flex items-center bg-neutral-100 rounded-full px-4 py-2.5 hover:bg-neutral-200 transition-colors group"
+          className="flex-1 flex items-center bg-neutral-100 rounded-full px-4 py-2.5 hover:bg-neutral-200 transition-colors group"
         >
           <Search className="w-4 h-4 text-neutral-400 mr-2 group-hover:text-black transition-colors" />
           <span className="flex-1 text-left text-sm text-neutral-400">Search products, categories...</span>
           <kbd className="hidden sm:flex px-1.5 py-0.5 bg-white rounded text-[9px] font-bold text-neutral-400 border border-neutral-200">⌘K</kbd>
         </button>
+
+        {/* Messenger icon (right side) */}
+        <Link
+          href="/ai-chat"
+          className="shrink-0 w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors relative"
+          aria-label="Messages"
+        >
+          <MessageCircle className="w-5 h-5 text-black" />
+          {/* Unread indicator dot */}
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
+        </Link>
       </div>
 
       {/* Stories bar */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice, type Product, API_BASE } from '@/lib/api';
 import { Card } from '@/components/ui/card';
@@ -26,6 +26,24 @@ function SearchContent() {
   const [followUpInput, setFollowUpInput] = useState('');
   const [followUpLoading, setFollowUpLoading] = useState(false);
   const [view, setView] = useState<'ai' | 'products' | 'videos'>('ai');
+
+  // Ref for the top search bar — dispatches visibility events to GlobalSpotlight
+  const searchBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = searchBarRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        window.dispatchEvent(
+          new CustomEvent('searchbar-visibility', { detail: { visible: entry.isIntersecting } })
+        );
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const doSearch = useCallback(async (q: string) => {
     if (!q.trim()) return;
@@ -122,7 +140,7 @@ function SearchContent() {
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
-      <div className="border-b border-neutral-200 sticky top-0 z-40 bg-white/95 backdrop-blur-xl">
+      <div ref={searchBarRef} className="border-b border-neutral-200 sticky top-0 z-40 bg-white/95 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.back()} className="shrink-0 w-9 h-9 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors">
             <ChevronLeft className="w-5 h-5 text-black" />
