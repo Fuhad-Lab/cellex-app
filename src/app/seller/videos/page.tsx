@@ -51,9 +51,9 @@ export default function SellerVideosPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         op: 'create',
-        video_url: videoUrl,
+        videoUrl: videoUrl,
         caption,
-        product_id: productId || null,
+        productId: productId || null,
       }),
     });
     setUploading(false);

@@ -61,7 +61,7 @@ export default function SellerStoriesPage() {
         op: 'create',
         story_type: storyType,
         image_url: imageUrl || null,
-        caption,
+        body: caption,
         product_id: productId || null,
       }),
     });
