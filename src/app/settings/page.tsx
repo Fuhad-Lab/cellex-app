@@ -46,7 +46,7 @@ export default function SettingsPage() {
     }
   }, [user, authLoading, router]);
 
-  if (loading) { return <PageSkeleton variant="settings" />; }
+  if (authLoading) { return <PageSkeleton variant="settings" />; }
 
   const handleLogout = async () => {
     await logout();

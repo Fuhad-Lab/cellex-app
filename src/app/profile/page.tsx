@@ -87,7 +87,7 @@ export default function ProfilePage() {
     router.push('/');
   };
 
-  if (loading) { return <PageSkeleton variant="profile" />; }
+  if (authLoading) { return <PageSkeleton variant="profile" />; }
 
   const menuItems = [
     { href: '/orders', icon: Package, label: 'My Orders', sub: `${ordersCount} order(s)`, color: 'bg-blue-100 text-blue-600' },
