@@ -2,32 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Compass, ShoppingCart, User } from 'lucide-react';
+import { Home, Search, Plus, ShoppingCart, User } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
  * MobileNav — bottom navigation bar.
  *
- * Architecture (per user's "Hidden Engine" vision):
- *   - Home: the immersive Instagram-style feed (/)
- *   - Categories: the "hidden engine" — lightning-fast search & category tab
- *   - [center] Discover: immersive video/content discovery (/videos)
- *   - Cart: shopping cart
- *   - Account: user profile
+ *   Home | Category | [+ Add] | Cart | Account
  *
- * No two buttons point to the same route.
+ * The center + button opens the "create" menu (add product, make post, etc.)
+ * for sellers. For buyers it opens a simplified create menu.
  */
-const navItems = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/categories', label: 'Categories', icon: Search },
-  { href: '/videos', label: 'Discover', icon: Compass, center: true },
-  { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-  { href: '/profile', label: 'Account', icon: User, showDot: true },
-];
-
 export function MobileNav() {
   const pathname = usePathname();
   const { cartCount, user } = useAuth();
+
+  const navItems = [
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/categories', label: 'Category', icon: Search },
+    { href: '/create', label: 'Add', icon: Plus, center: true },
+    { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
+    { href: '/profile', label: 'Account', icon: User, showDot: true },
+  ];
 
   return (
     <nav

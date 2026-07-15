@@ -78,7 +78,7 @@ export default function BecomeSellerPage() {
       const data = await resp.json();
       if (data.success) {
         toast({ title: 'Welcome to Cellex Selling! 🎉', description: 'Your seller account is ready' });
-        router.push('/seller');
+        router.push('/seller/preparing');
       } else {
         toast({ title: 'Error', description: data.error || 'Failed to create seller account', variant: 'destructive' });
       }
