@@ -2,21 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Compass, ShoppingCart, User, Heart } from 'lucide-react';
+import { Home, Search, Compass, ShoppingCart, User } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
  * MobileNav — bottom navigation bar.
  *
- * 4 items + 1 center button. "Home" is removed — the Cellex logo in the
- * top bar already links to the homepage, so a dedicated Home tab was
- * redundant. The center Discover button is the immersive video feed.
+ * Architecture (per user's "Hidden Engine" vision):
+ *   - Home: the immersive Instagram-style feed (/)
+ *   - Categories: the "hidden engine" — lightning-fast search & category tab
+ *   - [center] Discover: immersive video/content discovery (/videos)
+ *   - Cart: shopping cart
+ *   - Account: user profile
  *
- *   Categories | Wishlist | [Discover] | Cart | Account
+ * No two buttons point to the same route.
  */
 const navItems = [
-  { href: '/categories', label: 'Shop', icon: Search },
-  { href: '/wishlist', label: 'Saved', icon: Heart },
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/categories', label: 'Categories', icon: Search },
   { href: '/videos', label: 'Discover', icon: Compass, center: true },
   { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
   { href: '/profile', label: 'Account', icon: User, showDot: true },
