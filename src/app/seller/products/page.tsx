@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Edit, Trash2, Search, Store, Package } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys'];
 
 export default function SellerProductsPage() {
@@ -101,11 +101,7 @@ export default function SellerProductsPage() {
         />
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-        </div>
-      ) : filtered.length === 0 ? (
+      {loading ? (<PageSkeleton variant="seller-products" />) : filtered.length === 0 ? (
         <EmptyState
           icon={<Package className="w-8 h-8" />}
           title="No products yet"

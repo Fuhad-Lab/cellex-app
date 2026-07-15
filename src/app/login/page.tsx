@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Mail, Lock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 function LoginContent() {
   const { user, login, signup } = useAuth();
   const router = useRouter();
@@ -160,7 +160,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="login" />}>
       <LoginContent />
     </Suspense>
   );

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Store, Search, Users, Star, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/product-card';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 const CATEGORIES = ['All', 'Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys', 'General'];
 
 export default function SellersPage() {
@@ -55,13 +55,7 @@ export default function SellersPage() {
       return 0;
     });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="minimal" />; }
 
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 py-4">

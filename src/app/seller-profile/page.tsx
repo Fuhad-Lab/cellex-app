@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback , Suspense} from 'react';
+import { useEffect, useState, useCallback , Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api, formatPrice, timeAgo, type Product, type Review } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
@@ -8,13 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductGrid } from '@/components/product-card';
-import {
-  Store, MapPin, Users, Calendar, Star, UserPlus, UserCheck,
-  Package, Video as VideoIcon, LayoutGrid
-} from 'lucide-react';
+import { Store, MapPin, Users, Calendar, Star, UserPlus, UserCheck,
+  Package, Video as VideoIcon, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 function SellerProfileContent() {
   const params = useSearchParams();
@@ -74,13 +73,7 @@ function SellerProfileContent() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="seller-profile" />; }
 
   if (!seller) {
     return (
@@ -271,7 +264,7 @@ function SellerProfileContent() {
 
 export default function SellerProfilePage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="seller-profile" />}>
       <SellerProfileContent />
     </Suspense>
   );

@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 function GroupBuyContent() {
   const params = useSearchParams();
   const groupBuyId = params.get('id') || '';
@@ -49,13 +49,7 @@ function GroupBuyContent() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="group-buy" />; }
 
   if (!gb) {
     return (
@@ -203,7 +197,7 @@ function GroupBuyContent() {
 
 export default function GroupBuyPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="group-buy" />}>
       <GroupBuyContent />
     </Suspense>
   );

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, MessageCircle, Store, Users, ShoppingBag, Search } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 interface Conversation {
   id: string;
   name: string;
@@ -57,9 +57,7 @@ export default function MessengerPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-black rounded-full animate-spin" />
-      </div>
+      <PageSkeleton variant="messenger" />
     );
   }
 

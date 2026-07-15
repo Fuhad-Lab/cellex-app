@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, Users, Bell, ChevronLeft, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 export default function TelegramPage() {
   const [info, setInfo] = useState<any>(null);
   const [recent, setRecent] = useState<any[]>([]);
@@ -24,13 +24,7 @@ export default function TelegramPage() {
     })();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="telegram" />; }
 
   const isConfigured = info?.configured;
 

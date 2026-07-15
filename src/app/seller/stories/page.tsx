@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { api } from '@/lib/api';
 import { timeAgo } from '@/lib/api';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 const STORY_TYPES = [
   { key: 'announcement', label: '📢 Announcement', color: 'bg-blue-100 text-blue-700' },
   { key: 'deal', label: '💰 Deal', color: 'bg-red-100 text-red-700' },
@@ -90,13 +90,7 @@ export default function SellerStoriesPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="seller-stories" />; }
 
   return (
     <div className="space-y-4 max-w-2xl">

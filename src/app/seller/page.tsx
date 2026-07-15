@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Package, ShoppingBag, Users, TrendingUp, Radio, Plus, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 export default function SellerDashboard() {
   const [stats, setStats] = useState<any>({});
   const [recent, setRecent] = useState<any>(null);
@@ -25,13 +25,7 @@ export default function SellerDashboard() {
     })();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="seller-dashboard" />; }
 
   const statCards = [
     { label: 'Products', value: stats.productsCount || 0, icon: Package, color: 'bg-blue-100 text-blue-600' },

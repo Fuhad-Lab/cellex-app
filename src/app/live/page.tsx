@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Radio, Users, Eye, ChevronRight, Store } from 'lucide-react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/product-card';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 export default function LivePage() {
   const [liveNow, setLiveNow] = useState<any[]>([]);
   const [recent, setRecent] = useState<any[]>([]);
@@ -26,13 +26,7 @@ export default function LivePage() {
     })();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="live" />; }
 
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-6">

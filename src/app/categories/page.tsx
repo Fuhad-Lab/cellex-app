@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Search, Camera, ChevronLeft, Store, Filter, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 const ALL_CATEGORIES = [
   { label: 'All', value: '', emoji: '🛍️' },
   { label: 'Electronics', value: 'Electronics', emoji: '📱' },
@@ -578,7 +578,7 @@ function DesktopCategoryProductCard({ product }: { product: Product }) {
 
 export default function CategoriesPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="categories" />}>
       <CategoriesContent />
     </Suspense>
   );

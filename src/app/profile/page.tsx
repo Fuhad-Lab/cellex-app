@@ -8,14 +8,13 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  User, Package, Heart, Store, LogOut, Link2, Send, ChevronRight,
+import { User, Package, Heart, Store, LogOut, Link2, Send, ChevronRight,
   Mail, Phone, MapPin, Settings, ShoppingBag, Star, Bell, Globe,
-  Shield, HelpCircle, ChevronLeft
-} from 'lucide-react';
+  Shield, HelpCircle, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 export default function ProfilePage() {
   const { user, loading: authLoading, logout } = useAuth();
@@ -88,13 +87,7 @@ export default function ProfilePage() {
     router.push('/');
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="profile" />; }
 
   const menuItems = [
     { href: '/orders', icon: Package, label: 'My Orders', sub: `${ordersCount} order(s)`, color: 'bg-blue-100 text-blue-600' },

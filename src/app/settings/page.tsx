@@ -5,12 +5,11 @@ import { api } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import {
-  ChevronLeft, ChevronRight, Bell, Globe, Shield, Store, LogOut,
-  HelpCircle, Mail, Phone, User, Star, Sparkles
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bell, Globe, Shield, Store, LogOut,
+  HelpCircle, Mail, Phone, User, Star, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 export default function SettingsPage() {
   const { user, loading: authLoading, logout } = useAuth();
@@ -47,13 +46,7 @@ export default function SettingsPage() {
     }
   }, [user, authLoading, router]);
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="settings" />; }
 
   const handleLogout = async () => {
     await logout();

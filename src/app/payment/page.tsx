@@ -1,16 +1,15 @@
 'use client';
 
-import { useEffect, useState, useCallback , Suspense} from 'react';
+import { useEffect, useState, useCallback , Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api, formatPrice } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import {
-  CreditCard, Copy, Check, Clock, Banknote, CheckCircle2, AlertCircle, ChevronLeft
-} from 'lucide-react';
+import { CreditCard, Copy, Check, Clock, Banknote, CheckCircle2, AlertCircle, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 const PALMPAY_ACCOUNT = '8088561764';
 const PALMPAY_NAME = 'Abdlrazaq Bidemi Awofolaji';
@@ -87,13 +86,7 @@ function PaymentContent() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="payment" />; }
 
   if (!order) {
     return (
@@ -275,7 +268,7 @@ function PaymentContent() {
 
 export default function PaymentPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="payment" />}>
       <PaymentContent />
     </Suspense>
   );

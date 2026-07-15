@@ -4,10 +4,8 @@ import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice, type Product, API_BASE } from '@/lib/api';
 import { Card } from '@/components/ui/card';
-import {
-  Search, ChevronLeft, Store, Sparkles, Video as VideoIcon,
-  Star, ShoppingBag, Play, Paperclip, Send, ChevronDown, Loader2
-} from 'lucide-react';
+import { Search, ChevronLeft, Store, Sparkles, Video as VideoIcon,
+  Star, ShoppingBag, Play, Paperclip, Send, ChevronDown, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 function SearchContent() {

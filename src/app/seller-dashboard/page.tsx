@@ -3,13 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ChevronLeft, Store, Package, BarChart3, ShoppingBag, Radio, Video,
-  BookOpen, Settings, TrendingUp, DollarSign, Eye
-} from 'lucide-react';
+import { ChevronLeft, Store, Package, BarChart3, ShoppingBag, Radio, Video,
+  BookOpen, Settings, TrendingUp, DollarSign, Eye } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { api, formatPrice } from '@/lib/api';
 import { Card } from '@/components/ui/card';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 export default function SellerProfileDashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -54,9 +53,7 @@ export default function SellerProfileDashboardPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-black rounded-full animate-spin" />
-      </div>
+      <PageSkeleton variant="seller-dashboard" />
     );
   }
 

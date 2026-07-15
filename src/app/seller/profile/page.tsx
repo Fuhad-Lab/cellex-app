@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Store, Save } from 'lucide-react';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys', 'General'];
 const SELLER_TYPES = ['individual', 'business', 'farmer'];
 
@@ -76,13 +76,7 @@ export default function SellerProfilePage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="seller-profile" />; }
 
   return (
     <div className="space-y-4 max-w-2xl">

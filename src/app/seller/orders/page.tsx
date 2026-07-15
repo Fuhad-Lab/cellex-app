@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingBag, Package } from 'lucide-react';
 import { EmptyState } from '@/components/product-card';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 export default function SellerOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,13 +19,7 @@ export default function SellerOrdersPage() {
     })();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="seller-orders" />; }
 
   return (
     <div className="space-y-4">

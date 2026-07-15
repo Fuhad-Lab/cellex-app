@@ -9,7 +9,7 @@ import { Send, Eye, ChevronLeft, ShoppingBag, Radio } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 function LiveWatchContent() {
   const params = useSearchParams();
   const sessionId = params.get('id') || '';
@@ -75,13 +75,7 @@ function LiveWatchContent() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="live" />; }
 
   if (!session) {
     return (
@@ -206,7 +200,7 @@ function LiveWatchContent() {
 
 export default function LiveWatchPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="live" />}>
       <LiveWatchContent />
     </Suspense>
   );

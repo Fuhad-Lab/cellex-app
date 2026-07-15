@@ -9,10 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import {
-  ChevronLeft, Store, Upload, Check, User, Building, Sprout,
-  Camera, MapPin, FileText, Loader2
-} from 'lucide-react';
+import { ChevronLeft, Store, Upload, Check, User, Building, Sprout,
+  Camera, MapPin, FileText, Loader2 } from 'lucide-react';
 
 const CATEGORIES = [
   'Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports',

@@ -3,10 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  X, Package, Video, Radio, BookOpen, Sparkles, ShoppingBag
-} from 'lucide-react';
+import { X, Package, Video, Radio, BookOpen, Sparkles, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 export default function CreatePage() {
   const { user, loading: authLoading } = useAuth();
@@ -41,9 +40,7 @@ export default function CreatePage() {
 
   if (authLoading || checking) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-black rounded-full animate-spin" />
-      </div>
+      <PageSkeleton variant="create" />
     );
   }
 

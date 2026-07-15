@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Video, Upload, Trash2, Eye, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
-
+import { PageSkeleton } from '@/components/page-skeleton';
 export default function SellerVideosPage() {
   const { toast } = useToast();
   const [products, setProducts] = useState<any[]>([]);
@@ -81,13 +81,7 @@ export default function SellerVideosPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="seller-videos" />; }
 
   return (
     <div className="space-y-4 max-w-2xl">

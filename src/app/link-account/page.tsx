@@ -7,12 +7,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Link2, Phone, Check, Clock, Trash2, MessageCircle, ChevronLeft
-} from 'lucide-react';
+import { Link2, Phone, Check, Clock, Trash2, MessageCircle, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 const WHATSAPP_BOT_NUMBER = '+234 813 437 6492'; // placeholder
 
@@ -65,13 +64,7 @@ export default function LinkAccountPage() {
 
   // Add crossPlatform ops to api.ts if not present
   // Actually we need to extend api; let me check
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) { return <PageSkeleton variant="link-account" />; }
 
   return (
     <div className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6 py-4">

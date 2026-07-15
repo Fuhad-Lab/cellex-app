@@ -8,15 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  ShoppingCart, Heart, Share2, Store, Star, ChevronLeft, ChevronRight,
+import { ShoppingCart, Heart, Share2, Store, Star, ChevronLeft, ChevronRight,
   MessageSquare, ThumbsUp, Truck, Shield, RotateCcw, Users,
   MessageCircle, Clock, ChevronRight as Arrow, MapPin, Flag, MoreHorizontal,
-  CheckCircle, Award
-} from 'lucide-react';
+  CheckCircle, Award } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 function ProductContent() {
   const params = useSearchParams();
@@ -160,11 +159,7 @@ function ProductContent() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
+    return <PageSkeleton variant="product" />;
   }
 
   if (!product) {
@@ -554,7 +549,7 @@ function ProductContent() {
 
 export default function ProductPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-slate-200 border-t-primary rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<PageSkeleton variant="product" />}>
       <ProductContent />
     </Suspense>
   );
