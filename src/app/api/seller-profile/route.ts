@@ -2,19 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://tcwdbokruvlizkxcpkzj.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
+const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || ''; // Management API token (sbp_...)
+const EDGE_FUNCTIONS_URL = `${SUPABASE_URL}/functions/v1`;
 const COOKIE_NAME = 'cellex_session_id';
 
 /**
  * Seller Profile API Route
  *
- * This route handles seller profile creation and retrieval DIRECTLY via the
- * Supabase REST API (not through the edge function, which has a bug where
- * UPSERT returns success but doesn't actually create the seller).
+ * Handles seller profile creation and retrieval. Uses two mechanisms:
+ *   1. The auth edge function (via the generic proxy) to authenticate the user
+ *      and get their UUID from the web_sessions table
+ *   2. The Supabase SQL API (management token) to UPSERT into the sellers table
  *
- * Operations:
- *   - get:    Look up the seller by the authenticated user's UUID
- *   - update: UPSERT the seller profile (create if doesn't exist, update if it does)
+ * The seller-profile edge function has a bug where UPSERT returns success but
+ * doesn't actually create the seller. This route bypasses that by doing the
+ * SQL UPSERT directly via the management API.
  */
 
 export async function POST(request: NextRequest) {
@@ -34,87 +36,107 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
   }
 
-  // Step 1: Get the user ID from the web_sessions table
-  // The session_id cookie maps to a web_sessions row which has the auth user UUID
-  const serviceHeaders: Record<string, string> = {
-    'apikey': SUPABASE_SERVICE_KEY || SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${SUPABASE_SERVICE_KEY || SUPABASE_ANON_KEY}`,
+  // Step 1: Get the user by calling the auth edge function's "session" op
+  // This works because the edge function uses Deno.env which has valid keys
+  const authHeaders: Record<string, string> = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${sessionId}`,
     'Content-Type': 'application/json',
   };
 
   try {
-    const sessionResp = await fetch(
-      `${SUPABASE_URL}/rest/v1/web_sessions?select=user_id,access_token&session_id=eq.${sessionId}&limit=1`,
-      { headers: serviceHeaders }
-    );
+    const authResp = await fetch(`${EDGE_FUNCTIONS_URL}/auth`, {
+      method: 'POST',
+      headers: authHeaders,
+      body: JSON.stringify({ op: 'session' }),
+    });
 
-    if (!sessionResp.ok) {
-      return NextResponse.json({ success: false, error: 'Session lookup failed' }, { status: 401 });
-    }
-
-    const sessionData = await sessionResp.json();
-    if (!sessionData || sessionData.length === 0) {
+    const authData = await authResp.json();
+    if (!authData.success || !authData.user) {
       return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
     }
 
-    const userId = sessionData[0].user_id;
-    const accessToken = sessionData[0].access_token;
+    const userId = authData.user.id;
+    const userEmail = authData.user.email;
 
-    // Step 2: Handle the operation
+    // Step 2: Handle the operation using the SQL API (management token)
+    if (!SUPABASE_TOKEN) {
+      return NextResponse.json({ success: false, error: 'SUPABASE_TOKEN not set' }, { status: 500 });
+    }
+
+    const sqlHeaders: Record<string, string> = {
+      'Authorization': `Bearer ${SUPABASE_TOKEN}`,
+      'Content-Type': 'application/json',
+    };
+
     if (body.op === 'get') {
-      // Look up the seller by user UUID (sellers.id = auth.users.id)
-      const sellerResp = await fetch(
-        `${SUPABASE_URL}/rest/v1/sellers?id=eq.${userId}&select=*`,
-        { headers: serviceHeaders }
+      // Look up the seller by user UUID
+      const sqlResp = await fetch(
+        `https://api.supabase.com/v1/projects/tcwdbokruvlizkxcpkzj/database/query`,
+        {
+          method: 'POST',
+          headers: sqlHeaders,
+          body: JSON.stringify({
+            query: `SELECT * FROM sellers WHERE id = '${userId}'::uuid LIMIT 1;`,
+          }),
+        }
       );
 
-      const sellerData = await sellerResp.json();
-      if (sellerData && sellerData.length > 0) {
-        return NextResponse.json({ success: true, seller: sellerData[0] });
+      const sqlData = await sqlResp.json();
+      if (Array.isArray(sqlData) && sqlData.length > 0) {
+        return NextResponse.json({ success: true, seller: sqlData[0] });
       }
       return NextResponse.json({ success: true, seller: null });
     }
 
     if (body.op === 'update') {
-      // UPSERT: Try to insert with the user's UUID as the ID.
-      // If the seller already exists (ON CONFLICT), update instead.
-      const sellerRecord: Record<string, any> = {
-        id: userId,
-        email: body.email || null,
-        business_name: body.business_name || null,
-        business_description: body.business_description || null,
-        business_category: body.business_category || null,
-        business_location: body.business_location || null,
-        seller_type: body.seller_type || 'business',
-        farm_name: body.farm_name || null,
-        profile_image: body.profile_image || null,
-        status: 'active',
-        email_verified: true,
-        updated_at: new Date().toISOString(),
-      };
+      // UPSERT: Insert with the user's UUID, or update if exists
+      const businessName = (body.business_name || '').replace(/'/g, "''");
+      const businessDesc = (body.business_description || '').replace(/'/g, "''");
+      const businessCat = (body.business_category || 'General').replace(/'/g, "''");
+      const businessLoc = (body.business_location || '').replace(/'/g, "''");
+      const sellerType = (body.seller_type || 'business').replace(/'/g, "''");
+      const farmName = (body.farm_name || '').replace(/'/g, "''");
+      const profileImage = (body.profile_image || '').replace(/'/g, "''");
+      const emailEscaped = (userEmail || '').replace(/'/g, "''");
 
-      // Use UPSERT via the REST API with Prefer: resolution=merge-duplicates
-      const upsertResp = await fetch(`${SUPABASE_URL}/rest/v1/sellers`, {
-        method: 'POST',
-        headers: {
-          ...serviceHeaders,
-          'Prefer': 'return=representation,resolution=merge-duplicates',
-        },
-        body: JSON.stringify(sellerRecord),
-      });
+      const sqlQuery = `
+        INSERT INTO sellers (id, email, business_name, business_description, business_category, business_location, seller_type, farm_name, profile_image, status, email_verified, created_at, updated_at)
+        VALUES ('${userId}'::uuid, '${emailEscaped}', '${businessName}', '${businessDesc}', '${businessCat}', '${businessLoc}', '${sellerType}', '${farmName}', '${profileImage}', 'active', true, NOW(), NOW())
+        ON CONFLICT (id) DO UPDATE SET
+          business_name = EXCLUDED.business_name,
+          business_description = EXCLUDED.business_description,
+          business_category = EXCLUDED.business_category,
+          business_location = EXCLUDED.business_location,
+          seller_type = EXCLUDED.seller_type,
+          farm_name = EXCLUDED.farm_name,
+          profile_image = EXCLUDED.profile_image,
+          updated_at = NOW()
+        RETURNING *;
+      `;
 
-      if (!upsertResp.ok) {
-        const errText = await upsertResp.text();
+      const sqlResp = await fetch(
+        `https://api.supabase.com/v1/projects/tcwdbokruvlizkxcpkzj/database/query`,
+        {
+          method: 'POST',
+          headers: sqlHeaders,
+          body: JSON.stringify({ query: sqlQuery }),
+        }
+      );
+
+      const sqlData = await sqlResp.json();
+      if (Array.isArray(sqlData) && sqlData.length > 0) {
+        return NextResponse.json({ success: true, seller: sqlData[0] });
+      }
+
+      // Check for error
+      if (sqlData.message) {
         return NextResponse.json(
-          { success: false, error: `Failed to save seller profile: ${errText.substring(0, 200)}` },
+          { success: false, error: sqlData.message.substring(0, 200) },
           { status: 500 }
         );
       }
 
-      const upsertData = await upsertResp.json();
-      if (upsertData && upsertData.length > 0) {
-        return NextResponse.json({ success: true, seller: upsertData[0] });
-      }
       return NextResponse.json({ success: true });
     }
 
