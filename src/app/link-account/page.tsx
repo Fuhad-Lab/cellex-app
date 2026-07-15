@@ -64,7 +64,7 @@ export default function LinkAccountPage() {
 
   // Add crossPlatform ops to api.ts if not present
   // Actually we need to extend api; let me check
-  if (loading) { return <PageSkeleton variant="link-account" />; }
+  if (authLoading) { return <PageSkeleton variant="link-account" />; }
 
   return (
     <div className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6 py-4">

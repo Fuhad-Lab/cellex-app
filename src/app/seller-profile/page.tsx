@@ -77,10 +77,17 @@ function SellerProfileContent() {
 
   if (!seller) {
     return (
-      <div className="text-center py-20">
-        <Store className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-        <p className="text-slate-500">Seller not found</p>
-        <Link href="/" className="text-primary font-bold mt-3 inline-block">Back to home</Link>
+      <div className="text-center py-20 px-4">
+        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+          <Store className="w-8 h-8 text-slate-400" />
+        </div>
+        <h2 className="text-lg font-bold mb-1">Seller not found</h2>
+        <p className="text-sm text-slate-500 mb-6 max-w-xs mx-auto">
+          This seller may no longer be active on Cellex. Try browsing other stores.
+        </p>
+        <Link href="/categories" className="inline-block bg-black text-white text-sm font-bold px-6 py-3 rounded-full">
+          Browse Products
+        </Link>
       </div>
     );
   }
