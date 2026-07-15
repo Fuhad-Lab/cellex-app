@@ -1,2 +1,4 @@
-import { PageSkeleton } from '@/components/page-skeleton';
-export default function Loading() { return <PageSkeleton variant="grid" />; }
+import { PageSkeleton } from "@/components/page-skeleton";
+export default function Loading() {
+  return <PageSkeleton variant="group-buy" />;
+}
