@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import {
   Search, Heart, MessageCircle, Share2, Bookmark, ShoppingBag,
   Store, Radio, Users, TrendingUp, Flame, ChevronRight, Play,
-  CheckCircle, Plus
+  CheckCircle, Plus, Bell, User
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
@@ -47,6 +47,32 @@ export default function HomePage() {
   const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
   const [following, setFollowing] = useState<Set<string>>(new Set());
   const [liveCount, setLiveCount] = useState(0);
+  const [isSeller, setIsSeller] = useState(false);
+
+  // Check if the current user is a buyer-seller (has a seller profile).
+  // This determines which header layout to show:
+  //   - Buyer:        logo + search + messenger icon
+  //   - Buyer-Seller: logo + search + chat + notification + profile icons
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const resp = await fetch('/api/seller-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: 'get' }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (!cancelled && data.success && data.seller) {
+            setIsSeller(true);
+          }
+        }
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   // Ref for the top search bar — used to detect when it's scrolled out of view
   // so the GlobalSpotlight floating search button can appear.
@@ -230,19 +256,21 @@ export default function HomePage() {
 
   return (
     <div className="bg-white min-h-screen max-w-xl mx-auto">
-      {/* Top bar: Logo + Search + Messenger (Google-style) */}
+      {/* Top bar: ROLE-AWARE
+          - Buyer:        logo + search + messenger icon
+          - Buyer-Seller: logo + search + chat + notification + profile icons */}
       <div
         ref={searchBarRef}
         className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30 flex items-center gap-2"
       >
-        {/* Logo (left side) */}
+        {/* Logo (left side) — same for both roles */}
         <Link href="/" className="shrink-0 flex items-center gap-1.5">
           <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
             <span className="text-white font-extrabold text-base" style={{ fontFamily: 'var(--font-geist-mono)' }}>C</span>
           </div>
         </Link>
 
-        {/* Search bar (center, flex-1) */}
+        {/* Search bar (center, flex-1) — same for both roles */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
           className="flex-1 flex items-center bg-neutral-100 rounded-full px-4 py-2.5 hover:bg-neutral-200 transition-colors group"
@@ -252,16 +280,49 @@ export default function HomePage() {
           <kbd className="hidden sm:flex px-1.5 py-0.5 bg-white rounded text-[9px] font-bold text-neutral-400 border border-neutral-200">⌘K</kbd>
         </button>
 
-        {/* Messenger icon (right side) */}
-        <Link
-          href="/ai-chat"
-          className="shrink-0 w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors relative"
-          aria-label="Messages"
-        >
-          <MessageCircle className="w-5 h-5 text-black" />
-          {/* Unread indicator dot */}
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-        </Link>
+        {/* RIGHT SIDE — role-dependent */}
+        {isSeller ? (
+          <>
+            {/* Chat icon → /messenger (seller-to-buyer messaging) */}
+            <Link
+              href="/messenger"
+              className="shrink-0 w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors relative"
+              aria-label="Messages"
+            >
+              <MessageCircle className="w-5 h-5 text-black" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
+            </Link>
+
+            {/* Notification icon → /notifications */}
+            <Link
+              href="/notifications"
+              className="shrink-0 w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors relative"
+              aria-label="Notifications"
+            >
+              <Bell className="w-5 h-5 text-black" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
+            </Link>
+
+            {/* Profile icon → /seller-dashboard (Facebook 'Me' style) */}
+            <Link
+              href="/seller-dashboard"
+              className="shrink-0 w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors"
+              aria-label="My Store"
+            >
+              <User className="w-5 h-5 text-black" />
+            </Link>
+          </>
+        ) : (
+          /* Buyer: single messenger icon → /ai-chat */
+          <Link
+            href="/ai-chat"
+            className="shrink-0 w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors relative"
+            aria-label="Messages"
+          >
+            <MessageCircle className="w-5 h-5 text-black" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
+          </Link>
+        )}
       </div>
 
       {/* Stories bar */}
