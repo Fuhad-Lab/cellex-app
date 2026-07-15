@@ -1,13 +1,14 @@
 'use client';
 import { API_BASE } from '@/lib/api';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Send, Bot, User, Store, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
+import { PullToRefresh } from '@/components/pull-to-refresh';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -106,6 +107,18 @@ export default function AiChatPage() {
     }]);
   };
 
+  // Pull-to-refresh: re-fetch the greeting + clear the chat
+  const handleRefresh = useCallback(async () => {
+    setMessages([{
+      role: 'assistant',
+      content: user
+        ? `Hi! I'm your AI shopping assistant. Tell me what you're looking for — I can search across thousands of products, recommend based on budget, and help you find the best deals. What are you shopping for today?`
+        : `Hi! I'm your AI shopping assistant. I can help you find products, recommend gifts, and discover deals. Login to get personalized recommendations based on your shopping history.`,
+    }]);
+    // Small delay so the dancing circles are visible for at least 1 second
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }, [user]);
+
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6 py-4 h-[calc(100vh-3.5rem)] md:h-[calc(100vh-4rem)] flex flex-col">
       {/* Header */}
@@ -124,9 +137,10 @@ export default function AiChatPage() {
         </Button>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-4 pb-2 no-scrollbar">
-        {messages.map((msg, i) => (
+      {/* Messages — wrapped in PullToRefresh for swipe-down-to-reload with dancing circles */}
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div className="space-y-4 pb-2 no-scrollbar">
+          {messages.map((msg, i) => (
           <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
               msg.role === 'user' ? 'bg-slate-200' : 'brand-gradient'
@@ -188,7 +202,8 @@ export default function AiChatPage() {
         )}
 
         <div ref={endRef} />
-      </div>
+        </div>
+      </PullToRefresh>
 
       {/* Suggestions */}
       {messages.length <= 1 && (

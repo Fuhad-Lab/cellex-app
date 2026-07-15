@@ -55,9 +55,20 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
   // Single shared MotionValue — the x position of the TOP page
   const dragX = useMotionValue(0);
 
-  // Parallax transform for the BEHIND page
+  // Window width — used for parallax calculations
   const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 375;
-  const parallaxX = useTransform(dragX, [0, windowWidth], [-windowWidth * 0.3, 0]);
+
+  // Parallax transform for the BEHIND page.
+  // CRITICAL: at rest (dragX=0), the behind page MUST be at x=0 so it's
+  // completely hidden behind the top page. The previous transform [-W*0.3, 0]
+  // had the behind page at -W*0.3 at rest, making it visible on the left edge —
+  // which caused the "wrong page shows first" bug the user reported.
+  //
+  // New mapping: [0, W] → [0, W*0.2]
+  //   At rest (dragX=0):     behind at 0 (hidden behind top page) ✅
+  //   Drag-back (dragX→W):   behind shifts right 20% (parallax following) ✅
+  //   Push (dragX W→0):      behind shifts from right back to center ✅
+  const parallaxX = useTransform(dragX, [0, windowWidth], [0, windowWidth * 0.2]);
   const overlayOpacity = useTransform(dragX, [0, windowWidth], [0.35, 0]);
 
   // ---- Navigation handler — fires on every pathname change ----
