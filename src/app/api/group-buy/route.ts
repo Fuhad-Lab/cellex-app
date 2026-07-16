@@ -48,10 +48,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Group buy not found' }, { status: 404 });
   }
 
-  if (body.op === 'active') {
+  if (body.op === 'open') {
     const productId = body.productId;
     if (!productId) return NextResponse.json({ success: false, error: 'productId required' }, { status: 400 });
-    const resp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `SELECT * FROM group_buys WHERE product_id = ${productId} AND status = 'active' ORDER BY created_at DESC;` }) });
+    const resp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `SELECT * FROM group_buys WHERE product_id = ${productId} AND status = 'open' ORDER BY created_at DESC;` }) });
     const data = await resp.json();
     return NextResponse.json({ success: true, groupBuys: Array.isArray(data) ? data : [] });
   }
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
 
       // Create group buy
-      const createResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO group_buys (product_id, seller_id, initiator_id, target_count, current_count, discount_pct, status, expires_at, invite_code) VALUES (${productId}, '${product.seller_id}'::uuid, '${userId}'::uuid, ${targetCount}, 1, ${discountPct}, 'active', '${expiresAt}', '${inviteCode}') RETURNING *;` }) });
+      const createResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO group_buys (product_id, seller_id, initiator_id, target_count, current_count, discount_pct, status, expires_at, invite_code) VALUES (${productId}, '${product.seller_id}'::uuid, '${userId}'::uuid, ${targetCount}, 1, ${discountPct}, 'open', '${expiresAt}', '${inviteCode}') RETURNING *;` }) });
       const createData = await createResp.json();
       if (!Array.isArray(createData) || createData.length === 0) return NextResponse.json({ success: false, error: 'Failed to create group buy' }, { status: 500 });
       const groupBuy = createData[0];
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       if (!inviteCode) return NextResponse.json({ success: false, error: 'inviteCode required' }, { status: 400 });
 
       // Get group buy
-      const gbResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `SELECT * FROM group_buys WHERE invite_code = '${inviteCode.replace(/'/g, "''")}' AND status = 'active';` }) });
+      const gbResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `SELECT * FROM group_buys WHERE invite_code = '${inviteCode.replace(/'/g, "''")}' AND status = 'open';` }) });
       const gbData = await gbResp.json();
       if (!Array.isArray(gbData) || gbData.length === 0) return NextResponse.json({ success: false, error: 'Group buy not found or expired' }, { status: 404 });
       const groupBuy = gbData[0];
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       // Increment count
       const newCount = groupBuy.current_count + 1;
       const isComplete = newCount >= groupBuy.target_count;
-      const updateResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `UPDATE group_buys SET current_count = ${newCount}, status = '${isComplete ? 'completed' : 'active'}', completed_at = ${isComplete ? 'NOW()' : 'NULL'} WHERE id = '${groupBuy.id}'::uuid RETURNING *;` }) });
+      const updateResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `UPDATE group_buys SET current_count = ${newCount}, status = '${isComplete ? 'completed' : 'open'}', completed_at = ${isComplete ? 'NOW()' : 'NULL'} WHERE id = '${groupBuy.id}'::uuid RETURNING *;` }) });
       const updateData = await updateResp.json();
 
       // Add user to the group buy's conversation
