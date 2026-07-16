@@ -120,11 +120,22 @@ function ProductContent() {
 
   const startGroupBuy = async () => {
     if (!user) { router.push('/login?next=' + encodeURIComponent(`/product?id=${id}`)); return; }
-    const result = await api.groupBuy.create(id);
-    if (result.success && result.groupBuy?.id) {
-      router.push(`/group-buy?id=${result.groupBuy.id}`);
+    // Use the new group-buy API to start a group buy with invite link
+    const resp = await fetch('/api/group-buy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ op: 'start', productId: id }),
+    });
+    const result = await resp.json();
+    if (result.success && result.groupBuy) {
+      toast({
+        title: 'Group Buy Started! 🎉',
+        description: 'Share the invite link with friends to get the discount.',
+      });
+      // Navigate to the group buy join page so the user can copy/share the link
+      router.push(result.groupBuy.inviteLink || `/group-buy-join?code=${result.groupBuy.invite_code}`);
     } else {
-      toast({ title: 'Error', description: result.error, variant: 'destructive' });
+      toast({ title: 'Error', description: result.error || 'Failed to start group buy', variant: 'destructive' });
     }
   };
 
@@ -279,16 +290,34 @@ function ProductContent() {
         </button>
       )}
 
-      {/* === 5. GROUP BUY SECTION === */}
-      <div className="px-3 pt-3">
-        <div className="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2.5">
-          <span className="text-sm text-black">
-            {(product.units_sold || 0) * 3} people are buying now,{' '}
-            <button onClick={startGroupBuy} className="text-primary font-bold">Join now</button>
-          </span>
-          <ChevronRight className="w-4 h-4 text-slate-400" />
+      {/* === 5. GROUP BUY SECTION (only if seller enabled it) === */}
+      {product.group_buy_enabled ? (
+        <div className="px-3 pt-3">
+          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="w-5 h-5 text-purple-600" />
+              <div>
+                <div className="font-bold text-sm text-purple-900">Group Buy Available</div>
+                <div className="text-xs text-purple-600">
+                  Get {product.group_buy_discount_pct || 20}% off when {product.group_buy_target_count || 3} people join
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={startGroupBuy}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm py-2.5 rounded-lg hover:shadow-md transition-shadow"
+            >
+              Start a Group Buy & Get {product.group_buy_discount_pct || 20}% Off
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="px-3 pt-3">
+          <div className="bg-slate-50 rounded-lg px-3 py-2.5 text-center">
+            <span className="text-xs text-slate-400">Group buy not available — the seller did not enable group buy for this product.</span>
+          </div>
+        </div>
+      )}
 
       {/* === 6. SELLER CARDS WITH COUNTDOWN (always show at least 1 card) === */}
       <div className="px-3 pt-3 space-y-2">
@@ -582,12 +611,14 @@ function ProductContent() {
           >
             <ShoppingCart className="w-4 h-4 mr-1" /> Add to cart
           </Button>
-          <Button
-            onClick={startGroupBuy}
-            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold h-10"
-          >
-            <Users className="w-4 h-4 mr-1" /> Group buy · 20% off
-          </Button>
+          {product.group_buy_enabled && (
+            <Button
+              onClick={startGroupBuy}
+              className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-bold h-10"
+            >
+              <Users className="w-4 h-4 mr-1" /> Group buy · {product.group_buy_discount_pct || 20}% off
+            </Button>
+          )}
         </div>
       </div>
     </div>

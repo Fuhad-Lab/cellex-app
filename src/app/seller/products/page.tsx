@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Edit, Trash2, Search, Store, Package } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Store, Package, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -28,6 +28,9 @@ export default function SellerProductsPage() {
   const [category, setCategory] = useState('Electronics');
   const [imageUrl, setImageUrl] = useState('');
   const [saving, setSaving] = useState(false);
+  const [groupBuyEnabled, setGroupBuyEnabled] = useState(false);
+  const [groupBuyTarget, setGroupBuyTarget] = useState('3');
+  const [groupBuyDiscount, setGroupBuyDiscount] = useState('20');
 
   const load = async () => {
     setLoading(true);
@@ -41,6 +44,7 @@ export default function SellerProductsPage() {
   const openCreate = () => {
     setEditing(null);
     setName(''); setPrice(''); setDescription(''); setCategory('Electronics'); setImageUrl('');
+    setGroupBuyEnabled(false); setGroupBuyTarget('3'); setGroupBuyDiscount('20');
     setOpen(true);
   };
 
@@ -48,6 +52,9 @@ export default function SellerProductsPage() {
     setEditing(p);
     setName(p.name); setPrice(String(p.price)); setDescription(p.description || '');
     setCategory(p.category || 'Electronics'); setImageUrl(p.image_url || '');
+    setGroupBuyEnabled((p as any).group_buy_enabled || false);
+    setGroupBuyTarget(String((p as any).group_buy_target_count || 3));
+    setGroupBuyDiscount(String((p as any).group_buy_discount_pct || 20));
     setOpen(true);
   };
 
@@ -57,12 +64,26 @@ export default function SellerProductsPage() {
       return;
     }
     setSaving(true);
-    const data = { name, price: Number(price), description, category, image_url: imageUrl };
+    const data: any = { name, price: Number(price), description, category, image_url: imageUrl };
     const result = editing
       ? await api.sellerProducts.update(editing.id, data)
       : await api.sellerProducts.create(data);
     setSaving(false);
     if (result.success) {
+      // Update group buy settings via the group-buy API
+      if (groupBuyEnabled) {
+        await fetch('/api/group-buy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: 'enable', productId: result.product?.id || editing?.id, targetCount: Number(groupBuyTarget), discountPct: Number(groupBuyDiscount) }),
+        });
+      } else if (editing) {
+        await fetch('/api/group-buy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: 'disable', productId: editing.id }),
+        });
+      }
       toast({ title: editing ? 'Product updated' : 'Product created' });
       setOpen(false);
       load();
@@ -190,6 +211,39 @@ export default function SellerProductsPage() {
               <Label className="text-xs">Description</Label>
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Describe your product..." />
             </div>
+
+            {/* Group Buy Toggle */}
+            <div className="border-t border-slate-100 pt-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-slate-500" />
+                  <div>
+                    <Label className="text-xs font-bold">Enable Group Buy</Label>
+                    <p className="text-[10px] text-slate-400">Let buyers team up for bulk discounts</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGroupBuyEnabled(!groupBuyEnabled)}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${groupBuyEnabled ? 'bg-black' : 'bg-slate-200'}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${groupBuyEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              {groupBuyEnabled && (
+                <div className="grid grid-cols-2 gap-3 pl-6">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">People needed</Label>
+                    <Input type="number" value={groupBuyTarget} onChange={(e) => setGroupBuyTarget(e.target.value)} placeholder="3" min="2" max="100" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Discount %</Label>
+                    <Input type="number" value={groupBuyDiscount} onChange={(e) => setGroupBuyDiscount(e.target.value)} placeholder="20" min="5" max="80" />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Button onClick={save} disabled={saving} className="w-full brand-gradient text-primary-foreground font-bold">
               {saving ? 'Saving...' : editing ? 'Update product' : 'Create product'}
             </Button>
