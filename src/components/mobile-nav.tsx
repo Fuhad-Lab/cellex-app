@@ -32,7 +32,7 @@ export function MobileNav() {
         { href: '/profile', label: 'Account', icon: User, showDot: true },
       ]
     : [
-        { href: '/ai-chat', label: 'Chat', icon: MessageCircle },
+        { href: '/messenger', label: 'Chat', icon: MessageCircle },
         { href: '/categories', label: 'Category', icon: Search },
         { href: '/', label: 'Discover', icon: Home, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
