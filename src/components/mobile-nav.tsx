@@ -4,55 +4,25 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Search, Plus, ShoppingCart, User, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
-import { useEffect, useState } from 'react';
 
 /**
  * MobileNav — bottom navigation bar (ROLE-AWARE).
  *
+ * Reads `isSeller` from the AuthProvider context (which checks once on login
+ * and caches the result). This prevents the flicker where the buyer nav shows
+ * briefly before switching to the seller nav on every page load.
+ *
  * BUYER (no seller profile):
  *   Chat | Category | [Discover] | Cart | Account
- *   - Chat → /ai-chat (AI shopping assistant)
- *   - Category → /categories
- *   - [Discover] → / (homepage feed, center button)
- *   - Cart → /cart
- *   - Account → /profile
  *
  * BUYER-SELLER (has seller profile):
  *   Home | Category | [+ Add] | Cart | Account
- *   - Home → /
- *   - Category → /categories
- *   - [+ Add] → /create (center button, opens create menu)
- *   - Cart → /cart
- *   - Account → /profile
  */
 export function MobileNav() {
   const pathname = usePathname();
-  const { cartCount, user } = useAuth();
-  const [isSeller, setIsSeller] = useState(false);
+  const { cartCount, user, isSeller, sellerChecked } = useAuth();
 
-  // Check if the current user is a buyer-seller
-  useEffect(() => {
-    if (!user) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const resp = await fetch('/api/seller-profile', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ op: 'get' }),
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (!cancelled && data.success && data.seller) {
-            setIsSeller(true);
-          }
-        }
-      } catch {}
-    })();
-    return () => { cancelled = true; };
-  }, [user]);
-
-  // Role-based nav items
+  // Role-based nav items — isSeller comes from cached context, no async call
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },

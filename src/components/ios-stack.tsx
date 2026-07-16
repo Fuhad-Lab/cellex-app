@@ -4,20 +4,27 @@
  * IOSStack — true iOS-style navigation stack for Next.js App Router.
  *
  * Architecture:
- *   1. Maintains a history array of page keys + frozen components.
+ *   1. Maintains a history array of page keys + frozen React elements.
  *   2. A shared MotionValue (`dragX`) controls the TOP page's X position.
  *   3. The BEHIND page's X is derived via `useTransform` (parallax).
  *
- * CRITICAL FIXES vs. previous version:
- *   - Parallax: [0, W] → [0, W*0.2]. At rest (dragX=0), behind page is at
- *     x=0 (completely hidden behind top page). Previous [-W*0.3, 0] had the
- *     behind page visible at -30% on the left edge at rest.
- *   - Removed the `updateTopComponent` effect that fired on every render.
- *     Instead, the TOP page always renders the LIVE `children` prop (via a ref),
- *     and only BEHIND pages use frozen components from the stack state.
- *     This prevents the "duplicate page" bug where the behind page showed
- *     the same content as the top page.
- *   - Added deduplication: never push a page with the same key as the top.
+ * CRITICAL: Each stack item stores the EXACT `children` React element that was
+ * passed to IOSStack at the moment of navigation. This is the "frozen snapshot"
+ * of the previous page. The TOP page renders the CURRENT `children` (live).
+ *
+ * The behind page shows the PREVIOUS page because:
+ *   - When navigating A→B, the effect captures `children` (which is A's content
+ *     at that point, because the effect runs AFTER render but the `children`
+ *     prop hasn't changed yet for this specific pathname change).
+ *   - We store `{ key: A, component: children_at_this_moment }` as the behind item.
+ *   - We store `{ key: B, component: children_at_this_moment }` as the top item.
+ *   - On the NEXT render, `children` becomes B (new page). But the behind item
+ *     still holds the OLD children reference (A's content).
+ *
+ * IMPORTANT: We do NOT use a ref to track live children. Instead, we store
+ * the children in the stack state itself. The TOP item's component is updated
+ * via a separate effect that fires when `children` changes (but only updates
+ * the TOP item, never the behind items).
  */
 
 import { usePathname, useRouter } from 'next/navigation';
@@ -43,28 +50,42 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
   const isBack = useRef(false);
   const isDragBack = useRef(false);
   const isFirstMount = useRef(true);
-
-  // Ref to always access the latest `children` for the TOP page.
-  // This replaces the old `updateTopComponent` effect that caused the
-  // duplicate-page bug by firing on every render.
-  const liveChildrenRef = useRef(children);
-  liveChildrenRef.current = children;
+  // Track the pathname that was active when `children` was last captured.
+  // This lets us know if `children` is for the current pathname or a new one.
+  const lastPathRef = useRef<string>('');
 
   const dragX = useMotionValue(0);
-
   const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 375;
-
-  // Parallax: at rest (dragX=0), behind page is at x=0 (hidden behind top).
-  // During drag (dragX→W), behind page shifts right 20% (parallax following).
   const parallaxX = useTransform(dragX, [0, windowWidth], [0, windowWidth * 0.2]);
   const overlayOpacity = useTransform(dragX, [0, windowWidth], [0.35, 0]);
 
   // ---- Navigation handler — fires ONLY on pathname change ----
+  // At this point, `children` is STILL the OLD page's content (React hasn't
+  // re-rendered with the new children yet for this effect cycle).
+  // Wait — actually, by the time useEffect runs, the component HAS re-rendered
+  // with the new `children`. So `children` is the NEW page's content.
+  //
+  // This means when navigating A→B:
+  //   - pathname changes from A to B
+  //   - React re-renders IOSStack with children = B
+  //   - useEffect fires with pathname = B, children = B
+  //   - The stack already has [A] from before
+  //   - We push B: stack becomes [A, B]
+  //   - A's component was captured during the PREVIOUS render (when children was A)
+  //
+  // So A's component is correctly frozen. The issue is that A's component was
+  // set to `children` during the first mount, when children WAS A. ✓
+  //
+  // BUT: on subsequent re-renders (not navigations), `children` changes (e.g.
+  // context updates, state changes in parent). We need to update ONLY the TOP
+  // item's component, never the behind items.
+
   useEffect(() => {
     const ww = typeof window !== 'undefined' ? window.innerWidth : 375;
 
     if (isFirstMount.current) {
       isFirstMount.current = false;
+      lastPathRef.current = pathname;
       setStack([{ key: pathname, component: children }]);
       dragX.set(0);
       return;
@@ -78,9 +99,12 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
         return cleaned.slice(0, -1);
       });
       dragX.set(0);
+      lastPathRef.current = pathname;
       return;
     }
 
+    // At this point, `children` is the NEW page's content.
+    // The `prev` stack has the OLD pages with their frozen components.
     setStack((prev) => {
       if (prev.length === 0) {
         isBack.current = false;
@@ -90,23 +114,26 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
       // Back detection: new path matches the item below the top
       if (prev.length > 1 && prev[prev.length - 2].key === pathname) {
         isBack.current = true;
+        // Mark the top as exiting — keep its frozen component
         return prev.map((item, i) =>
           i === prev.length - 1 ? { ...item, isExiting: true } : item
         );
       }
 
-      // Same path — just update the top's component (no duplicate push)
+      // Same path — just update the top's component
       if (prev[prev.length - 1].key === pathname) {
         isBack.current = false;
         return [...prev.slice(0, -1), { key: pathname, component: children }];
       }
 
-      // Push — but DEDUPLICATE: if the new key already exists in the stack,
-      // remove the old entry first to prevent duplicates.
+      // Push — the OLD top becomes the BEHIND (its component is already frozen).
+      // The NEW page becomes the TOP with the current `children`.
       isBack.current = false;
       const clean = prev.filter((item) => !item.isExiting && item.key !== pathname);
       return [...clean, { key: pathname, component: children }];
     });
+
+    lastPathRef.current = pathname;
 
     if (isBack.current) {
       animate(dragX, ww, {
@@ -126,6 +153,23 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  // ---- Update ONLY the top item's component when children changes ----
+  // This fires on every render where children is different but pathname
+  // hasn't changed (e.g. context updates, cart count changes).
+  // It ONLY updates the TOP item — behind items keep their frozen components.
+  useEffect(() => {
+    if (pathname !== lastPathRef.current) return; // Skip during navigation
+    setStack((prev) => {
+      if (prev.length === 0) return prev;
+      const last = prev[prev.length - 1];
+      if (last.isExiting) return prev; // Don't update exiting items
+      if (last.key !== pathname) return prev; // Safety check
+      // Only update if the component reference actually changed
+      if (last.component === children) return prev;
+      return [...prev.slice(0, -1), { ...last, component: children }];
+    });
+  }, [children, pathname]);
 
   // ---- Handle drag-triggered back ----
   const handleDragBack = () => {
@@ -150,12 +194,12 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
         const useDragX = isExiting || (isLast && !hasExiting);
         const useParallaxX = !useDragX;
 
-        // CRITICAL: The TOP page (non-exiting, last in stack) always renders
-        // the LIVE children (via ref), NOT the frozen component from state.
-        // This ensures the top page always shows the correct, up-to-date content.
-        // The BEHIND page renders its frozen component from state (captured at
-        // navigation time), which is the PREVIOUS page's content.
-        const renderedComponent = (isLast && !isExiting) ? liveChildrenRef.current : item.component;
+        // The TOP page renders `item.component` (which is kept up-to-date by
+        // the children-update effect above). The BEHIND page renders its
+        // frozen `item.component` (captured at navigation time, never updated).
+        // Both use `item.component` — the difference is that the TOP item's
+        // component is updated on every render via the effect, while the
+        // BEHIND item's component is NEVER updated after it's pushed.
 
         return (
           <Screen
@@ -166,7 +210,7 @@ export function IOSStack({ children }: { children: React.ReactNode }) {
             overlayOpacity={useParallaxX ? overlayOpacity : undefined}
             onBack={handleDragBack}
           >
-            {renderedComponent}
+            {item.component}
           </Screen>
         );
       })}

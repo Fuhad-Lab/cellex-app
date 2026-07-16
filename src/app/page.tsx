@@ -34,7 +34,7 @@ interface FeedPost {
 
 export default function HomePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isSeller } = useAuth();
   const { toast } = useToast();
   const { burst } = useOptimisticUI();
 
@@ -45,32 +45,8 @@ export default function HomePage() {
   const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
   const [following, setFollowing] = useState<Set<string>>(new Set());
   const [liveCount, setLiveCount] = useState(0);
-  const [isSeller, setIsSeller] = useState(false);
 
-  // Check if the current user is a buyer-seller (has a seller profile).
-  // This determines which header layout to show:
-  //   - Buyer:        logo + search + messenger icon
-  //   - Buyer-Seller: logo + search + chat + notification + profile icons
-  useEffect(() => {
-    if (!user) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const resp = await fetch('/api/seller-profile', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ op: 'get' }),
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (!cancelled && data.success && data.seller) {
-            setIsSeller(true);
-          }
-        }
-      } catch {}
-    })();
-    return () => { cancelled = true; };
-  }, [user]);
+  // isSeller is now read from AuthProvider (cached, no flicker)
 
   // Ref for the top search bar — used to detect when it's scrolled out of view
   // so the GlobalSpotlight floating search button can appear.
