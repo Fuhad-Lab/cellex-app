@@ -260,6 +260,25 @@ function ProductContent() {
         )}
       </div>
 
+      {/* === 4b. TRY IT ON BUTTON (prominent, right after badges — for fashion/beauty/home) === */}
+      {['Fashion', 'Beauty', 'Home'].includes(product.category || '') && (
+        <button
+          onClick={() => setShowTryOn(true)}
+          className="mx-3 mt-3 w-[calc(100%-1.5rem)] bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl px-4 py-3 flex items-center justify-between hover:shadow-lg transition-shadow"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-sm">Try It On with AI</div>
+              <div className="text-[10px] opacity-90">See yourself wearing this</div>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      )}
+
       {/* === 5. GROUP BUY SECTION === */}
       <div className="px-3 pt-3">
         <div className="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2.5">
