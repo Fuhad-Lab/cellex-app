@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { ShoppingCart, Heart, Share2, Store, Star, ChevronLeft, ChevronRight,
+import { ShoppingCart, Heart, Share2, Store, Star, ChevronLeft, ChevronRight, Sparkles,
   MessageSquare, ThumbsUp, Truck, Shield, RotateCcw, Users,
   MessageCircle, Clock, ChevronRight as Arrow, MapPin, Flag, MoreHorizontal,
   CheckCircle, Award } from 'lucide-react';
@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { TryItOnModal } from '@/components/try-it-on';
 
 function ProductContent() {
   const params = useSearchParams();
@@ -34,6 +35,7 @@ function ProductContent() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showTryOn, setShowTryOn] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewComment, setReviewComment] = useState('');
@@ -492,9 +494,35 @@ function ProductContent() {
             </>
           )}
         </Card>
-      </section>
 
-      {/* === 11. BOTTOM ACTION BAR (Store/Save/Chat + cyan "Limited Offer" banner) === */}
+      {/* === 10b. TRY IT ON BUTTON (for fashion/beauty/accessory products) === */}
+      {['Fashion', 'Beauty', 'Home'].includes(product.category || '') && (
+        <button
+          onClick={() => setShowTryOn(true)}
+          className="w-full mt-3 mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl p-4 flex items-center justify-between hover:shadow-lg transition-shadow"
+        >
+          <div className="text-left flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="font-bold text-sm">Try It On with AI</div>
+              <div className="text-[10px] opacity-90">Upload your photo & see yourself with this product</div>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      )}
+
+      {/* Try It On Modal */}
+      <TryItOnModal
+        isOpen={showTryOn}
+        onClose={() => setShowTryOn(false)}
+        productName={product.name}
+        productCategory={product.category || ''}
+        productImage={product.image_url || ''}
+      />
+      </section>
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 px-3 py-2 flex items-center gap-2">
         {/* Left: 3 icons */}
         <Link href={seller ? `/seller-profile?id=${seller.id}` : '/'} className="flex flex-col items-center justify-center px-2 py-1">
