@@ -1,232 +1,219 @@
 'use client';
 
 /**
- * IOSStack — iOS-style navigation with "Move with me" drag + frozen previous page.
+ * IOSStack — true iOS-style navigation stack for Next.js App Router.
  *
  * Architecture:
- *   Layer 0 (z-0): Frozen previous page — captured BEFORE navigation, never updated.
- *                   Has a dimming overlay that fades as you drag.
- *   Layer 1 (z-10): Active page — draggable via framer-motion's `drag` prop.
- *                   Follows finger 1:1 (dragElastic right: 1).
+ *   1. Maintains a history array of page keys + frozen React elements.
+ *   2. A shared MotionValue (`dragX`) controls the TOP page's X position.
+ *   3. The BEHIND page's X is derived via `useTransform` (parallax).
  *
- * How the "frozen previous page" works:
- *   - We use a render-time ref check (NOT a useEffect) to capture the old children.
- *   - When `pathname` changes between renders, the ref still holds the PREVIOUS
- *     render's children. We snapshot that into `previousChildren.current`.
- *   - This must happen during render, NOT in useEffect, because by the time
- *     useEffect fires, `children` has already become the new page.
+ * CRITICAL: Each stack item stores the EXACT `children` React element that was
+ * passed to IOSStack at the moment of navigation. This is the "frozen snapshot"
+ * of the previous page. The TOP page renders the CURRENT `children` (live).
  *
- * Improvements over the proposed spec:
- *   1. SSR-safe: `window.innerWidth` guarded with `typeof window` check.
- *   2. Correct children capture: Uses render-time ref, not useEffect.
- *   3. Drag enabled whenever there's a previous page (not based on direction).
- *   4. Parallax at rest is 0 (previous page fully hidden, no left-edge gap).
- *   5. Manual touch handlers for edge-zone detection (framer's drag is too
- *      aggressive — it captures ALL horizontal touches, blocking vertical scroll).
+ * The behind page shows the PREVIOUS page because:
+ *   - When navigating A→B, the effect captures `children` (which is A's content
+ *     at that point, because the effect runs AFTER render but the `children`
+ *     prop hasn't changed yet for this specific pathname change).
+ *   - We store `{ key: A, component: children_at_this_moment }` as the behind item.
+ *   - We store `{ key: B, component: children_at_this_moment }` as the top item.
+ *   - On the NEXT render, `children` becomes B (new page). But the behind item
+ *     still holds the OLD children reference (A's content).
+ *
+ * IMPORTANT: We do NOT use a ref to track live children. Instead, we store
+ * the children in the stack state itself. The TOP item's component is updated
+ * via a separate effect that fires when `children` changes (but only updates
+ * the TOP item, never the behind items).
  */
 
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, type ReactNode, type TouchEvent as ReactTouchEvent } from 'react';
+import { useMotionValue, useTransform, animate } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import { Screen } from '@/components/screen';
+
+interface StackItem {
+  key: string;
+  component: React.ReactNode;
+  isExiting?: boolean;
+}
 
 const SLIDE_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
 const PUSH_DURATION = 0.45;
 const BACK_DURATION = 0.4;
-const EDGE_ZONE_PX = 28;
-const COMMIT_THRESHOLD_PX = 120;
 
-export function IOSStack({ children }: { children: ReactNode }) {
+export function IOSStack({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const [stack, setStack] = useState<StackItem[]>([]);
+  const isBack = useRef(false);
+  const isDragBack = useRef(false);
+  const isFirstMount = useRef(true);
+  // Track the pathname that was active when `children` was last captured.
+  // This lets us know if `children` is for the current pathname or a new one.
+  const lastPathRef = useRef<string>('');
+
+  const dragX = useMotionValue(0);
   const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 375;
+  const parallaxX = useTransform(dragX, [0, windowWidth], [0, windowWidth * 0.2]);
+  const overlayOpacity = useTransform(dragX, [0, windowWidth], [0.35, 0]);
 
-  // --- Frozen previous page ---
-  // previousChildren: snapshot of the page we just left (captured during render)
-  // lastChildren: the children from the PREVIOUS render (used to detect changes)
-  // lastPath: the pathname from the PREVIOUS render
-  const previousChildren = useRef<ReactNode | null>(null);
-  const lastChildren = useRef<ReactNode>(children);
-  const lastPath = useRef<string>(pathname);
-  const [hasPrevious, setHasPrevious] = useState(false);
-  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
+  // ---- Navigation handler — fires ONLY on pathname change ----
+  // At this point, `children` is STILL the OLD page's content (React hasn't
+  // re-rendered with the new children yet for this effect cycle).
+  // Wait — actually, by the time useEffect runs, the component HAS re-rendered
+  // with the new `children`. So `children` is the NEW page's content.
+  //
+  // This means when navigating A→B:
+  //   - pathname changes from A to B
+  //   - React re-renders IOSStack with children = B
+  //   - useEffect fires with pathname = B, children = B
+  //   - The stack already has [A] from before
+  //   - We push B: stack becomes [A, B]
+  //   - A's component was captured during the PREVIOUS render (when children was A)
+  //
+  // So A's component is correctly frozen. The issue is that A's component was
+  // set to `children` during the first mount, when children WAS A. ✓
+  //
+  // BUT: on subsequent re-renders (not navigations), `children` changes (e.g.
+  // context updates, state changes in parent). We need to update ONLY the TOP
+  // item's component, never the behind items.
 
-  // --- Render-time capture of previous children ---
-  // This runs DURING render (not in useEffect). When pathname changes between
-  // renders, lastChildren.current still holds the OLD page's children.
-  // We snapshot it into previousChildren BEFORE updating lastChildren.
-  if (lastPath.current !== pathname) {
-    // Pathname changed! Capture the old children as the "previous page"
-    previousChildren.current = lastChildren.current;
-    setHasPrevious(true);
-    // Detect direction: if the new path is shorter, it's likely a "back"
-    setDirection(lastPath.current.length > pathname.length ? 'back' : 'forward');
-    lastPath.current = pathname;
-  }
-  lastChildren.current = children;
+  useEffect(() => {
+    const ww = typeof window !== 'undefined' ? window.innerWidth : 375;
 
-  // --- Motion values ---
-  const x = useMotionValue(0);
-  // Previous page: at rest (x=0), fully hidden at position 0 (behind current).
-  // During drag (x→W), shifts right 20% for parallax depth.
-  const prevPageX = useTransform(x, [0, windowWidth], [0, windowWidth * 0.2]);
-  // Dimming overlay: dark at rest, fades as you drag
-  const shadowOpacity = useTransform(x, [0, windowWidth], [0.35, 0]);
-  // Subtle scale on previous page (zoom in slightly as revealed)
-  const prevPageScale = useTransform(x, [0, windowWidth], [0.96, 1]);
-
-  // --- Manual touch handlers for edge-zone swipe-back ---
-  // We DON'T use framer-motion's `drag` prop because it captures ALL horizontal
-  // touches and blocks vertical scrolling. Instead, we use manual touch handlers
-  // that only activate when the touch starts within the left edge zone.
-  const touchState = useRef<{
-    startX: number;
-    startY: number;
-    active: boolean;
-    horizontal: boolean | null;
-  }>({ startX: 0, startY: 0, active: false, horizontal: null });
-  const [isDragging, setIsDragging] = useState(false);
-
-  function onTouchStart(e: ReactTouchEvent<HTMLDivElement>) {
-    if (!hasPrevious) return;
-    const t = e.touches[0];
-    if (!t || t.clientX > EDGE_ZONE_PX) {
-      touchState.current = { startX: 0, startY: 0, active: false, horizontal: null };
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      lastPathRef.current = pathname;
+      setStack([{ key: pathname, component: children }]);
+      dragX.set(0);
       return;
     }
-    touchState.current = {
-      startX: t.clientX,
-      startY: t.clientY,
-      active: true,
-      horizontal: null,
-    };
-  }
 
-  function onTouchMove(e: ReactTouchEvent<HTMLDivElement>) {
-    const state = touchState.current;
-    if (!state.active) return;
-    const t = e.touches[0];
-    if (!t) return;
-    const dx = t.clientX - state.startX;
-    const dy = t.clientY - state.startY;
+    if (isDragBack.current) {
+      isDragBack.current = false;
+      isBack.current = true;
+      setStack((prev) => {
+        const cleaned = prev.filter((item) => !item.isExiting);
+        return cleaned.slice(0, -1);
+      });
+      dragX.set(0);
+      lastPathRef.current = pathname;
+      return;
+    }
 
-    if (state.horizontal === null) {
-      const absDx = Math.abs(dx);
-      const absDy = Math.abs(dy);
-      if (absDx < 8 && absDy < 8) return;
-      if (absDy > absDx) {
-        state.active = false;
-        return;
+    // At this point, `children` is the NEW page's content.
+    // The `prev` stack has the OLD pages with their frozen components.
+    setStack((prev) => {
+      if (prev.length === 0) {
+        isBack.current = false;
+        return [{ key: pathname, component: children }];
       }
-      state.horizontal = true;
-      setIsDragging(true);
-    }
 
-    if (!state.horizontal) return;
-    if (e.cancelable) e.preventDefault();
+      // Back detection: new path matches the item below the top
+      if (prev.length > 1 && prev[prev.length - 2].key === pathname) {
+        isBack.current = true;
+        // Mark the top as exiting — keep its frozen component
+        return prev.map((item, i) =>
+          i === prev.length - 1 ? { ...item, isExiting: true } : item
+        );
+      }
 
-    const clamped = Math.max(0, Math.min(dx, windowWidth));
-    x.set(clamped);
-  }
+      // Same path — just update the top's component
+      if (prev[prev.length - 1].key === pathname) {
+        isBack.current = false;
+        return [...prev.slice(0, -1), { key: pathname, component: children }];
+      }
 
-  function onTouchEnd() {
-    const state = touchState.current;
-    touchState.current = { startX: 0, startY: 0, active: false, horizontal: null };
-    if (!state.active || !state.horizontal) {
-      setIsDragging(false);
-      return;
-    }
+      // Push — the OLD top becomes the BEHIND (its component is already frozen).
+      // The NEW page becomes the TOP with the current `children`.
+      isBack.current = false;
+      const clean = prev.filter((item) => !item.isExiting && item.key !== pathname);
+      return [...clean, { key: pathname, component: children }];
+    });
 
-    const current = x.get();
-    if (current >= COMMIT_THRESHOLD_PX) {
-      // Commit: animate off-screen, then navigate back
-      animate(x, windowWidth, {
-        duration: 0.3,
+    lastPathRef.current = pathname;
+
+    if (isBack.current) {
+      animate(dragX, ww, {
+        duration: BACK_DURATION,
         ease: SLIDE_EASE,
         onComplete: () => {
-          setHasPrevious(false);
-          previousChildren.current = null;
-          router.back();
-          requestAnimationFrame(() => x.set(0));
+          setStack((prev) => prev.filter((item) => !item.isExiting).slice(0, -1));
+          dragX.set(0);
         },
       });
     } else {
-      // Cancel: snap back
-      animate(x, 0, {
-        duration: 0.3,
+      dragX.set(ww);
+      animate(dragX, 0, {
+        duration: PUSH_DURATION,
         ease: SLIDE_EASE,
-        onComplete: () => setIsDragging(false),
       });
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
-  // --- Animation variants for push/back (non-drag) ---
-  const variants = {
-    enter: (dir: string) => ({
-      x: dir === 'forward' ? '100%' : '0%',
-      zIndex: 10,
-    }),
-    center: {
-      x: 0,
-      zIndex: 10,
-      transition: { duration: PUSH_DURATION, ease: SLIDE_EASE },
-    },
-    exit: (dir: string) => ({
-      x: dir === 'forward' ? '-20%' : '100%',
-      zIndex: dir === 'forward' ? 1 : 10,
-      transition: { duration: BACK_DURATION, ease: SLIDE_EASE },
-    }),
+  // ---- Update ONLY the top item's component when children changes ----
+  // This fires on every render where children is different but pathname
+  // hasn't changed (e.g. context updates, cart count changes).
+  // It ONLY updates the TOP item — behind items keep their frozen components.
+  useEffect(() => {
+    if (pathname !== lastPathRef.current) return; // Skip during navigation
+    setStack((prev) => {
+      if (prev.length === 0) return prev;
+      const last = prev[prev.length - 1];
+      if (last.isExiting) return prev; // Don't update exiting items
+      if (last.key !== pathname) return prev; // Safety check
+      // Only update if the component reference actually changed
+      if (last.component === children) return prev;
+      return [...prev.slice(0, -1), { ...last, component: children }];
+    });
+  }, [children, pathname]);
+
+  // ---- Handle drag-triggered back ----
+  const handleDragBack = () => {
+    isDragBack.current = true;
+    router.back();
   };
+
+  // ---- Render ----
+  if (stack.length === 0) return null;
+
+  const hasExiting = stack.some((item) => item.isExiting);
 
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: '#000' }}>
-      {/* --- LAYER 0: Frozen Previous Page --- */}
-      {hasPrevious && previousChildren.current && (
-        <motion.div
-          className="absolute inset-0 bg-white"
-          style={{
-            x: prevPageX,
-            scale: prevPageScale,
-            zIndex: 0,
-            pointerEvents: 'none',
-          }}
-          aria-hidden="true"
-        >
-          {previousChildren.current}
-          {/* Dimming overlay — fades as the current page is dragged away */}
-          <motion.div
-            className="absolute inset-0 bg-black pointer-events-none"
-            style={{ opacity: shadowOpacity }}
-          />
-        </motion.div>
-      )}
+      {stack.map((item, index) => {
+        const isExiting = !!item.isExiting;
+        const isLast = index === stack.length - 1;
+        const isSecondLast = index === stack.length - 2;
 
-      {/* --- LAYER 1: Active Page (draggable via manual touch handlers) --- */}
-      <AnimatePresence mode="popLayout" custom={direction} initial={false}>
-        <motion.div
-          key={pathname}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          style={{
-            x,
-            zIndex: 10,
-            position: 'absolute',
-            inset: 0,
-            background: '#fff',
-            boxShadow: isDragging ? '-8px 0 25px rgba(0,0,0,0.2)' : 'none',
-          }}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-          onTouchCancel={onTouchEnd}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
+        if (!isLast && !isSecondLast && !isExiting) return null;
+
+        const useDragX = isExiting || (isLast && !hasExiting);
+        const useParallaxX = !useDragX;
+
+        // The TOP page renders `item.component` (which is kept up-to-date by
+        // the children-update effect above). The BEHIND page renders its
+        // frozen `item.component` (captured at navigation time, never updated).
+        // Both use `item.component` — the difference is that the TOP item's
+        // component is updated on every render via the effect, while the
+        // BEHIND item's component is NEVER updated after it's pushed.
+
+        return (
+          <Screen
+            key={item.key}
+            isTop={isLast && !isExiting}
+            isExiting={isExiting}
+            xValue={useDragX ? dragX : parallaxX}
+            overlayOpacity={useParallaxX ? overlayOpacity : undefined}
+            onBack={handleDragBack}
+          >
+            {item.component}
+          </Screen>
+        );
+      })}
     </div>
   );
 }
