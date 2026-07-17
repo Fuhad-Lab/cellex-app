@@ -6,9 +6,9 @@ import { api, formatPrice, type Product } from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Search, Heart, MessageCircle, Share2, Bookmark, ShoppingBag,
-  Store, Radio, Users, TrendingUp, Flame, ChevronRight, Play,
-  CheckCircle, Plus, Bell, User } from 'lucide-react';
+import { Search, Heart, MessageCircle, Share2, Bookmark,
+  Store, ChevronRight, Play,
+  CheckCircle, Bell, User, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
