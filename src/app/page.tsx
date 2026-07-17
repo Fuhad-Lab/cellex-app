@@ -299,7 +299,7 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Stories bar */}
+      {/* Stories bar — only show if there are stories */}
       {stories.length > 0 && (
         <div className="flex gap-3 px-3 py-2 overflow-x-auto no-scrollbar border-b border-neutral-100">
           {stories.slice(0, 10).map((s: any, i: number) => (
@@ -358,9 +358,12 @@ export default function HomePage() {
       </div>
 
       {/* End of feed */}
-      <div className="text-center py-8">
-        <p className="text-xs text-neutral-400">You're all caught up ✨</p>
-        <p className="text-[10px] text-neutral-300 mt-1">Check back for more drops</p>
+      <div className="text-center py-12">
+        <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-3">
+          <Sparkles className="w-5 h-5 text-neutral-400" />
+        </div>
+        <p className="text-sm font-medium text-neutral-500">You're all caught up</p>
+        <p className="text-xs text-neutral-300 mt-0.5">Check back for more drops</p>
       </div>
     </div>
   );
@@ -444,8 +447,8 @@ function FeedPostCard({
         {post.sellerId && (
           <button
             onClick={onFollow}
-            className={`text-sm font-bold px-4 py-2 rounded-full transition-all ${
-              isFollowing ? 'bg-neutral-100 text-neutral-600' : 'bg-black text-white hover:bg-neutral-800'
+            className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all ${
+              isFollowing ? 'bg-neutral-100 text-neutral-500' : 'bg-black text-white'
             }`}
           >
             {isFollowing ? 'Following' : 'Follow'}
@@ -487,19 +490,19 @@ function FeedPostCard({
 
         {/* Product badge */}
         {post.product && (
-          <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-2xl p-3 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 shrink-0">
+          <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-md rounded-xl p-2.5 flex items-center gap-2.5 shadow-sm">
+            <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 shrink-0">
               {post.product.image_url && (
                 <img src={post.product.image_url} alt="" className="w-full h-full object-cover" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-bold text-black truncate">{post.product.name}</div>
-              <div className="text-base font-extrabold text-black">{formatPrice(post.product.price)}</div>
+              <div className="text-xs font-bold text-black truncate">{post.product.name}</div>
+              <div className="text-sm font-extrabold text-black">{formatPrice(post.product.price)}</div>
             </div>
             <button
               onClick={onAddToCart}
-              className="bg-black text-white text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-neutral-800 transition-colors shrink-0 active:scale-95 min-w-[80px]"
+              className="bg-black text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-neutral-800 transition-colors shrink-0 active:scale-95"
             >
               Buy Now
             </button>
@@ -508,7 +511,7 @@ function FeedPostCard({
       </div>
 
       {/* Action bar */}
-      <div className="flex items-center gap-5 px-4 py-3">
+      <div className="flex items-center gap-4 px-3 py-2.5">
         <button onClick={onLike} className="flex items-center gap-2 group">
           <motion.div whileTap={{ scale: 1.3 }}>
             <Heart className={`w-7 h-7 transition-colors ${liked ? 'fill-black text-black' : 'text-black'}`} />
@@ -528,17 +531,17 @@ function FeedPostCard({
       </div>
 
       {/* Caption */}
-      <div className="px-4 pb-4">
-        <p className="text-sm text-black">
+      <div className="px-3 pb-3">
+        <p className="text-sm text-black leading-snug">
           <span className="font-bold mr-1.5">{post.sellerName}</span>
           {post.caption}
         </p>
         {post.product?.category && (
-          <p className="text-xs text-neutral-400 mt-1.5">#{post.product.category.toLowerCase().replace(/\s+/g, '')}</p>
+          <p className="text-xs text-neutral-400 mt-1">#{post.product.category.toLowerCase().replace(/\s+/g, '')}</p>
         )}
         {post.comments > 0 && (
           <button className="text-xs text-neutral-400 mt-1.5 hover:text-black transition-colors">
-            View all {post.comments} comments
+            View all {formatCount(post.comments)} comments
           </button>
         )}
       </div>

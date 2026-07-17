@@ -186,10 +186,10 @@ function ProductContent() {
 
   return (
     <div className="bg-white pb-20">
-      {/* Back arrow (top-left, overlays the image) */}
+      {/* Back arrow (fixed top-left) */}
       <button
         onClick={() => router.back()}
-        className="fixed top-3 left-3 z-50 w-9 h-9 rounded-full bg-white/90 backdrop-blur shadow flex items-center justify-center"
+        className="fixed top-3 left-3 z-50 w-9 h-9 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center transition-colors hover:bg-white"
       >
         <ChevronLeft className="w-5 h-5 text-black" />
       </button>
@@ -293,9 +293,11 @@ function ProductContent() {
       {/* === 5. GROUP BUY SECTION (only if seller enabled it) === */}
       {product.group_buy_enabled ? (
         <div className="px-3 pt-3">
-          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl px-4 py-3">
+          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-3">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="w-5 h-5 text-purple-600" />
+              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                <Users className="w-4 h-4 text-purple-600" />
+              </div>
               <div>
                 <div className="font-bold text-sm text-purple-900">Group Buy Available</div>
                 <div className="text-xs text-purple-600">
@@ -313,8 +315,8 @@ function ProductContent() {
         </div>
       ) : (
         <div className="px-3 pt-3">
-          <div className="bg-slate-50 rounded-lg px-3 py-2.5 text-center">
-            <span className="text-xs text-slate-400">Group buy not available — the seller did not enable group buy for this product.</span>
+          <div className="bg-slate-50 rounded-lg px-3 py-2 text-center">
+            <span className="text-xs text-slate-400">Group buy not available for this product</span>
           </div>
         </div>
       )}
