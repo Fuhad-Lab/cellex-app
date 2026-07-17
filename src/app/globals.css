@@ -386,7 +386,6 @@ html, body {
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
-  touch-action: manipulation;
 }
 
 /* Safe-area insets: applied on the body so every page gets them automatically. */
@@ -409,17 +408,10 @@ nav.fixed.bottom-0 {
 }
 
 /* ============================================================
-   iOS STACK NAVIGATION
-   The IOSStack renders a fixed full-screen container with absolute-
-   positioned Screen layers. These rules ensure the body doesn't
-   interfere with the stack's own scroll/overflow management.
+   NAVIGATION (standard Next.js — no iOS stack)
    ============================================================ */
 html, body {
-  overscroll-behavior-x: none; /* Disables browser 'Back' swipe */
-  touch-action: pan-y;         /* Allows vertical scroll, blocks horizontal interference */
+  overscroll-behavior-x: none;
   -webkit-font-smoothing: antialiased;
-  /* The IOSStack container is position:fixed, so the body shouldn't scroll.
-     Without this, you'd get a double-scroll effect (body + inner Screen). */
-  overflow: hidden;
 }
 
