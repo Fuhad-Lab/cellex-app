@@ -27,6 +27,7 @@ export default function SellerProductsPage() {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Electronics');
   const [imageUrl, setImageUrl] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [groupBuyEnabled, setGroupBuyEnabled] = useState(false);
   const [groupBuyTarget, setGroupBuyTarget] = useState('3');
@@ -43,7 +44,7 @@ export default function SellerProductsPage() {
 
   const openCreate = () => {
     setEditing(null);
-    setName(''); setPrice(''); setDescription(''); setCategory('Electronics'); setImageUrl('');
+    setName(''); setPrice(''); setDescription(''); setCategory('Electronics'); setImageUrl(''); setVideoUrl('');
     setGroupBuyEnabled(false); setGroupBuyTarget('3'); setGroupBuyDiscount('20');
     setOpen(true);
   };
@@ -52,6 +53,7 @@ export default function SellerProductsPage() {
     setEditing(p);
     setName(p.name); setPrice(String(p.price)); setDescription(p.description || '');
     setCategory(p.category || 'Electronics'); setImageUrl(p.image_url || '');
+    setVideoUrl((p as any).video_url || '');
     setGroupBuyEnabled((p as any).group_buy_enabled || false);
     setGroupBuyTarget(String((p as any).group_buy_target_count || 3));
     setGroupBuyDiscount(String((p as any).group_buy_discount_pct || 20));
@@ -64,7 +66,7 @@ export default function SellerProductsPage() {
       return;
     }
     setSaving(true);
-    const data: any = { name, price: Number(price), description, category, image_url: imageUrl };
+    const data: any = { name, price: Number(price), description, category, image_url: imageUrl, video_url: videoUrl || undefined };
     const result = editing
       ? await api.sellerProducts.update(editing.id, data)
       : await api.sellerProducts.create(data);
@@ -205,6 +207,13 @@ export default function SellerProductsPage() {
                 <div className="mt-2 w-20 h-20 rounded-lg overflow-hidden bg-slate-50">
                   <img src={imageUrl} alt="" className="w-full h-full object-cover" />
                 </div>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Product Video URL (optional — shows authenticity)</Label>
+              <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://... (mp4 or YouTube link)" />
+              {videoUrl && (
+                <p className="text-[10px] text-green-600">✓ Video will be shown on the product page</p>
               )}
             </div>
             <div className="space-y-1.5">

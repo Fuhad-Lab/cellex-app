@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ShoppingCart, Heart, Share2, Store, Star, ChevronLeft, ChevronRight, Sparkles,
   MessageSquare, ThumbsUp, Truck, Shield, RotateCcw, Users,
   MessageCircle, Clock, ChevronRight as Arrow, MapPin, Flag, MoreHorizontal,
-  CheckCircle, Award } from 'lucide-react';
+  CheckCircle, Award, Video as VideoIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -352,6 +352,33 @@ function ProductContent() {
           </Card>
         ))}
       </div>
+
+      {/* === 6b. PRODUCT VIDEO (authenticity proof from seller) === */}
+      {product.video_url && (
+        <section className="px-3 pt-3">
+          <div className="flex items-center gap-2 mb-2">
+            <VideoIcon className="w-4 h-4 text-black" />
+            <h3 className="font-bold text-sm">Seller Video — See it in action</h3>
+          </div>
+          <div className="rounded-xl overflow-hidden bg-black aspect-video">
+            {product.video_url.includes('youtube.com') || product.video_url.includes('youtu.be') ? (
+              <iframe
+                src={product.video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                className="w-full h-full"
+                allowFullScreen
+                title={product.name}
+              />
+            ) : (
+              <video
+                src={product.video_url}
+                controls
+                className="w-full h-full object-cover"
+                poster={product.image_url}
+              />
+            )}
+          </div>
+        </section>
+      )}
 
       {/* === 7. SHIPPING / RETURNS ROW === */}
       <div className="px-3 pt-3">

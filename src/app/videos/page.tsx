@@ -193,21 +193,30 @@ export default function VideosPage() {
 
   return (
     <div className="bg-black min-h-screen relative">
-      {/* Top tabs: Follow / Recommend */}
+      {/* Top bar: Back button + tabs */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/60 to-transparent">
-        <div className="flex items-center justify-center gap-6 py-3">
+        <div className="flex items-center gap-3 py-3 px-4">
           <button
-            onClick={() => setTab('follow')}
-            className={`text-sm font-medium ${tab === 'follow' ? 'text-white' : 'text-white/60'}`}
+            onClick={() => window.history.back()}
+            className="text-white shrink-0"
+            aria-label="Back"
           >
-            Follow
+            <ChevronLeft className="w-6 h-6" />
           </button>
-          <button
-            onClick={() => setTab('recommend')}
-            className={`text-sm font-bold ${tab === 'recommend' ? 'text-white border-b-2 border-white pb-0.5' : 'text-white/60'}`}
+          <div className="flex items-center justify-center gap-6 flex-1">
+            <button
+              onClick={() => setTab('follow')}
+              className={`text-sm font-medium ${tab === 'follow' ? 'text-white' : 'text-white/60'}`}
+            >
+              Follow
+            </button>
+            <button
+              onClick={() => setTab('recommend')}
+              className={`text-sm font-bold ${tab === 'recommend' ? 'text-white border-b-2 border-white pb-0.5' : 'text-white/60'}`}
           >
             Recommend
           </button>
+          </div>
         </div>
       </div>
 

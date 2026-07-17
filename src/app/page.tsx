@@ -456,14 +456,22 @@ function FeedPostCard({
       {/* Media */}
       <div className="relative bg-neutral-50 aspect-square overflow-hidden">
         {isVideo ? (
-          <video
-            ref={videoRef}
-            src={post.mediaUrl}
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          />
+          <Link href="/videos" className="block w-full h-full">
+            <video
+              ref={videoRef}
+              src={post.mediaUrl}
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+            />
+            {/* Tap to open indicator */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/20">
+              <div className="w-14 h-14 rounded-full bg-white/30 backdrop-blur flex items-center justify-center">
+                <Play className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </Link>
         ) : (
           <Link href={post.product ? `/product?id=${post.product.id}` : '#'}>
             <img src={post.mediaUrl} alt={post.caption} className="w-full h-full object-cover" loading="lazy" />

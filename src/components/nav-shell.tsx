@@ -11,7 +11,7 @@ import { MobileNav } from '@/components/mobile-nav';
  */
 export function NavShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideMobileNav = pathname === '/login' || pathname.startsWith('/product');
+  const hideMobileNav = pathname === '/login' || pathname.startsWith('/product') || pathname === '/videos';
 
   return (
     <>
