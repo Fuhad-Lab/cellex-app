@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Edit, Trash2, Search, Store, Package, Users } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Store, Package, Users, Upload, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -28,6 +28,7 @@ export default function SellerProductsPage() {
   const [category, setCategory] = useState('Electronics');
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [saving, setSaving] = useState(false);
   const [groupBuyEnabled, setGroupBuyEnabled] = useState(false);
   const [groupBuyTarget, setGroupBuyTarget] = useState('3');
@@ -210,10 +211,74 @@ export default function SellerProductsPage() {
               )}
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Product Video URL (optional — shows authenticity)</Label>
-              <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://... (mp4 or YouTube link)" />
-              {videoUrl && (
-                <p className="text-[10px] text-green-600">✓ Video will be shown on the product page</p>
+              <Label className="text-xs">Product Video (optional — shows authenticity)</Label>
+              {videoUrl ? (
+                <div className="flex items-center gap-2">
+                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-black" muted />
+                  <button
+                    type="button"
+                    onClick={() => setVideoUrl('')}
+                    className="text-xs text-red-500"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-4 cursor-pointer hover:border-black transition-colors">
+                  {uploadingVideo ? (
+                    <>
+                      <Loader2 className="w-6 h-6 text-slate-400 animate-spin mb-1" />
+                      <span className="text-xs text-slate-400">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-6 h-6 text-slate-400 mb-1" />
+                      <span className="text-xs text-slate-500">Tap to upload a video</span>
+                      <span className="text-[10px] text-slate-400">Max 10MB</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 10 * 1024 * 1024) {
+                        toast({ title: 'Video too large', description: 'Max 10MB', variant: 'destructive' });
+                        return;
+                      }
+                      setUploadingVideo(true);
+                      const reader = new FileReader();
+                      reader.onloadend = async () => {
+                        try {
+                          if (!editing) {
+                            setVideoUrl(reader.result as string);
+                            setUploadingVideo(false);
+                          } else {
+                            const resp = await fetch('/api/upload-video', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ productId: editing.id, videoData: reader.result }),
+                            });
+                            const data = await resp.json();
+                            if (data.success) {
+                              setVideoUrl(data.videoUrl);
+                              toast({ title: 'Video uploaded!' });
+                            } else {
+                              toast({ title: 'Upload failed', description: data.error, variant: 'destructive' });
+                            }
+                            setUploadingVideo(false);
+                          }
+                        } catch {
+                          setUploadingVideo(false);
+                          toast({ title: 'Upload failed', variant: 'destructive' });
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
               )}
             </div>
             <div className="space-y-1.5">
