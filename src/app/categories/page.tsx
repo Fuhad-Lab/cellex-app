@@ -130,12 +130,9 @@ function CategoriesContent() {
     updateUrl(category, s);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      load();
-    }
-  };
+  // NOTE: The top search bar now triggers Smart Search (spotlight overlay)
+  // instead of a form-based product search. The searchQuery state is still
+  // used for the initial URL query param (?q=...) and for subcategory search.
 
   // Search by subcategory label — sets the query and triggers a search.
   // We can't rely on the load() callback because it captures the old searchQuery;
@@ -154,22 +151,21 @@ function CategoriesContent() {
 
   return (
     <div className="ig-container bg-white min-h-screen pb-24 ig-topbar-offset">
-      {/* Top bar with search */}
+      {/* Top bar with search — clicking the search bar opens Smart Search spotlight */}
       <div ref={searchBarRef} className="ig-topbar gap-2">
         <button onClick={() => router.push('/')} className="ig-icon-btn shrink-0" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <form onSubmit={handleSearch} className="flex-1 flex items-center bg-neutral-100 rounded-md px-3 py-2">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
+          className="flex-1 flex items-center bg-neutral-100 rounded-md px-3 py-2 hover:bg-neutral-200 transition-colors text-left"
+          aria-label="Open Smart Search"
+        >
           <Search className="w-4 h-4 text-neutral-500 mr-2 shrink-0" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for items you want"
-            className="flex-1 bg-transparent outline-none text-sm text-black placeholder:text-neutral-500"
-          />
+          <span className="flex-1 text-sm text-neutral-500 truncate">Search for items you want</span>
           <Camera className="w-4 h-4 text-neutral-500 ml-2 shrink-0" />
-        </form>
+        </button>
       </div>
 
       {/* Category pills — horizontal scroll */}

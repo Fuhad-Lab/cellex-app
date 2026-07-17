@@ -226,14 +226,25 @@ export default function HomePage() {
           <span className="ig-logo">Cellex</span>
         </Link>
 
-        {/* Search (hidden on small screens — uses Cmd+K / FAB instead) */}
+        {/* Search — desktop: pill input, mobile: icon button.
+            Both trigger the Smart Search spotlight overlay. */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
           className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-neutral-200 transition-colors"
           style={{ background: '#efefef', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
+          aria-label="Search"
         >
           <Search className="w-4 h-4 text-neutral-500 mr-2" />
           <span className="text-sm text-neutral-500 text-left flex-1">Search</span>
+        </button>
+
+        {/* Mobile search icon button (visible < 640px) */}
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
+          className="sm:hidden ig-icon-btn flex-1 max-w-[40px]"
+          aria-label="Search"
+        >
+          <Search className="w-6 h-6 text-black" />
         </button>
 
         {/* Spacer on mobile (search hidden) */}
