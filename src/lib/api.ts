@@ -23,6 +23,10 @@ export interface Product {
   units_sold?: number;
   created_at?: string;
   additional_images?: string[];
+  video_url?: string;
+  group_buy_enabled?: boolean;
+  group_buy_target_count?: number;
+  group_buy_discount_pct?: number;
 }
 
 export interface Seller {
@@ -265,5 +269,5 @@ export function timeAgo(iso?: string): string {
 export function escapeHtml(s: unknown): string {
   return String(s ?? '').replace(/[&<>"']/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
+  }[c] as string));
 }

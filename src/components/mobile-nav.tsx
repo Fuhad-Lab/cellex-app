@@ -6,88 +6,88 @@ import { Home, Search, Plus, ShoppingCart, User, MessageCircle } from 'lucide-re
 import { useAuth } from '@/components/auth-provider';
 
 /**
- * MobileNav — bottom navigation bar (ROLE-AWARE).
+ * MobileNav — Instagram-style bottom navigation bar.
  *
- * Reads `isSeller` from the AuthProvider context (which checks once on login
- * and caches the result). This prevents the flicker where the buyer nav shows
- * briefly before switching to the seller nav on every page load.
+ * - 5 icons evenly spaced
+ * - NO labels (matches IG mobile web)
+ * - White background, 1px top border (#dbdbdb)
+ * - Active state: bold black icon (instead of gray)
+ * - Center "Add" button: filled black circle with white plus (IG Create style)
  *
- * BUYER (no seller profile):
- *   Chat | Category | [Discover] | Cart | Account
+ * BUYER:
+ *   [Chat] [Search] [⬛ Home ⬛] [Cart] [Account]
  *
- * BUYER-SELLER (has seller profile):
- *   Home | Category | [+ Add] | Cart | Account
+ * BUYER-SELLER:
+ *   [Home] [Search] [⬛ + ⬛] [Cart] [Account]
  */
 export function MobileNav() {
   const pathname = usePathname();
-  const { cartCount, user, isSeller, sellerChecked } = useAuth();
+  const { cartCount, user, isSeller } = useAuth();
 
-  // Role-based nav items — isSeller comes from cached context, no async call
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/categories', label: 'Category', icon: Search },
+        { href: '/categories', label: 'Search', icon: Search },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-        { href: '/profile', label: 'Account', icon: User, showDot: true },
+        { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
         { href: '/messenger', label: 'Chat', icon: MessageCircle },
-        { href: '/categories', label: 'Category', icon: Search },
-        { href: '/', label: 'Discover', icon: Home, center: true },
+        { href: '/categories', label: 'Search', icon: Search },
+        { href: '/', label: 'Home', icon: Home, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-        { href: '/profile', label: 'Account', icon: User, showDot: true },
+        { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ];
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-slate-200 md:hidden"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-    >
-      <div className="flex items-center justify-around max-w-lg mx-auto py-2.5 relative">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
+    <nav className="ig-bottom-nav md:hidden">
+      {navItems.map((item) => {
+        const isActive = pathname === item.href;
+        const Icon = item.icon;
 
-          if (item.center) {
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex flex-col items-center gap-1"
-              >
-                <div className="w-11 h-11 rounded-full bg-black flex items-center justify-center shadow-md">
-                  <Icon className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-[10px] font-bold text-black">{item.label}</span>
-              </Link>
-            );
-          }
-
+        if (item.center) {
+          // Center button — IG Create style: solid black circle, white icon
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center gap-1 relative ${
-                isActive ? 'text-black' : 'text-neutral-400'
-              }`}
+              className="flex items-center justify-center w-10 h-10"
+              aria-label={item.label}
             >
-              <div className="relative">
-                <Icon className="w-6 h-6" strokeWidth={isActive ? 2.5 : 2} />
-                {item.showBadge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-black text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                    {cartCount}
-                  </span>
-                )}
-                {item.showDot && user && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
-                )}
+              <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center hover:bg-neutral-800 transition-colors active:scale-95">
+                <Icon className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
-              <span className={`text-[10px] ${isActive ? 'font-bold' : 'font-medium'}`}>{item.label}</span>
             </Link>
           );
-        })}
-      </div>
+        }
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="flex items-center justify-center w-12 h-12 relative"
+            aria-label={item.label}
+          >
+            <div className="relative">
+              {/* Active state: filled icon (matches IG) */}
+              <Icon
+                className={`w-6 h-6 transition-colors ${isActive ? 'text-black' : 'text-neutral-700'}`}
+                strokeWidth={isActive ? 2.5 : 1.8}
+                fill={isActive && (item.label === 'Home' || item.label === 'Chat') ? 'currentColor' : 'none'}
+              />
+              {item.showBadge && cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                  {cartCount}
+                </span>
+              )}
+              {item.showAvatar && user && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+              )}
+            </div>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

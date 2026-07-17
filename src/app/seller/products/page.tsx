@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { api, formatPrice, type Product } from '@/lib/api';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Edit, Trash2, Search, Store, Package, Users, Upload, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Plus, Edit, Trash2, Search, Store, Package, Users, Upload, Loader2, X, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys'];
 
 export default function SellerProductsPage() {
@@ -26,9 +26,18 @@ export default function SellerProductsPage() {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Electronics');
-  const [imageUrl, setImageUrl] = useState('');
+
+  // Image upload — IG Create style. We support up to 4 images.
+  // The first image becomes image_url; the rest go into additional_images.
+  const [images, setImages] = useState<string[]>([]); // array of URLs (either uploaded /api/image?id=... or existing https://...)
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Video upload — same as before
   const [videoUrl, setVideoUrl] = useState('');
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
   const [saving, setSaving] = useState(false);
   const [groupBuyEnabled, setGroupBuyEnabled] = useState(false);
   const [groupBuyTarget, setGroupBuyTarget] = useState('3');
@@ -43,17 +52,29 @@ export default function SellerProductsPage() {
 
   useEffect(() => { load(); }, []);
 
+  const resetForm = () => {
+    setName(''); setPrice(''); setDescription(''); setCategory('Electronics');
+    setImages([]); setVideoUrl('');
+    setGroupBuyEnabled(false); setGroupBuyTarget('3'); setGroupBuyDiscount('20');
+  };
+
   const openCreate = () => {
     setEditing(null);
-    setName(''); setPrice(''); setDescription(''); setCategory('Electronics'); setImageUrl(''); setVideoUrl('');
-    setGroupBuyEnabled(false); setGroupBuyTarget('3'); setGroupBuyDiscount('20');
+    resetForm();
     setOpen(true);
   };
 
   const openEdit = (p: Product) => {
     setEditing(p);
     setName(p.name); setPrice(String(p.price)); setDescription(p.description || '');
-    setCategory(p.category || 'Electronics'); setImageUrl(p.image_url || '');
+    setCategory(p.category || 'Electronics');
+    // Load existing images: first image_url, then any additional_images
+    const additional = (p as any).additional_images;
+    const allImages = [
+      ...(p.image_url ? [p.image_url] : []),
+      ...(Array.isArray(additional) ? additional : []),
+    ];
+    setImages(allImages);
     setVideoUrl((p as any).video_url || '');
     setGroupBuyEnabled((p as any).group_buy_enabled || false);
     setGroupBuyTarget(String((p as any).group_buy_target_count || 3));
@@ -61,13 +82,126 @@ export default function SellerProductsPage() {
     setOpen(true);
   };
 
+  const handleImageUpload = async (files: FileList) => {
+    if (!files || files.length === 0) return;
+    if (images.length + files.length > 4) {
+      toast({ title: 'Max 4 images', description: 'You can upload up to 4 images per product', variant: 'destructive' });
+      return;
+    }
+
+    setUploadingImage(true);
+    const newUrls: string[] = [];
+
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) {
+        toast({ title: 'Invalid file', description: `${file.name} is not an image`, variant: 'destructive' });
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: 'Image too large', description: `${file.name} is over 5MB`, variant: 'destructive' });
+        continue;
+      }
+
+      // Read as data URL, then upload to /api/upload-image
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      try {
+        const resp = await fetch('/api/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: editing?.id,
+            imageData: dataUrl,
+          }),
+        });
+        const data = await resp.json();
+        if (data.success) {
+          newUrls.push(data.imageUrl);
+        } else {
+          toast({ title: 'Upload failed', description: data.error, variant: 'destructive' });
+        }
+      } catch (err) {
+        toast({ title: 'Upload failed', description: String(err), variant: 'destructive' });
+      }
+    }
+
+    if (newUrls.length > 0) {
+      setImages(prev => [...prev, ...newUrls]);
+      toast({ title: 'Image uploaded', description: `${newUrls.length} image(s) added` });
+    }
+    setUploadingImage(false);
+    // Reset the file input so the same file can be re-selected
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeImage = (idx: number) => {
+    setImages(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleVideoUpload = async (file: File) => {
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: 'Video too large', description: 'Max 10MB', variant: 'destructive' });
+      return;
+    }
+    setUploadingVideo(true);
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        if (!editing) {
+          // For new products, store the data URL temporarily — it'll be saved
+          // when the product is created. (Same pattern as before.)
+          setVideoUrl(reader.result as string);
+          setUploadingVideo(false);
+        } else {
+          const resp = await fetch('/api/upload-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: editing.id, videoData: reader.result }),
+          });
+          const data = await resp.json();
+          if (data.success) {
+            setVideoUrl(data.videoUrl);
+            toast({ title: 'Video uploaded!' });
+          } else {
+            toast({ title: 'Upload failed', description: data.error, variant: 'destructive' });
+          }
+          setUploadingVideo(false);
+        }
+      } catch {
+        setUploadingVideo(false);
+        toast({ title: 'Upload failed', variant: 'destructive' });
+      }
+    };
+    reader.readAsDataURL(file);
+    if (videoInputRef.current) videoInputRef.current.value = '';
+  };
+
   const save = async () => {
     if (!name || !price) {
       toast({ title: 'Missing fields', description: 'Name and price are required', variant: 'destructive' });
       return;
     }
+    if (images.length === 0) {
+      toast({ title: 'Add at least one image', description: 'Upload a product photo from your device', variant: 'destructive' });
+      return;
+    }
     setSaving(true);
-    const data: any = { name, price: Number(price), description, category, image_url: imageUrl, video_url: videoUrl || undefined };
+    const additional = images.slice(1); // first image is image_url, rest are additional_images
+    const data: any = {
+      name,
+      price: Number(price),
+      description,
+      category,
+      image_url: images[0],
+      additional_images: additional.length > 0 ? additional : undefined,
+      video_url: videoUrl || undefined,
+    };
     const result = editing
       ? await api.sellerProducts.update(editing.id, data)
       : await api.sellerProducts.create(data);
@@ -110,13 +244,13 @@ export default function SellerProductsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-extrabold">Products</h1>
-        <Button onClick={openCreate} className="brand-gradient text-primary-foreground font-bold">
+        <Button onClick={openCreate} className="bg-black text-white hover:bg-neutral-800 font-bold">
           <Plus className="w-4 h-4 mr-1" /> Add product
         </Button>
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -130,176 +264,203 @@ export default function SellerProductsPage() {
           icon={<Package className="w-8 h-8" />}
           title="No products yet"
           message="Add your first product to start selling on Cellex."
-          action={<Button onClick={openCreate} className="brand-gradient text-primary-foreground">Add product</Button>}
+          action={<Button onClick={openCreate} className="bg-black text-white hover:bg-neutral-800">Add product</Button>}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {filtered.map((p) => (
-            <Card key={p.id} className="overflow-hidden border-slate-100">
-              <div className="aspect-video bg-slate-50 relative">
+            <div key={p.id} className="overflow-hidden bg-white border border-neutral-200 rounded-lg">
+              <div className="aspect-square bg-neutral-50 relative">
                 {p.image_url ? (
-                  <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                  <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-300">
+                  <div className="w-full h-full flex items-center justify-center text-neutral-300">
                     <Store className="w-10 h-10" />
                   </div>
                 )}
-                <div className="absolute top-2 right-2 flex gap-1">
+                <div className="absolute top-1.5 right-1.5 flex gap-1">
                   <button
                     onClick={() => openEdit(p)}
                     className="bg-white/90 backdrop-blur p-1.5 rounded-lg shadow hover:bg-white"
+                    aria-label="Edit"
                   >
-                    <Edit className="w-3.5 h-3.5 text-slate-600" />
+                    <Edit className="w-3.5 h-3.5 text-neutral-700" />
                   </button>
                   <button
                     onClick={() => remove(p.id)}
                     className="bg-white/90 backdrop-blur p-1.5 rounded-lg shadow hover:bg-white"
+                    aria-label="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-red-500" />
                   </button>
                 </div>
               </div>
-              <div className="p-3">
-                <h3 className="font-bold text-sm line-clamp-1">{p.name}</h3>
+              <div className="p-2 sm:p-3">
+                <h3 className="font-semibold text-xs sm:text-sm line-clamp-1">{p.name}</h3>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="font-extrabold text-primary">{formatPrice(p.price)}</span>
-                  <span className="text-xs text-slate-500">{p.units_sold || 0} sold</span>
+                  <span className="font-bold text-sm text-black">{formatPrice(p.price)}</span>
+                  <span className="text-[10px] text-neutral-500">{p.units_sold || 0} sold</span>
                 </div>
                 {p.category && (
-                  <span className="inline-block mt-2 text-[10px] bg-slate-100 px-2 py-0.5 rounded">{p.category}</span>
+                  <span className="inline-block mt-1.5 text-[9px] bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-600">{p.category}</span>
                 )}
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
 
-      {/* Create/Edit dialog */}
+      {/* Create/Edit dialog — Instagram Create style */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit product' : 'Add new product'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-3">
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+            {/* Image upload — Instagram Create style */}
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold">Product photos *</Label>
+              <p className="text-[11px] text-neutral-500 -mt-1">Upload from your device. First photo is the cover. Max 4 photos.</p>
+
+              {images.length > 0 && (
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {images.map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-md overflow-hidden bg-neutral-100 group">
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                      {idx === 0 && (
+                        <span className="absolute top-1 left-1 bg-black text-white text-[8px] font-bold px-1 py-0.5 rounded">COVER</span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black"
+                        aria-label="Remove image"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {images.length < 4 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="w-full border-2 border-dashed border-neutral-300 rounded-xl p-6 flex flex-col items-center justify-center hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                >
+                  {uploadingImage ? (
+                    <>
+                      <Loader2 className="w-7 h-7 text-neutral-400 animate-spin mb-2" />
+                      <span className="text-xs text-neutral-500">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mb-2">
+                        <ImageIcon className="w-6 h-6 text-neutral-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-black">Upload photos</span>
+                      <span className="text-[11px] text-neutral-500 mt-0.5">Tap to choose from your device</span>
+                      <span className="text-[10px] text-neutral-400 mt-0.5">JPG, PNG, WebP · Max 5MB each</span>
+                    </>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
+                  />
+                </button>
+              )}
+            </div>
+
+            {/* Video upload */}
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold">Product video (optional)</Label>
+              <p className="text-[11px] text-neutral-500 -mt-1">Show authenticity. Max 10MB.</p>
+              {videoUrl ? (
+                <div className="flex items-center gap-3">
+                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-black" muted />
+                  <button
+                    type="button"
+                    onClick={() => setVideoUrl('')}
+                    className="text-xs text-red-500 font-medium"
+                  >
+                    Remove video
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => videoInputRef.current?.click()}
+                  disabled={uploadingVideo}
+                  className="w-full border-2 border-dashed border-neutral-300 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                >
+                  {uploadingVideo ? (
+                    <>
+                      <Loader2 className="w-5 h-5 text-neutral-400 animate-spin" />
+                      <span className="text-xs text-neutral-500">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5 text-neutral-600" />
+                      <span className="text-xs text-neutral-700 font-medium">Upload a video</span>
+                    </>
+                  )}
+                  <input
+                    ref={videoInputRef}
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleVideoUpload(e.target.files[0])}
+                  />
+                </button>
+              )}
+            </div>
+
             <div className="space-y-1.5">
-              <Label className="text-xs">Product name *</Label>
+              <Label className="text-xs font-semibold">Product name *</Label>
               <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. iPhone 15 Pro Max" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Price (₦) *</Label>
+                <Label className="text-xs font-semibold">Price (₦) *</Label>
                 <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="50000" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Category</Label>
+                <Label className="text-xs font-semibold">Category</Label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm bg-white"
                 >
                   {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Image URL</Label>
-              <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." />
-              {imageUrl && (
-                <div className="mt-2 w-20 h-20 rounded-lg overflow-hidden bg-slate-50">
-                  <img src={imageUrl} alt="" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Product Video (optional — shows authenticity)</Label>
-              {videoUrl ? (
-                <div className="flex items-center gap-2">
-                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-black" muted />
-                  <button
-                    type="button"
-                    onClick={() => setVideoUrl('')}
-                    className="text-xs text-red-500"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-4 cursor-pointer hover:border-black transition-colors">
-                  {uploadingVideo ? (
-                    <>
-                      <Loader2 className="w-6 h-6 text-slate-400 animate-spin mb-1" />
-                      <span className="text-xs text-slate-400">Uploading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-6 h-6 text-slate-400 mb-1" />
-                      <span className="text-xs text-slate-500">Tap to upload a video</span>
-                      <span className="text-[10px] text-slate-400">Max 10MB</span>
-                    </>
-                  )}
-                  <input
-                    type="file"
-                    accept="video/*"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      if (file.size > 10 * 1024 * 1024) {
-                        toast({ title: 'Video too large', description: 'Max 10MB', variant: 'destructive' });
-                        return;
-                      }
-                      setUploadingVideo(true);
-                      const reader = new FileReader();
-                      reader.onloadend = async () => {
-                        try {
-                          if (!editing) {
-                            setVideoUrl(reader.result as string);
-                            setUploadingVideo(false);
-                          } else {
-                            const resp = await fetch('/api/upload-video', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ productId: editing.id, videoData: reader.result }),
-                            });
-                            const data = await resp.json();
-                            if (data.success) {
-                              setVideoUrl(data.videoUrl);
-                              toast({ title: 'Video uploaded!' });
-                            } else {
-                              toast({ title: 'Upload failed', description: data.error, variant: 'destructive' });
-                            }
-                            setUploadingVideo(false);
-                          }
-                        } catch {
-                          setUploadingVideo(false);
-                          toast({ title: 'Upload failed', variant: 'destructive' });
-                        }
-                      };
-                      reader.readAsDataURL(file);
-                    }}
-                  />
-                </label>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Description</Label>
+              <Label className="text-xs font-semibold">Description</Label>
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Describe your product..." />
             </div>
 
             {/* Group Buy Toggle */}
-            <div className="border-t border-slate-100 pt-3 space-y-3">
+            <div className="border-t border-neutral-100 pt-3 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-slate-500" />
+                  <Users className="w-4 h-4 text-neutral-600" />
                   <div>
                     <Label className="text-xs font-bold">Enable Group Buy</Label>
-                    <p className="text-[10px] text-slate-400">Let buyers team up for bulk discounts</p>
+                    <p className="text-[10px] text-neutral-500">Let buyers team up for bulk discounts</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setGroupBuyEnabled(!groupBuyEnabled)}
-                  className={`relative w-11 h-6 rounded-full transition-colors ${groupBuyEnabled ? 'bg-black' : 'bg-slate-200'}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${groupBuyEnabled ? 'bg-black' : 'bg-neutral-200'}`}
+                  aria-label="Toggle group buy"
                 >
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${groupBuyEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
                 </button>
@@ -318,7 +479,7 @@ export default function SellerProductsPage() {
               )}
             </div>
 
-            <Button onClick={save} disabled={saving} className="w-full brand-gradient text-primary-foreground font-bold">
+            <Button onClick={save} disabled={saving} className="w-full bg-black text-white hover:bg-neutral-800 font-bold">
               {saving ? 'Saving...' : editing ? 'Update product' : 'Create product'}
             </Button>
           </div>

@@ -1,15 +1,10 @@
 'use client';
 
-import { useEffect, useState, useCallback , Suspense } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api, formatPrice, timeAgo, type Product, type Review } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ProductGrid } from '@/components/product-card';
-import { Store, MapPin, Users, Calendar, Star, UserPlus, UserCheck,
-  Package, Video as VideoIcon, LayoutGrid } from 'lucide-react';
+import { Store, MapPin, Star, Grid3x3, Film, Package, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -25,11 +20,9 @@ function SellerProfileContent() {
   const [seller, setSeller] = useState<any>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [stats, setStats] = useState<any>({});
-  const [tab, setTab] = useState<'all' | 'videos' | 'products'>('all');
+  const [tab, setTab] = useState<'products' | 'videos'>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [videos, setVideos] = useState<any[]>([]);
-  const [feed, setFeed] = useState<any[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -53,10 +46,7 @@ function SellerProfileContent() {
     }
     setLoading(false);
 
-    // Load videos + feed + reviews in background
     api.videos.bySeller(sellerId).then((r) => r.success && setVideos(r.videos || []));
-    api.social.sellerFeed(sellerId, 10).then((r) => r.success && setFeed(r.feed || []));
-    api.reviews.bySeller(sellerId).then((r) => r.success && setReviews(r.reviews || []));
   }, [sellerId]);
 
   useEffect(() => { load(); }, [load]);
@@ -77,15 +67,15 @@ function SellerProfileContent() {
 
   if (!seller) {
     return (
-      <div className="text-center py-20 px-4">
-        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
-          <Store className="w-8 h-8 text-slate-400" />
+      <div className="ig-container text-center py-20 px-4">
+        <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
+          <Store className="w-8 h-8 text-neutral-400" />
         </div>
-        <h2 className="text-lg font-bold mb-1">Seller not found</h2>
-        <p className="text-sm text-slate-500 mb-6 max-w-xs mx-auto">
+        <h2 className="text-lg font-semibold mb-1">Seller not found</h2>
+        <p className="text-sm text-neutral-500 mb-6 max-w-xs mx-auto">
           This seller may no longer be active on Cellex. Try browsing other stores.
         </p>
-        <Link href="/categories" className="inline-block bg-black text-white text-sm font-bold px-6 py-3 rounded-full">
+        <Link href="/categories" className="inline-block bg-black text-white text-sm font-semibold px-6 py-3 rounded-lg">
           Browse Products
         </Link>
       </div>
@@ -93,180 +83,173 @@ function SellerProfileContent() {
   }
 
   const name = seller.business_name || seller.farm_name || 'Unnamed store';
+  const totalPosts = products.length + videos.length;
 
   return (
-    <div className="max-w-5xl mx-auto pb-6">
-      {/* Cover + profile header */}
-      <div className="brand-gradient h-32 sm:h-40 relative">
-        <div className="absolute inset-0 bg-black/10" />
+    <div className="ig-container bg-white min-h-screen">
+      {/* Top bar — IG-style with back button */}
+      <div className="ig-topbar">
+        <button
+          onClick={() => router.back()}
+          className="ig-icon-btn"
+          aria-label="Back"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-base font-semibold truncate">{name}</h1>
+          {seller.business_category && (
+            <p className="text-[11px] text-neutral-500 -mt-0.5 truncate">{seller.business_category}</p>
+          )}
+        </div>
       </div>
 
-      <div className="px-3 sm:px-4 lg:px-6 -mt-12 sm:-mt-14 relative">
-        <div className="flex items-end gap-4 mb-3">
-          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-white bg-white shadow-lg overflow-hidden shrink-0">
-            {seller.profile_image ? (
-              <img src={seller.profile_image} alt={name} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full brand-gradient flex items-center justify-center text-white font-extrabold text-4xl">
-                {name.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="flex-1 pb-2">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">{name}</h1>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-1">
-              {seller.business_category && (
-                <span className="flex items-center gap-1"><Package className="w-3 h-3" /> {seller.business_category}</span>
-              )}
-              {seller.business_location && (
-                <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {seller.business_location}</span>
-              )}
-              {seller.created_at && (
-                <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Joined {timeAgo(seller.created_at)}</span>
-              )}
-            </div>
-          </div>
-          <div className="pb-2">
-            <Button
-              onClick={toggleFollow}
-              className={isFollowing ? '' : 'brand-gradient text-primary-foreground'}
-              variant={isFollowing ? 'outline' : 'default'}
-            >
-              {isFollowing ? <><UserCheck className="w-4 h-4 mr-1" /> Following</> : <><UserPlus className="w-4 h-4 mr-1" /> Follow</>}
-            </Button>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <Card className="p-3 text-center border-slate-100">
-            <div className="text-lg font-extrabold text-primary">{stats.followers || 0}</div>
-            <div className="text-[10px] text-slate-500 font-semibold">FOLLOWERS</div>
-          </Card>
-          <Card className="p-3 text-center border-slate-100">
-            <div className="text-lg font-extrabold text-primary">{products.length}</div>
-            <div className="text-[10px] text-slate-500 font-semibold">PRODUCTS</div>
-          </Card>
-          <Card className="p-3 text-center border-slate-100">
-            <div className="text-lg font-extrabold text-primary flex items-center justify-center gap-1">
-              {(stats.rating || 0).toFixed(1)} <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-            </div>
-            <div className="text-[10px] text-slate-500 font-semibold">RATING</div>
-          </Card>
-        </div>
-
-        {seller.business_description && (
-          <Card className="p-4 border-slate-100 mb-4">
-            <p className="text-sm text-slate-700 leading-relaxed">{seller.business_description}</p>
-          </Card>
-        )}
-
-        {/* Tabs — only 3: All | Videos | Products */}
-        <div className="flex gap-1 border-b border-slate-200 mb-4 overflow-x-auto no-scrollbar">
-          {[
-            { key: 'all', label: `All (${products.length + videos.length})`, icon: LayoutGrid },
-            { key: 'videos', label: `Videos (${videos.length})`, icon: VideoIcon },
-            { key: 'products', label: `Products (${products.length})`, icon: Package },
-          ].map((t) => {
-            const Icon = t.icon;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key as any)}
-                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
-                  tab === t.key
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab content — All: videos grid + products grid */}
-        {tab === 'all' && (
-          <div className="space-y-6">
-            {videos.length > 0 && (
-              <div>
-                <h3 className="text-sm font-bold text-slate-700 mb-2">Videos</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                  {videos.map((v) => (
-                    <Link key={v.id} href="/videos" className="block group">
-                      <Card className="overflow-hidden border-slate-100 hover:shadow-md transition-shadow">
-                        <div className="aspect-[9/16] bg-slate-900 relative">
-                          {v.video_url ? (
-                            <video src={v.video_url} muted className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <VideoIcon className="w-8 h-8 text-white/50" />
-                            </div>
-                          )}
-                          <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-                            ▶ {v.views_count || 0}
-                          </div>
-                        </div>
-                        <div className="p-2">
-                          <div className="text-xs font-medium line-clamp-2 h-8 leading-tight">{v.caption || 'Video'}</div>
-                          <div className="text-[10px] text-slate-400 mt-0.5">❤ {v.likes_count || 0}</div>
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div>
-              {videos.length > 0 && <h3 className="text-sm font-bold text-slate-700 mb-2">Products</h3>}
-              <ProductGrid products={products} loading={false} />
-            </div>
-          </div>
-        )}
-
-        {/* Tab content — Videos only */}
-        {tab === 'videos' && (
-          videos.length === 0 ? (
-            <Card className="p-8 text-center border-slate-100">
-              <VideoIcon className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-              <p className="text-sm text-slate-500">No videos yet</p>
-            </Card>
+      {/* Profile header — IG-style: avatar + stats row */}
+      <div className="ig-profile-header">
+        <div className="shrink-0">
+          {seller.profile_image ? (
+            <img src={seller.profile_image} alt={name} className="ig-avatar-lg" />
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {videos.map((v) => (
-                <Link key={v.id} href="/videos" className="block group">
-                  <Card className="overflow-hidden border-slate-100 hover:shadow-md transition-shadow">
-                    <div className="aspect-[9/16] bg-slate-900 relative">
-                      {v.video_url ? (
-                        <video src={v.video_url} muted className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <VideoIcon className="w-8 h-8 text-white/50" />
-                        </div>
-                      )}
-                      <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-                        ▶ {v.views_count || 0}
-                      </div>
-                    </div>
-                    <div className="p-2">
-                      <div className="text-xs font-medium line-clamp-2 h-8 leading-tight">{v.caption || 'Video'}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">❤ {v.likes_count || 0}</div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+            <div className="ig-avatar-lg bg-neutral-800 flex items-center justify-center text-white font-bold text-2xl">
+              {name.charAt(0).toUpperCase()}
             </div>
-          )
-        )}
-
-        {/* Tab content — Products only */}
-        {tab === 'products' && (
-          <ProductGrid products={products} loading={false} />
-        )}
+          )}
+        </div>
+        <div className="ig-profile-stats">
+          <div className="ig-profile-stat">
+            <span className="num">{totalPosts}</span>
+            <span className="label">posts</span>
+          </div>
+          <div className="ig-profile-stat">
+            <span className="num">{formatCount(stats.followers || 0)}</span>
+            <span className="label">followers</span>
+          </div>
+          <div className="ig-profile-stat">
+            <span className="num">{products.length}</span>
+            <span className="label">products</span>
+          </div>
+        </div>
       </div>
+
+      {/* Bio — IG-style */}
+      <div className="px-4 pb-3">
+        <div className="text-sm font-semibold text-black">{name}</div>
+        {seller.business_description && (
+          <p className="text-sm text-neutral-700 leading-snug mt-1 whitespace-pre-line">{seller.business_description}</p>
+        )}
+        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-neutral-500">
+          {seller.business_location && (
+            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {seller.business_location}</span>
+          )}
+          {seller.created_at && (
+            <span>Joined {timeAgo(seller.created_at)}</span>
+          )}
+          {(stats.rating || 0) > 0 && (
+            <span className="flex items-center gap-1">
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+              {(stats.rating || 0).toFixed(1)}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Action buttons — IG-style: Follow + Message */}
+      <div className="flex gap-2 px-4 pb-3">
+        <button
+          onClick={toggleFollow}
+          className={`flex-1 ${isFollowing ? 'ig-btn-outline' : 'ig-btn-primary'} ${isFollowing ? 'following' : ''}`}
+        >
+          {isFollowing ? 'Following' : 'Follow'}
+        </button>
+        <Link
+          href={`/messenger?seller=${sellerId}`}
+          className="flex-1 ig-btn-outline text-center inline-flex items-center justify-center"
+        >
+          Message
+        </Link>
+      </div>
+
+      {/* Tab bar — IG-style: 2 tabs (Products / Videos) */}
+      <div className="ig-tab-bar">
+        <button
+          onClick={() => setTab('products')}
+          className={`ig-tab ${tab === 'products' ? 'active' : ''}`}
+          aria-label="Products tab"
+        >
+          <Grid3x3 className="w-5 h-5" strokeWidth={tab === 'products' ? 2.5 : 1.5} />
+        </button>
+        <button
+          onClick={() => setTab('videos')}
+          className={`ig-tab ${tab === 'videos' ? 'active' : ''}`}
+          aria-label="Videos tab"
+        >
+          <Film className="w-5 h-5" strokeWidth={tab === 'videos' ? 2.5 : 1.5} />
+        </button>
+      </div>
+
+      {/* Tab content */}
+      {tab === 'products' && (
+        products.length === 0 ? (
+          <div className="text-center py-16 px-4">
+            <Package className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
+            <p className="text-sm font-medium text-neutral-700">No products yet</p>
+            <p className="text-xs text-neutral-400 mt-1">When this seller adds products, they'll appear here.</p>
+          </div>
+        ) : (
+          <div className="ig-post-grid">
+            {products.map((p) => (
+              <Link key={p.id} href={`/product?id=${p.id}`} className="block relative group">
+                <img
+                  src={p.image_url || ''}
+                  alt={p.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                {/* Hover overlay with price (desktop only) */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="text-white text-sm font-bold">{formatPrice(p.price)}</div>
+                  <div className="text-white/80 text-[10px] mt-0.5">{p.units_sold || 0} sold</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )
+      )}
+
+      {tab === 'videos' && (
+        videos.length === 0 ? (
+          <div className="text-center py-16 px-4">
+            <Film className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
+            <p className="text-sm font-medium text-neutral-700">No videos yet</p>
+            <p className="text-xs text-neutral-400 mt-1">When this seller posts videos, they'll appear here.</p>
+          </div>
+        ) : (
+          <div className="ig-post-grid">
+            {videos.map((v) => (
+              <Link key={v.id} href="/videos" className="block relative group bg-black">
+                {v.video_url ? (
+                  <video src={v.video_url} muted className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Film className="w-6 h-6 text-white/30" />
+                  </div>
+                )}
+                <div className="absolute top-2 right-2 flex items-center gap-1">
+                  <span className="text-white text-[10px] font-semibold">{formatCount(v.views_count || 0)}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )
+      )}
     </div>
   );
+}
+
+function formatCount(n: number): string {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return String(n);
 }
 
 export default function SellerProfilePage() {
@@ -276,4 +259,3 @@ export default function SellerProfilePage() {
     </Suspense>
   );
 }
-

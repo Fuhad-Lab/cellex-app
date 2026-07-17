@@ -44,8 +44,13 @@
 }
 
 /* ============================================================
-   Cellex Design System — Pure White + Black
-   No cyan. Minimal. Clean. Apple-like.
+   Cellex Design System — Instagram-inspired
+   Social commerce: IG's clean white UI + commerce CTAs.
+   - System font stack (matches IG exactly)
+   - Pure white bg / pure black text
+   - #f5f5f5 hover, #dbdbdb borders, #8e8e8e secondary text
+   - Square media in feed (1:1, full-bleed within card)
+   - Compact action bar (24px icons, no labels)
    ============================================================ */
 
 :root {
@@ -56,18 +61,18 @@
   --popover: #ffffff;
   --popover-foreground: #000000;
   --primary: #000000;
-  --primary-hover: #1a1a1a;
+  --primary-hover: #262626;
   --primary-foreground: #ffffff;
   --secondary: #f5f5f5;
   --secondary-foreground: #000000;
   --muted: #f5f5f5;
-  --muted-foreground: #666666;
-  --accent: #f5f5f5;
+  --muted-foreground: #8e8e8e;
+  --accent: #efefef;
   --accent-foreground: #000000;
-  --destructive: #ef4444;
+  --destructive: #ed4956; /* IG red */
   --destructive-foreground: #ffffff;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
+  --border: #dbdbdb;
+  --input: #dbdbdb;
   --ring: #000000;
   --chart-1: #000000;
   --chart-2: #333333;
@@ -83,6 +88,9 @@
   --sidebar-accent-foreground: #e2e8f0;
   --sidebar-border: #1a1a1a;
   --sidebar-ring: #ffffff;
+
+  /* IG-style font stack */
+  --font-ig: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .dark {
@@ -121,6 +129,7 @@ body {
   color: var(--foreground);
   font-size: 16px;
   line-height: 1.5;
+  font-family: var(--font-ig);
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
@@ -413,5 +422,296 @@ nav.fixed.bottom-0 {
 html, body {
   overscroll-behavior-x: none;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   INSTAGRAM-STYLE UTILITIES (applied across the app)
+   ============================================================ */
+
+/* IG-style container — centers content, max 470px on mobile (matches IG feed width) */
+.ig-container {
+  max-width: 470px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* IG-style top bar — sticky, white, 1px bottom border, compact height */
+.ig-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #ffffff;
+  border-bottom: 1px solid #dbdbdb;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+/* IG logo — bold serif-style wordmark */
+.ig-logo {
+  font-family: var(--font-ig);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  color: #000000;
+}
+
+/* IG-style stories ring — gradient border around avatar */
+.ig-story-ring {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  padding: 2px;
+  border-radius: 50%;
+}
+
+/* IG-style avatar — circular, object-cover */
+.ig-avatar-sm { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.ig-avatar-md { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+.ig-avatar-lg { width: 77px; height: 77px; border-radius: 50%; object-fit: cover; }
+
+/* IG-style action bar — 24px icons, no labels, tight spacing */
+.ig-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+}
+.ig-action-bar button {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #000000;
+}
+.ig-action-bar button:hover {
+  color: #262626;
+}
+
+/* IG-style icon button — used in top bar */
+.ig-icon-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #000000;
+  border-radius: 50%;
+  transition: background 0.15s ease;
+}
+.ig-icon-btn:hover {
+  background: #f5f5f5;
+}
+
+/* IG-style feed card — no card shadow, just bottom divider */
+.ig-feed-card {
+  background: #ffffff;
+  border-bottom: 1px solid #efefef;
+}
+
+/* IG-style media — square, full-bleed */
+.ig-media {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #fafafa;
+  position: relative;
+  overflow: hidden;
+}
+.ig-media img,
+.ig-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* IG-style likes count — bold, no label */
+.ig-likes {
+  font-weight: 600;
+  font-size: 14px;
+  color: #000000;
+  padding: 0 12px 4px;
+}
+
+/* IG-style caption — bold username + text */
+.ig-caption {
+  font-size: 14px;
+  color: #000000;
+  padding: 0 12px 8px;
+  line-height: 1.4;
+}
+.ig-caption .username {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* IG-style timestamp — uppercase, small, gray */
+.ig-timestamp {
+  font-size: 10px;
+  color: #8e8e8e;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 0 12px 12px;
+}
+
+/* IG-style "View all comments" link */
+.ig-comments-link {
+  font-size: 14px;
+  color: #8e8e8e;
+  padding: 0 12px 4px;
+  display: inline-block;
+  cursor: pointer;
+}
+.ig-comments-link:hover {
+  color: #262626;
+}
+
+/* IG-style bottom nav (mobile) — 5 icons, no labels, white bg + top border */
+.ig-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: #ffffff;
+  border-top: 1px solid #dbdbdb;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* IG-style profile header — 77px avatar + stats row */
+.ig-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px;
+}
+.ig-profile-stats {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+.ig-profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.ig-profile-stat .num {
+  font-weight: 600;
+  font-size: 16px;
+  color: #000000;
+}
+.ig-profile-stat .label {
+  font-size: 12px;
+  color: #8e8e8e;
+}
+
+/* IG-style post grid — 3 columns, no gaps */
+.ig-post-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #dbdbdb;
+  border-top: 1px solid #dbdbdb;
+}
+.ig-post-grid > * {
+  aspect-ratio: 1 / 1;
+  background: #fafafa;
+  overflow: hidden;
+}
+.ig-post-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* IG-style tab bar under profile header */
+.ig-tab-bar {
+  display: flex;
+  border-top: 1px solid #dbdbdb;
+  height: 44px;
+}
+.ig-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #8e8e8e;
+  border-top: 1px solid transparent;
+  margin-top: -1px;
+}
+.ig-tab.active {
+  color: #000000;
+  border-top-color: #000000;
+}
+
+/* IG-style button — outlined (Edit Profile style) */
+.ig-btn-outline {
+  background: #ffffff;
+  border: 1px solid #dbdbdb;
+  color: #262626;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ig-btn-outline:hover {
+  background: #f5f5f5;
+}
+
+/* IG-style primary button — solid black */
+.ig-btn-primary {
+  background: #0095f6; /* IG blue, used for Follow CTA */
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ig-btn-primary:hover {
+  background: #1877f2;
+}
+.ig-btn-primary.following {
+  background: #efefef;
+  color: #262626;
+}
+.ig-btn-primary.following:hover {
+  background: #dbdbdb;
+}
+
+/* IG-style search input — gray pill, no border */
+.ig-search-input {
+  background: #efefef;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #262626;
+  width: 100%;
+}
+.ig-search-input:focus {
+  background: #e3e3e3;
+  outline: none;
+}
+.ig-search-input::placeholder {
+  color: #8e8e8e;
+}
+
+/* Hide elements at IG breakpoints (desktop sidebar shows at >=768px) */
+@media (min-width: 768px) {
+  .ig-bottom-nav { display: none; }
 }
 

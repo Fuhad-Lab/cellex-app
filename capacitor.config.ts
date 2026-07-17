@@ -18,7 +18,6 @@ const config: CapacitorConfig = {
     },
     CapacitorUpdater: {
       autoUpdate: true,
-      channel: 'production',
       resetWhenUpdate: true,
     },
   },
