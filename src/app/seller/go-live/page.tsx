@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { api, formatPrice } from '@/lib/api';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Radio, Eye, Play, Square } from 'lucide-react';
+import { Radio, Eye, Square } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function GoLivePage() {
@@ -71,22 +69,24 @@ export default function GoLivePage() {
     }
   };
 
+  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+
   return (
     <div className="space-y-4 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-extrabold">Go Live</h1>
-        <p className="text-sm text-slate-500">Start a live shopping session</p>
+        <h1 className="text-2xl font-bold">Go Live</h1>
+        <p className="text-sm text-neutral-500">Start a live shopping session</p>
       </div>
 
       {activeSession ? (
-        <Card className="p-4 border-red-200 bg-red-50">
+        <div className="border border-neutral-200 rounded-md p-4 bg-neutral-50">
           <div className="flex items-center gap-2 mb-3">
-            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="bg-[#ed4956] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
             </span>
-            <span className="text-xs font-bold text-red-700">{activeSession.title}</span>
+            <span className="text-xs font-semibold text-black">{activeSession.title}</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-slate-700 mb-3">
+          <div className="flex items-center gap-4 text-sm text-neutral-700 mb-3">
             <span className="flex items-center gap-1">
               <Eye className="w-4 h-4" /> {activeSession.viewer_count || 0} viewers
             </span>
@@ -94,31 +94,37 @@ export default function GoLivePage() {
           <a
             href={`/live-watch?id=${activeSession.id}`}
             target="_blank"
-            className="text-xs text-primary font-semibold block mb-3"
+            className="text-xs text-black font-medium block mb-3 underline"
           >
-            View public watch page →
+            View public watch page
           </a>
-          <Button onClick={endLive} variant="destructive" className="w-full">
-            <Square className="w-4 h-4 mr-1" /> End session
-          </Button>
-        </Card>
+          <button onClick={endLive} className="w-full bg-[#ed4956] text-white font-semibold rounded-md py-2.5 hover:opacity-90">
+            <Square className="w-4 h-4 inline mr-1" /> End session
+          </button>
+        </div>
       ) : (
-        <Card className="p-4 border-slate-100 space-y-3">
+        <div className="border border-neutral-200 rounded-md p-4 space-y-3 bg-white">
+          {/* Camera preview placeholder */}
+          <div className="aspect-video bg-black rounded-md flex items-center justify-center text-white relative">
+            <Radio className="w-12 h-12" />
+            <span className="absolute bottom-2 left-2 text-xs opacity-70">Camera preview</span>
+          </div>
+
           <div className="space-y-1.5">
-            <Label className="text-xs">Session title *</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Friday Tech Deals — Up to 30% off!" />
+            <Label className="text-xs font-semibold text-neutral-700">Session title *</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Friday Tech Deals — Up to 30% off!" className={inputClass} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Stream URL (optional)</Label>
-            <Input value={streamUrl} onChange={(e) => setStreamUrl(e.target.value)} placeholder="YouTube/HLS link — leave blank for text-only" />
-            <p className="text-[10px] text-slate-400">Supports YouTube links or HLS streams. Without a URL, viewers can still chat and buy.</p>
+            <Label className="text-xs font-semibold text-neutral-700">Stream URL (optional)</Label>
+            <Input value={streamUrl} onChange={(e) => setStreamUrl(e.target.value)} placeholder="YouTube/HLS link — leave blank for text-only" className={inputClass} />
+            <p className="text-[10px] text-neutral-400">Supports YouTube links or HLS streams. Without a URL, viewers can still chat and buy.</p>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Featured product</Label>
+            <Label className="text-xs font-semibold text-neutral-700">Featured product</Label>
             <select
               value={featuredProductId}
               onChange={(e) => setFeaturedProductId(e.target.value ? Number(e.target.value) : '')}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+              className={inputClass}
             >
               <option value="">No featured product</option>
               {products.map((p) => (
@@ -128,27 +134,27 @@ export default function GoLivePage() {
               ))}
             </select>
           </div>
-          <Button
+          <button
             onClick={startLive}
             disabled={starting}
-            className="w-full brand-gradient text-primary-foreground font-bold"
+            className="w-full bg-[#ed4956] text-white font-semibold rounded-md py-3 hover:opacity-90 disabled:opacity-50"
           >
-            <Radio className="w-4 h-4 mr-1" />
+            <Radio className="w-4 h-4 inline mr-1" />
             {starting ? 'Starting...' : 'Go Live'}
-          </Button>
-        </Card>
+          </button>
+        </div>
       )}
 
-      <Card className="p-4 border-slate-100 bg-slate-50">
-        <h3 className="font-bold text-sm mb-2">Tips for a great live session</h3>
-        <ul className="text-xs text-slate-600 space-y-1 list-disc list-inside">
+      <div className="border border-neutral-200 rounded-md p-4 bg-neutral-50">
+        <h3 className="font-semibold text-sm mb-2">Tips for a great live session</h3>
+        <ul className="text-xs text-neutral-600 space-y-1 list-disc list-inside">
           <li>Test your stream URL 5 minutes before going live</li>
-          <li>Have a clear opening — introduce yourself and what you'll showcase</li>
+          <li>Have a clear opening — introduce yourself and what you&apos;ll showcase</li>
           <li>Engage with chat — answer questions quickly</li>
           <li>Feature a product with a clear call-to-action</li>
           <li>Typical session length: 15-45 minutes</li>
         </ul>
-      </Card>
+      </div>
     </div>
   );
 }

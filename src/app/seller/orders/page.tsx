@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { api, formatPrice, timeAgo } from '@/lib/api';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ShoppingBag, Package } from 'lucide-react';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -23,7 +21,7 @@ export default function SellerOrdersPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-extrabold">Orders</h1>
+      <h1 className="text-2xl font-bold">Orders</h1>
 
       {orders.length === 0 ? (
         <EmptyState
@@ -34,27 +32,27 @@ export default function SellerOrdersPage() {
       ) : (
         <div className="space-y-3">
           {orders.map((o) => (
-            <Card key={o.id} className="p-4 border-slate-100">
+            <div key={o.id} className="border border-neutral-200 rounded-md p-4 bg-white">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm">#{o.id?.slice(0, 8)}</span>
-                  <Badge variant="secondary" className="text-[10px]">{o.status}</Badge>
+                  <span className="font-semibold text-sm">#{o.id?.slice(0, 8)}</span>
+                  <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded-full">{o.status}</span>
                 </div>
-                <span className="text-xs text-slate-500">{timeAgo(o.created_at)}</span>
+                <span className="text-xs text-neutral-500">{timeAgo(o.created_at)}</span>
               </div>
               <div className="space-y-1">
                 {o.items?.map((item: any, i: number) => (
                   <div key={i} className="flex items-center justify-between text-sm">
-                    <span className="text-slate-700">{item.product_name} × {item.quantity}</span>
+                    <span className="text-neutral-700">{item.product_name} × {item.quantity}</span>
                     <span className="font-semibold">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
-                <span className="text-xs text-slate-500">Total</span>
-                <span className="font-extrabold text-primary">{formatPrice(o.total)}</span>
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100">
+                <span className="text-xs text-neutral-500">Total</span>
+                <span className="font-bold text-black">{formatPrice(o.total)}</span>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}

@@ -3,9 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api, formatPrice, type CartItem } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { ShoppingCart, Trash2, Minus, Plus, Store, ArrowRight } from 'lucide-react';
+import { ShoppingCart, Trash2, Minus, Plus, Store, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -79,136 +77,142 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <EmptyState
-          icon={<ShoppingCart className="w-8 h-8" />}
-          title="Your cart is empty"
-          message="Browse our marketplace and find great deals from local Nigerian sellers."
-          action={
-            <Link href="/categories">
-              <Button className="brand-gradient text-primary-foreground font-bold">Start shopping</Button>
-            </Link>
-          }
-        />
+      <div className="ig-container bg-white min-h-screen">
+        <div className="ig-topbar">
+          <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-base font-semibold flex-1 ml-2">Cart</h1>
+        </div>
+        <div className="px-4 py-10">
+          <EmptyState
+            icon={<ShoppingCart className="w-8 h-8" />}
+            title="Your cart is empty"
+            message="Browse our marketplace and find great deals from local Nigerian sellers."
+            action={
+              <Link href="/categories">
+                <button className="bg-black text-white font-semibold rounded-md px-4 py-2.5 hover:bg-neutral-800">
+                  Start shopping
+                </button>
+              </Link>
+            }
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 py-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold flex items-center gap-2">
-          <ShoppingCart className="w-5 h-5 text-primary" />
-          Cart ({items.length})
-        </h1>
-        <button onClick={clearCart} className="text-xs text-red-500 hover:underline">Clear all</button>
+    <div className="ig-container bg-white min-h-screen pb-32">
+      {/* Top bar */}
+      <div className="ig-topbar">
+        <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-base font-semibold flex-1 ml-2">Cart ({items.length})</h1>
+        <button
+          onClick={clearCart}
+          className="text-xs font-semibold text-[#ed4956] hover:underline px-3"
+          aria-label="Clear cart"
+        >
+          Clear all
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Items */}
-        <div className="lg:col-span-2 space-y-3">
-          {items.map((item) => (
-            <Card key={item.id} className="p-3 border-slate-100">
-              <div className="flex gap-3">
-                <Link href={`/product?id=${item.product_id}`} className="shrink-0">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-50">
-                    {item.products?.image_url ? (
-                      <img src={item.products.image_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">
-                        <Store className="w-8 h-8" />
-                      </div>
-                    )}
+      {/* Items list — single column on mobile */}
+      <div className="divide-y divide-neutral-100">
+        {items.map((item) => (
+          <div key={item.id} className="p-4 flex gap-3">
+            <Link href={`/product?id=${item.product_id}`} className="shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-md overflow-hidden bg-neutral-50">
+                {item.products?.image_url ? (
+                  <img src={item.products.image_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                    <Store className="w-8 h-8" />
                   </div>
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <Link href={`/product?id=${item.product_id}`}>
-                    <h3 className="font-semibold text-sm text-slate-900 line-clamp-2 hover:text-primary">
-                      {item.products?.name || 'Product'}
-                    </h3>
-                  </Link>
-                  <div className="text-xs text-slate-400 mt-0.5">{item.products?.category}</div>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="text-primary font-bold">{formatPrice(item.products?.price || 0)}</div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center border border-slate-200 rounded-lg">
-                        <button
-                          onClick={() => updateQty(item.id, -1)}
-                          disabled={updating === item.id}
-                          className="px-2 py-1 hover:bg-slate-50 disabled:opacity-50"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="px-3 py-1 text-xs font-bold">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQty(item.id, 1)}
-                          disabled={updating === item.id}
-                          className="px-2 py-1 hover:bg-slate-50 disabled:opacity-50"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        disabled={updating === item.id}
-                        className="text-red-400 hover:text-red-600"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                )}
+              </div>
+            </Link>
+            <div className="flex-1 min-w-0">
+              <Link href={`/product?id=${item.product_id}`}>
+                <h3 className="font-semibold text-sm text-black line-clamp-2 hover:opacity-70">
+                  {item.products?.name || 'Product'}
+                </h3>
+              </Link>
+              <div className="text-xs text-neutral-500 mt-0.5">{item.products?.category}</div>
+              <div className="flex items-center justify-between mt-2">
+                <div className="text-black font-bold">{formatPrice(item.products?.price || 0)}</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center border border-neutral-200 rounded-md">
+                    <button
+                      onClick={() => updateQty(item.id, -1)}
+                      disabled={updating === item.id}
+                      className="px-2 py-1 hover:bg-neutral-50 disabled:opacity-50"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </button>
+                    <span className="px-3 py-1 text-xs font-bold">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQty(item.id, 1)}
+                      disabled={updating === item.id}
+                      className="px-2 py-1 hover:bg-neutral-50 disabled:opacity-50"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
                   </div>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    disabled={updating === item.id}
+                    className="text-neutral-400 hover:text-[#ed4956] p-1"
+                    aria-label="Remove item"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-              <div className="mt-2 pt-2 border-t border-slate-100 text-right text-xs text-slate-500">
-                Subtotal: <span className="font-bold text-slate-700">{formatPrice((item.products?.price || 0) * item.quantity)}</span>
-              </div>
-            </Card>
-          ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
-          <Link href="/categories" className="block">
-            <Button variant="outline" className="w-full border-dashed">
-              + Continue shopping
-            </Button>
-          </Link>
+      <div className="px-4 py-3">
+        <Link
+          href="/categories"
+          className="block text-center text-sm font-semibold text-black border border-neutral-300 rounded-md py-2.5 hover:bg-neutral-50"
+        >
+          Continue shopping
+        </Link>
+      </div>
+
+      {/* Sticky bottom bar with checkout */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[470px] bg-white border-t border-neutral-200 p-4 z-40">
+        <div className="space-y-1 text-sm mb-3">
+          <div className="flex justify-between">
+            <span className="text-neutral-600">Subtotal</span>
+            <span className="font-semibold">{formatPrice(subtotal)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-neutral-600">Shipping</span>
+            <span className="font-semibold">
+              {shipping === 0 ? <span className="text-green-600">FREE</span> : formatPrice(shipping)}
+            </span>
+          </div>
+          <div className="flex justify-between pt-1 border-t border-neutral-100">
+            <span className="font-bold">Total</span>
+            <span className="font-extrabold text-black text-lg">{formatPrice(total)}</span>
+          </div>
         </div>
-
-        {/* Summary */}
-        <div className="lg:col-span-1">
-          <Card className="p-4 border-slate-100 sticky top-20">
-            <h3 className="font-bold text-sm mb-3">Order Summary</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">Subtotal</span>
-                <span className="font-semibold">{formatPrice(subtotal)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">Shipping</span>
-                <span className="font-semibold">
-                  {shipping === 0 ? <span className="text-green-600">FREE</span> : formatPrice(shipping)}
-                </span>
-              </div>
-              {shipping === 0 && (
-                <div className="text-[10px] text-green-600 bg-green-50 rounded p-1.5">
-                  🎉 You qualify for free shipping!
-                </div>
-              )}
-              <div className="border-t border-slate-200 pt-2 flex justify-between">
-                <span className="font-bold">Total</span>
-                <span className="font-extrabold text-primary text-lg">{formatPrice(total)}</span>
-              </div>
-            </div>
-
-            <Button
-              onClick={() => router.push('/checkout')}
-              className="w-full mt-4 brand-gradient text-primary-foreground font-bold"
-            >
-              Proceed to checkout <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-
-            <div className="mt-3 text-center text-[10px] text-slate-400">
-              Secure payment via PalmPay bank transfer
-            </div>
-          </Card>
+        <button
+          onClick={() => router.push('/checkout')}
+          className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800"
+        >
+          Proceed to checkout
+        </button>
+        <div className="mt-2 text-center text-[10px] text-neutral-400">
+          Secure payment via PalmPay bank transfer
         </div>
       </div>
     </div>

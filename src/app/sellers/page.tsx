@@ -1,18 +1,16 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { api, type Product } from '@/lib/api';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Store, Search, Users, Star, ChevronLeft } from 'lucide-react';
+import { Store, Search, Users, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
 const CATEGORIES = ['All', 'Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys', 'General'];
 
 export default function SellersPage() {
+  const router = useRouter();
   const [sellers, setSellers] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,38 +56,39 @@ export default function SellersPage() {
   if (loading) { return <PageSkeleton variant="minimal" />; }
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 py-4">
-      <Link href="/" className="inline-flex items-center text-xs text-slate-500 hover:text-primary mb-3">
-        <ChevronLeft className="w-4 h-4" /> Back to home
-      </Link>
-
-      <div className="flex items-center gap-2 mb-4">
-        <Store className="w-6 h-6 text-primary" />
-        <h1 className="text-xl font-bold">All Sellers</h1>
-        <Badge variant="secondary" className="ml-1">{filteredSellers.length}</Badge>
+    <div className="ig-container bg-white min-h-screen pb-24">
+      {/* Top bar */}
+      <div className="ig-topbar">
+        <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-base font-semibold flex-1 ml-2">Sellers</h1>
+        <span className="text-xs text-neutral-500">{filteredSellers.length}</span>
       </div>
 
       {/* Filters */}
-      <div className="space-y-3 mb-4">
+      <div className="px-4 py-3 space-y-3 border-b border-neutral-100">
+        {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <Input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search sellers..."
-            className="pl-9"
+            className="w-full bg-neutral-100 rounded-md pl-9 pr-3 py-2.5 text-sm outline-none focus:bg-white focus:ring-1 focus:ring-neutral-300"
           />
         </div>
 
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        {/* Category pills */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar">
           {CATEGORIES.map((c) => (
             <button
               key={c}
               onClick={() => setCategory(c)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                 category === c
-                  ? 'brand-gradient text-primary-foreground'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-black text-white'
+                  : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
               }`}
             >
               {c}
@@ -97,8 +96,9 @@ export default function SellersPage() {
           ))}
         </div>
 
+        {/* Sort */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-500">Sort by:</span>
+          <span className="text-neutral-500">Sort by:</span>
           {[
             { key: 'followers' as const, label: 'Followers' },
             { key: 'products' as const, label: 'Most products' },
@@ -107,8 +107,8 @@ export default function SellersPage() {
             <button
               key={s.key}
               onClick={() => setSort(s.key)}
-              className={`px-3 py-1 rounded-full font-bold transition-colors ${
-                sort === s.key ? 'bg-primary/10 text-primary' : 'bg-slate-50 text-slate-500'
+              className={`px-3 py-1 rounded-full font-semibold transition-colors ${
+                sort === s.key ? 'bg-neutral-100 text-black' : 'bg-neutral-50 text-neutral-500'
               }`}
             >
               {s.label}
@@ -117,64 +117,42 @@ export default function SellersPage() {
         </div>
       </div>
 
-      {/* Sellers grid */}
+      {/* Sellers list */}
       {filteredSellers.length === 0 ? (
-        <EmptyState
-          icon={<Store className="w-8 h-8" />}
-          title="No sellers found"
-          message="Try adjusting your search or filters."
-        />
+        <div className="px-4 py-10">
+          <EmptyState
+            icon={<Store className="w-8 h-8" />}
+            title="No sellers found"
+            message="Try adjusting your search or filters."
+          />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="divide-y divide-neutral-100">
           {filteredSellers.map((seller) => {
             const sellerProducts = allProducts
               .filter(p => p.seller_id === seller.id)
-              .slice(0, 4);
+              .slice(0, 3);
             const productCount = allProducts.filter(p => p.seller_id === seller.id).length;
             const name = seller.business_name || seller.farm_name || 'Unnamed store';
             const initial = name.charAt(0).toUpperCase();
 
             return (
-              <Card key={seller.id} className="p-3 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                {/* 2x2 product grid */}
-                <div className="grid grid-cols-2 gap-1.5 mb-3">
-                  {sellerProducts.length > 0 ? (
-                    sellerProducts.map((p) => (
-                      <Link key={p.id} href={`/product?id=${p.id}`}>
-                        <div className="aspect-square rounded-lg overflow-hidden bg-slate-50">
-                          {p.image_url ? (
-                            <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                              <Store className="w-8 h-8" />
-                            </div>
-                          )}
-                        </div>
-                      </Link>
-                    ))
-                  ) : (
-                    Array.from({ length: 4 }).map((_, i) => (
-                      <div key={i} className="aspect-square rounded-lg bg-slate-50" />
-                    ))
-                  )}
-                </div>
-
-                {/* Seller info + Shop button */}
+              <Link
+                key={seller.id}
+                href={`/seller-profile?id=${seller.id}`}
+                className="block p-4 hover:bg-neutral-50 transition-colors"
+              >
                 <div className="flex items-center gap-3">
-                  <Link href={`/seller-profile?id=${seller.id}`} className="shrink-0">
-                    {seller.profile_image ? (
-                      <img src={seller.profile_image} className="w-10 h-10 rounded-full object-cover" alt="" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-sm">
-                        {initial}
-                      </div>
-                    )}
-                  </Link>
+                  {seller.profile_image ? (
+                    <img src={seller.profile_image} className="w-12 h-12 rounded-full object-cover shrink-0" alt="" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center text-white font-bold text-sm shrink-0">
+                      {initial}
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
-                    <Link href={`/seller-profile?id=${seller.id}`} className="font-bold text-sm text-slate-900 hover:text-primary truncate block">
-                      {name}
-                    </Link>
-                    <div className="text-xs text-slate-500 flex items-center gap-2 flex-wrap">
+                    <div className="font-semibold text-sm text-black truncate">{name}</div>
+                    <div className="text-xs text-neutral-500 flex items-center gap-2 flex-wrap">
                       <span className="flex items-center gap-0.5">
                         <Users className="w-3 h-3" /> {seller.followers || 0}
                       </span>
@@ -188,11 +166,22 @@ export default function SellersPage() {
                       )}
                     </div>
                   </div>
-                  <Link href={`/seller-profile?id=${seller.id}`}>
-                    <Button size="sm" variant="default">Shop</Button>
-                  </Link>
+                  <span className="text-xs font-semibold text-black bg-neutral-100 px-3 py-1.5 rounded-md">
+                    Shop
+                  </span>
                 </div>
-              </Card>
+                {sellerProducts.length > 0 && (
+                  <div className="grid grid-cols-3 gap-1 mt-3">
+                    {sellerProducts.map((p) => (
+                      <div key={p.id} className="aspect-square rounded-sm overflow-hidden bg-neutral-50">
+                        {p.image_url && (
+                          <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Link>
             );
           })}
         </div>

@@ -3,9 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { api, formatPrice } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Heart, Share2, Play, Volume2, VolumeX, ChevronLeft,
-  MessageCircle, ShoppingBag, Bookmark, Star, X, Send } from 'lucide-react';
+  MessageCircle, ShoppingBag, Bookmark, Star, X, Send, Check, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -179,7 +178,7 @@ export default function VideosPage() {
             <p className="text-white/60 text-sm mt-1 text-center">Follow sellers to see their videos here</p>
             <Button
               onClick={() => setTab('recommend')}
-              className="mt-4 brand-gradient text-white"
+              className="mt-4 bg-black text-white"
             >
               Browse recommended
             </Button>
@@ -248,7 +247,7 @@ export default function VideosPage() {
                   className="max-h-full max-w-full object-cover"
                 />
               ) : (
-                <div className="bg-slate-900 w-full h-full flex items-center justify-center text-white">
+                <div className="bg-neutral-900 w-full h-full flex items-center justify-center text-white">
                   <Play className="w-12 h-12" />
                 </div>
               )}
@@ -267,7 +266,7 @@ export default function VideosPage() {
                 {sellerId && (
                   <div className="relative mb-1">
                     <Link href={`/seller-profile?id=${sellerId}`}>
-                      <div className="w-12 h-12 rounded-full brand-gradient flex items-center justify-center text-white font-bold border-2 border-white overflow-hidden">
+                      <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center text-white font-bold border-2 border-white overflow-hidden">
                         {sellerImg ? (
                           <img src={sellerImg} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -278,17 +277,17 @@ export default function VideosPage() {
                     <button
                       onClick={() => toggleFollow(sellerId)}
                       className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold ${
-                        isFollowing ? 'bg-slate-500' : 'bg-primary'
+                        isFollowing ? 'bg-neutral-500' : 'bg-black'
                       }`}
                     >
-                      {isFollowing ? '✓' : '+'}
+                      {isFollowing ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
                     </button>
                   </div>
                 )}
 
                 {/* Like */}
                 <button onClick={() => toggleLike(video.id)} className="flex flex-col items-center gap-1">
-                  <div className={`w-12 h-12 rounded-full backdrop-blur flex items-center justify-center transition-colors ${likes[video.id] ? 'bg-primary' : 'bg-black/40'}`}>
+                  <div className={`w-12 h-12 rounded-full backdrop-blur flex items-center justify-center transition-colors ${likes[video.id] ? 'bg-[#ed4956]' : 'bg-black/40'}`}>
                     <Heart className={`w-6 h-6 ${likes[video.id] ? 'fill-white text-white' : 'text-white'}`} />
                   </div>
                   <span className="text-xs text-white font-bold">{(video.likes_count || 0) + (likes[video.id] ? 1 : 0)}</span>
@@ -322,8 +321,7 @@ export default function VideosPage() {
               {/* === BOTTOM-LEFT INFO === */}
               <div className="absolute bottom-20 left-3 right-20 z-20">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-primary text-white text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                  <span className="bg-black text-white text-xs font-bold px-2 py-0.5 rounded">
                     VIDEO
                   </span>
                   <Link href={sellerId ? `/seller-profile?id=${sellerId}` : '#'}>
@@ -337,23 +335,23 @@ export default function VideosPage() {
 
                 {product && (
                   <Link href={`/product?id=${product.id}`} className="block max-w-xs">
-                    <Card className="p-2 bg-white border-0 flex items-center gap-2 shadow-lg">
-                      <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden shrink-0">
+                    <div className="p-2 bg-white border-0 flex items-center gap-2 shadow-lg rounded-md">
+                      <div className="w-12 h-12 rounded-md bg-neutral-100 overflow-hidden shrink-0">
                         {product.image_url ? (
                           <img src={product.image_url} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <ShoppingBag className="w-5 h-5 m-auto mt-3.5 text-slate-400" />
+                          <ShoppingBag className="w-5 h-5 m-auto mt-3.5 text-neutral-400" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="inline-block bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded mb-0.5">FEATURED</span>
+                        <span className="inline-block bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded mb-0.5">FEATURED</span>
                         <div className="text-sm font-bold text-black truncate">{product.name}</div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-base font-extrabold price">{formatPrice(product.price)}</span>
+                          <span className="text-base font-bold text-black">{formatPrice(product.price)}</span>
                         </div>
                       </div>
-                      <Button size="sm" className="brand-gradient text-white h-8 shrink-0">Buy</Button>
-                    </Card>
+                      <button className="bg-black text-white text-xs font-semibold rounded-md h-8 px-3 shrink-0">Buy</button>
+                    </div>
                   </Link>
                 )}
 
@@ -368,7 +366,7 @@ export default function VideosPage() {
               {/* Bottom CTA */}
               {product && (
                 <Link href={`/product?id=${product.id}`} className="absolute bottom-3 left-3 right-3 z-20 block">
-                  <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-11 text-base">
+                  <Button className="w-full bg-black hover:bg-neutral-800 text-white font-bold h-11 text-base">
                     <ShoppingBag className="w-4 h-4 mr-2" />
                     Shop this product · {formatPrice(product.price)}
                   </Button>
@@ -391,10 +389,10 @@ export default function VideosPage() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-              <h3 className="font-bold text-base text-black">{comments.length} Comments</h3>
-              <button onClick={() => setShowComments(false)}>
-                <X className="w-5 h-5 text-slate-500" />
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+              <h3 className="font-semibold text-base text-black">{comments.length} Comments</h3>
+              <button onClick={() => setShowComments(false)} aria-label="Close">
+                <X className="w-5 h-5 text-neutral-500" />
               </button>
             </div>
 
@@ -402,20 +400,20 @@ export default function VideosPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {comments.map((c) => (
                 <div key={c.id} className="flex items-start gap-2">
-                  <div className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-xs shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white font-bold text-xs shrink-0">
                     {c.user.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-black">{c.user}</span>
-                      <span className="text-xs text-slate-400">{c.time}</span>
+                      <span className="font-semibold text-sm text-black">{c.user}</span>
+                      <span className="text-xs text-neutral-400">{c.time}</span>
                     </div>
-                    <p className="text-sm text-slate-700 mt-0.5">{c.text}</p>
+                    <p className="text-sm text-neutral-700 mt-0.5">{c.text}</p>
                     <div className="flex items-center gap-4 mt-1">
-                      <button className="flex items-center gap-1 text-xs text-slate-400 hover:text-primary">
+                      <button className="flex items-center gap-1 text-xs text-neutral-400 hover:text-black">
                         <Heart className="w-3 h-3" /> Like
                       </button>
-                      <button className="text-xs text-slate-400 hover:text-primary">Reply</button>
+                      <button className="text-xs text-neutral-400 hover:text-black">Reply</button>
                     </div>
                   </div>
                 </div>
@@ -423,13 +421,13 @@ export default function VideosPage() {
             </div>
 
             {/* Comment input */}
-            <div className="border-t border-slate-100 p-3 flex items-center gap-2">
+            <div className="border-t border-neutral-100 p-3 flex items-center gap-2">
               {user ? (
-                <div className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-xs shrink-0">
+                <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white font-bold text-xs shrink-0">
                   {(user.email || '?').charAt(0).toUpperCase()}
                 </div>
               ) : (
-                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-400 shrink-0">
                   <MessageCircle className="w-4 h-4" />
                 </div>
               )}
@@ -440,12 +438,13 @@ export default function VideosPage() {
                 onKeyDown={(e) => e.key === 'Enter' && sendComment()}
                 placeholder={user ? 'Add a comment...' : 'Login to comment'}
                 disabled={!user}
-                className="flex-1 bg-slate-100 rounded-full px-4 py-2 text-sm outline-none disabled:opacity-50"
+                className="flex-1 bg-neutral-100 rounded-full px-4 py-2 text-sm outline-none disabled:opacity-50"
               />
               <button
                 onClick={sendComment}
                 disabled={!commentInput.trim() || !user}
-                className="text-primary font-bold text-sm disabled:opacity-30"
+                className="text-black font-semibold text-sm disabled:opacity-30"
+                aria-label="Send comment"
               >
                 <Send className="w-5 h-5" />
               </button>

@@ -47,7 +47,7 @@ export default function SellerPreparingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 max-w-md mx-auto">
+    <div className="ig-container bg-white min-h-screen flex flex-col items-center justify-center px-6">
       <motion.div
         className="w-24 h-24 rounded-3xl bg-black flex items-center justify-center mb-8"
         animate={{ scale: [1, 1.05, 1], rotate: [0, -2, 2, 0] }}
@@ -59,17 +59,17 @@ export default function SellerPreparingPage() {
       <h1 className="text-2xl font-bold text-center mb-2">
         Hold on, while we redesign your dashboard
       </h1>
-      <p className="text-sm text-slate-500 text-center mb-8">
+      <p className="text-sm text-neutral-500 text-center mb-8">
         We&apos;re setting up your seller tools and preparing your store.
       </p>
 
       <div className="w-full mb-4">
-        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
           <motion.div className="h-full bg-black rounded-full" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
-      <div className="flex items-center gap-2 text-sm text-slate-600 mb-8">
+      <div className="flex items-center gap-2 text-sm text-neutral-600 mb-8">
         {step < steps.length - 1 ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -83,13 +83,13 @@ export default function SellerPreparingPage() {
         )}
       </div>
 
-      <div className="flex items-center gap-1.5 text-xs text-slate-400">
+      <div className="flex items-center gap-1.5 text-xs text-neutral-400">
         <Sparkles className="w-3 h-3" />
         <span>Welcome to Cellex Selling</span>
         <Sparkles className="w-3 h-3" />
       </div>
 
-      <Link href="/seller" className="mt-8 text-xs text-slate-400 underline">
+      <Link href="/seller" className="mt-8 text-xs text-neutral-400 underline">
         Skip to dashboard
       </Link>
     </div>

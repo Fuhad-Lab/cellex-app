@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { api, formatPrice, timeAgo } from '@/lib/api';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Package, ShoppingBag, Users, TrendingUp, Radio, Plus, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -28,23 +25,23 @@ export default function SellerDashboard() {
   if (loading) { return <PageSkeleton variant="seller-dashboard" />; }
 
   const statCards = [
-    { label: 'Products', value: stats.productsCount || 0, icon: Package, color: 'bg-blue-100 text-blue-600' },
-    { label: 'Orders', value: stats.ordersCount || 0, icon: ShoppingBag, color: 'bg-green-100 text-green-600' },
-    { label: 'Followers', value: stats.followers || 0, icon: Users, color: 'bg-purple-100 text-purple-600' },
-    { label: 'Revenue', value: formatPrice(stats.revenue || 0), icon: TrendingUp, color: 'bg-amber-100 text-amber-600' },
+    { label: 'Products', value: stats.productsCount || 0, icon: Package },
+    { label: 'Orders', value: stats.ordersCount || 0, icon: ShoppingBag },
+    { label: 'Followers', value: stats.followers || 0, icon: Users },
+    { label: 'Revenue', value: formatPrice(stats.revenue || 0), icon: TrendingUp, small: true },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold">Dashboard</h1>
-          <p className="text-sm text-slate-500">Welcome back to your seller center</p>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-sm text-neutral-500">Welcome back to your seller center</p>
         </div>
         <Link href="/seller/products">
-          <Button className="brand-gradient text-primary-foreground font-bold">
-            <Plus className="w-4 h-4 mr-1" /> Add product
-          </Button>
+          <button className="bg-black text-white font-semibold rounded-md px-4 py-2.5 text-sm hover:bg-neutral-800 flex items-center gap-1.5">
+            <Plus className="w-4 h-4" /> Add product
+          </button>
         </Link>
       </div>
 
@@ -53,13 +50,11 @@ export default function SellerDashboard() {
         {statCards.map((s) => {
           const Icon = s.icon;
           return (
-            <Card key={s.label} className="p-4 border-slate-100">
-              <div className={`w-9 h-9 rounded-xl ${s.color} flex items-center justify-center mb-2`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <div className="text-2xl font-extrabold">{s.value}</div>
-              <div className="text-xs text-slate-500 font-semibold">{s.label}</div>
-            </Card>
+            <div key={s.label} className="border border-neutral-200 rounded-md p-4 bg-white">
+              <Icon className="w-5 h-5 text-black mb-2" />
+              <div className={`font-bold ${s.small ? 'text-base' : 'text-2xl'}`}>{s.value}</div>
+              <div className="text-xs text-neutral-500 font-medium">{s.label}</div>
+            </div>
           );
         })}
       </div>
@@ -67,82 +62,82 @@ export default function SellerDashboard() {
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recent products */}
-        <Card className="p-4 border-slate-100">
+        <div className="border border-neutral-200 rounded-md p-4 bg-white">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm">Recent Products</h3>
-            <Link href="/seller/products" className="text-xs text-primary font-semibold">See all →</Link>
+            <h3 className="font-semibold text-sm">Recent Products</h3>
+            <Link href="/seller/products" className="text-xs text-black font-medium">See all</Link>
           </div>
           <div className="space-y-2">
             {recent?.products && recent.products.length > 0 ? (
               recent.products.slice(0, 5).map((p: any) => (
-                <div key={p.id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg">
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0">
+                <div key={p.id} className="flex items-center gap-3 p-2 hover:bg-neutral-50 rounded-md">
+                  <div className="w-10 h-10 rounded-md bg-neutral-100 overflow-hidden shrink-0">
                     {p.image_url && <img src={p.image_url} alt="" className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold truncate">{p.name}</div>
-                    <div className="text-xs text-slate-500">{formatPrice(p.price)} · {p.units_sold || 0} sold</div>
+                    <div className="text-sm font-medium truncate">{p.name}</div>
+                    <div className="text-xs text-neutral-500">{formatPrice(p.price)} · {p.units_sold || 0} sold</div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-6 text-xs text-slate-400">
-                <Package className="w-8 h-8 mx-auto mb-1 text-slate-200" />
+              <div className="text-center py-6 text-xs text-neutral-400">
+                <Package className="w-8 h-8 mx-auto mb-1 text-neutral-300" />
                 No products yet
               </div>
             )}
           </div>
-        </Card>
+        </div>
 
         {/* Recent orders */}
-        <Card className="p-4 border-slate-100">
+        <div className="border border-neutral-200 rounded-md p-4 bg-white">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm">Recent Orders</h3>
-            <Link href="/seller/orders" className="text-xs text-primary font-semibold">See all →</Link>
+            <h3 className="font-semibold text-sm">Recent Orders</h3>
+            <Link href="/seller/orders" className="text-xs text-black font-medium">See all</Link>
           </div>
           <div className="space-y-2">
             {recent?.orders && recent.orders.length > 0 ? (
               recent.orders.slice(0, 5).map((o: any) => (
-                <div key={o.id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg">
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                    <ShoppingBag className="w-4 h-4 text-slate-500" />
+                <div key={o.id} className="flex items-center gap-3 p-2 hover:bg-neutral-50 rounded-md">
+                  <div className="w-10 h-10 rounded-md bg-neutral-100 flex items-center justify-center shrink-0">
+                    <ShoppingBag className="w-4 h-4 text-neutral-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold truncate">#{o.id?.slice(0, 8)}</div>
-                    <div className="text-xs text-slate-500">{formatPrice(o.total)} · {timeAgo(o.created_at)}</div>
+                    <div className="text-sm font-medium truncate">#{o.id?.slice(0, 8)}</div>
+                    <div className="text-xs text-neutral-500">{formatPrice(o.total)} · {timeAgo(o.created_at)}</div>
                   </div>
-                  <Badge variant="secondary" className="text-[10px]">{o.status}</Badge>
+                  <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded-full">{o.status}</span>
                 </div>
               ))
             ) : (
-              <div className="text-center py-6 text-xs text-slate-400">
-                <ShoppingBag className="w-8 h-8 mx-auto mb-1 text-slate-200" />
+              <div className="text-center py-6 text-xs text-neutral-400">
+                <ShoppingBag className="w-8 h-8 mx-auto mb-1 text-neutral-300" />
                 No orders yet
               </div>
             )}
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <Link href="/seller/go-live">
-          <Card className="p-4 border-slate-100 hover:shadow-md transition-shadow text-center cursor-pointer">
-            <Radio className="w-6 h-6 mx-auto text-red-500 mb-1" />
-            <div className="text-xs font-bold">Go Live</div>
-          </Card>
+          <div className="border border-neutral-200 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
+            <Radio className="w-6 h-6 mx-auto text-black mb-1" />
+            <div className="text-xs font-semibold">Go Live</div>
+          </div>
         </Link>
         <Link href="/seller/videos">
-          <Card className="p-4 border-slate-100 hover:shadow-md transition-shadow text-center cursor-pointer">
-            <Package className="w-6 h-6 mx-auto text-primary mb-1" />
-            <div className="text-xs font-bold">Upload Video</div>
-          </Card>
+          <div className="border border-neutral-200 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
+            <Package className="w-6 h-6 mx-auto text-black mb-1" />
+            <div className="text-xs font-semibold">Upload Video</div>
+          </div>
         </Link>
         <Link href="/seller/stories">
-          <Card className="p-4 border-slate-100 hover:shadow-md transition-shadow text-center cursor-pointer">
-            <Package className="w-6 h-6 mx-auto text-violet-500 mb-1" />
-            <div className="text-xs font-bold">Post Story</div>
-          </Card>
+          <div className="border border-neutral-200 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
+            <Package className="w-6 h-6 mx-auto text-black mb-1" />
+            <div className="text-xs font-semibold">Post Story</div>
+          </div>
         </Link>
       </div>
     </div>

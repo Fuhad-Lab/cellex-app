@@ -438,8 +438,8 @@ function VideoResult({ video, index }: { video: any; index: number }) {
               <Play className="w-8 h-8 text-white/50" />
             </div>
           )}
-          <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-            ▶ {video.views_count || 0}
+          <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
+            <Play className="w-2.5 h-2.5" /> {video.views_count || 0}
           </div>
         </div>
         <div className="p-2">

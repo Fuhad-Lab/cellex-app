@@ -3,11 +3,9 @@
 import { useState, useEffect , Suspense} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Mail, Lock, Sparkles } from 'lucide-react';
+import { Mail, Lock, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/page-skeleton';
 function LoginContent() {
@@ -53,31 +51,37 @@ function LoginContent() {
     }
   };
 
+  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-cyan-50 via-white to-white">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-white">
       <div className="w-full max-w-md space-y-6">
+        {/* Top bar back button */}
+        {next !== '/' && (
+          <button
+            onClick={() => router.push('/')}
+            className="inline-flex items-center text-xs text-neutral-500 hover:text-black"
+          >
+            <ChevronLeft className="w-4 h-4" /> Back to home
+          </button>
+        )}
+
         {/* Logo header */}
         <div className="text-center">
-          <div
-            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl brand-gradient glow mb-3"
-            style={{ fontFamily: 'var(--font-geist-mono)' }}
-          >
-            <span className="text-white font-extrabold text-2xl">C</span>
-          </div>
-          <h1 className="text-2xl font-extrabold brand-text" style={{ fontFamily: 'var(--font-geist-mono)' }}>
+          <h1 className="text-3xl font-extrabold text-black" style={{ fontFamily: 'var(--font-geist-mono)' }}>
             Cellex
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Nigeria's #1 social marketplace</p>
+          <p className="text-sm text-neutral-500 mt-2">Nigeria&apos;s #1 social marketplace</p>
         </div>
 
-        <Card className="p-6 shadow-lg border-slate-100">
+        <div className="border border-neutral-200 rounded-md p-6">
           {/* Tabs */}
-          <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-xl mb-5">
+          <div className="grid grid-cols-2 gap-1 p-1 bg-neutral-100 rounded-md mb-5">
             <button
               type="button"
               onClick={() => { setMode('login'); setError(''); }}
-              className={`py-2 rounded-lg text-sm font-bold transition-all ${
-                mode === 'login' ? 'bg-white shadow text-primary' : 'text-slate-500'
+              className={`py-2 rounded-md text-sm font-semibold transition-all ${
+                mode === 'login' ? 'bg-white shadow text-black' : 'text-neutral-500'
               }`}
             >
               Login
@@ -85,8 +89,8 @@ function LoginContent() {
             <button
               type="button"
               onClick={() => { setMode('signup'); setError(''); }}
-              className={`py-2 rounded-lg text-sm font-bold transition-all ${
-                mode === 'signup' ? 'bg-white shadow text-primary' : 'text-slate-500'
+              className={`py-2 rounded-md text-sm font-semibold transition-all ${
+                mode === 'signup' ? 'bg-white shadow text-black' : 'text-neutral-500'
               }`}
             >
               Sign up
@@ -95,9 +99,9 @@ function LoginContent() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-slate-600">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-neutral-700">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                 <Input
                   id="email"
                   type="email"
@@ -105,14 +109,14 @@ function LoginContent() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="pl-9"
+                  className={`pl-9 ${inputClass}`}
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-semibold text-slate-600">Password</Label>
+              <Label htmlFor="password" className="text-xs font-semibold text-neutral-700">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                 <Input
                   id="password"
                   type="password"
@@ -121,37 +125,31 @@ function LoginContent() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 6 characters"
-                  className="pl-9"
+                  className={`pl-9 ${inputClass}`}
                 />
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg p-3">
+              <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-md p-3">
                 {error}
               </div>
             )}
 
-            <Button type="submit" disabled={loading} className="w-full brand-gradient text-primary-foreground font-bold">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50"
+            >
               {loading ? (
-                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
               ) : mode === 'login' ? 'Login' : 'Create account'}
-            </Button>
+            </button>
           </form>
 
-          <div className="mt-4 text-center text-xs text-slate-400">
-            By continuing, you agree to Cellex's Terms & Privacy Policy
+          <div className="mt-4 text-center text-xs text-neutral-400">
+            By continuing, you agree to Cellex&apos;s Terms & Privacy Policy
           </div>
-        </Card>
-
-        <div className="bg-gradient-to-r from-cyan-50 to-violet-50 border border-cyan-100 rounded-xl p-4 text-center">
-          <Sparkles className="w-5 h-5 text-primary mx-auto mb-1" />
-          <p className="text-xs text-slate-700">
-            <span className="font-bold">AI Shopping:</span> Try our AI assistant after login — find products by chatting naturally.
-          </p>
-          <Link href="/ai-chat" className="text-xs font-bold text-primary hover:underline mt-1 inline-block">
-            Explore AI →
-          </Link>
         </div>
       </div>
     </div>

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -78,50 +76,52 @@ export default function SellerProfilePage() {
 
   if (loading) { return <PageSkeleton variant="seller-profile" />; }
 
+  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+
   return (
     <div className="space-y-4 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-extrabold">Seller Profile</h1>
-        <p className="text-sm text-slate-500">This is your public storefront</p>
+        <h1 className="text-2xl font-bold">Seller Profile</h1>
+        <p className="text-sm text-neutral-500">This is your public storefront</p>
       </div>
 
-      <Card className="p-4 border-slate-100 space-y-3">
+      <div className="border border-neutral-200 rounded-md p-4 space-y-3 bg-white">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center">
+          <div className="w-16 h-16 rounded-md bg-black flex items-center justify-center overflow-hidden">
             {profileImage ? (
-              <img src={profileImage} alt="" className="w-full h-full object-cover rounded-2xl" />
+              <img src={profileImage} alt="" className="w-full h-full object-cover" />
             ) : (
               <Store className="w-8 h-8 text-white" />
             )}
           </div>
           <div className="flex-1">
-            <div className="font-bold">{businessName || 'Your store name'}</div>
-            <div className="text-xs text-slate-500">{businessCategory}</div>
+            <div className="font-semibold">{businessName || 'Your store name'}</div>
+            <div className="text-xs text-neutral-500">{businessCategory}</div>
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs">Business / Store name</Label>
-          <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. TechHub Nigeria" />
+          <Label className="text-xs font-semibold text-neutral-700">Business / Store name</Label>
+          <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. TechHub Nigeria" className={inputClass} />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs">Category</Label>
+            <Label className="text-xs font-semibold text-neutral-700">Category</Label>
             <select
               value={businessCategory}
               onChange={(e) => setBusinessCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+              className={inputClass}
             >
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Seller type</Label>
+            <Label className="text-xs font-semibold text-neutral-700">Seller type</Label>
             <select
               value={sellerType}
               onChange={(e) => setSellerType(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+              className={inputClass}
             >
               {SELLER_TYPES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -129,37 +129,38 @@ export default function SellerProfilePage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs">Location</Label>
-          <Input value={businessLocation} onChange={(e) => setBusinessLocation(e.target.value)} placeholder="e.g. Lagos, Nigeria" />
+          <Label className="text-xs font-semibold text-neutral-700">Location</Label>
+          <Input value={businessLocation} onChange={(e) => setBusinessLocation(e.target.value)} placeholder="e.g. Lagos, Nigeria" className={inputClass} />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs">Profile image URL</Label>
-          <Input value={profileImage} onChange={(e) => setProfileImage(e.target.value)} placeholder="https://..." />
+          <Label className="text-xs font-semibold text-neutral-700">Profile image URL</Label>
+          <Input value={profileImage} onChange={(e) => setProfileImage(e.target.value)} placeholder="https://..." className={inputClass} />
         </div>
 
         {sellerType === 'farmer' && (
           <div className="space-y-1.5">
-            <Label className="text-xs">Farm name</Label>
-            <Input value={farmName} onChange={(e) => setFarmName(e.target.value)} placeholder="e.g. Green Valley Farm" />
+            <Label className="text-xs font-semibold text-neutral-700">Farm name</Label>
+            <Input value={farmName} onChange={(e) => setFarmName(e.target.value)} placeholder="e.g. Green Valley Farm" className={inputClass} />
           </div>
         )}
 
         <div className="space-y-1.5">
-          <Label className="text-xs">Description</Label>
+          <Label className="text-xs font-semibold text-neutral-700">Description</Label>
           <Textarea
             value={businessDescription}
             onChange={(e) => setBusinessDescription(e.target.value)}
             rows={4}
             placeholder="Tell buyers about your business..."
+            className={inputClass}
           />
         </div>
 
-        <Button onClick={save} disabled={saving} className="w-full brand-gradient text-primary-foreground font-bold">
-          <Save className="w-4 h-4 mr-1" />
+        <button onClick={save} disabled={saving} className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50">
+          <Save className="w-4 h-4 inline mr-1" />
           {saving ? 'Saving...' : 'Save profile'}
-        </Button>
-      </Card>
+        </button>
+      </div>
     </div>
   );
 }

@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Link2, Phone, Check, Clock, Trash2, MessageCircle, ChevronLeft } from 'lucide-react';
@@ -62,154 +60,148 @@ export default function LinkAccountPage() {
     }
   };
 
-  // Add crossPlatform ops to api.ts if not present
-  // Actually we need to extend api; let me check
   if (authLoading) { return <PageSkeleton variant="link-account" />; }
 
-  return (
-    <div className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6 py-4">
-      <Link href="/profile" className="inline-flex items-center text-xs text-slate-500 hover:text-primary mb-3">
-        <ChevronLeft className="w-4 h-4" /> Back to profile
-      </Link>
+  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-green-500 flex items-center justify-center">
-          <Link2 className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold">Link WhatsApp</h1>
-          <p className="text-xs text-slate-500">Shop via WhatsApp with a unified cart</p>
-        </div>
+  return (
+    <div className="ig-container bg-white min-h-screen pb-24">
+      {/* Top bar */}
+      <div className="ig-topbar">
+        <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-base font-semibold flex-1 ml-2">Link WhatsApp</h1>
       </div>
 
-      {/* Intro card */}
-      <Card className="p-4 border-slate-100 mb-4 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+      <div className="px-4 py-4 space-y-4">
+        {/* Intro */}
         <div className="flex items-start gap-2">
-          <MessageCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-          <div className="text-sm text-slate-700">
-            <p className="font-bold mb-1">Shop without opening the app!</p>
+          <MessageCircle className="w-5 h-5 text-black shrink-0 mt-0.5" />
+          <div className="text-sm text-neutral-700">
+            <p className="font-semibold mb-1">Shop without opening the app!</p>
             <p className="text-xs">
               Link your WhatsApp number to your Cellex account and shop by chatting with our bot.
               Your cart stays synced across WhatsApp and the web app.
             </p>
           </div>
         </div>
-      </Card>
 
-      {/* Generate code */}
-      {!linkCode ? (
-        <Card className="p-4 border-slate-100 mb-4">
-          <h3 className="font-bold text-sm mb-3">Step 1: Generate link code</h3>
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Your WhatsApp phone number</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <Input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="08012345678"
-                  className="pl-9"
-                />
+        {/* Generate code */}
+        {!linkCode ? (
+          <div className="border border-neutral-200 rounded-md p-4">
+            <h3 className="font-semibold text-sm mb-3">Step 1: Generate link code</h3>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-neutral-700">Your WhatsApp phone number</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <Input
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="08012345678"
+                    className={`pl-9 ${inputClass}`}
+                  />
+                </div>
               </div>
+              <button
+                onClick={generateCode}
+                disabled={loadingCode}
+                className="w-full bg-black text-white font-semibold rounded-md py-2.5 hover:bg-neutral-800 disabled:opacity-50"
+              >
+                {loadingCode ? 'Generating...' : 'Generate code'}
+              </button>
             </div>
-            <Button
-              onClick={generateCode}
-              disabled={loadingCode}
-              className="w-full brand-gradient text-primary-foreground font-bold"
-            >
-              {loadingCode ? 'Generating...' : 'Generate code'}
-            </Button>
           </div>
-        </Card>
-      ) : (
-        <Card className="p-4 border-slate-100 mb-4 border-2 border-primary">
-          <h3 className="font-bold text-sm mb-2 flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-500" /> Code generated!
-          </h3>
-          <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4 text-center my-3">
-            <div className="text-xs text-slate-500 mb-1">Your link code</div>
-            <div className="text-4xl font-extrabold tracking-[0.3em] text-primary">{linkCode}</div>
-          </div>
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold">Step 2: Send the code to our WhatsApp bot</p>
-            <ol className="space-y-1 text-xs text-slate-600 list-decimal list-inside">
-              <li>Open WhatsApp and message our bot</li>
-              <li>Send the code: <code className="bg-slate-100 px-1 rounded font-mono">link {linkCode}</code></li>
-              <li>Your account will be linked instantly</li>
-            </ol>
-          </div>
-          <Button
-            onClick={() => window.open(`https://wa.me/${WHATSAPP_BOT_NUMBER.replace(/[^0-9]/g, '')}?text=link%20${linkCode}`, '_blank')}
-            className="w-full mt-3 bg-green-500 hover:bg-green-600 text-white font-bold"
-          >
-            <MessageCircle className="w-4 h-4 mr-1" /> Open WhatsApp
-          </Button>
-          <Button
-            onClick={() => { setLinkCode(null); setPhone(''); loadLinks(); }}
-            variant="outline"
-            className="w-full mt-2"
-          >
-            Done
-          </Button>
-        </Card>
-      )}
-
-      {/* Existing links */}
-      <Card className="p-4 border-slate-100">
-        <h3 className="font-bold text-sm mb-3">Linked phones ({links.length})</h3>
-        {links.length === 0 ? (
-          <p className="text-xs text-slate-400 text-center py-3">No phones linked yet</p>
         ) : (
-          <div className="space-y-2">
-            {links.map((l) => (
-              <div key={l.id} className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg">
-                <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
-                  <Phone className="w-4 h-4 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold">{l.phone_number}</div>
-                  <div className="text-[10px] text-slate-500 flex items-center gap-1">
-                    {l.confirmed_at ? (
-                      <><Check className="w-3 h-3 text-green-500" /> Linked {new Date(l.confirmed_at).toLocaleDateString()}</>
-                    ) : (
-                      <><Clock className="w-3 h-3 text-amber-500" /> Pending confirmation</>
-                    )}
+          <div className="border-2 border-black rounded-md p-4">
+            <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
+              <Check className="w-4 h-4 text-green-500" /> Code generated!
+            </h3>
+            <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4 text-center my-3">
+              <div className="text-xs text-neutral-500 mb-1">Your link code</div>
+              <div className="text-4xl font-bold tracking-[0.3em] text-black">{linkCode}</div>
+            </div>
+            <div className="space-y-2 text-sm">
+              <p className="font-semibold">Step 2: Send the code to our WhatsApp bot</p>
+              <ol className="space-y-1 text-xs text-neutral-600 list-decimal list-inside">
+                <li>Open WhatsApp and message our bot</li>
+                <li>Send the code: <code className="bg-neutral-100 px-1 rounded font-mono">link {linkCode}</code></li>
+                <li>Your account will be linked instantly</li>
+              </ol>
+            </div>
+            <button
+              onClick={() => window.open(`https://wa.me/${WHATSAPP_BOT_NUMBER.replace(/[^0-9]/g, '')}?text=link%20${linkCode}`, '_blank')}
+              className="w-full mt-3 bg-[#25D366] hover:opacity-90 text-white font-semibold rounded-md py-2.5"
+            >
+              <MessageCircle className="w-4 h-4 inline mr-1" /> Open WhatsApp
+            </button>
+            <button
+              onClick={() => { setLinkCode(null); setPhone(''); loadLinks(); }}
+              className="w-full mt-2 bg-white border border-neutral-200 text-black font-semibold rounded-md py-2.5 hover:bg-neutral-50"
+            >
+              Done
+            </button>
+          </div>
+        )}
+
+        {/* Existing links */}
+        <div className="border border-neutral-200 rounded-md p-4">
+          <h3 className="font-semibold text-sm mb-3">Linked phones ({links.length})</h3>
+          {links.length === 0 ? (
+            <p className="text-xs text-neutral-400 text-center py-3">No phones linked yet</p>
+          ) : (
+            <div className="space-y-2">
+              {links.map((l) => (
+                <div key={l.id} className="flex items-center gap-3 p-2 bg-neutral-50 rounded-md">
+                  <div className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center">
+                    <Phone className="w-4 h-4 text-black" />
                   </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold">{l.phone_number}</div>
+                    <div className="text-[10px] text-neutral-500 flex items-center gap-1">
+                      {l.confirmed_at ? (
+                        <><Check className="w-3 h-3 text-green-500" /> Linked {new Date(l.confirmed_at).toLocaleDateString()}</>
+                      ) : (
+                        <><Clock className="w-3 h-3 text-amber-500" /> Pending confirmation</>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => unlink(l.phone_number)}
+                    className="text-[#ed4956] hover:opacity-70 p-1"
+                    aria-label="Unlink"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => unlink(l.phone_number)}
-                  className="text-red-400 hover:text-red-600"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Bot commands */}
+        <div className="border border-neutral-200 rounded-md p-4">
+          <h3 className="font-semibold text-sm mb-3">WhatsApp bot commands</h3>
+          <div className="space-y-2 text-xs">
+            {[
+              { cmd: 'search phone', desc: 'Search for phones' },
+              { cmd: 'show <product_id>', desc: 'View product details' },
+              { cmd: 'add <product_id> <qty>', desc: 'Add to cart' },
+              { cmd: 'cart', desc: 'View your cart' },
+              { cmd: 'checkout', desc: 'Get checkout URL' },
+              { cmd: 'groupbuys', desc: 'See active group buys' },
+              { cmd: 'live', desc: 'See live sessions' },
+              { cmd: 'link <code>', desc: 'Link your account' },
+            ].map((c) => (
+              <div key={c.cmd} className="flex items-center gap-3">
+                <code className="bg-neutral-100 px-2 py-1 rounded font-mono text-black font-semibold whitespace-nowrap">{c.cmd}</code>
+                <span className="text-neutral-600">{c.desc}</span>
               </div>
             ))}
           </div>
-        )}
-      </Card>
-
-      {/* Bot commands */}
-      <Card className="p-4 border-slate-100 mt-4">
-        <h3 className="font-bold text-sm mb-3">WhatsApp bot commands</h3>
-        <div className="space-y-2 text-xs">
-          {[
-            { cmd: 'search phone', desc: 'Search for phones' },
-            { cmd: 'show <product_id>', desc: 'View product details' },
-            { cmd: 'add <product_id> <qty>', desc: 'Add to cart' },
-            { cmd: 'cart', desc: 'View your cart' },
-            { cmd: 'checkout', desc: 'Get checkout URL' },
-            { cmd: 'groupbuys', desc: 'See active group buys' },
-            { cmd: 'live', desc: 'See live sessions' },
-            { cmd: 'link <code>', desc: 'Link your account' },
-          ].map((c) => (
-            <div key={c.cmd} className="flex items-center gap-3">
-              <code className="bg-slate-100 px-2 py-1 rounded font-mono text-primary font-bold whitespace-nowrap">{c.cmd}</code>
-              <span className="text-slate-600">{c.desc}</span>
-            </div>
-          ))}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

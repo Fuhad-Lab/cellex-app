@@ -253,8 +253,8 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="shrink-0 flex items-center gap-1">
-            <Link href="/ai-chat" className="ig-icon-btn relative" aria-label="Messages">
-              <Send className="w-6 h-6" />
+            <Link href="/notifications" className="ig-icon-btn relative" aria-label="Notifications">
+              <Bell className="w-6 h-6" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
             </Link>
           </div>
