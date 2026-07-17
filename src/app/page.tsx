@@ -6,7 +6,7 @@ import { api, formatPrice, type Product } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { Search, Heart, MessageCircle, Send, Bookmark,
   Store, ChevronRight, Play,
-  CheckCircle, Bell, User, Sparkles, Home as HomeIcon } from 'lucide-react';
+  CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -38,6 +38,7 @@ export default function HomePage() {
 
   const [feed, setFeed] = useState<FeedPost[]>([]);
   const [stories, setStories] = useState<any[]>([]);
+  const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
@@ -77,7 +78,9 @@ export default function HomePage() {
 
         const sellerMap = new Map<string, { name: string; image?: string }>();
         if (sellersResp.success) {
-          (sellersResp.sellers || []).forEach((s: any) => {
+          const sellersList = sellersResp.sellers || [];
+          setSellers(sellersList);
+          sellersList.forEach((s: any) => {
             sellerMap.set(s.id, { name: s.business_name || s.farm_name || 'Seller', image: s.profile_image });
           });
         }
@@ -298,22 +301,43 @@ export default function HomePage() {
         </Link>
       )}
 
-      {/* Feed */}
+      {/* Feed — IG-style.
+          Every 3 feed posts, insert a horizontal "Suggested Sellers" carousel.
+          The carousel shows 3 seller cards followed by a "See all" card that
+          links to /sellers. Sellers are rotated so each carousel shows a
+          different batch. */}
       <div>
-        {feed.map((post, index) => (
-          <FeedPostCard
-            key={post.id}
-            post={post}
-            index={index}
-            liked={likedPosts.has(post.id)}
-            saved={savedPosts.has(post.id)}
-            isFollowing={post.sellerId ? following.has(post.sellerId) : false}
-            onLike={(e) => toggleLike(post.id, e)}
-            onSave={(e) => toggleSave(post.id, e)}
-            onFollow={(e) => post.sellerId && toggleFollow(post.sellerId, e)}
-            onAddToCart={(e) => post.product && addToCart(post.product, e)}
-          />
-        ))}
+        {feed.map((post, index) => {
+          // Insert a seller carousel AFTER every 3rd post (index 2, 5, 8, ...)
+          const showSellers = sellers.length > 0 && (index + 1) % 3 === 0;
+          // Rotate the seller batch: carousel 0 shows sellers[0..2], carousel 1 shows sellers[3..5], etc.
+          const carouselIndex = Math.floor((index + 1) / 3) - 1;
+          const sellerBatch = sellers.slice(carouselIndex * 3, carouselIndex * 3 + 3);
+
+          return (
+            <div key={post.id}>
+              <FeedPostCard
+                post={post}
+                index={index}
+                liked={likedPosts.has(post.id)}
+                saved={savedPosts.has(post.id)}
+                isFollowing={post.sellerId ? following.has(post.sellerId) : false}
+                onLike={(e) => toggleLike(post.id, e)}
+                onSave={(e) => toggleSave(post.id, e)}
+                onFollow={(e) => post.sellerId && toggleFollow(post.sellerId, e)}
+                onAddToCart={(e) => post.product && addToCart(post.product, e)}
+              />
+              {showSellers && sellerBatch.length > 0 && (
+                <SuggestedSellersCarousel
+                  sellers={sellerBatch}
+                  carouselIndex={carouselIndex}
+                  following={following}
+                  onFollow={(sellerId, e) => toggleFollow(sellerId, e)}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* End of feed — IG-style */}
@@ -533,4 +557,109 @@ function formatCount(n: number): string {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return String(n);
+}
+
+/**
+ * SuggestedSellersCarousel — horizontal scroll of seller cards, inserted
+ * between feed posts every 3 items. Shows 3 sellers + a "See all" card
+ * that links to /sellers.
+ *
+ * Layout matches Instagram's "Suggested for you" pattern:
+ * - Section header: "Suggested Sellers" + "See All" link
+ * - Horizontal scroll of square-ish seller cards (avatar + name + Follow btn)
+ * - Final card: "See all sellers" with chevron
+ */
+function SuggestedSellersCarousel({
+  sellers,
+  carouselIndex,
+  following,
+  onFollow,
+}: {
+  sellers: any[];
+  carouselIndex: number;
+  following: Set<string>;
+  onFollow: (sellerId: string, e: React.MouseEvent) => void;
+}) {
+  // Vary the header label slightly so repeat carousels feel fresh
+  const headerLabel = carouselIndex === 0
+    ? 'Suggested Sellers'
+    : carouselIndex === 1
+    ? 'Discover More Sellers'
+    : 'More Sellers to Follow';
+
+  return (
+    <section className="border-y border-neutral-100 bg-white py-4">
+      {/* Section header */}
+      <div className="flex items-center justify-between px-3 mb-3">
+        <div className="flex items-center gap-1.5">
+          <Users className="w-4 h-4 text-neutral-700" />
+          <h3 className="text-sm font-semibold text-black">{headerLabel}</h3>
+        </div>
+        <Link href="/sellers" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+          See All
+        </Link>
+      </div>
+
+      {/* Horizontal scroll of seller cards */}
+      <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
+        {sellers.map((seller) => {
+          const sellerId = seller.id;
+          const name = seller.business_name || seller.farm_name || 'Seller';
+          const image = seller.profile_image;
+          const category = seller.business_category;
+          const isFollowing = following.has(sellerId);
+
+          return (
+            <div
+              key={sellerId}
+              className="shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center text-center"
+            >
+              <Link href={`/seller-profile?id=${sellerId}`} className="block">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-neutral-200 mb-2">
+                  {image ? (
+                    <img src={image} alt={name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white font-bold text-xl">
+                      {name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+              </Link>
+              <Link
+                href={`/seller-profile?id=${sellerId}`}
+                className="text-xs font-semibold text-black truncate max-w-full hover:opacity-70 mb-0.5"
+              >
+                {name}
+              </Link>
+              {category && (
+                <p className="text-[10px] text-neutral-500 truncate max-w-full mb-2">{category}</p>
+              )}
+              <button
+                onClick={(e) => onFollow(sellerId, e)}
+                className={`w-full text-xs font-semibold py-1.5 rounded-md transition-colors ${
+                  isFollowing
+                    ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                    : 'bg-black text-white hover:bg-neutral-800'
+                }`}
+              >
+                {isFollowing ? 'Following' : 'Follow'}
+              </button>
+            </div>
+          );
+        })}
+
+        {/* "See all sellers" card — links to /sellers page */}
+        <Link
+          href="/sellers"
+          className="shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors"
+        >
+          <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-2">
+            <ChevronRight className="w-6 h-6 text-neutral-700" />
+          </div>
+          <span className="text-xs font-semibold text-black">See all sellers</span>
+          <span className="text-[10px] text-neutral-500 mt-0.5">Discover more stores</span>
+        </Link>
+      </div>
+    </section>
+  );
 }

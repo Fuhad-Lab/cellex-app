@@ -23,7 +23,10 @@ export function GlobalSpotlight() {
   const pathname = usePathname();
   const [searchBarVisible, setSearchBarVisible] = useState(false);
 
-  // Pages where the floating search button should NOT appear at all
+  // Pages where the floating search button should NOT appear at all.
+  // These pages either have their own search bar (categories, search, wishlist,
+  // sellers) or are flows where search doesn't make sense (login, checkout,
+  // payment, seller dashboard, link-account, telegram).
   const hideOnRoutes = [
     '/login',
     '/checkout',
@@ -31,6 +34,15 @@ export function GlobalSpotlight() {
     '/seller',      // seller dashboard has its own sidebar nav
     '/link-account',
     '/telegram',
+    '/categories',  // has its own product search bar in the topbar
+    '/search',      // IS the search page — no need for a FAB
+    '/wishlist',    // simple list page, no search needed
+    '/sellers',     // sellers directory, no search needed
+    '/cart',        // cart page, no search needed
+    '/orders',      // orders list, no search needed
+    '/profile',     // profile page, no search needed
+    '/settings',    // settings page, no search needed
+    '/notifications', // notifications list, no search needed
   ];
 
   const shouldHideButton = hideOnRoutes.some((route) =>
