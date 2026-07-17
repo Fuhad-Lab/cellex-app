@@ -67,7 +67,7 @@ function SellerProfileContent() {
 
   if (!seller) {
     return (
-      <div className="ig-container text-center py-20 px-4">
+      <div className="ig-container text-center py-20 px-4 ig-topbar-offset">
         <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
           <Store className="w-8 h-8 text-neutral-400" />
         </div>

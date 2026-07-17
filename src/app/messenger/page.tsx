@@ -220,7 +220,7 @@ export default function MessengerPage() {
   // ---- Chat view (when a conversation is active) ----
   if (activeConversation) {
     return (
-      <div className="ig-container bg-white min-h-screen flex flex-col h-screen">
+      <div className="ig-container bg-white min-h-screen flex flex-col h-screen ig-topbar-offset">
         {/* Chat header */}
         <div className="ig-topbar">
           <button onClick={() => setActiveConversation(null)} className="ig-icon-btn" aria-label="Back">

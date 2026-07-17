@@ -397,9 +397,11 @@ html, body {
   -webkit-touch-callout: none;
 }
 
-/* Safe-area insets: applied on the body so every page gets them automatically. */
+/* Safe-area insets: applied on the body so every page gets them automatically.
+   NOTE: padding-top is NOT applied here because the fixed .ig-topbar handles
+   the top inset itself (positioned at top: env(safe-area-inset-top)). If we
+   added body padding-top too, we'd get double spacing on pages with a topbar. */
 body {
-  padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
@@ -435,17 +437,41 @@ html, body {
   width: 100%;
 }
 
-/* IG-style top bar — sticky, white, 1px bottom border, compact height */
+/* IG-style top bar — FIXED at top, white, 1px bottom border, compact height.
+   Uses position: fixed so it stays pinned during scroll (matches IG mobile web).
+   Positioned at top: env(safe-area-inset-top) so it sits BELOW the iPhone notch.
+
+   Pages that use .ig-topbar have pt-[54px] added to their root div by the
+   add_topbar_offset.py script. The offset is augmented with safe-area-inset-top
+   via the .ig-topbar-offset class (use that instead of pt-[54px] for pages
+   that need to account for the notch). */
 .ig-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 0;
+  right: 0;
+  z-index: 50;
   background: #ffffff;
   border-bottom: 1px solid #dbdbdb;
   height: 54px;
   display: flex;
   align-items: center;
   padding: 0 12px;
+  max-width: 470px;
+  margin: 0 auto;
+}
+
+/* On desktop (>=768px), allow the top bar to span wider but still centered */
+@media (min-width: 768px) {
+  .ig-topbar {
+    max-width: 935px;
+  }
+}
+
+/* Helper class — adds top padding equal to the fixed topbar height + notch.
+   Applied automatically to page root divs by add_topbar_offset.py. */
+.ig-topbar-offset {
+  padding-top: calc(54px + env(safe-area-inset-top));
 }
 
 /* IG logo — bold serif-style wordmark */

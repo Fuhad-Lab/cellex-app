@@ -107,7 +107,7 @@ export default function AiChatPage() {
   };
 
   return (
-    <div className="ig-container bg-white min-h-screen flex flex-col h-screen">
+    <div className="ig-container bg-white min-h-screen flex flex-col h-screen ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">

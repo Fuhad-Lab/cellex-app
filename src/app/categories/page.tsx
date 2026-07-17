@@ -153,7 +153,7 @@ function CategoriesContent() {
   const subcats = category ? SUBCATEGORIES[category] || [] : [];
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24">
+    <div className="ig-container bg-white min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar with search */}
       <div ref={searchBarRef} className="ig-topbar gap-2">
         <button onClick={() => router.push('/')} className="ig-icon-btn shrink-0" aria-label="Back">

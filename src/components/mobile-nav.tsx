@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Plus, ShoppingCart, User, MessageCircle } from 'lucide-react';
+import { Home, Search, Plus, ShoppingCart, User, Bell, Send, Grid3x3 } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
@@ -15,10 +15,10 @@ import { useAuth } from '@/components/auth-provider';
  * - Center "Add" button: filled black circle with white plus (IG Create style)
  *
  * BUYER:
- *   [Chat] [Search] [⬛ Home ⬛] [Cart] [Account]
+ *   [Messenger] [Explore] [⬛ Home ⬛] [Cart] [Account]
  *
  * BUYER-SELLER:
- *   [Home] [Search] [⬛ + ⬛] [Cart] [Account]
+ *   [Home] [Explore] [⬛ + ⬛] [Cart] [Account]
  */
 export function MobileNav() {
   const pathname = usePathname();
@@ -27,14 +27,14 @@ export function MobileNav() {
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/categories', label: 'Search', icon: Search },
+        { href: '/categories', label: 'Explore', icon: Grid3x3 },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
-        { href: '/messenger', label: 'Chat', icon: MessageCircle },
-        { href: '/categories', label: 'Search', icon: Search },
+        { href: '/messenger', label: 'Messages', icon: Send },
+        { href: '/categories', label: 'Explore', icon: Grid3x3 },
         { href: '/', label: 'Home', icon: Home, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
@@ -74,7 +74,7 @@ export function MobileNav() {
               <Icon
                 className={`w-6 h-6 transition-colors ${isActive ? 'text-black' : 'text-neutral-700'}`}
                 strokeWidth={isActive ? 2.5 : 1.8}
-                fill={isActive && (item.label === 'Home' || item.label === 'Chat') ? 'currentColor' : 'none'}
+                fill={isActive && (item.label === 'Home' || item.label === 'Messages') ? 'currentColor' : 'none'}
               />
               {item.showBadge && cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
@@ -84,6 +84,10 @@ export function MobileNav() {
               {item.showAvatar && user && (
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
               )}
+              {/* Unread badge for messenger */}
+              {item.label === 'Messages' && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+              )}
             </div>
           </Link>
         );
@@ -91,3 +95,4 @@ export function MobileNav() {
     </nav>
   );
 }
+

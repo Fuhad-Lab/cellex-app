@@ -101,7 +101,7 @@ export default function ProfilePage() {
   const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24">
+    <div className="ig-container bg-white min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">

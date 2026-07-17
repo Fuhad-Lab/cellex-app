@@ -150,7 +150,7 @@ function ProductContent() {
 
   if (!product) {
     return (
-      <div className="ig-container text-center py-20 px-4">
+      <div className="ig-container text-center py-20 px-4 ig-topbar-offset">
         <Store className="w-12 h-12 mx-auto text-neutral-300 mb-3" />
         <p className="text-neutral-700 font-semibold">Product not found</p>
         <Link href="/" className="inline-block mt-4 bg-black text-white text-sm font-semibold px-6 py-2.5 rounded-lg">Back to home</Link>

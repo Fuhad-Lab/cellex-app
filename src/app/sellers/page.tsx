@@ -56,7 +56,7 @@ export default function SellersPage() {
   if (loading) { return <PageSkeleton variant="minimal" />; }
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24">
+    <div className="ig-container bg-white min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">

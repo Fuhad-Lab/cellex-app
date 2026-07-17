@@ -66,7 +66,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="ig-container bg-white min-h-screen">
+    <div className="ig-container bg-white min-h-screen ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.push('/')} className="ig-icon-btn" aria-label="Back">

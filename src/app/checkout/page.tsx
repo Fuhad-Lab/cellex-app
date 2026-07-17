@@ -103,7 +103,7 @@ export default function CheckoutPage() {
   const labelClass = "text-xs font-semibold text-neutral-700";
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-32">
+    <div className="ig-container bg-white min-h-screen pb-32 ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.push('/cart')} className="ig-icon-btn" aria-label="Back">

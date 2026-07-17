@@ -48,7 +48,7 @@ export default function OrdersPage() {
 
   if (orders.length === 0) {
     return (
-      <div className="ig-container bg-white min-h-screen">
+      <div className="ig-container bg-white min-h-screen ig-topbar-offset">
         <div className="ig-topbar">
           <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
