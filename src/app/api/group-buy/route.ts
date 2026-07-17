@@ -128,14 +128,16 @@ export async function POST(request: NextRequest) {
       // Add initiator as first member
       await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO group_buy_members (group_buy_id, user_id) VALUES ('${groupBuy.id}'::uuid, '${userId}'::uuid);` }) });
 
-      // Create a conversation for this group buy
-      const convResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO conversations (type, participant1, participant2, group_buy_id) VALUES ('group_buy', '${userId}'::uuid, '${product.seller_id}'::uuid, '${groupBuy.id}'::uuid) RETURNING *;` }) });
-      const convData = await convResp.json();
+      // Create a conversation for this group buy (initiator ↔ seller)
+      // Only create if initiator is NOT the seller (avoid self-conversation)
       let conversationId = null;
-      if (Array.isArray(convData) && convData.length > 0) {
-        conversationId = convData[0].id;
-        // Link conversation to group buy
-        await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `UPDATE group_buys SET conversation_id = '${conversationId}'::uuid WHERE id = '${groupBuy.id}'::uuid;` }) });
+      if (userId !== product.seller_id) {
+        const convResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO conversations (type, participant1, participant2, group_buy_id) VALUES ('group_buy', '${userId}'::uuid, '${product.seller_id}'::uuid, '${groupBuy.id}'::uuid) RETURNING *;` }) });
+        const convData = await convResp.json();
+        if (Array.isArray(convData) && convData.length > 0) {
+          conversationId = convData[0].id;
+          await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `UPDATE group_buys SET conversation_id = '${conversationId}'::uuid WHERE id = '${groupBuy.id}'::uuid;` }) });
+        }
       }
 
       return NextResponse.json({ success: true, groupBuy: { ...groupBuy, conversationId, inviteLink: `/group-buy-join?code=${inviteCode}` } });
@@ -169,13 +171,9 @@ export async function POST(request: NextRequest) {
       const updateResp = await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `UPDATE group_buys SET current_count = ${newCount}, status = '${isComplete ? 'completed' : 'open'}', completed_at = ${isComplete ? 'NOW()' : 'NULL'} WHERE id = '${groupBuy.id}'::uuid RETURNING *;` }) });
       const updateData = await updateResp.json();
 
-      // Add user to the group buy's conversation
-      if (groupBuy.conversation_id) {
-        // The conversation was created between initiator and seller.
-        // For a true group chat, we'd need a many-to-many table.
-        // For now, we create a new conversation between the joining user and the initiator.
-        await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO conversations (type, participant1, participant2, group_buy_id) VALUES ('group_buy', '${userId}'::uuid, '${groupBuy.initiator_id}'::uuid, '${groupBuy.id}'::uuid) ON CONFLICT DO NOTHING;` }) });
-      }
+      // Add user to the group buy's conversation (create one between joiner and initiator)
+      // This creates a 1-on-1 conversation linked to the group buy
+      await fetch(sqlApiUrl, { method: 'POST', headers: sqlHeaders, body: JSON.stringify({ query: `INSERT INTO conversations (type, participant1, participant2, group_buy_id) VALUES ('group_buy', '${userId}'::uuid, '${groupBuy.initiator_id}'::uuid, '${groupBuy.id}'::uuid) ON CONFLICT DO NOTHING;` }) });
 
       return NextResponse.json({ success: true, groupBuy: Array.isArray(updateData) && updateData.length > 0 ? updateData[0] : groupBuy });
     }
