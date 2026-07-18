@@ -32,7 +32,7 @@ interface FeedPost {
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, isSeller } = useAuth();
+  const { user, isSeller, unreadMessages } = useAuth();
   const { toast } = useToast();
   const { burst } = useOptimisticUI();
 
@@ -64,6 +64,9 @@ export default function HomePage() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Note: unreadMessages is fetched by AuthProvider (shared across all pages
+  // via useAuth context) and polled every 30 seconds. No duplicate fetch here.
 
   useEffect(() => {
     (async () => {
@@ -226,8 +229,9 @@ export default function HomePage() {
           <span className="ig-logo">Cellex</span>
         </Link>
 
-        {/* Search — desktop: pill input, mobile: icon button.
-            Both trigger the Smart Search spotlight overlay. */}
+        {/* Search — desktop only (pill button).
+            Mobile users access Smart Search via the Explore/Categories page
+            search bar, or via Cmd+K on physical keyboards. */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
           className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-neutral-200 transition-colors"
@@ -238,28 +242,23 @@ export default function HomePage() {
           <span className="text-sm text-neutral-500 text-left flex-1">Search</span>
         </button>
 
-        {/* Mobile search icon button (visible < 640px) */}
-        <button
-          onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-          className="sm:hidden ig-icon-btn flex-1 max-w-[40px]"
-          aria-label="Search"
-        >
-          <Search className="w-6 h-6 text-black" />
-        </button>
-
         {/* Spacer on mobile (search hidden) */}
         <div className="flex-1 sm:hidden" />
 
-        {/* RIGHT SIDE — role-dependent */}
+        {/* RIGHT SIDE — role-dependent.
+            Badges are FUNCTIONAL: only show when there's actual unread data. */}
         {isSeller ? (
           <div className="shrink-0 flex items-center gap-1">
             <Link href="/messenger" className="ig-icon-btn relative" aria-label="Messages">
               <Send className="w-6 h-6" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+              {user && unreadMessages > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+                </span>
+              )}
             </Link>
-            <Link href="/notifications" className="ig-icon-btn relative" aria-label="Notifications">
+            <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
               <Bell className="w-6 h-6" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
             </Link>
             <Link href="/seller-dashboard" className="ig-icon-btn" aria-label="My Store">
               <User className="w-6 h-6" />
@@ -267,50 +266,57 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="shrink-0 flex items-center gap-1">
-            <Link href="/notifications" className="ig-icon-btn relative" aria-label="Notifications">
+            <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
               <Bell className="w-6 h-6" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
             </Link>
           </div>
         )}
       </div>
 
-      {/* Stories bar — IG-style horizontal scroll with gradient rings */}
-      {stories.length > 0 && (
-        <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar border-b border-neutral-100">
-          {stories.slice(0, 12).map((s: any, i: number) => (
-            <Link
-              key={i}
-              href={`/seller-profile?id=${s.seller_id || ''}`}
-              className="shrink-0 flex flex-col items-center gap-1"
-            >
-              <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
-                <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
-                  {s.profile_image ? (
-                    <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Store className="w-5 h-5 text-neutral-300" />
+      {/* Stories + Live section — subtle gradient background for visual warmth */}
+      {(stories.length > 0 || liveCount > 0) && (
+        <div className="ig-hero-bg border-b border-neutral-100">
+          {/* Stories bar — IG-style horizontal scroll with gradient rings */}
+          {stories.length > 0 && (
+            <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
+              {stories.slice(0, 12).map((s: any, i: number) => (
+                <Link
+                  key={i}
+                  href={`/seller-profile?id=${s.seller_id || ''}`}
+                  className="shrink-0 flex flex-col items-center gap-1"
+                >
+                  <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
+                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
+                      {s.profile_image ? (
+                        <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Store className="w-5 h-5 text-neutral-300" />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                  </div>
+                  <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Live Now indicator — compact black pill with pulse glow */}
+          {liveCount > 0 && (
+            <Link href="/live" className="block px-3 pb-3">
+              <div className="flex items-center gap-2 bg-black text-white rounded-full px-3 py-2 hover:bg-neutral-800 transition-colors ig-pulse-glow">
+                <span className="w-2 h-2 bg-red-500 rounded-full ig-float" />
+                <span className="text-xs font-bold">{liveCount} LIVE NOW</span>
+                <ChevronRight className="w-3 h-3 ml-auto" />
               </div>
-              <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
             </Link>
-          ))}
+          )}
         </div>
       )}
 
-      {/* Live Now indicator — compact black pill */}
-      {liveCount > 0 && (
-        <Link href="/live" className="block px-3 pt-3">
-          <div className="flex items-center gap-2 bg-black text-white rounded-full px-3 py-2 hover:bg-neutral-800 transition-colors">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-xs font-bold">{liveCount} LIVE NOW</span>
-            <ChevronRight className="w-3 h-3 ml-auto" />
-          </div>
-        </Link>
-      )}
+      {/* Stories bar fallback (if no stories but live exists — handled above) */}
+      {stories.length === 0 && liveCount === 0 && null}
 
       {/* Feed — IG-style.
           Every 3 feed posts, insert a horizontal "Suggested Sellers" carousel.
@@ -449,8 +455,8 @@ function FeedPostCard({
         )}
       </div>
 
-      {/* Media — IG-style: square, full-bleed */}
-      <div className="ig-media">
+      {/* Media — IG-style: square, full-bleed, with hover zoom on images */}
+      <div className="ig-media ig-img-zoom">
         {isVideo ? (
           <Link href="/videos" className="block w-full h-full relative">
             <video
@@ -467,7 +473,7 @@ function FeedPostCard({
             </div>
           </Link>
         ) : (
-          <Link href={post.product ? `/product?id=${post.product.id}` : '#'}>
+          <Link href={post.product ? `/product?id=${post.product.id}` : '#'} className="block w-full h-full">
             <img src={post.mediaUrl} alt={post.caption} className="w-full h-full object-cover" loading="lazy" />
           </Link>
         )}
@@ -613,7 +619,7 @@ function SuggestedSellersCarousel({
 
       {/* Horizontal scroll of seller cards */}
       <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
-        {sellers.map((seller) => {
+        {sellers.map((seller, index) => {
           const sellerId = seller.id;
           const name = seller.business_name || seller.farm_name || 'Seller';
           const image = seller.profile_image;
@@ -623,17 +629,20 @@ function SuggestedSellersCarousel({
           return (
             <div
               key={sellerId}
-              className="shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center text-center"
+              className="ig-bounce-in shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all"
+              style={{ animationDelay: `${index * 60}ms` }}
             >
               <Link href={`/seller-profile?id=${sellerId}`} className="block">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-neutral-200 mb-2">
-                  {image ? (
-                    <img src={image} alt={name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white font-bold text-xl">
-                      {name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-neutral-200 mb-2 ig-story-ring" style={{ padding: 2 }}>
+                  <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
+                    {image ? (
+                      <img src={image} alt={name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white font-bold text-xl">
+                        {name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </Link>
               <Link

@@ -22,7 +22,7 @@ import { useAuth } from '@/components/auth-provider';
  */
 export function MobileNav() {
   const pathname = usePathname();
-  const { cartCount, user, isSeller } = useAuth();
+  const { cartCount, user, isSeller, unreadMessages } = useAuth();
 
   const navItems = isSeller
     ? [
@@ -84,9 +84,13 @@ export function MobileNav() {
               {item.showAvatar && user && (
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
               )}
-              {/* Unread badge for messenger */}
-              {item.label === 'Messages' && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+              {/* Functional unread badge for messenger — only shows when logged
+                  in AND there are actual conversations with messages. Count
+                  comes from AuthProvider which polls every 30s. */}
+              {item.label === 'Messages' && user && unreadMessages > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+                </span>
               )}
             </div>
           </Link>

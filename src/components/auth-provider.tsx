@@ -14,10 +14,12 @@ interface AuthContextType {
   cartCount: number;
   isSeller: boolean;
   sellerChecked: boolean;
+  unreadMessages: number;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signup: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshCartCount: () => Promise<void>;
+  refreshUnreadMessages: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,10 +28,12 @@ const AuthContext = createContext<AuthContextType>({
   cartCount: 0,
   isSeller: false,
   sellerChecked: false,
+  unreadMessages: 0,
   login: async () => ({ success: false }),
   signup: async () => ({ success: false }),
   logout: async () => {},
   refreshCartCount: async () => {},
+  refreshUnreadMessages: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -38,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [cartCount, setCartCount] = useState(0);
   const [isSeller, setIsSeller] = useState(false);
   const [sellerChecked, setSellerChecked] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   const refreshCartCount = useCallback(async () => {
     if (!user) {
@@ -48,6 +53,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await api.cart.count();
       if (result.success) {
         setCartCount(result.count || 0);
+      }
+    } catch {}
+  }, [user]);
+
+  // Fetch unread message count for the messenger badge.
+  // Functional: only runs when logged in. Counts conversations that have a
+  // lastMessage as "unread" since we don't have read receipts yet.
+  const refreshUnreadMessages = useCallback(async () => {
+    if (!user) {
+      setUnreadMessages(0);
+      return;
+    }
+    try {
+      const resp = await fetch('/api/messenger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op: 'list' }),
+      });
+      const data = await resp.json();
+      if (data.success && Array.isArray(data.conversations)) {
+        const withMessages = data.conversations.filter((c: any) => c.lastMessage && c.lastMessage.trim());
+        setUnreadMessages(withMessages.length);
       }
     } catch {}
   }, [user]);
@@ -100,6 +127,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshCartCount();
   }, [user, refreshCartCount]);
 
+  // Fetch unread messages when user changes (login/logout)
+  useEffect(() => {
+    refreshUnreadMessages();
+  }, [user, refreshUnreadMessages]);
+
+  // Poll for new messages every 30 seconds when logged in (so the badge stays fresh)
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(refreshUnreadMessages, 30000);
+    return () => clearInterval(interval);
+  }, [user, refreshUnreadMessages]);
+
   const login = async (email: string, password: string) => {
     const result = await api.auth.login(email, password);
     if (result.success && result.user) {
@@ -122,12 +161,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await api.auth.logout();
     setUser(null);
     setCartCount(0);
+    setUnreadMessages(0);
     setIsSeller(false);
     setSellerChecked(true);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, cartCount, isSeller, sellerChecked, login, signup, logout, refreshCartCount }}>
+    <AuthContext.Provider value={{ user, loading, cartCount, isSeller, sellerChecked, unreadMessages, login, signup, logout, refreshCartCount, refreshUnreadMessages }}>
       {children}
     </AuthContext.Provider>
   );
