@@ -12,6 +12,16 @@ const API_BASE = Capacitor.isNativePlatform()
 export { Capacitor };
 export { API_BASE };
 
+// Owncast streaming server — handles live video for seller go-live sessions.
+// Sellers stream to this RTMP endpoint via OBS or their phone's streaming app.
+// Viewers watch via the embed URL (embedded in /live-watch).
+// Admin panel is at /admin (admin / Cellex2026!).
+export const OWNCAST_URL = 'https://ai-module-tester.onrender.com';
+export const OWNCAST_RTMP_SERVER = 'rtmp://ai-module-tester.onrender.com/live';
+export const OWNCAST_STREAM_KEY = 'cellex-live-2026';
+export const OWNCAST_EMBED_URL = `${OWNCAST_URL}/embed/stream`;
+export const OWNCAST_HLS_URL = `${OWNCAST_URL}/hls/stream.m3u8`;
+
 export interface Product {
   id: number;
   name: string;

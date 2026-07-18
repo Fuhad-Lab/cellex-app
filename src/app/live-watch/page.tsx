@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback , Suspense} from 'react';
+import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { api, formatPrice } from '@/lib/api';
-import { Send, Eye, ChevronLeft, ShoppingBag, Radio } from 'lucide-react';
+import { api, formatPrice, OWNCAST_URL, OWNCAST_HLS_URL } from '@/lib/api';
+import { Send, Eye, ChevronLeft, ShoppingBag, Radio, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
+
 function LiveWatchContent() {
   const params = useSearchParams();
   const sessionId = params.get('id') || '';
@@ -21,6 +22,7 @@ function LiveWatchContent() {
   const [chatInput, setChatInput] = useState('');
   const [joined, setJoined] = useState(false);
   const [lastMsgId, setLastMsgId] = useState(0);
+  const [owncastOnline, setOwncastOnline] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -45,6 +47,23 @@ function LiveWatchContent() {
   }, [sessionId, user, joined]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Check if Owncast stream is actually online (seller is broadcasting)
+  useEffect(() => {
+    if (!session || session.status !== 'live') return;
+    const checkOwncast = async () => {
+      try {
+        const resp = await fetch(`${OWNCAST_URL}/api/status`);
+        const data = await resp.json();
+        setOwncastOnline(data.online === true);
+      } catch {
+        setOwncastOnline(false);
+      }
+    };
+    checkOwncast();
+    const interval = setInterval(checkOwncast, 5000); // check every 5 seconds
+    return () => clearInterval(interval);
+  }, [session]);
 
   // Poll messages
   useEffect(() => {
@@ -94,6 +113,8 @@ function LiveWatchContent() {
   }
 
   const isLive = session.status === 'live';
+  // Check if this session uses Owncast (stream_url contains our Owncast URL)
+  const usesOwncast = session.stream_url && session.stream_url.includes('ai-module-tester.onrender.com');
 
   return (
     <div className="ig-container bg-white min-h-screen pb-24">
@@ -105,9 +126,45 @@ function LiveWatchContent() {
         <h1 className="text-base font-semibold flex-1 ml-2 truncate">{session.title}</h1>
       </div>
 
-      {/* Stream */}
+      {/* Stream — Owncast player */}
       <div className="aspect-video bg-black relative">
-        {session.stream_url ? (
+        {usesOwncast ? (
+          <>
+            {/* Owncast HLS player */}
+            <video
+              autoPlay
+              muted
+              playsInline
+              controls
+              className="w-full h-full"
+              poster={session.featured_product?.image_url || undefined}
+            >
+              <source src={OWNCAST_HLS_URL} type="application/x-mpegURL" />
+              Your browser does not support the video tag.
+            </video>
+
+            {/* Offline overlay — shown when seller hasn't started streaming yet */}
+            {isLive && !owncastOnline && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/80">
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-3">
+                  <Radio className="w-8 h-8 animate-pulse" />
+                </div>
+                <p className="text-sm font-semibold">Waiting for seller to start streaming</p>
+                <p className="text-xs text-white/60 mt-1">The session is live — video will appear here shortly</p>
+              </div>
+            )}
+
+            {/* Offline session overlay */}
+            {!isLive && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black">
+                <Radio className="w-12 h-12 text-white/30 mb-2" />
+                <p className="text-sm font-semibold">Session has ended</p>
+                <p className="text-xs text-white/50 mt-1">This live session is no longer active</p>
+              </div>
+            )}
+          </>
+        ) : session.stream_url ? (
+          // Fallback: YouTube or other URL
           session.stream_url.includes('youtube') || session.stream_url.includes('youtu.be') ? (
             <iframe
               src={session.stream_url.replace('watch?v=', 'embed/')}
@@ -124,7 +181,9 @@ function LiveWatchContent() {
             <p className="text-sm">Audio-only / text live session</p>
           </div>
         )}
-        <div className="absolute top-2 left-2 flex items-center gap-2">
+
+        {/* LIVE badge + viewer count */}
+        <div className="absolute top-2 left-2 flex items-center gap-2 pointer-events-none">
           {isLive && (
             <span className="bg-[#ed4956] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
@@ -163,6 +222,17 @@ function LiveWatchContent() {
               </button>
             </Link>
           </div>
+        )}
+
+        {/* Open in full screen link for Owncast */}
+        {usesOwncast && isLive && (
+          <a
+            href={OWNCAST_URL}
+            target="_blank"
+            className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-black mt-3 transition-colors"
+          >
+            <ExternalLink className="w-3 h-3" /> Open in full screen
+          </a>
         )}
       </div>
 
@@ -213,4 +283,3 @@ export default function LiveWatchPage() {
     </Suspense>
   );
 }
-
