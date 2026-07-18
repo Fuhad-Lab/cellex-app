@@ -2,23 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Plus, ShoppingCart, User, Bell, Send, Grid3x3 } from 'lucide-react';
+import { Home, Plus, ShoppingCart, User, Send, Grid3x3, Clapperboard } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
  * MobileNav — Instagram-style bottom navigation bar.
  *
- * - 5 icons evenly spaced
- * - NO labels (matches IG mobile web)
+ * - 5 icons evenly spaced, NO labels (matches IG mobile web)
  * - White background, 1px top border (#dbdbdb)
  * - Active state: bold black icon (instead of gray)
- * - Center "Add" button: filled black circle with white plus (IG Create style)
+ * - Center button: filled black circle with white icon (IG Create style)
  *
  * BUYER:
- *   [Messenger] [Explore] [⬛ Home ⬛] [Cart] [Account]
+ *   [Messenger] [Shorts] [⬛ Home ⬛] [Category] [Cart]
+ *   (Account icon is in the HEADER beside Notifications)
  *
  * BUYER-SELLER:
- *   [Home] [Explore] [⬛ + ⬛] [Cart] [Account]
+ *   [Home] [Shorts] [⬛ + Add ⬛] [Cart] [Account]
+ *   (Explore/Categories removed to make room for Shorts — sellers can still
+ *    reach Categories via search spotlight or by tapping a product's
+ *    category hashtag. Account stays in nav because it links to /profile
+ *    which is DIFFERENT from the header's User icon which links to
+ *    /seller-dashboard.)
  */
 export function MobileNav() {
   const pathname = usePathname();
@@ -27,17 +32,17 @@ export function MobileNav() {
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/categories', label: 'Explore', icon: Grid3x3 },
+        { href: '/videos', label: 'Shorts', icon: Clapperboard },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
         { href: '/messenger', label: 'Messages', icon: Send },
-        { href: '/categories', label: 'Explore', icon: Grid3x3 },
+        { href: '/videos', label: 'Shorts', icon: Clapperboard },
         { href: '/', label: 'Home', icon: Home, center: true },
+        { href: '/categories', label: 'Category', icon: Grid3x3 },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-        { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ];
 
   return (
@@ -99,4 +104,3 @@ export function MobileNav() {
     </nav>
   );
 }
-

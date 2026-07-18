@@ -39,11 +39,12 @@ export default function HomePage() {
   const [feed, setFeed] = useState<FeedPost[]>([]);
   const [stories, setStories] = useState<any[]>([]);
   const [sellers, setSellers] = useState<any[]>([]);
+  const [liveSessions, setLiveSessions] = useState<any[]>([]);
+  const [shorts, setShorts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
   const [following, setFollowing] = useState<Set<string>>(new Set());
-  const [liveCount, setLiveCount] = useState(0);
 
   const searchBarRef = useRef<HTMLDivElement>(null);
 
@@ -150,7 +151,24 @@ export default function HomePage() {
         setFeed(interleaved);
 
         if (storiesResp.success) setStories(storiesResp.stories || []);
-        if (liveResp.success) setLiveCount((liveResp.sessions || []).length);
+        if (liveResp.success) setLiveSessions(liveResp.sessions || []);
+
+        // Store video posts as Shorts (for the Shorts section).
+        // These are the same videos that appear in the feed, but presented
+        // as vertical 9:16 cards in a horizontal scroll (YouTube Shorts style).
+        if (vidResp.success) {
+          const videoShorts = (vidResp.videos || []).slice(0, 10).map((v: any) => ({
+            id: v.id,
+            videoUrl: v.video_url || '',
+            caption: v.caption || '',
+            views: v.views_count || 0,
+            likes: v.likes_count || 0,
+            seller: v.seller || {},
+            product: v.product,
+            createdAt: v.created_at,
+          }));
+          setShorts(videoShorts);
+        }
       } catch (e) {
         console.error('Feed load error:', e);
       } finally {
@@ -265,58 +283,64 @@ export default function HomePage() {
             </Link>
           </div>
         ) : (
+          /* Buyer: Notifications + Account icons in header.
+             Account links to /profile (personal profile).
+             Mobile nav no longer has Account — it has Shorts instead. */
           <div className="shrink-0 flex items-center gap-1">
             <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
               <Bell className="w-6 h-6" />
+            </Link>
+            <Link href="/profile" className="ig-icon-btn relative" aria-label="Account">
+              <User className="w-6 h-6" />
+              {user && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+              )}
             </Link>
           </div>
         )}
       </div>
 
-      {/* Stories + Live section — subtle gradient background for visual warmth */}
-      {(stories.length > 0 || liveCount > 0) && (
+      {/* Stories section — IG-style horizontal scroll with gradient rings */}
+      {stories.length > 0 && (
         <div className="ig-hero-bg border-b border-neutral-100">
-          {/* Stories bar — IG-style horizontal scroll with gradient rings */}
-          {stories.length > 0 && (
-            <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
-              {stories.slice(0, 12).map((s: any, i: number) => (
-                <Link
-                  key={i}
-                  href={`/seller-profile?id=${s.seller_id || ''}`}
-                  className="shrink-0 flex flex-col items-center gap-1"
-                >
-                  <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
-                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
-                      {s.profile_image ? (
-                        <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Store className="w-5 h-5 text-neutral-300" />
-                        </div>
-                      )}
-                    </div>
+          <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
+            {stories.slice(0, 12).map((s: any, i: number) => (
+              <Link
+                key={i}
+                href={`/seller-profile?id=${s.seller_id || ''}`}
+                className="shrink-0 flex flex-col items-center gap-1"
+              >
+                <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
+                  <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
+                    {s.profile_image ? (
+                      <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Store className="w-5 h-5 text-neutral-300" />
+                      </div>
+                    )}
                   </div>
-                  <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Live Now indicator — compact black pill with pulse glow */}
-          {liveCount > 0 && (
-            <Link href="/live" className="block px-3 pb-3">
-              <div className="flex items-center gap-2 bg-black text-white rounded-full px-3 py-2 hover:bg-neutral-800 transition-colors ig-pulse-glow">
-                <span className="w-2 h-2 bg-red-500 rounded-full ig-float" />
-                <span className="text-xs font-bold">{liveCount} LIVE NOW</span>
-                <ChevronRight className="w-3 h-3 ml-auto" />
-              </div>
-            </Link>
-          )}
+                </div>
+                <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Stories bar fallback (if no stories but live exists — handled above) */}
-      {stories.length === 0 && liveCount === 0 && null}
+      {/* Live Auctions section — eBay-style horizontal scroll of live seller cards.
+          Replaces the old small "LIVE NOW" pill. Each card shows the seller,
+          their live title, viewer count, and a Watch Live CTA. */}
+      {liveSessions.length > 0 && (
+        <LiveAuctionsSection sessions={liveSessions} />
+      )}
+
+      {/* Shorts section — YouTube Shorts / IG Reels style horizontal scroll.
+          Vertical 9:16 video thumbnails with caption + views. Appears above
+          the feed so users can discover video content quickly. */}
+      {shorts.length > 0 && (
+        <ShortsSection shorts={shorts} />
+      )}
 
       {/* Feed — IG-style.
           Every 3 feed posts, insert a horizontal "Suggested Sellers" carousel.
@@ -574,6 +598,204 @@ function formatCount(n: number): string {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return String(n);
+}
+
+/**
+ * Format the duration a live session has been running.
+ * e.g. "5m", "1h 23m", "2h"
+ */
+function formatLiveDuration(startedAt: string): string {
+  const start = new Date(startedAt).getTime();
+  const diff = Date.now() - start;
+  if (diff < 0) return '0m';
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  if (hours > 0) return `${hours}h ${minutes % 60}m`;
+  return `${minutes}m`;
+}
+
+/**
+ * LiveAuctionsSection — eBay-style horizontal scroll of live seller cards.
+ *
+ * Each card shows:
+ * - Seller avatar with pulsing red LIVE ring
+ * - Seller name
+ * - Live session title (e.g. "Friday tech deals")
+ * - Viewer count with eye icon
+ * - "Watch Live" CTA button
+ *
+ * The section has a dark gradient background to make the LIVE cards pop,
+ * similar to eBay's live auction section.
+ */
+function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
+  return (
+    <section className="border-b border-neutral-100 bg-gradient-to-b from-neutral-900 to-black py-4">
+      {/* Section header */}
+      <div className="flex items-center justify-between px-3 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 bg-red-500 rounded-full ig-float" />
+            <span className="text-xs font-bold text-white tracking-wide">LIVE NOW</span>
+          </span>
+          <span className="text-xs text-white/50">·</span>
+          <span className="text-xs text-white/70">{sessions.length} seller{sessions.length === 1 ? '' : 's'} streaming</span>
+        </div>
+        <Link href="/live" className="text-xs font-semibold text-sky-400 hover:text-sky-300">
+          See all
+        </Link>
+      </div>
+
+      {/* Horizontal scroll of live cards */}
+      <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
+        {sessions.map((session, index) => {
+          const seller = session.seller || {};
+          const sellerName = seller.business_name || 'Seller';
+          const sellerImage = seller.profile_image;
+          const title = session.title || `${sellerName} is live`;
+          const viewers = session.viewer_count || 0;
+          const liveDuration = session.started_at
+            ? formatLiveDuration(session.started_at)
+            : null;
+
+          return (
+            <Link
+              key={session.id}
+              href={`/live-watch?id=${session.id}`}
+              className="ig-bounce-in shrink-0 w-64 bg-white rounded-xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-0.5"
+              style={{ animationDelay: `${index * 80}ms` }}
+            >
+              {/* Top: avatar + LIVE badge + duration */}
+              <div className="relative h-32 bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
+                {/* Pulsing red ring around avatar */}
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-40" />
+                  <div className="relative w-16 h-16 rounded-full border-2 border-red-500 overflow-hidden bg-neutral-700">
+                    {sellerImage ? (
+                      <img src={sellerImage} alt={sellerName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
+                        {sellerName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* LIVE badge */}
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
+                  <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                  LIVE
+                </div>
+                {/* Duration */}
+                {liveDuration && (
+                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    {liveDuration}
+                  </div>
+                )}
+              </div>
+              {/* Bottom: title + viewers + CTA */}
+              <div className="p-3">
+                <div className="text-xs font-semibold text-black truncate mb-1">{sellerName}</div>
+                <div className="text-xs text-neutral-600 line-clamp-1 mb-2">{title}</div>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1 text-[10px] text-neutral-500">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                    {formatCount(viewers)} watching
+                  </span>
+                  <span className="bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                    Watch Live
+                  </span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * ShortsSection — YouTube Shorts / IG Reels style horizontal scroll.
+ *
+ * Each card is a vertical 9:16 video thumbnail with:
+ * - Caption overlay at bottom
+ * - View count + play icon
+ * - Seller name
+ *
+ * Tapping a short navigates to /videos (the full-screen video viewer).
+ */
+function ShortsSection({ shorts }: { shorts: any[] }) {
+  return (
+    <section className="border-b border-neutral-100 py-4">
+      {/* Section header */}
+      <div className="flex items-center justify-between px-3 mb-3">
+        <div className="flex items-center gap-1.5">
+          <Play className="w-4 h-4 text-black fill-black" />
+          <h3 className="text-sm font-semibold text-black">Shorts</h3>
+        </div>
+        <Link href="/videos" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+          See all
+        </Link>
+      </div>
+
+      {/* Horizontal scroll of vertical video cards */}
+      <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
+        {shorts.map((short, index) => {
+          const seller = short.seller || {};
+          const sellerName = seller.business_name || 'Seller';
+          const caption = short.caption || '';
+          const views = short.views || 0;
+          const likes = short.likes || 0;
+          const productImage = short.product?.image_url;
+
+          return (
+            <Link
+              key={short.id}
+              href="/videos"
+              className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-neutral-900 hover:shadow-lg transition-all hover:-translate-y-0.5"
+              style={{ animationDelay: `${index * 60}ms` }}
+            >
+              {/* Vertical 9:16 video thumbnail */}
+              <div className="relative aspect-[9/16] bg-neutral-800">
+                {short.videoUrl ? (
+                  <video
+                    src={short.videoUrl}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-cover"
+                    onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+                    onMouseLeave={(e) => e.currentTarget.pause()}
+                  />
+                ) : productImage ? (
+                  <img src={productImage} alt={caption} className="w-full h-full object-cover" loading="lazy" />
+                ) : null}
+                {/* Gradient overlay for caption readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                {/* Play count top-right */}
+                <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+                  <Play className="w-2 h-2 fill-white" />
+                  {formatCount(views)}
+                </div>
+                {/* Caption + seller at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-2">
+                  <div className="text-[10px] font-semibold text-white truncate mb-0.5">{sellerName}</div>
+                  {caption && (
+                    <div className="text-[10px] text-white/80 line-clamp-2 leading-tight">{caption}</div>
+                  )}
+                  {/* Likes */}
+                  <div className="flex items-center gap-1 mt-1">
+                    <Heart className="w-2.5 h-2.5 fill-red-500 text-red-500" />
+                    <span className="text-[9px] text-white/70">{formatCount(likes)}</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 /**
