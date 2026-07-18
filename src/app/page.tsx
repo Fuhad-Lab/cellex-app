@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { useOptimisticUI } from '@/components/optimistic-ui';
+import { PageSkeleton } from '@/components/page-skeleton';
 
 interface FeedPost {
   type: 'video' | 'product';
@@ -228,11 +229,7 @@ export default function HomePage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="loading-dots"><span></span><span></span><span></span></div>
-      </div>
-    );
+    return <PageSkeleton variant="home" />;
   }
 
   return (
@@ -732,7 +729,7 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
           <Play className="w-4 h-4 text-black fill-black" />
           <h3 className="text-sm font-semibold text-black">Shorts</h3>
         </div>
-        <Link href="/videos" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+        <Link href="/shorts" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
           See all
         </Link>
       </div>
@@ -750,7 +747,7 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
           return (
             <Link
               key={short.id}
-              href="/videos"
+              href="/shorts"
               className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-neutral-900 hover:shadow-lg transition-all hover:-translate-y-0.5"
               style={{ animationDelay: `${index * 60}ms` }}
             >

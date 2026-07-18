@@ -32,14 +32,14 @@ export function MobileNav() {
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/videos', label: 'Shorts', icon: Clapperboard },
+        { href: '/shorts', label: 'Shorts', icon: Clapperboard },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
         { href: '/messenger', label: 'Messages', icon: Send },
-        { href: '/videos', label: 'Shorts', icon: Clapperboard },
+        { href: '/shorts', label: 'Shorts', icon: Clapperboard },
         { href: '/', label: 'Home', icon: Home, center: true },
         { href: '/categories', label: 'Category', icon: Grid3x3 },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
