@@ -135,11 +135,12 @@ export default function SellersPage() {
             const productCount = allProducts.filter(p => p.seller_id === seller.id).length;
             const name = seller.business_name || seller.farm_name || 'Unnamed store';
             const initial = name.charAt(0).toUpperCase();
+            const sellerHref = seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`;
 
             return (
               <Link
                 key={seller.id}
-                href={`/seller-profile?id=${seller.id}`}
+                href={sellerHref}
                 className="block p-4 hover:bg-neutral-50 transition-colors"
               >
                 <div className="flex items-center gap-3">

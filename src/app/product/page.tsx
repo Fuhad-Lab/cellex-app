@@ -317,7 +317,7 @@ function ProductContent() {
       {seller && (
         <div className="px-3 py-3 border-t border-neutral-100">
           <div className="flex items-center gap-3">
-            <Link href={`/seller-profile?id=${seller.id}`}>
+            <Link href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`}>
               <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200 shrink-0">
                 {seller.profile_image ? (
                   <img src={seller.profile_image} alt="" className="w-full h-full object-cover" />
@@ -329,13 +329,13 @@ function ProductContent() {
               </div>
             </Link>
             <div className="flex-1 min-w-0">
-              <Link href={`/seller-profile?id=${seller.id}`} className="text-sm font-semibold text-black hover:opacity-70 truncate block">
+              <Link href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`} className="text-sm font-semibold text-black hover:opacity-70 truncate block">
                 {seller.business_name || 'Unnamed store'}
               </Link>
               <div className="text-xs text-neutral-500">{product.units_sold || 0} sold · {seller.business_location || 'Nigeria'}</div>
             </div>
             <Link
-              href={`/seller-profile?id=${seller.id}`}
+              href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`}
               className="text-xs font-semibold text-sky-500 hover:text-sky-700 px-3 py-1.5"
             >
               Visit

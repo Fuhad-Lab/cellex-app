@@ -17,6 +17,7 @@ interface FeedPost {
   type: 'video' | 'product';
   id: string;
   sellerId?: string;
+  sellerSlug?: string;
   sellerName: string;
   sellerImage?: string;
   mediaUrl: string;
@@ -81,12 +82,12 @@ export default function HomePage() {
           api.social.discover(60).catch(() => ({ success: false })),
         ]);
 
-        const sellerMap = new Map<string, { name: string; image?: string }>();
+        const sellerMap = new Map<string, { name: string; image?: string; slug?: string }>();
         if (sellersResp.success) {
           const sellersList = sellersResp.sellers || [];
           setSellers(sellersList);
           sellersList.forEach((s: any) => {
-            sellerMap.set(s.id, { name: s.business_name || s.farm_name || 'Seller', image: s.profile_image });
+            sellerMap.set(s.id, { name: s.business_name || s.farm_name || 'Seller', image: s.profile_image, slug: s.slug });
           });
         }
 
@@ -95,10 +96,13 @@ export default function HomePage() {
         if (vidResp.success) {
           (vidResp.videos || []).forEach((v: any) => {
             const seller = v.seller || {};
+            // If the video seller doesn't have a slug, look it up via sellerMap
+            const sellerInfo = seller.id ? sellerMap.get(seller.id) : null;
             posts.push({
               type: 'video',
               id: `vid-${v.id}`,
               sellerId: seller.id,
+              sellerSlug: seller.slug || sellerInfo?.slug,
               sellerName: seller.business_name || 'Seller',
               sellerImage: seller.profile_image,
               mediaUrl: v.video_url || '',
@@ -127,6 +131,7 @@ export default function HomePage() {
               type: 'product',
               id: `prod-${p.id}`,
               sellerId: p.seller_id,
+              sellerSlug: sellerInfo?.slug,
               sellerName: sellerInfo?.name || 'Cellex Seller',
               sellerImage: sellerInfo?.image,
               mediaUrl: p.image_url || '',
@@ -301,26 +306,25 @@ export default function HomePage() {
       {stories.length > 0 && (
         <div className="ig-hero-bg border-b border-neutral-100">
           <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
-            {stories.slice(0, 12).map((s: any, i: number) => (
-              <Link
-                key={i}
-                href={`/seller-profile?id=${s.seller_id || ''}`}
-                className="shrink-0 flex flex-col items-center gap-1"
-              >
-                <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
-                  <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
-                    {s.profile_image ? (
-                      <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Store className="w-5 h-5 text-neutral-300" />
-                      </div>
-                    )}
+            {stories.slice(0, 12).map((s: any, i: number) => {
+              const storyHref = s.slug ? `/${s.slug}` : `/seller-profile?id=${s.seller_id || ''}`;
+              return (
+                <Link key={i} href={storyHref} className="shrink-0 flex flex-col items-center gap-1">
+                  <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
+                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
+                      {s.profile_image ? (
+                        <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Store className="w-5 h-5 text-neutral-300" />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
-              </Link>
-            ))}
+                  <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -441,7 +445,7 @@ function FeedPostCard({
     >
       {/* Seller header — IG-style: avatar + username + verified + Follow */}
       <div className="flex items-center gap-3 px-3 py-2.5">
-        <Link href={post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#'}>
+        <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')}>
           <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 shrink-0">
             {post.sellerImage ? (
               <img src={post.sellerImage} alt="" className="w-full h-full object-cover" />
@@ -453,7 +457,7 @@ function FeedPostCard({
           </div>
         </Link>
         <div className="flex-1 min-w-0 flex items-center gap-1">
-          <Link href={post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#'} className="text-sm font-semibold text-black hover:opacity-70 transition-opacity truncate">
+          <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')} className="text-sm font-semibold text-black hover:opacity-70 transition-opacity truncate">
             {post.sellerName}
           </Link>
           {post.verified && (
@@ -844,6 +848,7 @@ function SuggestedSellersCarousel({
           const image = seller.profile_image;
           const category = seller.business_category;
           const isFollowing = following.has(sellerId);
+          const sellerHref = seller.slug ? `/${seller.slug}` : `/seller-profile?id=${sellerId}`;
 
           return (
             <div
@@ -851,7 +856,7 @@ function SuggestedSellersCarousel({
               className="ig-bounce-in shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all"
               style={{ animationDelay: `${index * 60}ms` }}
             >
-              <Link href={`/seller-profile?id=${sellerId}`} className="block">
+              <Link href={sellerHref} className="block">
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-neutral-200 mb-2 ig-story-ring" style={{ padding: 2 }}>
                   <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
                     {image ? (
@@ -865,7 +870,7 @@ function SuggestedSellersCarousel({
                 </div>
               </Link>
               <Link
-                href={`/seller-profile?id=${sellerId}`}
+                href={sellerHref}
                 className="text-xs font-semibold text-black truncate max-w-full hover:opacity-70 mb-0.5"
               >
                 {name}

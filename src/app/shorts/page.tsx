@@ -226,7 +226,7 @@ export default function ShortsPage() {
               <div className="absolute left-0 right-16 bottom-24 px-4 z-20">
                 {/* Seller row */}
                 <div className="flex items-center gap-2 mb-2">
-                  <Link href={`/seller-profile?id=${seller.id || ''}`}>
+                  <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')}>
                     <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white bg-neutral-700 shrink-0">
                       {sellerImage ? (
                         <img src={sellerImage} alt="" className="w-full h-full object-cover" />
@@ -237,7 +237,7 @@ export default function ShortsPage() {
                       )}
                     </div>
                   </Link>
-                  <Link href={`/seller-profile?id=${seller.id || ''}`} className="text-white font-semibold text-sm hover:opacity-80">
+                  <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')} className="text-white font-semibold text-sm hover:opacity-80">
                     {sellerName}
                   </Link>
                   {!user && (

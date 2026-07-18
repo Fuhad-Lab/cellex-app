@@ -141,7 +141,7 @@ function LiveWatchContent() {
         <h2 className="font-semibold text-base">{session.title}</h2>
         <div className="text-xs text-neutral-500 mt-0.5">
           by{' '}
-          <Link href={`/seller-profile?id=${session.seller_id}`} className="text-black font-medium">
+          <Link href={session.seller_slug ? `/${session.seller_slug}` : `/seller-profile?id=${session.seller_id}`} className="text-black font-medium">
             {session.seller_name}
           </Link>
         </div>

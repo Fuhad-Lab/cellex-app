@@ -229,7 +229,7 @@ export const api = {
   // ===== Profile =====
   profile: {
     get: () => apiCall('profile', { op: 'get' }),
-    update: (data: { fullName?: string; phone?: string; address?: string }) =>
+    update: (data: { fullName?: string; phone?: string; address?: string; profileImage?: string }) =>
       apiCall('profile', { op: 'update', ...data }),
   },
 

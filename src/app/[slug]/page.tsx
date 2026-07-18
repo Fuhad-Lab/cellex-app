@@ -1,116 +1,140 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { api, formatPrice, timeAgo, type Product, type Review } from '@/lib/api';
-import { useAuth } from '@/components/auth-provider';
-import { Store, MapPin, Star, Grid3x3, Film, Package, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { api, formatPrice, type Product } from '@/lib/api';
+import { Store, MapPin, Star, Grid3x3, Film, Package, ChevronLeft, Heart, Share2, ShoppingBag, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
-function SellerProfileContent() {
-  const params = useSearchParams();
-  const sellerId = params.get('id') || '';
-  const { user } = useAuth();
+/**
+ * SellerStorefront — dynamic storefront page at /<slug>
+ *
+ * Examples:
+ *   /fuhad-shirts  →  Fuhad Shirts storefront
+ *   /lagos-fashion  →  Lagos Fashion House storefront
+ *
+ * This is a SINGLE page that handles ALL seller storefronts dynamically.
+ * The slug is read from the URL, then we fetch the seller + products via
+ * /api/seller-by-slug. No page is created per seller — it's all dynamic.
+ *
+ * Works on both:
+ *   - Web (standalone): native dynamic route
+ *   - APK (static export): client-side fetch with generateStaticParams fallback
+ */
+export default function SellerStorefront({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const [seller, setSeller] = useState<any>(null);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [stats, setStats] = useState<any>({});
-  const [tab, setTab] = useState<'products' | 'videos'>('products');
   const [products, setProducts] = useState<Product[]>([]);
-  const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [tab, setTab] = useState<'products' | 'videos'>('products');
+  const [videos, setVideos] = useState<any[]>([]);
 
-  const load = useCallback(async () => {
-    if (!sellerId) return;
-    setLoading(true);
-    const [profileResp, prodResp] = await Promise.all([
-      api.social.publicProfile(sellerId),
-      api.products.all(200),
-    ]);
-    if (profileResp.success && profileResp.seller) {
-      setSeller(profileResp.seller);
-      setIsFollowing(profileResp.isFollowing || false);
-      setStats({
-        followers: profileResp.followers || 0,
-        posts: profileResp.posts || 0,
-        rating: profileResp.rating || 0,
-      });
-      // If the seller has a slug, redirect to the clean /<slug> URL.
-      // This page is kept as a fallback for sellers without a slug (legacy data).
-      if (profileResp.seller.slug) {
-        router.replace(`/${profileResp.seller.slug}`);
-        return;
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch('/api/seller-by-slug', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug }),
+        });
+        const data = await resp.json();
+        if (data.success && data.seller) {
+          setSeller(data.seller);
+          setProducts(data.products || []);
+          // Load videos in background
+          if (data.seller.id) {
+            api.videos.bySeller(data.seller.id).then((r) => {
+              if (r.success) setVideos(r.videos || []);
+            }).catch(() => {});
+          }
+        } else {
+          setNotFound(true);
+        }
+      } catch {
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
-    }
-    if (prodResp.success && prodResp.products) {
-      setProducts(prodResp.products.filter((p: Product) => p.seller_id === sellerId));
-    }
-    setLoading(false);
-
-    api.videos.bySeller(sellerId).then((r) => r.success && setVideos(r.videos || []));
-  }, [sellerId, router]);
-
-  useEffect(() => { load(); }, [load]);
+    })();
+  }, [slug]);
 
   const toggleFollow = async () => {
-    if (!user) { router.push('/login?next=' + encodeURIComponent(`/seller-profile?id=${sellerId}`)); return; }
+    if (!user) {
+      router.push(`/login?next=/${slug}`);
+      return;
+    }
+    if (!seller) return;
     const result = isFollowing
-      ? await api.social.unfollow(sellerId)
-      : await api.social.follow(sellerId);
+      ? await api.social.unfollow(seller.id)
+      : await api.social.follow(seller.id);
     if (result.success) {
       setIsFollowing(!isFollowing);
-      setStats((s) => ({ ...s, followers: s.followers + (isFollowing ? -1 : 1) }));
-      toast({ title: isFollowing ? 'Unfollowed' : 'Following', description: seller?.business_name });
+      toast({ title: isFollowing ? 'Unfollowed' : 'Following', description: seller.business_name });
     }
   };
 
-  if (loading) { return <PageSkeleton variant="seller-profile" />; }
+  const shareStore = () => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    if (navigator.share) {
+      navigator.share({ title: seller?.business_name, url }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(url);
+      toast({ title: 'Store link copied!' });
+    }
+  };
 
-  if (!seller) {
+  if (loading) {
+    return <PageSkeleton variant="seller-profile" />;
+  }
+
+  if (notFound || !seller) {
     return (
-      <div className="ig-container text-center py-20 px-4 ig-topbar-offset">
-        <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-          <Store className="w-8 h-8 text-neutral-400" />
+      <div className="ig-container bg-white min-h-screen flex flex-col items-center justify-center text-center px-6">
+        <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
+          <Store className="w-10 h-10 text-neutral-400" />
         </div>
-        <h2 className="text-lg font-semibold mb-1">Seller not found</h2>
-        <p className="text-sm text-neutral-500 mb-6 max-w-xs mx-auto">
-          This seller may no longer be active on Cellex. Try browsing other stores.
+        <h1 className="text-xl font-bold mb-2">Storefront Not Found</h1>
+        <p className="text-sm text-neutral-500 max-w-xs mb-6">
+          The store <span className="font-mono font-semibold">/{slug}</span> doesn&apos;t exist, or the seller may have changed their name.
         </p>
-        <Link href="/categories" className="inline-block bg-black text-white text-sm font-semibold px-6 py-3 rounded-lg">
-          Browse Products
+        <Link href="/" className="bg-black text-white text-sm font-semibold px-6 py-3 rounded-md">
+          Go to homepage
         </Link>
       </div>
     );
   }
 
-  const name = seller.business_name || seller.farm_name || 'Unnamed store';
+  const name = seller.business_name || seller.farm_name || 'Store';
   const totalPosts = products.length + videos.length;
 
   return (
-    <div className="ig-container bg-white min-h-screen">
-      {/* Top bar — IG-style with back button */}
+    <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+      {/* Top bar */}
       <div className="ig-topbar">
-        <button
-          onClick={() => router.back()}
-          className="ig-icon-btn"
-          aria-label="Back"
-        >
+        <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 ml-2">
           <h1 className="text-base font-semibold truncate">{name}</h1>
           {seller.business_category && (
             <p className="text-[11px] text-neutral-500 -mt-0.5 truncate">{seller.business_category}</p>
           )}
         </div>
+        <button onClick={shareStore} className="ig-icon-btn" aria-label="Share store">
+          <Share2 className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* Profile header — IG-style: avatar + stats row */}
+      {/* Profile header — IG-style */}
       <div className="ig-profile-header">
         <div className="shrink-0">
           {seller.profile_image ? (
@@ -127,7 +151,7 @@ function SellerProfileContent() {
             <span className="label">posts</span>
           </div>
           <div className="ig-profile-stat">
-            <span className="num">{formatCount(stats.followers || 0)}</span>
+            <span className="num">—</span>
             <span className="label">followers</span>
           </div>
           <div className="ig-profile-stat">
@@ -137,29 +161,32 @@ function SellerProfileContent() {
         </div>
       </div>
 
-      {/* Bio — IG-style */}
+      {/* Bio */}
       <div className="px-4 pb-3">
-        <div className="text-sm font-semibold text-black">{name}</div>
+        <div className="text-sm font-semibold text-black flex items-center gap-1">
+          {name}
+          <CheckCircle className="w-3.5 h-3.5 text-sky-500 fill-sky-500 stroke-white" />
+        </div>
         {seller.business_description && (
           <p className="text-sm text-neutral-700 leading-snug mt-1 whitespace-pre-line">{seller.business_description}</p>
         )}
+        {/* Store URL display */}
+        <div className="mt-2 flex items-center gap-1.5 text-xs text-sky-500 font-medium">
+          <Link href={`/${slug}`} className="hover:underline">
+            cellex.app/{slug}
+          </Link>
+        </div>
         <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-neutral-500">
           {seller.business_location && (
             <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {seller.business_location}</span>
           )}
           {seller.created_at && (
-            <span>Joined {timeAgo(seller.created_at)}</span>
-          )}
-          {(stats.rating || 0) > 0 && (
-            <span className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              {(stats.rating || 0).toFixed(1)}
-            </span>
+            <span>Joined {new Date(seller.created_at).toLocaleDateString()}</span>
           )}
         </div>
       </div>
 
-      {/* Action buttons — IG-style: Follow + Message */}
+      {/* Action buttons */}
       <div className="flex gap-2 px-4 pb-3">
         <button
           onClick={toggleFollow}
@@ -168,14 +195,14 @@ function SellerProfileContent() {
           {isFollowing ? 'Following' : 'Follow'}
         </button>
         <Link
-          href={`/messenger?seller=${sellerId}`}
+          href={`/messenger?seller=${seller.id}`}
           className="flex-1 ig-btn-outline text-center inline-flex items-center justify-center"
         >
           Message
         </Link>
       </div>
 
-      {/* Tab bar — IG-style: 2 tabs (Products / Videos) */}
+      {/* Tab bar */}
       <div className="ig-tab-bar">
         <button
           onClick={() => setTab('products')}
@@ -199,7 +226,7 @@ function SellerProfileContent() {
           <div className="text-center py-16 px-4">
             <Package className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
             <p className="text-sm font-medium text-neutral-700">No products yet</p>
-            <p className="text-xs text-neutral-400 mt-1">When this seller adds products, they'll appear here.</p>
+            <p className="text-xs text-neutral-400 mt-1">When this store adds products, they&apos;ll appear here.</p>
           </div>
         ) : (
           <div className="ig-post-grid">
@@ -211,7 +238,6 @@ function SellerProfileContent() {
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
-                {/* Hover overlay with price (desktop only) */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
                   <div className="text-white text-sm font-bold">{formatPrice(p.price)}</div>
                   <div className="text-white/80 text-[10px] mt-0.5">{p.units_sold || 0} sold</div>
@@ -227,12 +253,12 @@ function SellerProfileContent() {
           <div className="text-center py-16 px-4">
             <Film className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
             <p className="text-sm font-medium text-neutral-700">No videos yet</p>
-            <p className="text-xs text-neutral-400 mt-1">When this seller posts videos, they'll appear here.</p>
+            <p className="text-xs text-neutral-400 mt-1">When this store posts videos, they&apos;ll appear here.</p>
           </div>
         ) : (
           <div className="ig-post-grid">
             {videos.map((v) => (
-              <Link key={v.id} href="/videos" className="block relative group bg-black">
+              <Link key={v.id} href="/shorts" className="block relative group bg-black">
                 {v.video_url ? (
                   <video src={v.video_url} muted className="w-full h-full object-cover" />
                 ) : (
@@ -256,12 +282,4 @@ function formatCount(n: number): string {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return String(n);
-}
-
-export default function SellerProfilePage() {
-  return (
-    <Suspense fallback={<PageSkeleton variant="seller-profile" />}>
-      <SellerProfileContent />
-    </Suspense>
-  );
 }
