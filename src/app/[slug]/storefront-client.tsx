@@ -151,7 +151,7 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
             <span className="label">posts</span>
           </div>
           <div className="ig-profile-stat">
-            <span className="num">—</span>
+            <span className="num">{formatCount(seller.followers_count || 0)}</span>
             <span className="label">followers</span>
           </div>
           <div className="ig-profile-stat">

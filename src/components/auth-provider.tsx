@@ -151,6 +151,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (email: string, password: string) => {
     const result = await api.auth.signup(email, password);
     if (result.success && result.user) {
+      // Check if the signup returned a session_id (auto-login).
+      // If not (email confirmation required), auto-login with the same credentials
+      // to create a real session. This is necessary because Supabase's signup
+      // endpoint doesn't return a session when email confirmation is enabled,
+      // even with mailer_autoconfirm=true.
+      if (!result.session_id) {
+        const loginResult = await api.auth.login(email, password);
+        if (loginResult.success && loginResult.user) {
+          setUser(loginResult.user);
+          return { success: true };
+        }
+        // If auto-login fails, still return success (account was created)
+        // but the user will need to log in manually.
+        setUser(result.user);
+        return { success: true };
+      }
       setUser(result.user);
       return { success: true };
     }
