@@ -1,42 +1,46 @@
 'use client';
 
 import { useEffect } from 'react';
-import { App as CapacitorApp } from '@capacitor/app';
 import { useRouter, usePathname } from 'next/navigation';
-import { Capacitor } from '@capacitor/core';
 
 /**
  * NativeBackGesture — handles Android back navigation.
  *
  * iOS: Native swipe-back is enabled via allowsBackForwardNavigationGestures
- * in the WKWebView (set during the GitHub Actions iOS build). The WKWebView
- * handles it natively — no JavaScript needed.
+ * in the WKWebView (set during the GitHub Actions iOS build).
  *
- * Android: Listens for @capacitor/app 'backButton' event (triggered by both
- * hardware back button AND edge swipe gesture). Calls router.back() for
- * in-app navigation, or exits the app on the homepage.
+ * Android: Listens for @capacitor/app 'backButton' event.
  */
 export function NativeBackGesture({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+    if (typeof window === 'undefined') return;
 
     let backListener: { remove: () => void } | null = null;
 
-    const setupListener = async () => {
-      backListener = await CapacitorApp.addListener('backButton', () => {
-        const exitRoutes = ['/', '/home', '/login'];
-        if (exitRoutes.includes(pathname)) {
-          CapacitorApp.exitApp();
-        } else {
-          router.back();
-        }
-      });
+    const setup = async () => {
+      try {
+        // Dynamic imports — won't crash on web where these don't exist
+        const { Capacitor } = await import('@capacitor/core');
+        if (!Capacitor.isNativePlatform()) return;
+
+        const { App: CapacitorApp } = await import('@capacitor/app');
+        backListener = await CapacitorApp.addListener('backButton', () => {
+          const exitRoutes = ['/', '/home', '/login'];
+          if (exitRoutes.includes(pathname)) {
+            CapacitorApp.exitApp();
+          } else {
+            router.back();
+          }
+        });
+      } catch {
+        // Not in Capacitor environment — do nothing
+      }
     };
 
-    setupListener();
+    setup();
 
     return () => {
       if (backListener) backListener.remove();
