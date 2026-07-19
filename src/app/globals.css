@@ -533,10 +533,51 @@ html, body {
   background: #f5f5f5;
 }
 
-/* IG-style feed card — no card shadow, just bottom divider */
+/* IG-style feed card — kept for backwards compat. New feed cards use
+   .ig-card (rounded iOS-style card with soft shadow). */
 .ig-feed-card {
   background: #ffffff;
   border-bottom: 1px solid #efefef;
+}
+
+/* iOS-style rounded card — used for feed posts, suggested sellers,
+   live auctions, shorts and any self-contained content block.
+   - Solid white background (the body has a subtle gradient so cards "float")
+   - 24px radius (matches iOS large corner radius)
+   - overflow: hidden so media conforms to the rounded corners
+   - Soft 4% shadow for depth without being heavy */
+.ig-card {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.dark .ig-card {
+  background: rgba(18, 18, 18, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Spacing helper — adds 12px horizontal margins + 16px bottom margin
+   so cards don't touch screen edges and are physically separated. */
+.ig-card-spaced {
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 16px;
+}
+
+/* Cart item card — slightly smaller radius (20px) than feed cards,
+   with the same soft shadow. */
+.ig-cart-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.dark .ig-cart-card {
+  background: rgba(18, 18, 18, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* IG-style media — square, full-bleed */

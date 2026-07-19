@@ -225,9 +225,9 @@ export default function MessengerPage() {
   // ---- Chat view (when a conversation is active) ----
   if (activeConversation) {
     return (
-      <div className="ig-container bg-white min-h-screen flex flex-col h-screen ig-topbar-offset">
+      <div className="ig-container bg-white min-h-screen flex flex-col h-screen" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         {/* Chat header */}
-        <div className="ig-topbar">
+        <div className="flex items-center px-3 py-3 border-b border-neutral-100 shrink-0">
           <button onClick={() => setActiveConversation(null)} className="ig-icon-btn" aria-label="Back">
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -290,9 +290,9 @@ export default function MessengerPage() {
 
   // ---- Conversation list view ----
   return (
-    <div className="ig-container bg-white min-h-screen">
+    <div className="ig-container bg-white min-h-screen" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       {/* Header */}
-      <div className="ig-topbar">
+      <div className="flex items-center px-3 py-3 border-b border-neutral-100 shrink-0">
         <button onClick={() => router.push('/')} className="ig-icon-btn shrink-0" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>

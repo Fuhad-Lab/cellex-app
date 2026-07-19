@@ -438,10 +438,10 @@ function FeedPostCard({
 
   return (
     <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-      className="ig-feed-card"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className="ig-card ig-card-spaced"
     >
       {/* Seller header — IG-style: avatar + username + verified + Follow */}
       <div className="flex items-center gap-3 px-3 py-2.5">
@@ -561,7 +561,7 @@ function FeedPostCard({
       {post.product && (
         <Link
           href={`/product?id=${post.product.id}`}
-          className="block mx-3 mb-3 bg-white border border-neutral-200 rounded-lg p-2.5 flex items-center gap-3 hover:bg-neutral-50 transition-colors"
+          className="block mx-3 mb-3 bg-neutral-50 border border-neutral-100 rounded-xl p-2.5 flex items-center gap-3 hover:bg-neutral-100 transition-colors"
         >
           <div className="w-11 h-11 rounded-md overflow-hidden bg-neutral-100 shrink-0">
             {post.product.image_url && (
@@ -630,7 +630,9 @@ function formatLiveDuration(startedAt: string): string {
  */
 function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
   return (
-    <section className="border-b border-neutral-100 bg-gradient-to-b from-neutral-900 to-black py-4">
+    <section className="ig-card ig-card-spaced mt-3 overflow-hidden">
+      {/* Dark gradient backdrop inside the card so the LIVE cards pop */}
+      <div className="bg-gradient-to-b from-neutral-900 to-black py-4">
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-2">
@@ -710,6 +712,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
           );
         })}
       </div>
+      </div>
     </section>
   );
 }
@@ -726,7 +729,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
  */
 function ShortsSection({ shorts }: { shorts: any[] }) {
   return (
-    <section className="border-b border-neutral-100 py-4">
+    <section className="ig-card ig-card-spaced overflow-hidden py-4">
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
@@ -828,7 +831,7 @@ function SuggestedSellersCarousel({
     : 'More Sellers to Follow';
 
   return (
-    <section className="border-y border-neutral-100 bg-white py-4">
+    <section className="ig-card ig-card-spaced overflow-hidden py-4">
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
@@ -853,7 +856,7 @@ function SuggestedSellersCarousel({
           return (
             <div
               key={sellerId}
-              className="ig-bounce-in shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all"
+              className="ig-bounce-in shrink-0 w-36 border border-neutral-100 rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-white"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               <Link href={sellerHref} className="block">
@@ -895,7 +898,7 @@ function SuggestedSellersCarousel({
         {/* "See all sellers" card — links to /sellers page */}
         <Link
           href="/sellers"
-          className="shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors"
+          className="shrink-0 w-36 border border-neutral-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors bg-white"
         >
           <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-2">
             <ChevronRight className="w-6 h-6 text-neutral-700" />

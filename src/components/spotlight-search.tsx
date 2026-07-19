@@ -156,7 +156,7 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
             transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
             className="fixed top-0 left-0 right-0 z-[9999] flex justify-center pt-[8vh] px-4"
           >
-            <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-neutral-100">
+            <div className="w-full max-w-2xl glass-modal rounded-3xl overflow-hidden">
               {/* Input */}
               <div className="flex items-center gap-3 px-5 py-4 border-b border-neutral-100">
                 <Search className="w-5 h-5 text-neutral-400 shrink-0" />

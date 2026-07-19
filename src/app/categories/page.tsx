@@ -257,7 +257,7 @@ function CategoriesContent() {
 /* IG-style product card — minimal, white bg, square image, price bold */
 function CategoryProductCard({ product }: { product: Product }) {
   return (
-    <Link href={`/product?id=${product.id}`} className="bg-white rounded-md overflow-hidden border border-neutral-200 block">
+    <Link href={`/product?id=${product.id}`} className="ig-card block">
       <div className="aspect-square bg-neutral-50 relative">
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" loading="lazy" />

@@ -356,10 +356,10 @@ function SearchContent() {
         )}
       </div>
 
-      {/* Follow-up input (fixed bottom, AI view only) */}
+      {/* Follow-up input (floating above bottom nav, AI view only) */}
       {view === 'ai' && !loading && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-neutral-200 px-4 py-3">
-          <div className="max-w-3xl mx-auto flex items-center gap-2 border-2 border-neutral-200 rounded-full px-4 py-2.5 focus-within:border-black transition-colors">
+        <div className="fixed left-1/2 -translate-x-1/2 z-40" style={{ bottom: 'calc(env(safe-area-inset-bottom) + 88px)', width: 'calc(100% - 24px)', maxWidth: '446px' }}>
+          <div className="glass-input flex items-center gap-2 rounded-full px-4 py-2.5">
             <Paperclip className="w-4 h-4 text-neutral-400 shrink-0" />
             <input
               type="text"
