@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         response.cookies.set(COOKIE_NAME, data.session_id, {
           httpOnly: true,
           secure: true,
-          sameSite: 'lax',
+          sameSite: 'none',
           maxAge: 7 * 24 * 60 * 60,
           path: '/',
         });

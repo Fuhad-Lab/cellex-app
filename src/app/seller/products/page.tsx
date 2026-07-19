@@ -11,6 +11,7 @@ import { Plus, Edit, Trash2, Search, Store, Package, Users, Upload, Loader2, X, 
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys'];
 
@@ -111,7 +112,8 @@ export default function SellerProductsPage() {
       });
 
       try {
-        const resp = await fetch('/api/upload-image', {
+        const resp = await fetch(`${API_BASE}/api/upload-image`, {
+      credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -159,7 +161,8 @@ export default function SellerProductsPage() {
           setVideoUrl(reader.result as string);
           setUploadingVideo(false);
         } else {
-          const resp = await fetch('/api/upload-video', {
+          const resp = await fetch(`${API_BASE}/api/upload-video`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ productId: editing.id, videoData: reader.result }),
@@ -209,13 +212,15 @@ export default function SellerProductsPage() {
     if (result.success) {
       // Update group buy settings via the group-buy API
       if (groupBuyEnabled) {
-        await fetch('/api/group-buy', {
+        await fetch(`${API_BASE}/api/group-buy`, {
+      credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'enable', productId: result.product?.id || editing?.id, targetCount: Number(groupBuyTarget), discountPct: Number(groupBuyDiscount) }),
         });
       } else if (editing) {
-        await fetch('/api/group-buy', {
+        await fetch(`${API_BASE}/api/group-buy`, {
+      credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'disable', productId: editing.id }),

@@ -10,6 +10,13 @@
 #   3. npm run build           -> ./out
 #   4. Restore src/app/api/ and next.config.web.ts
 #   5. npx cap sync android    -> copies ./out into the native project
+
+# Enable Android 13+ Predictive Back animation (native swipe-back gesture)
+MANIFEST="android/app/src/main/AndroidManifest.xml"
+if [ -f "$MANIFEST" ] && ! grep -q "enableOnBackInvokedCallback" "$MANIFEST"; then
+  sed -i 's/<application/<application android:enableOnBackInvokedCallback="true"/' "$MANIFEST"
+  echo "    -> enabled Predictive Back in AndroidManifest.xml"
+fi
 #   6. ./gradlew assembleRelease
 #
 # This script is invoked by .github/workflows/build-android.yml on every push.
@@ -80,6 +87,13 @@ if [ ! -d android ]; then
   npx cap add android
 fi
 npx cap sync android
+
+# Enable Android 13+ Predictive Back animation (native swipe-back gesture)
+MANIFEST="android/app/src/main/AndroidManifest.xml"
+if [ -f "$MANIFEST" ] && ! grep -q "enableOnBackInvokedCallback" "$MANIFEST"; then
+  sed -i 's/<application/<application android:enableOnBackInvokedCallback="true"/' "$MANIFEST"
+  echo "    -> enabled Predictive Back in AndroidManifest.xml"
+fi
 
 echo "==> [6/6] Building Android release APK"
 cd android

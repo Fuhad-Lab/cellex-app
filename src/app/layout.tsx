@@ -7,6 +7,7 @@ import { OTABootstrap } from "@/components/ota-bootstrap";
 import { OptimisticUIProvider } from "@/components/optimistic-ui";
 import { GlobalSpotlight } from "@/components/global-spotlight";
 import { NavShell } from "@/components/nav-shell";
+import { NativeBackGesture } from "@/components/native-back-gesture";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default function RootLayout({
       <body
         className={`${jakarta.variable} ${sora.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
+        <NativeBackGesture>
         <AuthProvider>
           <OTABootstrap />
           <OptimisticUIProvider>
@@ -66,7 +68,8 @@ export default function RootLayout({
             <GlobalSpotlight />
             <Toaster />
           </OptimisticUIProvider>
-        </AuthProvider>
+                </AuthProvider>
+      </NativeBackGesture>
       </body>
     </html>
   );

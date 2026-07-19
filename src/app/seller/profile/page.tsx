@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Store, Save } from 'lucide-react';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys', 'General'];
 const SELLER_TYPES = ['individual', 'business', 'farmer'];
 
@@ -28,7 +29,8 @@ export default function SellerProfilePage() {
       const result = await api.sellerProducts.list(); // triggers seller provisioning
       setLoading(false);
       // Fetch profile via seller-profile edge function
-      const profResp = await fetch('/api/seller-profile', {
+      const profResp = await fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'get' }),
@@ -51,7 +53,8 @@ export default function SellerProfilePage() {
 
   const save = async () => {
     setSaving(true);
-    const profResp = await fetch('/api/seller-profile', {
+    const profResp = await fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

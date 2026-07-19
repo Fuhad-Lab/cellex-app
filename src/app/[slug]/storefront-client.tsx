@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 /**
  * SellerStorefront — dynamic storefront page at /<slug>
@@ -41,7 +42,8 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
   useEffect(() => {
     (async () => {
       try {
-        const resp = await fetch('/api/seller-by-slug', {
+        const resp = await fetch(`${API_BASE}/api/seller-by-slug`, {
+      credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug }),

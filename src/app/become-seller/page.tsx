@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { ChevronLeft, Store, Check, User, Building, Sprout,
   Camera, MapPin, FileText, Loader2 } from 'lucide-react';
+import { API_BASE } from '@/lib/api';
 
 const CATEGORIES = [
   'Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports',
@@ -57,7 +58,8 @@ export default function BecomeSellerPage() {
     if (!canSubmit) return;
     setSaving(true);
     try {
-      const resp = await fetch('/api/seller-profile', {
+      const resp = await fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

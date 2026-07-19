@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Bell, Globe, Shield, Store, LogOut,
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 export default function SettingsPage() {
   const { user, loading: authLoading, logout } = useAuth();
@@ -28,7 +29,8 @@ export default function SettingsPage() {
         }
         // Check seller status
         try {
-          const sellerResp = await fetch('/api/seller-profile', {
+          const sellerResp = await fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ op: 'get' }),

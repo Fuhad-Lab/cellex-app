@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Radio, Eye, Square, Copy, ExternalLink, Video, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { API_BASE } from '@/lib/api';
 
 export default function GoLivePage() {
   const { toast } = useToast();
@@ -60,7 +61,8 @@ export default function GoLivePage() {
     setStarting(true);
     // Set the stream_url to the Owncast embed URL so viewers see the live video
     const streamUrl = OWNCAST_URL + '/embed/stream';
-    const result = await fetch('/api/live', {
+    const result = await fetch(`${API_BASE}/api/live`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -82,7 +84,8 @@ export default function GoLivePage() {
 
   const endLive = async () => {
     if (!activeSession || !confirm('End this live session?')) return;
-    const result = await fetch('/api/live', {
+    const result = await fetch(`${API_BASE}/api/live`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ op: 'end', sessionId: activeSession.id }),

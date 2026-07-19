@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Sparkles, Upload, X, Loader2, Download, RefreshCw } from 'lucide-react';
+import { API_BASE } from '@/lib/api';
 
 interface TryItOnModalProps {
   isOpen: boolean;
@@ -63,7 +64,8 @@ export function TryItOnModal({ isOpen, onClose, productName, productCategory, pr
         prompt = `A person with ${productName}, photorealistic, commercial photography, natural pose, studio lighting, high quality`;
       }
 
-      const resp = await fetch('/api/try-on', {
+      const resp = await fetch(`${API_BASE}/api/try-on`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

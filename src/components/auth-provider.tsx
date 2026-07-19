@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { api } from '@/lib/api';
+import { API_BASE } from '@/lib/api';
 
 interface User {
   id: string;
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const resp = await fetch('/api/messenger', {
+      const resp = await fetch(`${API_BASE}/api/messenger`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'list' }),
@@ -106,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const resp = await fetch('/api/seller-profile', {
+        const resp = await fetch(`${API_BASE}/api/seller-profile`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'get' }),

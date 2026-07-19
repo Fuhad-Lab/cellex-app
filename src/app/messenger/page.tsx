@@ -8,6 +8,7 @@ import {
   Lock, ArrowLeft, Search
 } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
+import { API_BASE } from '@/lib/api';
 
 interface Conversation {
   id: string;
@@ -74,7 +75,8 @@ export default function MessengerPage() {
     if (user) {
       (async () => {
         try {
-          const resp = await fetch('/api/seller-profile', {
+          const resp = await fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ op: 'get' }),
@@ -94,7 +96,8 @@ export default function MessengerPage() {
 
   const loadConversations = async () => {
     try {
-      const resp = await fetch('/api/messenger', {
+      const resp = await fetch(`${API_BASE}/api/messenger`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'list' }),
@@ -112,7 +115,8 @@ export default function MessengerPage() {
 
   const loadMessages = async (convId: string) => {
     try {
-      const resp = await fetch('/api/messenger', {
+      const resp = await fetch(`${API_BASE}/api/messenger`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'messages', conversationId: convId }),
@@ -148,7 +152,8 @@ export default function MessengerPage() {
       const encryptedB64 = btoa(String.fromCharCode(...new Uint8Array(encrypted)));
       const ivB64 = btoa(String.fromCharCode(...iv));
 
-      const resp = await fetch('/api/messenger', {
+      const resp = await fetch(`${API_BASE}/api/messenger`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

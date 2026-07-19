@@ -64,6 +64,7 @@ export default function AiChatPage() {
 
       // Call AI chat endpoint
       const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

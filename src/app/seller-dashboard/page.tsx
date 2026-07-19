@@ -11,6 +11,7 @@ import {
 import { useAuth } from '@/components/auth-provider';
 import { api, formatPrice, timeAgo, type Product } from '@/lib/api';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 /**
  * SellerDashboardPage — dynamic seller dashboard.
@@ -54,18 +55,21 @@ export default function SellerDashboardPage() {
         // Videos fetch separately (uses op='mine' which may not exist on older
         // edge functions — we swallow errors gracefully).
         const [profileResp, productsResp, ordersResp, videosResp] = await Promise.all([
-          fetch('/api/seller-profile', {
+          fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ op: 'get' }),
           }).then((r) => r.json()).catch(() => ({ success: false })),
           api.sellerProducts.list().catch(() => ({ success: false })),
-          fetch('/api/seller-orders', {
+          fetch(`${API_BASE}/api/seller-orders`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ op: 'list' }),
           }).then((r) => r.json()).catch(() => ({ success: false })),
-          fetch('/api/videos', {
+          fetch(`${API_BASE}/api/videos`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ op: 'mine' }),

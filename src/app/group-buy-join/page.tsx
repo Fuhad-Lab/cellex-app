@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Users, Check, ShoppingBag, Lock, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
+import { API_BASE } from '@/lib/api';
 
 function GroupBuyJoinContent() {
   const params = useSearchParams();
@@ -26,7 +27,8 @@ function GroupBuyJoinContent() {
     }
     (async () => {
       try {
-        const resp = await fetch('/api/group-buy', {
+        const resp = await fetch(`${API_BASE}/api/group-buy`, {
+      credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'invite', inviteCode }),
@@ -51,7 +53,8 @@ function GroupBuyJoinContent() {
     }
     setJoining(true);
     try {
-      const resp = await fetch('/api/group-buy', {
+      const resp = await fetch(`${API_BASE}/api/group-buy`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'join', inviteCode }),

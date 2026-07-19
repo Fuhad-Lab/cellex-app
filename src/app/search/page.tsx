@@ -56,6 +56,7 @@ function SearchContent() {
       api.products.search(q, null),
       api.videos.feed(50).catch(() => ({ success: false, videos: [] })),
       fetch(`${API_BASE}/api/ai-chat`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -113,6 +114,7 @@ function SearchContent() {
     setFollowUpLoading(true);
     try {
       const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

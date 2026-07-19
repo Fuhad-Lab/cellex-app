@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { X, Package, Video, Radio, BookOpen, Sparkles, ShoppingBag, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 export default function CreatePage() {
   const { user, loading: authLoading } = useAuth();
@@ -21,7 +22,8 @@ export default function CreatePage() {
     if (user) {
       (async () => {
         try {
-          const resp = await fetch('/api/seller-profile', {
+          const resp = await fetch(`${API_BASE}/api/seller-profile`, {
+      credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ op: 'get' }),

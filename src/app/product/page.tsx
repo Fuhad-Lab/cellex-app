@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { TryItOnModal } from '@/components/try-it-on';
+import { API_BASE } from '@/lib/api';
 
 function ProductContent() {
   const params = useSearchParams();
@@ -103,7 +104,8 @@ function ProductContent() {
 
   const startGroupBuy = async () => {
     if (!user) { router.push('/login?next=' + encodeURIComponent(`/product?id=${id}`)); return; }
-    const resp = await fetch('/api/group-buy', {
+    const resp = await fetch(`${API_BASE}/api/group-buy`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ op: 'start', productId: id }),

@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/product-card';
 import { api } from '@/lib/api';
 import { timeAgo } from '@/lib/api';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 const STORY_TYPES = [
   { key: 'announcement', label: 'Announcement', icon: Megaphone },
   { key: 'deal', label: 'Deal', icon: Tag },
@@ -33,7 +34,8 @@ export default function SellerStoriesPage() {
     const [prodResp] = await Promise.all([api.sellerProducts.list()]);
     if (prodResp.success) setProducts(prodResp.products || []);
     try {
-      const sResp = await fetch('/api/stories', {
+      const sResp = await fetch(`${API_BASE}/api/stories`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'mine' }),
@@ -52,7 +54,8 @@ export default function SellerStoriesPage() {
       return;
     }
     setPosting(true);
-    const result = await fetch('/api/stories', {
+    const result = await fetch(`${API_BASE}/api/stories`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -76,7 +79,8 @@ export default function SellerStoriesPage() {
 
   const remove = async (id: number) => {
     if (!confirm('Delete this story?')) return;
-    const result = await fetch('/api/stories', {
+    const result = await fetch(`${API_BASE}/api/stories`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ op: 'delete', storyId: id }),

@@ -76,7 +76,7 @@ async function apiCall(path: string, body: Record<string, unknown> = {}) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-    credentials: 'same-origin',
+    credentials: 'include',
   });
   const data = await resp.json();
   if (!resp.ok) {

@@ -9,6 +9,7 @@ import { Video, Upload, Trash2, Eye, Heart, Clapperboard, Package, Loader2, X } 
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 /**
  * SellerVideosPage — manage product videos AND reels.
@@ -39,7 +40,8 @@ export default function SellerVideosPage() {
     const [prodResp] = await Promise.all([api.sellerProducts.list()]);
     if (prodResp.success) setProducts(prodResp.products || []);
     try {
-      const vidResp = await fetch('/api/videos', {
+      const vidResp = await fetch(`${API_BASE}/api/videos`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ op: 'mine' }),
@@ -66,7 +68,8 @@ export default function SellerVideosPage() {
         // We need a productId for the upload-video endpoint, so use a temp value
         // The endpoint stores it and returns a URL
         const tempProductId = productId || 0;
-        const resp = await fetch('/api/upload-video', {
+        const resp = await fetch(`${API_BASE}/api/upload-video`, {
+      credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productId: tempProductId, videoData: reader.result }),
@@ -93,7 +96,8 @@ export default function SellerVideosPage() {
       return;
     }
     setUploading(true);
-    const result = await fetch('/api/videos', {
+    const result = await fetch(`${API_BASE}/api/videos`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -116,7 +120,8 @@ export default function SellerVideosPage() {
 
   const remove = async (id: number) => {
     if (!confirm('Delete this video?')) return;
-    const result = await fetch('/api/videos', {
+    const result = await fetch(`${API_BASE}/api/videos`, {
+      credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ op: 'delete', videoId: id }),

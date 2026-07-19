@@ -10,6 +10,7 @@ import { Mail, Lock, ChevronLeft, User, Camera, Loader2, X } from 'lucide-react'
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { API_BASE } from '@/lib/api';
 
 function LoginContent() {
   const { user, login, signup } = useAuth();
@@ -82,7 +83,8 @@ function LoginContent() {
         reader.readAsDataURL(profileImageFile);
       });
 
-      const resp = await fetch('/api/upload-image', {
+      const resp = await fetch(`${API_BASE}/api/upload-image`, {
+      credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
