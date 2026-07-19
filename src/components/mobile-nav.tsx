@@ -6,15 +6,14 @@ import { Home, Search, Plus, ShoppingCart, User, Send, Grid3x3 } from 'lucide-re
 import { useAuth } from '@/components/auth-provider';
 
 /**
- * MobileNav — WhatsApp "Liquid Glass" floating island bottom navigation.
+ * MobileNav — WhatsApp Liquid Glass floating island bottom navigation.
  *
- * Design features:
- * - Floating island container with 28px rounded corners
- * - Glassmorphism: translucent frosted glass with 20px backdrop blur
- * - 16px margin from bottom + 12px from sides (floats above safe area)
- * - Dynamic active pill indicator that resizes to hug the active icon
- * - Spring animation when switching tabs (cubic-bezier 0.34, 1.56, 0.64, 1)
- * - Hyper-thin white border for crisp edge definition
+ * BUYER nav: Messenger | Shorts | [Home] | Category | Cart
+ *   (Notification + Account icons are in the HEADER, not the nav)
+ *
+ * SELLER nav: Home | Shorts | [+] | Cart | Account
+ *   (Messenger + Notification icons are in the HEADER, not the nav)
+ *   (Account in nav = /profile personal profile; Account in header = /seller-dashboard store)
  */
 export function MobileNav() {
   const pathname = usePathname();
@@ -38,14 +37,16 @@ export function MobileNav() {
 
   return (
     <div
-      className="glass-nav fixed left-3 right-3 z-[60] md:hidden"
+      className="glass-nav fixed left-1/2 -translate-x-1/2 z-50 md:hidden"
       style={{
-        bottom: 'calc(env(safe-area-inset-bottom) + 12px)',
-        borderRadius: '28px',
-        height: '62px',
+        bottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+        width: '90%',
+        maxWidth: '400px',
+        height: '64px',
+        borderRadius: '32px',
       }}
     >
-      <div className="flex items-center justify-around h-full px-2">
+      <div className="flex items-center justify-around h-full px-4">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -62,7 +63,7 @@ export function MobileNav() {
                   className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
                   style={{
                     background: 'linear-gradient(135deg, #000000 0%, #333333 100%)',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.15) inset',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
                   }}
                 >
                   <Icon className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -79,7 +80,6 @@ export function MobileNav() {
               style={{ flex: '1 1 0', height: '100%' }}
               aria-label={item.label}
             >
-              {/* Active pill indicator — dynamically sized background capsule */}
               {isActive && (
                 <div
                   className="glass-active-pill glass-pill-enter absolute"

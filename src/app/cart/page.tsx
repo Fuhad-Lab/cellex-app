@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+
 export default function CartPage() {
   const { user, loading: authLoading, refreshCartCount } = useAuth();
   const router = useRouter();
@@ -70,9 +71,7 @@ export default function CartPage() {
   const total = subtotal + shipping;
 
   if (authLoading || loading) {
-    return (
-      <PageSkeleton variant="cart" />
-    );
+    return <PageSkeleton variant="cart" />;
   }
 
   if (items.length === 0) {
@@ -103,7 +102,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-32">
+    <div className="ig-container bg-white min-h-screen ig-topbar-offset pb-40">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
@@ -119,7 +118,7 @@ export default function CartPage() {
         </button>
       </div>
 
-      {/* Items list — single column on mobile */}
+      {/* Items list */}
       <div className="divide-y divide-neutral-100">
         {items.map((item) => (
           <div key={item.id} className="p-4 flex gap-3">
@@ -173,6 +172,10 @@ export default function CartPage() {
                   </button>
                 </div>
               </div>
+              {/* Subtotal per item */}
+              <div className="mt-1.5 text-xs text-neutral-400">
+                Subtotal: <span className="font-semibold text-neutral-700">{formatPrice((item.products?.price || 0) * item.quantity)}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -187,8 +190,17 @@ export default function CartPage() {
         </Link>
       </div>
 
-      {/* Sticky bottom bar with checkout */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[470px] bg-white border-t border-neutral-200 p-4 z-40">
+      {/* Sticky checkout bar — floating glass above the bottom nav */}
+      <div
+        className="glass fixed left-1/2 -translate-x-1/2 z-40"
+        style={{
+          bottom: 'calc(env(safe-area-inset-bottom) + 88px)',
+          width: 'calc(100% - 24px)',
+          maxWidth: '446px',
+          borderRadius: '20px',
+          padding: '16px',
+        }}
+      >
         <div className="space-y-1 text-sm mb-3">
           <div className="flex justify-between">
             <span className="text-neutral-600">Subtotal</span>
@@ -207,7 +219,7 @@ export default function CartPage() {
         </div>
         <button
           onClick={() => router.push('/checkout')}
-          className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800"
+          className="w-full bg-black text-white font-semibold rounded-full py-3 hover:bg-neutral-800 transition-colors"
         >
           Proceed to checkout
         </button>
