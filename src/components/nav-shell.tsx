@@ -15,7 +15,7 @@ export function NavShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <main className={`flex-1 ${hideMobileNav ? '' : 'pb-20 md:pb-0'}`}>
+      <main className={`flex-1 ${hideMobileNav ? '' : 'pb-28 md:pb-0'}`}>
         {children}
       </main>
       {!hideMobileNav && <MobileNav />}

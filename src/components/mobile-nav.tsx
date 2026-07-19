@@ -2,28 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Plus, ShoppingCart, User, Send, Grid3x3, Clapperboard } from 'lucide-react';
+import { Home, Search, Plus, ShoppingCart, User, Send, Grid3x3 } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
- * MobileNav — Instagram-style bottom navigation bar.
+ * MobileNav — WhatsApp "Liquid Glass" floating island bottom navigation.
  *
- * - 5 icons evenly spaced, NO labels (matches IG mobile web)
- * - White background, 1px top border (#dbdbdb)
- * - Active state: bold black icon (instead of gray)
- * - Center button: filled black circle with white icon (IG Create style)
- *
- * BUYER:
- *   [Messenger] [Shorts] [⬛ Home ⬛] [Category] [Cart]
- *   (Account icon is in the HEADER beside Notifications)
- *
- * BUYER-SELLER:
- *   [Home] [Shorts] [⬛ + Add ⬛] [Cart] [Account]
- *   (Explore/Categories removed to make room for Shorts — sellers can still
- *    reach Categories via search spotlight or by tapping a product's
- *    category hashtag. Account stays in nav because it links to /profile
- *    which is DIFFERENT from the header's User icon which links to
- *    /seller-dashboard.)
+ * Design features:
+ * - Floating island container with 28px rounded corners
+ * - Glassmorphism: translucent frosted glass with 20px backdrop blur
+ * - 16px margin from bottom + 12px from sides (floats above safe area)
+ * - Dynamic active pill indicator that resizes to hug the active icon
+ * - Spring animation when switching tabs (cubic-bezier 0.34, 1.56, 0.64, 1)
+ * - Hyper-thin white border for crisp edge definition
  */
 export function MobileNav() {
   const pathname = usePathname();
@@ -32,75 +23,102 @@ export function MobileNav() {
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/shorts', label: 'Shorts', icon: Clapperboard },
+        { href: '/shorts', label: 'Shorts', icon: Grid3x3 },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
         { href: '/messenger', label: 'Messages', icon: Send },
-        { href: '/shorts', label: 'Shorts', icon: Clapperboard },
+        { href: '/shorts', label: 'Shorts', icon: Grid3x3 },
         { href: '/', label: 'Home', icon: Home, center: true },
-        { href: '/categories', label: 'Category', icon: Grid3x3 },
+        { href: '/categories', label: 'Category', icon: Search },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
       ];
 
   return (
-    <nav className="ig-bottom-nav md:hidden">
-      {navItems.map((item) => {
-        const isActive = pathname === item.href;
-        const Icon = item.icon;
+    <div
+      className="glass-nav fixed left-3 right-3 z-[60] md:hidden"
+      style={{
+        bottom: 'calc(env(safe-area-inset-bottom) + 12px)',
+        borderRadius: '28px',
+        height: '62px',
+      }}
+    >
+      <div className="flex items-center justify-around h-full px-2">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          const Icon = item.icon;
 
-        if (item.center) {
-          // Center button — IG Create style: solid black circle, white icon
+          if (item.center) {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center justify-center"
+                aria-label={item.label}
+              >
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
+                  style={{
+                    background: 'linear-gradient(135deg, #000000 0%, #333333 100%)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.15) inset',
+                  }}
+                >
+                  <Icon className="w-5 h-5 text-white" strokeWidth={2.5} />
+                </div>
+              </Link>
+            );
+          }
+
           return (
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center justify-center w-10 h-10"
+              className="flex items-center justify-center relative transition-all"
+              style={{ flex: '1 1 0', height: '100%' }}
               aria-label={item.label}
             >
-              <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center hover:bg-neutral-800 transition-colors active:scale-95">
-                <Icon className="w-4 h-4 text-white" strokeWidth={2.5} />
+              {/* Active pill indicator — dynamically sized background capsule */}
+              {isActive && (
+                <div
+                  className="glass-active-pill glass-pill-enter absolute"
+                  style={{
+                    width: '48px',
+                    height: '38px',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    borderRadius: '14px',
+                  }}
+                />
+              )}
+              <div className="relative flex items-center justify-center">
+                <Icon
+                  className={`w-6 h-6 transition-all duration-300 ${
+                    isActive ? 'text-black scale-110' : 'text-neutral-500'
+                  }`}
+                  strokeWidth={isActive ? 2.5 : 1.8}
+                  fill={isActive && (item.label === 'Home' || item.label === 'Messages') ? 'currentColor' : 'none'}
+                />
+                {item.showBadge && cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                    {cartCount}
+                  </span>
+                )}
+                {item.showAvatar && user && (
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                )}
+                {item.label === 'Messages' && user && unreadMessages > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                    <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+                  </span>
+                )}
               </div>
             </Link>
           );
-        }
-
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center justify-center w-12 h-12 relative"
-            aria-label={item.label}
-          >
-            <div className="relative">
-              {/* Active state: filled icon (matches IG) */}
-              <Icon
-                className={`w-6 h-6 transition-colors ${isActive ? 'text-black' : 'text-neutral-700'}`}
-                strokeWidth={isActive ? 2.5 : 1.8}
-                fill={isActive && (item.label === 'Home' || item.label === 'Messages') ? 'currentColor' : 'none'}
-              />
-              {item.showBadge && cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                  {cartCount}
-                </span>
-              )}
-              {item.showAvatar && user && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
-              )}
-              {/* Functional unread badge for messenger — only shows when logged
-                  in AND there are actual conversations with messages. Count
-                  comes from AuthProvider which polls every 30s. */}
-              {item.label === 'Messages' && user && unreadMessages > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
-                  <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
-                </span>
-              )}
-            </div>
-          </Link>
-        );
-      })}
-    </nav>
+        })}
+      </div>
+    </div>
   );
 }

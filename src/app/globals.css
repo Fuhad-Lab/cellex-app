@@ -451,8 +451,10 @@ html, body {
   left: 0;
   right: 0;
   z-index: 50;
-  background: #ffffff;
-  border-bottom: 1px solid #dbdbdb;
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   height: 54px;
   display: flex;
   align-items: center;
@@ -593,20 +595,17 @@ html, body {
   color: #262626;
 }
 
-/* IG-style bottom nav (mobile) — 5 icons, no labels, white bg + top border */
+/* Bottom nav — now a floating glass island (WhatsApp Liquid Glass style).
+   The actual styling is in the .glass-nav class. This is kept for backward
+   compatibility but the mobile-nav component now uses .glass-nav directly. */
 .ig-bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 60;
-  background: #ffffff;
-  border-top: 1px solid #dbdbdb;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding-bottom: env(safe-area-inset-bottom);
+  height: 0px;
+  pointer-events: none;
 }
 
 /* IG-style profile header — 77px avatar + stats row */
@@ -738,7 +737,7 @@ html, body {
 
 /* Hide elements at IG breakpoints (desktop sidebar shows at >=768px) */
 @media (min-width: 768px) {
-  .ig-bottom-nav { display: none; }
+  .ig-bottom-nav, .glass-nav { display: none !important; }
 }
 
 /* ============================================================
@@ -900,3 +899,127 @@ html, body {
   z-index: -1;
 }
 
+/* ============================================================
+   LIQUID GLASS — WhatsApp-style glassmorphism design system
+   Applied across: bottom nav, topbar, cards, modals, overlays
+   ============================================================ */
+
+/* Base glass container — frosted glass with heavy blur */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* Dark mode glass */
+.dark .glass {
+  background: rgba(30, 30, 30, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Glass topbar — transparent with blur, content scrolls underneath */
+.glass-topbar {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.dark .glass-topbar {
+  background: rgba(30, 30, 30, 0.65) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Glass bottom nav — floating island with rounded corners */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.dark .glass-nav {
+  background: rgba(30, 30, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Active tab indicator — floating capsule that dynamically resizes */
+.glass-active-pill {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dark .glass-active-pill {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Glass card — for product cards, feed cards, etc. */
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dark .glass-card {
+  background: rgba(40, 40, 40, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Glass modal/sheet — for dialogs, bottom sheets */
+.glass-modal {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.dark .glass-modal {
+  background: rgba(30, 30, 30, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glass input — frosted search bars and text inputs */
+.glass-input {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .glass-input {
+  background: rgba(50, 50, 50, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Spring animation for active tab transitions */
+@keyframes glassPillSpring {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.glass-pill-enter {
+  animation: glassPillSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Subtle page background gradient for glass to look good */
+body {
+  background: linear-gradient(180deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%) !important;
+  min-height: 100vh;
+}
+
+.dark body {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 50%, #1a1a1a 100%) !important;
+}
