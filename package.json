@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
-    "@capacitor/app": "^8.1.0",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
     "@capacitor/ios": "^8.4.1",
@@ -108,5 +107,8 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "@capacitor/app": "^8.1.0"
   }
 }
