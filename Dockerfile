@@ -13,7 +13,7 @@ COPY package.json package-lock.json ./
 
 # Use npm ci for reproducible installs (requires package-lock.json).
 # --legacy-peer-deps avoids peer-dep conflicts with Next 16.
-RUN npm ci --no-audit --no-fund --legacy-peer-deps
+RUN npm install --no-audit --no-fund --legacy-peer-deps
 
 # Now copy the rest of the source.
 COPY . .
