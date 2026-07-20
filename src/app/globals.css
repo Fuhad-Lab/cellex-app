@@ -478,6 +478,7 @@ html, body {
 
 /* IG logo — bold serif-style wordmark */
 .ig-logo {
+  color: #ffffff !important;
   font-family: var(--font-ig);
   font-weight: 800;
   font-size: 22px;
