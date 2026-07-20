@@ -56,7 +56,7 @@ export default function SettingsPage() {
   const sectionLabel = "text-xs font-semibold text-neutral-500 uppercase tracking-wide px-4 mb-2";
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24 ig-topbar-offset">
+    <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">

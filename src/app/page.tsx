@@ -238,7 +238,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+    <div className="ig-container min-h-screen ig-topbar-offset">
       {/* Top bar — IG-style: logo left, search center, icons right */}
       <div
         ref={searchBarRef}

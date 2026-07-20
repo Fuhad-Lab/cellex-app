@@ -47,7 +47,7 @@ export default function SellerPreparingPage() {
   }, []);
 
   return (
-    <div className="ig-container bg-white min-h-screen flex flex-col items-center justify-center px-6">
+    <div className="ig-container min-h-screen flex flex-col items-center justify-center px-6">
       <motion.div
         className="w-24 h-24 rounded-3xl bg-black flex items-center justify-center mb-8"
         animate={{ scale: [1, 1.05, 1], rotate: [0, -2, 2, 0] }}

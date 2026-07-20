@@ -152,7 +152,7 @@ export default function SellerDashboardPage() {
   const sellerSlug = seller?.slug;
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24 ig-topbar-offset">
+    <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       <div className="ig-topbar">
         <button onClick={() => router.push('/')} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />

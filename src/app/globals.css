@@ -54,7 +54,7 @@
    ============================================================ */
 
 :root {
-  --background: #ffffff;
+  --background: transparent;
   --foreground: #000000;
   --card: #ffffff;
   --card-foreground: #000000;

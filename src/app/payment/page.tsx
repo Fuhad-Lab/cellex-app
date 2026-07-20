@@ -87,7 +87,7 @@ function PaymentContent() {
 
   if (!order) {
     return (
-      <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+      <div className="ig-container min-h-screen ig-topbar-offset">
         <div className="ig-topbar">
           <button onClick={() => router.push('/cart')} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
@@ -104,7 +104,7 @@ function PaymentContent() {
   }
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24">
+    <div className="ig-container min-h-screen pb-24">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.push('/cart')} className="ig-icon-btn" aria-label="Back">

@@ -51,7 +51,7 @@ function GroupBuyContent() {
 
   if (!gb) {
     return (
-      <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+      <div className="ig-container min-h-screen ig-topbar-offset">
         <div className="ig-topbar">
           <button onClick={() => router.push('/categories')} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
@@ -83,7 +83,7 @@ function GroupBuyContent() {
   const discountedPrice = (gb.product?.price || 0) * (1 - (gb.discount_pct || 20) / 100);
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24">
+    <div className="ig-container min-h-screen pb-24">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.push(`/product?id=${gb.product_id}`)} className="ig-icon-btn" aria-label="Back">

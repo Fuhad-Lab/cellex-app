@@ -164,7 +164,7 @@ function ProductContent() {
   const canTryOn = tryOnCategories.includes(product.category || '');
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-32">
+    <div className="ig-container min-h-screen pb-32">
       {/* Top bar — IG-style: back + share + save */}
       <div className="ig-topbar">
         <button

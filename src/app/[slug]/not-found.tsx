@@ -7,7 +7,7 @@ import { Store } from 'lucide-react';
  */
 export default function StoreNotFound() {
   return (
-    <div className="ig-container bg-white min-h-screen flex flex-col items-center justify-center text-center px-6">
+    <div className="ig-container min-h-screen flex flex-col items-center justify-center text-center px-6">
       <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
         <Store className="w-10 h-10 text-neutral-400" />
       </div>

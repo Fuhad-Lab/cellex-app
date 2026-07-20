@@ -82,7 +82,7 @@ function GroupBuyJoinContent() {
 
   if (error && !groupBuy) {
     return (
-      <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+      <div className="ig-container min-h-screen ig-topbar-offset">
         <div className="ig-topbar">
           <button onClick={() => router.push('/categories')} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
@@ -105,7 +105,7 @@ function GroupBuyJoinContent() {
   const initiatorName = groupBuy?.initiator_email?.split('@')[0] || 'Someone';
 
   return (
-    <div className="ig-container bg-white min-h-screen pb-24">
+    <div className="ig-container min-h-screen pb-24">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.push('/categories')} className="ig-icon-btn" aria-label="Back">

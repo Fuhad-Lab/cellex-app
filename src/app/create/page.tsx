@@ -63,7 +63,7 @@ export default function CreatePage() {
   const options = isSeller ? sellerOptions : buyerOptions;
 
   return (
-    <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+    <div className="ig-container min-h-screen ig-topbar-offset">
       {/* Top bar */}
       <div className="ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">

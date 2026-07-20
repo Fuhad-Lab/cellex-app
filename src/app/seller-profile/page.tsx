@@ -92,7 +92,7 @@ function SellerProfileContent() {
   const totalPosts = products.length + videos.length;
 
   return (
-    <div className="ig-container bg-white min-h-screen">
+    <div className="ig-container min-h-screen">
       {/* Top bar — IG-style with back button */}
       <div className="ig-topbar">
         <button
