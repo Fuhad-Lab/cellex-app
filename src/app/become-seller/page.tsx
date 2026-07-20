@@ -86,7 +86,7 @@ export default function BecomeSellerPage() {
     setSaving(false);
   };
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
@@ -122,7 +122,7 @@ export default function BecomeSellerPage() {
           {/* Profile image */}
           <div className="flex flex-col items-center gap-2">
             <label className="cursor-pointer">
-              <div className="w-24 h-24 rounded-full bg-neutral-100 border-2 border-dashed border-neutral-300 flex items-center justify-center overflow-hidden hover:border-black transition-colors">
+              <div className="w-24 h-24 rounded-full bg-neutral-100 border-2 border-dashed border-white/15 flex items-center justify-center overflow-hidden hover:border-black transition-colors">
                 {profileImage ? (
                   <img src={profileImage} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -157,7 +157,7 @@ export default function BecomeSellerPage() {
                     key={type.value}
                     onClick={() => setSellerType(type.value)}
                     className={`flex flex-col items-center gap-1 p-3 rounded-md border-2 transition-all ${
-                      isActive ? 'border-black bg-neutral-50' : 'border-neutral-200'
+                      isActive ? 'border-black bg-neutral-50' : 'border-white/10'
                     }`}
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-black' : 'text-neutral-400'}`} />
@@ -226,7 +226,7 @@ export default function BecomeSellerPage() {
                     key={cat}
                     onClick={() => setBusinessCategory(cat)}
                     className={`px-3 py-2.5 rounded-md border-2 text-xs font-semibold transition-all ${
-                      isActive ? 'border-black bg-neutral-50 text-black' : 'border-neutral-200 text-neutral-500'
+                      isActive ? 'border-black bg-neutral-50 text-black' : 'border-white/10 text-neutral-500'
                     }`}
                   >
                     {cat}
@@ -252,7 +252,7 @@ export default function BecomeSellerPage() {
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => setStep(1)} className="flex-1 bg-white border border-neutral-300 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
+            <button onClick={() => setStep(1)} className="flex-1 bg-white border border-white/15 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
               Back
             </button>
             <button
@@ -275,8 +275,8 @@ export default function BecomeSellerPage() {
           </div>
 
           {/* Summary card */}
-          <div className="border border-neutral-200 rounded-md p-4 space-y-3">
-            <div className="flex items-center gap-3 pb-3 border-b border-neutral-100">
+          <div className="border border-white/10 rounded-md p-4 space-y-3">
+            <div className="flex items-center gap-3 pb-3 border-b border-white/5">
               <div className="w-14 h-14 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden shrink-0">
                 {profileImage ? (
                   <img src={profileImage} alt="" className="w-full h-full object-cover" />
@@ -314,7 +314,7 @@ export default function BecomeSellerPage() {
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => setStep(2)} className="flex-1 bg-white border border-neutral-300 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
+            <button onClick={() => setStep(2)} className="flex-1 bg-white border border-white/15 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
               Back
             </button>
             <button

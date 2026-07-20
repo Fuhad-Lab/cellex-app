@@ -3,15 +3,11 @@
 import { usePathname } from 'next/navigation';
 import { MobileNav } from '@/components/mobile-nav';
 
-/**
- * NavShell — the fixed chrome (MobileNav) with page content.
- *
- * Uses standard Next.js navigation (no iOS swipe stack).
- * Pages render normally with Next.js's built-in transitions.
- */
+const ROUTES_WITHOUT_NAV = ['/login', '/search', '/shorts', '/videos'];
+
 export function NavShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideMobileNav = pathname === '/login' || pathname.startsWith('/product') || pathname === '/videos';
+  const hideMobileNav = ROUTES_WITHOUT_NAV.some(route => pathname === route) || pathname.startsWith('/product');
 
   return (
     <>

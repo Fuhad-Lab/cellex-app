@@ -158,7 +158,7 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
           >
             <div className="w-full max-w-2xl glass-modal rounded-3xl overflow-hidden">
               {/* Input */}
-              <div className="flex items-center gap-3 px-5 py-4 border-b border-neutral-100">
+              <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
                 <Search className="w-5 h-5 text-neutral-400 shrink-0" />
                 <input
                   ref={inputRef}
@@ -286,16 +286,16 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-2.5 border-t border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
+              <div className="px-4 py-2.5 border-t border-white/5 bg-neutral-50/50 flex items-center justify-between">
                 <div className="flex items-center gap-3 text-[10px] text-neutral-400">
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-neutral-200 text-[9px] font-bold">↑↓</kbd> Navigate
+                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-white/10 text-[9px] font-bold">↑↓</kbd> Navigate
                   </span>
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-neutral-200 text-[9px] font-bold">↵</kbd> Select
+                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-white/10 text-[9px] font-bold">↵</kbd> Select
                   </span>
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-neutral-200 text-[9px] font-bold">Esc</kbd> Close
+                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-white/10 text-[9px] font-bold">Esc</kbd> Close
                   </span>
                 </div>
                 <span className="text-[10px] text-neutral-400 font-medium">Cellex Search</span>

@@ -109,7 +109,7 @@ function GroupBuyContent() {
       <div className="px-4 py-4 space-y-4">
         {/* Product preview */}
         {gb.product && (
-          <div className="border border-neutral-200 rounded-md p-3 flex gap-3">
+          <div className="border border-white/10 rounded-md p-3 flex gap-3">
             <Link href={`/product?id=${gb.product_id}`}>
               <div className="w-20 h-20 rounded-md bg-neutral-50 overflow-hidden">
                 {gb.product.image_url && (
@@ -131,7 +131,7 @@ function GroupBuyContent() {
         )}
 
         {/* Progress */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold">
               {gb.current_count || 0} / {gb.target_count} joined
@@ -153,7 +153,7 @@ function GroupBuyContent() {
 
         {/* Member avatars */}
         {gb.members && gb.members.length > 0 && (
-          <div className="border border-neutral-200 rounded-md p-3">
+          <div className="border border-white/10 rounded-md p-3">
             <div className="text-xs text-neutral-500 mb-2">Members</div>
             <div className="flex flex-wrap gap-2">
               {gb.members.slice(0, 10).map((m: any, i: number) => (
@@ -184,7 +184,7 @@ function GroupBuyContent() {
             >
               {joining ? 'Joining...' : 'Join group buy'}
             </button>
-            <button onClick={share} className="w-full bg-white border border-neutral-300 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
+            <button onClick={share} className="w-full bg-white border border-white/15 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
               <Share2 className="w-4 h-4 inline mr-1" /> Share to WhatsApp
             </button>
           </div>
@@ -197,7 +197,7 @@ function GroupBuyContent() {
         )}
 
         {/* How it works */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">How group buys work</h3>
           <ol className="space-y-2 text-xs text-neutral-600">
             <li className="flex gap-2">

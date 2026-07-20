@@ -54,16 +54,16 @@
    ============================================================ */
 
 :root {
-  --background: transparent;
-  --foreground: #000000;
-  --card: #ffffff;
+  --background: #050508;
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.07);
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
   --primary: #000000;
   --primary-hover: #262626;
   --primary-foreground: #ffffff;
-  --secondary: #f5f5f5;
+  --secondary: rgba(255, 255, 255, 0.05);
   --secondary-foreground: #000000;
   --muted: #f5f5f5;
   --muted-foreground: #8e8e8e;
@@ -71,8 +71,8 @@
   --accent-foreground: #000000;
   --destructive: #ed4956; /* IG red */
   --destructive-foreground: #ffffff;
-  --border: #dbdbdb;
-  --input: #dbdbdb;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
   --ring: #000000;
   --chart-1: #000000;
   --chart-2: #333333;
@@ -94,9 +94,9 @@
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #e2e8f0;
-  --card: #1e293b;
+  --background: #050508;
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.07);
   --card-foreground: #e2e8f0;
   --popover: #1e293b;
   --popover-foreground: #e2e8f0;
@@ -110,13 +110,13 @@
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #334155;
+  --border: rgba(255, 255, 255, 0.08);
   --input: #334155;
   --ring: #ffffff;
 }
 
 * {
-  border-color: var(--border);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 html {
@@ -1110,4 +1110,27 @@ body {
   box-shadow: 
     inset 0 4px 6px rgba(255, 255, 255, 0.15),
     0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+/* Accessibility: Focus states for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Accessibility: Better color contrast on dark bg */
+.ig-timestamp {
+  color: #94a3b8 !important;
+}
+
+/* Scroll behavior: instant on mobile for performance */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: auto !important;
+  }
 }

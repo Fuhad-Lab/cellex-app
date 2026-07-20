@@ -274,7 +274,7 @@ export default function SellerProductsPage() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {filtered.map((p) => (
-            <div key={p.id} className="overflow-hidden bg-white border border-neutral-200 rounded-lg">
+            <div key={p.id} className="overflow-hidden bg-white border border-white/10 rounded-lg">
               <div className="aspect-square bg-neutral-50 relative">
                 {p.image_url ? (
                   <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
@@ -353,7 +353,7 @@ export default function SellerProductsPage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingImage}
-                  className="w-full border-2 border-dashed border-neutral-300 rounded-xl p-6 flex flex-col items-center justify-center hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                  className="w-full border-2 border-dashed border-white/15 rounded-xl p-6 flex flex-col items-center justify-center hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
                 >
                   {uploadingImage ? (
                     <>
@@ -402,7 +402,7 @@ export default function SellerProductsPage() {
                   type="button"
                   onClick={() => videoInputRef.current?.click()}
                   disabled={uploadingVideo}
-                  className="w-full border-2 border-dashed border-neutral-300 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                  className="w-full border-2 border-dashed border-white/15 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
                 >
                   {uploadingVideo ? (
                     <>
@@ -440,7 +440,7 @@ export default function SellerProductsPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm bg-white"
+                  className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm bg-white"
                 >
                   {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                 </select>
@@ -452,7 +452,7 @@ export default function SellerProductsPage() {
             </div>
 
             {/* Group Buy Toggle */}
-            <div className="border-t border-neutral-100 pt-3 space-y-3">
+            <div className="border-t border-white/5 pt-3 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-neutral-600" />

@@ -304,7 +304,7 @@ export default function HomePage() {
 
       {/* Stories section — IG-style horizontal scroll with gradient rings */}
       {stories.length > 0 && (
-        <div className="ig-hero-bg border-b border-neutral-100">
+        <div className="ig-hero-bg border-b border-white/5">
           <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
             {stories.slice(0, 12).map((s: any, i: number) => {
               const storyHref = s.slug ? `/${s.slug}` : `/seller-profile?id=${s.seller_id || ''}`;
@@ -384,7 +384,7 @@ export default function HomePage() {
 
       {/* End of feed — IG-style */}
       <div className="text-center py-12 px-4">
-        <div className="w-14 h-14 rounded-full border-2 border-neutral-300 flex items-center justify-center mx-auto mb-3">
+        <div className="w-14 h-14 rounded-full border-2 border-white/15 flex items-center justify-center mx-auto mb-3">
           <Sparkles className="w-6 h-6 text-neutral-400" />
         </div>
         <p className="text-sm font-semibold text-neutral-700">You're all caught up</p>
@@ -561,7 +561,7 @@ function FeedPostCard({
       {post.product && (
         <Link
           href={`/product?id=${post.product.id}`}
-          className="block mx-3 mb-3 bg-neutral-50 border border-neutral-100 rounded-xl p-2.5 flex items-center gap-3 hover:bg-neutral-100 transition-colors"
+          className="block mx-3 mb-3 bg-neutral-50 border border-white/5 rounded-xl p-2.5 flex items-center gap-3 hover:bg-neutral-100 transition-colors"
         >
           <div className="w-11 h-11 rounded-md overflow-hidden bg-neutral-100 shrink-0">
             {post.product.image_url && (
@@ -856,7 +856,7 @@ function SuggestedSellersCarousel({
           return (
             <div
               key={sellerId}
-              className="ig-bounce-in shrink-0 w-36 border border-neutral-100 rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-white"
+              className="ig-bounce-in shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-white"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               <Link href={sellerHref} className="block">
@@ -898,7 +898,7 @@ function SuggestedSellersCarousel({
         {/* "See all sellers" card — links to /sellers page */}
         <Link
           href="/sellers"
-          className="shrink-0 w-36 border border-neutral-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors bg-white"
+          className="shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors bg-white"
         >
           <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-2">
             <ChevronRight className="w-6 h-6 text-neutral-700" />

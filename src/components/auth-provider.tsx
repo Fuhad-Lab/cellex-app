@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   useEffect(() => {
-    refreshCartCount();
+    if (user) refreshCartCount();
   }, [user, refreshCartCount]);
 
   // Fetch unread messages when user changes (login/logout)
@@ -136,7 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Poll for new messages every 30 seconds when logged in (so the badge stays fresh)
   useEffect(() => {
     if (!user) return;
-    const interval = setInterval(refreshUnreadMessages, 30000);
+    const interval = setInterval(refreshUnreadMessages, 60000);
     return () => clearInterval(interval);
   }, [user, refreshUnreadMessages]);
 

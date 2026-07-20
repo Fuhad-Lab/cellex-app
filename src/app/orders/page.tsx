@@ -83,7 +83,7 @@ export default function OrdersPage() {
         <h1 className="text-base font-semibold flex-1 ml-2">My Orders</h1>
       </div>
 
-      <div className="divide-y divide-neutral-100">
+      <div className="divide-y divide-white/5">
         {orders.map((order) => {
           const isExpanded = expanded === order.id;
           const status = (order.status || 'pending').toLowerCase();

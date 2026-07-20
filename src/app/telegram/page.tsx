@@ -40,7 +40,7 @@ export default function TelegramPage() {
 
       <div className="px-4 py-4 space-y-4">
         {/* Channel card */}
-        <div className={`border border-neutral-200 rounded-md p-4 ${isConfigured ? '' : 'opacity-60'}`}>
+        <div className={`border border-white/10 rounded-md p-4 ${isConfigured ? '' : 'opacity-60'}`}>
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full bg-[#0088cc] flex items-center justify-center text-white">
               <Send className="w-7 h-7" />
@@ -72,7 +72,7 @@ export default function TelegramPage() {
         </div>
 
         {/* What you'll get */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">What you&apos;ll get</h3>
           <div className="space-y-2 text-sm">
             {[
@@ -93,7 +93,7 @@ export default function TelegramPage() {
         </div>
 
         {/* Recent broadcasts */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-black" /> Recent broadcasts
           </h3>
@@ -117,7 +117,7 @@ export default function TelegramPage() {
         </div>
 
         {/* Bot commands */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">Telegram bot commands</h3>
           <p className="text-xs text-neutral-500 mb-3">
             Chat with our bot to interact with Cellex right from Telegram:

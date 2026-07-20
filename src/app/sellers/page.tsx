@@ -67,7 +67,7 @@ export default function SellersPage() {
       </div>
 
       {/* Filters */}
-      <div className="px-4 py-3 space-y-3 border-b border-neutral-100">
+      <div className="px-4 py-3 space-y-3 border-b border-white/5">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
@@ -127,7 +127,7 @@ export default function SellersPage() {
           />
         </div>
       ) : (
-        <div className="divide-y divide-neutral-100">
+        <div className="divide-y divide-white/5">
           {filteredSellers.map((seller) => {
             const sellerProducts = allProducts
               .filter(p => p.seller_id === seller.id)

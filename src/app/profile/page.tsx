@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
   if (authLoading) { return <PageSkeleton variant="profile" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   // Show "Store" tab only for sellers
   const tabs: { key: View; label: string; icon: any }[] = [
@@ -178,7 +178,7 @@ export default function ProfilePage() {
         {/* Quick action button */}
         <button
           onClick={() => setView('settings')}
-          className="w-full mt-4 bg-neutral-50 border border-neutral-200 text-black font-semibold rounded-md py-2 text-sm hover:bg-neutral-100"
+          className="w-full mt-4 bg-neutral-50 border border-white/10 text-black font-semibold rounded-md py-2 text-sm hover:bg-neutral-100"
         >
           Edit profile
         </button>
@@ -205,7 +205,7 @@ export default function ProfilePage() {
       {view === 'overview' && (
         <div className="animate-fade-in">
           {/* Quick links grid — Amazon account style */}
-          <div className="grid grid-cols-3 gap-2 p-4 border-b border-neutral-100">
+          <div className="grid grid-cols-3 gap-2 p-4 border-b border-white/5">
             {[
               { icon: Package, label: 'Orders', sub: `${orders.length}`, view: 'orders' as View },
               { icon: Heart, label: 'Wishlist', sub: `${wishlistCount}`, href: '/wishlist' },
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                 <Link
                   key={i}
                   href={item.href}
-                  className="flex flex-col items-center justify-center p-3 border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors"
+                  className="flex flex-col items-center justify-center p-3 border border-white/10 rounded-md hover:bg-neutral-50 transition-colors"
                 >
                   {content}
                 </Link>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                 <button
                   key={i}
                   onClick={() => item.view && setView(item.view)}
-                  className="flex flex-col items-center justify-center p-3 border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors"
+                  className="flex flex-col items-center justify-center p-3 border border-white/10 rounded-md hover:bg-neutral-50 transition-colors"
                 >
                   {content}
                 </button>
@@ -243,7 +243,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Recent orders */}
-          <div className="px-4 py-4 border-b border-neutral-100">
+          <div className="px-4 py-4 border-b border-white/5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold">Recent Orders</h3>
               <button onClick={() => setView('orders')} className="text-xs font-semibold text-sky-500">
@@ -261,7 +261,7 @@ export default function ProfilePage() {
             ) : (
               <div className="space-y-2">
                 {orders.slice(0, 3).map((order) => (
-                  <div key={order.id} className="flex items-center gap-3 p-2 border border-neutral-100 rounded-md">
+                  <div key={order.id} className="flex items-center gap-3 p-2 border border-white/5 rounded-md">
                     <div className="w-10 h-10 rounded bg-neutral-100 flex items-center justify-center shrink-0">
                       <Package className="w-5 h-5 text-neutral-400" />
                     </div>
@@ -314,7 +314,7 @@ export default function ProfilePage() {
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-neutral-100">
+            <div className="divide-y divide-white/5">
               {orders.map((order) => (
                 <div key={order.id} className="px-4 py-3">
                   <div className="flex items-center justify-between mb-2">
@@ -378,7 +378,7 @@ export default function ProfilePage() {
                 <Link
                   key={i}
                   href={item.href}
-                  className="flex flex-col items-start p-3 border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors"
+                  className="flex flex-col items-start p-3 border border-white/10 rounded-md hover:bg-neutral-50 transition-colors"
                 >
                   <Icon className="w-5 h-5 text-black mb-2" strokeWidth={1.5} />
                   <span className="text-xs font-semibold">{item.label}</span>
@@ -393,7 +393,7 @@ export default function ProfilePage() {
       {view === 'settings' && (
         <div className="animate-fade-in">
           {/* Profile edit section */}
-          <div className="px-4 py-4 border-b border-neutral-100">
+          <div className="px-4 py-4 border-b border-white/5">
             <h3 className="text-sm font-semibold mb-3">Profile</h3>
 
             {!editing ? (
@@ -420,7 +420,7 @@ export default function ProfilePage() {
                 )}
                 <button
                   onClick={() => setEditing(true)}
-                  className="w-full mt-2 bg-neutral-50 border border-neutral-200 text-black font-semibold rounded-md py-2 text-sm hover:bg-neutral-100"
+                  className="w-full mt-2 bg-neutral-50 border border-white/10 text-black font-semibold rounded-md py-2 text-sm hover:bg-neutral-100"
                 >
                   Edit profile
                 </button>
@@ -443,7 +443,7 @@ export default function ProfilePage() {
                   <button onClick={saveProfile} disabled={saving} className="flex-1 bg-black text-white font-semibold rounded-md py-2.5 text-sm hover:bg-neutral-800 disabled:opacity-50">
                     {saving ? 'Saving...' : 'Save'}
                   </button>
-                  <button onClick={() => setEditing(false)} className="flex-1 bg-white border border-neutral-200 text-black font-semibold rounded-md py-2.5 text-sm hover:bg-neutral-50">
+                  <button onClick={() => setEditing(false)} className="flex-1 bg-white border border-white/10 text-black font-semibold rounded-md py-2.5 text-sm hover:bg-neutral-50">
                     Cancel
                   </button>
                 </div>
@@ -452,7 +452,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Notification preferences */}
-          <div className="px-4 py-4 border-b border-neutral-100">
+          <div className="px-4 py-4 border-b border-white/5">
             <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <Bell className="w-4 h-4" /> Notifications
             </h3>
@@ -480,7 +480,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Region */}
-          <div className="px-4 py-4 border-b border-neutral-100">
+          <div className="px-4 py-4 border-b border-white/5">
             <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <Globe className="w-4 h-4" /> Region
             </h3>
@@ -501,7 +501,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Security */}
-          <div className="px-4 py-4 border-b border-neutral-100">
+          <div className="px-4 py-4 border-b border-white/5">
             <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <Shield className="w-4 h-4" /> Security
             </h3>
@@ -520,7 +520,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Help & support */}
-          <div className="px-4 py-4 border-b border-neutral-100">
+          <div className="px-4 py-4 border-b border-white/5">
             <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <HelpCircle className="w-4 h-4" /> Help & Support
             </h3>
@@ -542,7 +542,7 @@ export default function ProfilePage() {
           <div className="px-4 py-6">
             <button
               onClick={handleLogout}
-              className="w-full text-[#ed4956] border border-neutral-200 hover:bg-neutral-50 rounded-md py-2.5 text-sm font-semibold"
+              className="w-full text-[#ed4956] border border-white/10 hover:bg-neutral-50 rounded-md py-2.5 text-sm font-semibold"
             >
               <LogOut className="w-4 h-4 inline mr-2" /> Logout
             </button>

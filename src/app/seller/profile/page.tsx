@@ -79,7 +79,7 @@ export default function SellerProfilePage() {
 
   if (loading) { return <PageSkeleton variant="seller-profile" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   return (
     <div className="space-y-4 max-w-2xl">
@@ -88,7 +88,7 @@ export default function SellerProfilePage() {
         <p className="text-sm text-neutral-500">This is your public storefront</p>
       </div>
 
-      <div className="border border-neutral-200 rounded-md p-4 space-y-3 bg-white">
+      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
         <div className="flex items-center gap-3">
           <div className="w-16 h-16 rounded-md bg-black flex items-center justify-center overflow-hidden">
             {profileImage ? (

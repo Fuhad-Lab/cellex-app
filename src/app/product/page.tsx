@@ -293,7 +293,7 @@ function ProductContent() {
       {/* Group Buy — only if seller enabled it. Clean, IG-style. */}
       {product.group_buy_enabled && (
         <div className="px-3 pb-3">
-          <div className="border border-neutral-200 rounded-lg p-3">
+          <div className="border border-white/10 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
                 <Users className="w-4 h-4 text-neutral-700" />
@@ -317,7 +317,7 @@ function ProductContent() {
 
       {/* Seller header — IG-style: avatar + name + follow button */}
       {seller && (
-        <div className="px-3 py-3 border-t border-neutral-100">
+        <div className="px-3 py-3 border-t border-white/5">
           <div className="flex items-center gap-3">
             <Link href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`}>
               <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200 shrink-0">
@@ -348,7 +348,7 @@ function ProductContent() {
 
       {/* Description — IG-style caption block */}
       {product.description && (
-        <div className="px-3 py-3 border-t border-neutral-100">
+        <div className="px-3 py-3 border-t border-white/5">
           <div className="text-sm font-semibold text-black mb-1">Description</div>
           <p className="text-sm text-neutral-700 whitespace-pre-wrap leading-relaxed">{product.description}</p>
         </div>
@@ -356,7 +356,7 @@ function ProductContent() {
 
       {/* Product video — IG-style */}
       {product.video_url && (
-        <section className="px-3 py-3 border-t border-neutral-100">
+        <section className="px-3 py-3 border-t border-white/5">
           <div className="flex items-center gap-2 mb-2">
             <VideoIcon className="w-4 h-4 text-black" />
             <h3 className="font-semibold text-sm">Video</h3>
@@ -382,7 +382,7 @@ function ProductContent() {
       )}
 
       {/* Shipping info — IG-style minimal row */}
-      <div className="px-3 py-3 border-t border-neutral-100">
+      <div className="px-3 py-3 border-t border-white/5">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs text-neutral-700">
             <RotateCcw className="w-4 h-4 text-neutral-700" />
@@ -400,7 +400,7 @@ function ProductContent() {
       </div>
 
       {/* Reviews — IG-style comments section */}
-      <section className="px-3 py-3 border-t border-neutral-100">
+      <section className="px-3 py-3 border-t border-white/5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-black">Reviews · {reviewSummary.count}</h2>
           {reviewSummary.count > 0 && (
@@ -409,7 +409,7 @@ function ProductContent() {
         </div>
 
         {showReviewForm && (
-          <div className="border border-neutral-200 rounded-lg p-3 mb-3 space-y-2">
+          <div className="border border-white/10 rounded-lg p-3 mb-3 space-y-2">
             <div>
               <div className="text-xs font-semibold mb-1">Rating</div>
               <div className="flex gap-1">
@@ -425,7 +425,7 @@ function ProductContent() {
               value={reviewTitle}
               onChange={(e) => setReviewTitle(e.target.value)}
               placeholder="Title (optional)"
-              className="w-full px-3 py-2 border border-neutral-200 rounded-md text-sm bg-white"
+              className="w-full px-3 py-2 border border-white/10 rounded-md text-sm bg-white"
             />
             <Textarea
               value={reviewComment}
@@ -505,11 +505,11 @@ function ProductContent() {
       )}
 
       {/* Fixed bottom bar — Add to cart + Buy now (IG-style minimal) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-neutral-200 px-3 py-2.5 flex items-center gap-2" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' }}>
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-white/10 px-3 py-2.5 flex items-center gap-2" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' }}>
         <button
           onClick={addToCart}
           disabled={adding}
-          className="flex-1 bg-white border border-neutral-300 text-black font-semibold text-sm py-2.5 rounded-lg hover:bg-neutral-50 disabled:opacity-50"
+          className="flex-1 bg-white border border-white/15 text-black font-semibold text-sm py-2.5 rounded-lg hover:bg-neutral-50 disabled:opacity-50"
         >
           Add to cart
         </button>

@@ -97,7 +97,7 @@ export default function CreatePage() {
             <Link
               key={opt.href}
               href={opt.href}
-              className="flex items-center gap-3 p-3 rounded-md border border-neutral-200 hover:bg-neutral-50 transition-colors"
+              className="flex items-center gap-3 p-3 rounded-md border border-white/10 hover:bg-neutral-50 transition-colors"
             >
               <div className="w-10 h-10 rounded-md bg-neutral-100 flex items-center justify-center shrink-0">
                 <Icon className="w-5 h-5 text-black" />

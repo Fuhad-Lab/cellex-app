@@ -148,7 +148,7 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQty(item.id, -1)}
                   disabled={updating === item.id}
-                  className="w-8 h-8 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-3 h-3" />
@@ -157,7 +157,7 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQty(item.id, 1)}
                   disabled={updating === item.id}
-                  className="w-8 h-8 rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-3 h-3" />
@@ -175,7 +175,7 @@ export default function CartPage() {
       <div className="px-3 py-4">
         <Link
           href="/categories"
-          className="block text-center text-sm font-semibold text-black border border-neutral-200 rounded-full py-3 hover:bg-neutral-50 transition-colors"
+          className="block text-center text-sm font-semibold text-black border border-white/10 rounded-full py-3 hover:bg-neutral-50 transition-colors"
         >
           Continue shopping
         </Link>
@@ -208,7 +208,7 @@ export default function CartPage() {
               Add {formatPrice(50000 - subtotal)} more for free shipping
             </div>
           )}
-          <div className="flex justify-between pt-2 border-t border-neutral-100">
+          <div className="flex justify-between pt-2 border-t border-white/5">
             <span className="font-bold">Total</span>
             <span className="font-extrabold text-black text-lg">{formatPrice(total)}</span>
           </div>

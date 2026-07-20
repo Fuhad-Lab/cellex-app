@@ -50,7 +50,7 @@ export default function SellerDashboard() {
         {statCards.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="border border-neutral-200 rounded-md p-4 bg-white">
+            <div key={s.label} className="border border-white/10 rounded-md p-4 bg-white">
               <Icon className="w-5 h-5 text-black mb-2" />
               <div className={`font-bold ${s.small ? 'text-base' : 'text-2xl'}`}>{s.value}</div>
               <div className="text-xs text-neutral-500 font-medium">{s.label}</div>
@@ -62,7 +62,7 @@ export default function SellerDashboard() {
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recent products */}
-        <div className="border border-neutral-200 rounded-md p-4 bg-white">
+        <div className="border border-white/10 rounded-md p-4 bg-white">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-sm">Recent Products</h3>
             <Link href="/seller/products" className="text-xs text-black font-medium">See all</Link>
@@ -90,7 +90,7 @@ export default function SellerDashboard() {
         </div>
 
         {/* Recent orders */}
-        <div className="border border-neutral-200 rounded-md p-4 bg-white">
+        <div className="border border-white/10 rounded-md p-4 bg-white">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-sm">Recent Orders</h3>
             <Link href="/seller/orders" className="text-xs text-black font-medium">See all</Link>
@@ -122,19 +122,19 @@ export default function SellerDashboard() {
       {/* Quick actions */}
       <div className="grid grid-cols-3 gap-3">
         <Link href="/seller/go-live">
-          <div className="border border-neutral-200 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
+          <div className="border border-white/10 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
             <Radio className="w-6 h-6 mx-auto text-black mb-1" />
             <div className="text-xs font-semibold">Go Live</div>
           </div>
         </Link>
         <Link href="/seller/videos">
-          <div className="border border-neutral-200 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
+          <div className="border border-white/10 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
             <Package className="w-6 h-6 mx-auto text-black mb-1" />
             <div className="text-xs font-semibold">Upload Video</div>
           </div>
         </Link>
         <Link href="/seller/stories">
-          <div className="border border-neutral-200 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
+          <div className="border border-white/10 rounded-md p-4 hover:bg-neutral-50 transition-colors text-center">
             <Package className="w-6 h-6 mx-auto text-black mb-1" />
             <div className="text-xs font-semibold">Post Story</div>
           </div>

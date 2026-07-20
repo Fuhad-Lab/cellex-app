@@ -90,7 +90,7 @@ export default function WishlistPage() {
         <h1 className="text-base font-semibold flex-1 ml-2">Wishlist ({items.length})</h1>
       </div>
 
-      <div className="divide-y divide-neutral-100">
+      <div className="divide-y divide-white/5">
         {items.map((item) => {
           const product = item.products;
           if (!product) return null;
@@ -121,7 +121,7 @@ export default function WishlistPage() {
                   </button>
                   <button
                     onClick={() => remove(item.id)}
-                    className="text-[#ed4956] border border-neutral-200 hover:bg-neutral-50 rounded-md px-3"
+                    className="text-[#ed4956] border border-white/10 hover:bg-neutral-50 rounded-md px-3"
                     aria-label="Remove"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

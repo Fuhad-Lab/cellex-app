@@ -47,7 +47,7 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         {/* Top row */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
@@ -68,7 +68,7 @@ export function Navbar() {
           </Link>
 
           {/* Search */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl flex items-center border-2 border-slate-200 rounded-full px-4 py-2 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+          <form onSubmit={handleSearch} className="flex-1 max-w-xl flex items-center border-2 border-white/10 rounded-full px-4 py-2 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15 transition-all">
             <Search className="text-slate-400 mr-2 w-4 h-4" />
             <input
               type="text"
@@ -113,7 +113,7 @@ export function Navbar() {
                   <ChevronDown className="w-3 h-3" />
                 </button>
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-white/5 py-2 z-50">
                     <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <User className="w-4 h-4 text-primary" /> My Profile
                     </Link>
@@ -123,7 +123,7 @@ export function Navbar() {
                     <Link href="/wishlist" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Heart className="w-4 h-4 text-primary" /> Wishlist
                     </Link>
-                    <div className="border-t border-slate-100 my-1" />
+                    <div className="border-t border-white/5 my-1" />
                     <Link href="/seller" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Store className="w-4 h-4 text-primary" /> Seller Dashboard
                     </Link>
@@ -133,7 +133,7 @@ export function Navbar() {
                     <Link href="/telegram" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Send className="w-4 h-4 text-primary" /> Telegram Alerts
                     </Link>
-                    <div className="border-t border-slate-100 my-1" />
+                    <div className="border-t border-white/5 my-1" />
                     <button
                       onClick={() => { logout(); window.location.href = '/'; }}
                       className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 w-full"

@@ -68,7 +68,7 @@ export default function SettingsPage() {
       {/* Account section */}
       <div className="pt-4">
         <h2 className={sectionLabel}>Account</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+        <div className="divide-y divide-white/5 border-y border-white/5">
           <Link href="/profile" className="flex items-center gap-3 px-4 py-3.5 hover:bg-neutral-50 transition-colors">
             <User className="w-5 h-5 text-black shrink-0" />
             <div className="flex-1">
@@ -99,7 +99,7 @@ export default function SettingsPage() {
       {/* Preferences */}
       <div className="pt-6">
         <h2 className={sectionLabel}>Preferences</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+        <div className="divide-y divide-white/5 border-y border-white/5">
           <ToggleRow icon={Bell} label="Push Notifications" desc="Order updates & deals" defaultOn />
           <ToggleRow icon={Star} label="Email Digest" desc="Weekly recommendation" defaultOn />
           <ToggleRow icon={Globe} label="Location Services" desc="For local product suggestions" />
@@ -109,7 +109,7 @@ export default function SettingsPage() {
       {/* Seller section */}
       <div className="pt-6">
         <h2 className={sectionLabel}>Selling</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+        <div className="divide-y divide-white/5 border-y border-white/5">
           {isSeller ? (
             <Link href="/seller" className="flex items-center gap-3 px-4 py-3.5 hover:bg-neutral-50 transition-colors">
               <Store className="w-5 h-5 text-black shrink-0" />
@@ -135,7 +135,7 @@ export default function SettingsPage() {
       {/* Support */}
       <div className="pt-6">
         <h2 className={sectionLabel}>Support</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+        <div className="divide-y divide-white/5 border-y border-white/5">
           <Link href="/telegram" className="flex items-center gap-3 px-4 py-3.5 hover:bg-neutral-50 transition-colors">
             <HelpCircle className="w-5 h-5 text-black shrink-0" />
             <div className="flex-1">
@@ -158,7 +158,7 @@ export default function SettingsPage() {
       {/* Security */}
       <div className="pt-6">
         <h2 className={sectionLabel}>Security</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+        <div className="divide-y divide-white/5 border-y border-white/5">
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Shield className="w-5 h-5 text-neutral-500 shrink-0" />
             <div className="flex-1">
@@ -171,7 +171,7 @@ export default function SettingsPage() {
 
       {/* Logout */}
       <div className="px-4 mt-6">
-        <button onClick={handleLogout} className="w-full text-[#ed4956] border border-neutral-200 hover:bg-neutral-50 rounded-md py-2.5 text-sm font-semibold">
+        <button onClick={handleLogout} className="w-full text-[#ed4956] border border-white/10 hover:bg-neutral-50 rounded-md py-2.5 text-sm font-semibold">
           <LogOut className="w-4 h-4 inline mr-2" /> Logout
         </button>
       </div>

@@ -53,7 +53,7 @@ export default function LivePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {liveNow.map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
-                <div className="overflow-hidden border border-neutral-200 rounded-md hover:opacity-90 transition-opacity">
+                <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
                   <div className="aspect-video bg-black relative">
                     <div className="w-full h-full flex items-center justify-center text-white">
                       <Radio className="w-10 h-10" />
@@ -75,7 +75,7 @@ export default function LivePage() {
                       <span>{s.seller_name}</span>
                     </div>
                     {s.featured_product && (
-                      <div className="mt-2 pt-2 border-t border-neutral-100 flex items-center justify-between">
+                      <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
                         <span className="text-xs text-neutral-500 line-clamp-1">{s.featured_product.name}</span>
                         <span className="text-sm font-bold text-black">{formatPrice(s.featured_product.price)}</span>
                       </div>
@@ -95,7 +95,7 @@ export default function LivePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {recent.slice(0, 6).map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
-                <div className="overflow-hidden border border-neutral-200 rounded-md hover:opacity-90 transition-opacity">
+                <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
                   <div className="aspect-video bg-neutral-100 flex items-center justify-center">
                     <Radio className="w-6 h-6 text-neutral-300" />
                   </div>

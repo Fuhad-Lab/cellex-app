@@ -94,7 +94,7 @@ export default function SellerStoriesPage() {
 
   if (loading) { return <PageSkeleton variant="seller-stories" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   return (
     <div className="space-y-4 max-w-2xl">
@@ -104,7 +104,7 @@ export default function SellerStoriesPage() {
       </div>
 
       {/* Post form */}
-      <div className="border border-neutral-200 rounded-md p-4 space-y-3 bg-white">
+      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
         <h3 className="font-semibold text-sm">Post a story</h3>
 
         {/* Story type */}
@@ -119,7 +119,7 @@ export default function SellerStoriesPage() {
                   key={t.key}
                   onClick={() => setStoryType(t.key)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md border-2 text-[10px] font-semibold transition-all ${
-                    isActive ? 'border-black bg-neutral-50 text-black' : 'border-neutral-200 text-neutral-500'
+                    isActive ? 'border-black bg-neutral-50 text-black' : 'border-white/10 text-neutral-500'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -172,7 +172,7 @@ export default function SellerStoriesPage() {
           <h3 className="font-semibold text-sm">Active stories ({stories.length})</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {stories.map((s) => (
-              <div key={s.id} className="border border-neutral-200 rounded-md overflow-hidden bg-white relative">
+              <div key={s.id} className="border border-white/10 rounded-md overflow-hidden bg-white relative">
                 <div className="aspect-[9/16] bg-neutral-100 relative">
                   {s.image_url ? (
                     <img src={s.image_url} alt="" className="w-full h-full object-cover" />

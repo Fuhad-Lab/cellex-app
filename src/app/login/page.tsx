@@ -173,7 +173,7 @@ function LoginContent() {
     router.push(next);
   };
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-white">
@@ -196,7 +196,7 @@ function LoginContent() {
           <p className="text-sm text-neutral-500 mt-2">Nigeria&apos;s #1 social marketplace</p>
         </div>
 
-        <div className="border border-neutral-200 rounded-md p-6">
+        <div className="border border-white/10 rounded-md p-6">
           {/* Tabs */}
           <div className="grid grid-cols-2 gap-1 p-1 bg-neutral-100 rounded-md mb-5">
             <button
@@ -228,7 +228,7 @@ function LoginContent() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="relative w-24 h-24 rounded-full bg-neutral-100 border-2 border-dashed border-neutral-300 hover:border-black hover:bg-neutral-50 transition-colors flex items-center justify-center overflow-hidden group"
+                    className="relative w-24 h-24 rounded-full bg-neutral-100 border-2 border-dashed border-white/15 hover:border-black hover:bg-neutral-50 transition-colors flex items-center justify-center overflow-hidden group"
                     aria-label="Upload profile picture"
                   >
                     {profileImagePreview ? (

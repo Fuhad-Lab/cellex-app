@@ -140,7 +140,7 @@ function SearchContent() {
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
-      <div ref={searchBarRef} className="border-b border-neutral-200 sticky top-0 z-40 bg-white/95 backdrop-blur-xl">
+      <div ref={searchBarRef} className="border-b border-white/10 sticky top-0 z-40 bg-white/95 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.back()} className="shrink-0 w-9 h-9 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors">
             <ChevronLeft className="w-5 h-5 text-black" />
@@ -151,7 +151,7 @@ function SearchContent() {
             </div>
             <span className="text-lg font-extrabold text-black" style={{ fontFamily: 'var(--font-geist-mono)' }}>Cellex</span>
           </Link>
-          <form onSubmit={handleSubmit} className="flex-1 flex items-center border-2 border-neutral-200 rounded-full px-4 py-2 focus-within:border-black transition-colors">
+          <form onSubmit={handleSubmit} className="flex-1 flex items-center border-2 border-white/10 rounded-full px-4 py-2 focus-within:border-black transition-colors">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
               type="text"
@@ -246,7 +246,7 @@ function SearchContent() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {aiProducts.map((p, i) => (
                     <Link key={p.id} href={`/product?id=${p.id}`} className="block group animate-scale-in" style={{ animationDelay: `${i * 50}ms` }}>
-                      <Card className="overflow-hidden border-neutral-200 hover-lift card-transition">
+                      <Card className="overflow-hidden border-white/10 hover-lift card-transition">
                         <div className="aspect-square bg-neutral-50 img-zoom">
                           {p.image_url ? (
                             <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
@@ -431,7 +431,7 @@ function VideoResult({ video, index }: { video: any; index: number }) {
   const product = video.product;
   return (
     <Link href="/videos" className="block group animate-scale-in" style={{ animationDelay: `${index * 50}ms` }}>
-      <Card className="overflow-hidden border-neutral-200 hover-lift card-transition">
+      <Card className="overflow-hidden border-white/10 hover-lift card-transition">
         <div className="aspect-[9/16] bg-neutral-900 relative">
           {video.video_url ? (
             <video src={video.video_url} muted className="w-full h-full object-cover" />

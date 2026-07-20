@@ -32,7 +32,7 @@ export default function SellerOrdersPage() {
       ) : (
         <div className="space-y-3">
           {orders.map((o) => (
-            <div key={o.id} className="border border-neutral-200 rounded-md p-4 bg-white">
+            <div key={o.id} className="border border-white/10 rounded-md p-4 bg-white">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">#{o.id?.slice(0, 8)}</span>
@@ -48,7 +48,7 @@ export default function SellerOrdersPage() {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100">
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
                 <span className="text-xs text-neutral-500">Total</span>
                 <span className="font-bold text-black">{formatPrice(o.total)}</span>
               </div>

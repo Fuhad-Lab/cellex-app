@@ -206,7 +206,7 @@ function LiveWatchContent() {
         </div>
 
         {session.featured_product && (
-          <div className="mt-3 border border-neutral-200 rounded-md p-3 flex items-center gap-3">
+          <div className="mt-3 border border-white/10 rounded-md p-3 flex items-center gap-3">
             <div className="w-16 h-16 rounded-md bg-neutral-50 overflow-hidden">
               {session.featured_product.image_url && (
                 <img src={session.featured_product.image_url} alt="" className="w-full h-full object-cover" />
@@ -237,8 +237,8 @@ function LiveWatchContent() {
       </div>
 
       {/* Chat */}
-      <div className="border-t border-neutral-200 flex flex-col h-[50vh]">
-        <div className="px-4 py-3 border-b border-neutral-100 font-semibold text-sm">Live Chat</div>
+      <div className="border-t border-white/10 flex flex-col h-[50vh]">
+        <div className="px-4 py-3 border-b border-white/5 font-semibold text-sm">Live Chat</div>
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {messages.length === 0 && (
             <p className="text-center text-xs text-neutral-400 mt-8">No messages yet. Be the first.</p>
@@ -253,14 +253,14 @@ function LiveWatchContent() {
           ))}
           <div ref={chatEndRef} />
         </div>
-        <div className="p-2 border-t border-neutral-100 flex gap-2">
+        <div className="p-2 border-t border-white/5 flex gap-2">
           <input
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder={user ? 'Type a message...' : 'Login to chat'}
             disabled={!user || !isLive}
-            className="flex-1 bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2 text-sm disabled:opacity-50 focus:bg-white focus:border-neutral-400 outline-none"
+            className="flex-1 bg-neutral-50 border border-white/10 rounded-md px-3 py-2 text-sm disabled:opacity-50 focus:bg-white focus:border-neutral-400 outline-none"
           />
           <button
             onClick={sendMessage}

@@ -211,7 +211,7 @@ export default function MessengerPage() {
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-neutral-200 border-t-black rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-white/10 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -227,7 +227,7 @@ export default function MessengerPage() {
     return (
       <div className="ig-container min-h-screen flex flex-col h-screen" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         {/* Chat header */}
-        <div className="flex items-center px-3 py-3 border-b border-neutral-100 shrink-0">
+        <div className="flex items-center px-3 py-3 border-b border-white/5 shrink-0">
           <button onClick={() => setActiveConversation(null)} className="ig-icon-btn" aria-label="Back">
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -266,7 +266,7 @@ export default function MessengerPage() {
         </div>
 
         {/* Input bar */}
-        <div className="border-t border-neutral-200 px-4 py-3 flex items-center gap-2 bg-white">
+        <div className="border-t border-white/10 px-4 py-3 flex items-center gap-2 bg-white">
           <input
             type="text"
             value={inputText}
@@ -292,7 +292,7 @@ export default function MessengerPage() {
   return (
     <div className="ig-container min-h-screen" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       {/* Header */}
-      <div className="flex items-center px-3 py-3 border-b border-neutral-100 shrink-0">
+      <div className="flex items-center px-3 py-3 border-b border-white/5 shrink-0">
         <button onClick={() => router.push('/')} className="ig-icon-btn shrink-0" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -321,7 +321,7 @@ export default function MessengerPage() {
       </div>
 
       {/* Tabs */}
-      <div className="sticky top-[54px] z-20 bg-white border-b border-neutral-200 px-2 flex items-center gap-1">
+      <div className="sticky top-[54px] z-20 bg-white border-b border-white/10 px-2 flex items-center gap-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.key;
@@ -358,7 +358,7 @@ export default function MessengerPage() {
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-white/5">
             {filteredConversations.map((conv) => (
               <button
                 key={conv.id}

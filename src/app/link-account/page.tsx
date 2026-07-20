@@ -62,7 +62,7 @@ export default function LinkAccountPage() {
 
   if (authLoading) { return <PageSkeleton variant="link-account" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
@@ -89,7 +89,7 @@ export default function LinkAccountPage() {
 
         {/* Generate code */}
         {!linkCode ? (
-          <div className="border border-neutral-200 rounded-md p-4">
+          <div className="border border-white/10 rounded-md p-4">
             <h3 className="font-semibold text-sm mb-3">Step 1: Generate link code</h3>
             <div className="space-y-3">
               <div className="space-y-1.5">
@@ -118,7 +118,7 @@ export default function LinkAccountPage() {
             <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" /> Code generated!
             </h3>
-            <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4 text-center my-3">
+            <div className="bg-neutral-50 border border-white/10 rounded-md p-4 text-center my-3">
               <div className="text-xs text-neutral-500 mb-1">Your link code</div>
               <div className="text-4xl font-bold tracking-[0.3em] text-black">{linkCode}</div>
             </div>
@@ -138,7 +138,7 @@ export default function LinkAccountPage() {
             </button>
             <button
               onClick={() => { setLinkCode(null); setPhone(''); loadLinks(); }}
-              className="w-full mt-2 bg-white border border-neutral-200 text-black font-semibold rounded-md py-2.5 hover:bg-neutral-50"
+              className="w-full mt-2 bg-white border border-white/10 text-black font-semibold rounded-md py-2.5 hover:bg-neutral-50"
             >
               Done
             </button>
@@ -146,7 +146,7 @@ export default function LinkAccountPage() {
         )}
 
         {/* Existing links */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">Linked phones ({links.length})</h3>
           {links.length === 0 ? (
             <p className="text-xs text-neutral-400 text-center py-3">No phones linked yet</p>
@@ -181,7 +181,7 @@ export default function LinkAccountPage() {
         </div>
 
         {/* Bot commands */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">WhatsApp bot commands</h3>
           <div className="space-y-2 text-xs">
             {[

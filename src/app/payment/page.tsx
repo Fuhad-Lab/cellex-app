@@ -146,10 +146,10 @@ function PaymentContent() {
 
         {/* Step: Details - show bank info */}
         {(step === 'details' || step === 'sent' || step === 'verifying') && (
-          <div className="border border-neutral-200 rounded-md p-4">
+          <div className="border border-white/10 rounded-md p-4">
             <h3 className="font-semibold text-sm mb-4">Bank Transfer Details</h3>
 
-            <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4 space-y-3">
+            <div className="bg-neutral-50 border border-white/10 rounded-md p-4 space-y-3">
               <div>
                 <div className="text-xs text-neutral-500">Account number</div>
                 <button
@@ -202,13 +202,13 @@ function PaymentContent() {
 
             {step === 'sent' && (
               <div className="mt-4 space-y-2">
-                <div className="bg-neutral-50 border border-neutral-200 rounded-md p-3 flex items-center gap-2">
+                <div className="bg-neutral-50 border border-white/10 rounded-md p-3 flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-neutral-400 border-t-transparent rounded-full animate-spin" />
                   <span className="text-xs text-neutral-700">
                     Verifying your payment — this usually takes 30 seconds
                   </span>
                 </div>
-                <button onClick={load} className="w-full bg-white border border-neutral-300 text-black text-xs font-semibold rounded-md py-2 hover:bg-neutral-50">
+                <button onClick={load} className="w-full bg-white border border-white/15 text-black text-xs font-semibold rounded-md py-2 hover:bg-neutral-50">
                   Check status manually
                 </button>
               </div>
@@ -225,7 +225,7 @@ function PaymentContent() {
 
         {/* Step: Paid - success */}
         {step === 'paid' && (
-          <div className="border border-neutral-200 rounded-md p-6 text-center">
+          <div className="border border-white/10 rounded-md p-6 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <CheckCircle2 className="w-10 h-10 text-green-600" />
             </div>
@@ -246,7 +246,7 @@ function PaymentContent() {
                 <button className="w-full bg-black text-white font-semibold rounded-md py-2.5">View orders</button>
               </Link>
               <Link href="/" className="flex-1">
-                <button className="w-full bg-white border border-neutral-300 text-black font-semibold rounded-md py-2.5">Continue shopping</button>
+                <button className="w-full bg-white border border-white/15 text-black font-semibold rounded-md py-2.5">Continue shopping</button>
               </Link>
             </div>
           </div>
@@ -254,7 +254,7 @@ function PaymentContent() {
 
         {/* Step: Failed */}
         {step === 'failed' && (
-          <div className="border border-neutral-200 rounded-md p-6 text-center">
+          <div className="border border-white/10 rounded-md p-6 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <AlertCircle className="w-10 h-10 text-red-600" />
             </div>

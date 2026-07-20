@@ -74,7 +74,7 @@ function HomeSkeleton() {
         <S className="w-10 h-10 rounded-full shrink-0" />
       </div>
       {/* Stories bar */}
-      <div className="flex gap-3 px-3 py-2 border-b border-neutral-100">
+      <div className="flex gap-3 px-3 py-2 border-b border-white/5">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="shrink-0 flex flex-col items-center gap-1">
             <S className="w-14 h-14 rounded-full" />
@@ -88,7 +88,7 @@ function HomeSkeleton() {
       </div>
       {/* Feed posts — match FeedPostCard structure */}
       {Array.from({ length: 2 }).map((_, i) => (
-        <div key={i} className="border-b border-neutral-100">
+        <div key={i} className="border-b border-white/5">
           {/* Seller header */}
           <div className="flex items-center gap-2.5 px-3 py-2.5">
             <S className="w-9 h-9 rounded-full shrink-0" />
@@ -127,19 +127,19 @@ function CategoriesSkeleton() {
   return (
     <div className="bg-white min-h-screen">
       {/* Search bar */}
-      <div className="sticky top-0 z-30 bg-white px-3 pt-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+      <div className="sticky top-0 z-30 bg-white px-3 pt-3 pb-2 border-b border-white/5 flex items-center gap-2">
         <S className="w-5 h-5 shrink-0" />
         <S className="flex-1 h-9 rounded-full" />
         <S className="w-5 h-5 shrink-0" />
       </div>
       {/* Category tabs */}
-      <div className="flex items-center gap-5 px-3 py-2 border-b border-slate-100">
+      <div className="flex items-center gap-5 px-3 py-2 border-b border-white/5">
         {Array.from({ length: 7 }).map((_, i) => (
           <S key={i} className="w-16 h-4 shrink-0" />
         ))}
       </div>
       {/* Subcategory grid (5-col) */}
-      <div className="grid grid-cols-5 gap-2 px-3 py-3 border-b border-slate-100">
+      <div className="grid grid-cols-5 gap-2 px-3 py-3 border-b border-white/5">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="flex flex-col items-center gap-1">
             <S className="w-11 h-11 rounded-full" />
@@ -148,14 +148,14 @@ function CategoriesSkeleton() {
         ))}
       </div>
       {/* Sort bar */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
         <S className="w-20 h-3" />
         <S className="w-20 h-7 rounded-lg" />
       </div>
       {/* Product grid 2-col — matches MobileCategoryProductCard */}
       <div className="grid grid-cols-2 gap-2 px-3 py-3">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-lg overflow-hidden border border-slate-100">
+          <div key={i} className="bg-white rounded-lg overflow-hidden border border-white/5">
             <S className="w-full aspect-square rounded-none" />
             <div className="p-2 space-y-1.5">
               <S className="w-full h-3" />
@@ -207,7 +207,7 @@ function ProductSkeleton() {
         <S className="w-full h-16 rounded-xl" />
       </div>
       {/* Seller card */}
-      <div className="px-4 py-3 flex items-center gap-3 border-t border-slate-100">
+      <div className="px-4 py-3 flex items-center gap-3 border-t border-white/5">
         <S className="w-10 h-10 rounded-full" />
         <div className="flex-1 space-y-1.5">
           <S className="w-20 h-3" />
@@ -216,12 +216,12 @@ function ProductSkeleton() {
         <S className="w-14 h-7 rounded-full" />
       </div>
       {/* Reviews section */}
-      <div className="px-4 py-3 border-t border-slate-100 space-y-2">
+      <div className="px-4 py-3 border-t border-white/5 space-y-2">
         <S className="w-28 h-4" />
         <S className="w-full h-16 rounded-lg" />
       </div>
       {/* Bottom action bar — fixed */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-3 py-2 flex gap-2 items-center">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-white/5 px-3 py-2 flex gap-2 items-center">
         <S className="w-10 h-10 rounded-lg" />
         <S className="w-10 h-10 rounded-lg" />
         <S className="flex-1 h-10 rounded-full" />
@@ -240,7 +240,7 @@ function CartSkeleton() {
     <div className="bg-white min-h-screen max-w-3xl mx-auto px-4 py-4">
       <S className="w-20 h-7 mb-4" />
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex gap-3 p-3 border border-slate-100 rounded-xl mb-3">
+        <div key={i} className="flex gap-3 p-3 border border-white/5 rounded-xl mb-3">
           <S className="w-20 h-20 rounded-xl shrink-0" />
           <div className="flex-1 space-y-2">
             <S className="w-3/4 h-4" />
@@ -255,7 +255,7 @@ function CartSkeleton() {
         </div>
       ))}
       {/* Summary */}
-      <div className="border-t border-slate-100 pt-4 mt-4 space-y-2">
+      <div className="border-t border-white/5 pt-4 mt-4 space-y-2">
         <div className="flex justify-between"><S className="w-16 h-4" /><S className="w-20 h-4" /></div>
         <div className="flex justify-between"><S className="w-20 h-4" /><S className="w-16 h-4" /></div>
         <div className="flex justify-between"><S className="w-12 h-5" /><S className="w-24 h-5" /></div>
@@ -301,7 +301,7 @@ function OrdersSkeleton() {
       <S className="w-24 h-7 mb-4" />
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="border border-slate-100 rounded-xl overflow-hidden">
+          <div key={i} className="border border-white/5 rounded-xl overflow-hidden">
             {/* Order header */}
             <div className="p-4 flex items-center gap-3">
               <S className="w-10 h-10 rounded-xl shrink-0" />
@@ -318,7 +318,7 @@ function OrdersSkeleton() {
               <S className="w-12 h-12 rounded-lg" />
             </div>
             {/* Total */}
-            <div className="px-4 py-3 border-t border-slate-100 flex justify-between">
+            <div className="px-4 py-3 border-t border-white/5 flex justify-between">
               <S className="w-16 h-4" />
               <S className="w-20 h-4" />
             </div>
@@ -337,7 +337,7 @@ function SearchSkeleton() {
   return (
     <div className="bg-white min-h-screen">
       {/* Header with search + tabs */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-100">
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <S className="w-9 h-9 rounded-full shrink-0" />
           <S className="flex-1 h-10 rounded-full" />
@@ -374,7 +374,7 @@ function SearchSkeleton() {
         </div>
       </div>
       {/* Follow-up input bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-white/5 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-2">
           <S className="w-10 h-10 rounded-full" />
           <S className="flex-1 h-10 rounded-full" />
@@ -397,7 +397,7 @@ function ProfileSkeleton() {
         <S className="w-9 h-9 rounded-full" />
       </div>
       {/* User card */}
-      <div className="bg-white p-4 rounded-xl border border-slate-100">
+      <div className="bg-white p-4 rounded-xl border border-white/5">
         <div className="flex items-center gap-3 mb-4">
           <S className="w-16 h-16 rounded-full" />
           <div className="flex-1 space-y-2">
@@ -414,7 +414,7 @@ function ProfileSkeleton() {
       {/* Stats grid */}
       <div className="grid grid-cols-3 gap-2">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="bg-white p-3 rounded-xl border border-slate-100 text-center space-y-1">
+          <div key={i} className="bg-white p-3 rounded-xl border border-white/5 text-center space-y-1">
             <S className="w-6 h-5 mx-auto" />
             <S className="w-12 h-3 mx-auto" />
           </div>
@@ -422,7 +422,7 @@ function ProfileSkeleton() {
       </div>
       {/* Menu items */}
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3">
+        <div key={i} className="bg-white p-3 rounded-xl border border-white/5 flex items-center gap-3">
           <S className="w-10 h-10 rounded-xl" />
           <div className="flex-1 space-y-1">
             <S className="w-24 h-4" />
@@ -475,7 +475,7 @@ function AIChatSkeleton() {
   return (
     <div className="bg-white min-h-screen flex flex-col max-w-3xl mx-auto">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
         <S className="w-9 h-9 rounded-xl shrink-0" />
         <div className="flex-1">
           <S className="w-32 h-4 mb-1" />
@@ -504,7 +504,7 @@ function AIChatSkeleton() {
         ))}
       </div>
       {/* Input bar */}
-      <div className="px-4 py-3 border-t border-slate-100 flex items-center gap-2">
+      <div className="px-4 py-3 border-t border-white/5 flex items-center gap-2">
         <S className="w-10 h-10 rounded-full" />
         <S className="flex-1 h-10 rounded-full" />
         <S className="w-10 h-10 rounded-full" />
@@ -558,7 +558,7 @@ function LiveSkeleton() {
         <S className="w-24 h-5 mb-3" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-xl overflow-hidden border border-slate-100">
+            <div key={i} className="rounded-xl overflow-hidden border border-white/5">
               <S className="w-full aspect-video" />
               <div className="p-3 space-y-2">
                 <S className="w-3/4 h-4" />
@@ -583,7 +583,7 @@ function GroupBuySkeleton() {
       {/* Group buy banner */}
       <S className="w-full h-24 rounded-2xl mb-4" />
       {/* Product card */}
-      <div className="flex gap-3 p-3 border border-slate-100 rounded-xl mb-4">
+      <div className="flex gap-3 p-3 border border-white/5 rounded-xl mb-4">
         <S className="w-20 h-20 rounded-xl shrink-0" />
         <div className="flex-1 space-y-2">
           <S className="w-3/4 h-4" />
@@ -607,7 +607,7 @@ function WishlistSkeleton() {
       <S className="w-28 h-7 mb-4" />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="p-3 border border-slate-100 rounded-xl flex gap-3">
+          <div key={i} className="p-3 border border-white/5 rounded-xl flex gap-3">
             <S className="w-20 h-20 rounded-xl shrink-0" />
             <div className="flex-1 space-y-2">
               <S className="w-3/4 h-4" />
@@ -696,18 +696,18 @@ function PaymentSkeleton() {
 function SellerDashboardSkeleton() {
   return (
     <div className="bg-white min-h-screen max-w-2xl mx-auto pb-24">
-      <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
         <S className="w-9 h-9 rounded-full" />
         <S className="w-20 h-5" />
       </div>
       {/* Store header */}
-      <div className="px-4 py-6 text-center border-b border-slate-100">
+      <div className="px-4 py-6 text-center border-b border-white/5">
         <S className="w-20 h-20 rounded-full mx-auto mb-3" />
         <S className="w-32 h-6 mx-auto mb-2" />
         <S className="w-24 h-3 mx-auto" />
       </div>
       {/* Stats grid */}
-      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-slate-100">
+      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-white/5">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="text-center space-y-1">
             <S className="w-4 h-4 mx-auto" />
@@ -720,7 +720,7 @@ function SellerDashboardSkeleton() {
       {Array.from({ length: 3 }).map((_, section) => (
         <div key={section} className="px-4 py-3">
           <S className="w-16 h-3 mb-2" />
-          <div className="border border-slate-100 rounded-xl divide-y divide-slate-100">
+          <div className="border border-white/5 rounded-xl divide-y divide-white/5">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3 p-3">
                 <S className="w-9 h-9 rounded-lg" />
@@ -749,7 +749,7 @@ function SellerProductsSkeleton() {
       <S className="w-full h-11 rounded-full" />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-xl overflow-hidden border border-slate-100">
+          <div key={i} className="rounded-xl overflow-hidden border border-white/5">
             <S className="w-full aspect-square" />
             <div className="p-3 space-y-2">
               <S className="w-3/4 h-3" />
@@ -775,7 +775,7 @@ function SellerOrdersSkeleton() {
     <div className="space-y-3 max-w-4xl mx-auto p-4">
       <S className="w-24 h-7 mb-4" />
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="border border-slate-100 rounded-xl p-4 space-y-2">
+        <div key={i} className="border border-white/5 rounded-xl p-4 space-y-2">
           <div className="flex justify-between">
             <S className="w-20 h-4" />
             <S className="w-16 h-5 rounded-full" />
@@ -799,7 +799,7 @@ function SellerProfileSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto p-4">
       <S className="w-32 h-7" />
-      <div className="border border-slate-100 rounded-xl p-4 space-y-3">
+      <div className="border border-white/5 rounded-xl p-4 space-y-3">
         <S className="w-16 h-16 rounded-2xl mx-auto" />
         <div className="space-y-2">
           <S className="w-20 h-3" />
@@ -827,7 +827,7 @@ function SellerGoLiveSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto p-4">
       <S className="w-24 h-7" />
-      <div className="border border-slate-100 rounded-xl p-4 space-y-3">
+      <div className="border border-white/5 rounded-xl p-4 space-y-3">
         <div className="space-y-2">
           <S className="w-20 h-3" />
           <S className="w-full h-11 rounded-lg" />
@@ -851,7 +851,7 @@ function SellerVideosSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto p-4">
       <S className="w-24 h-7" />
-      <div className="border border-slate-100 rounded-xl p-4 space-y-3">
+      <div className="border border-white/5 rounded-xl p-4 space-y-3">
         <div className="space-y-2">
           <S className="w-20 h-3" />
           <S className="w-full h-11 rounded-lg" />
@@ -863,7 +863,7 @@ function SellerVideosSkeleton() {
         <S className="w-full h-11 rounded-full" />
       </div>
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex gap-3 border border-slate-100 rounded-xl p-3">
+        <div key={i} className="flex gap-3 border border-white/5 rounded-xl p-3">
           <S className="w-20 h-20 rounded-lg shrink-0" />
           <div className="flex-1 space-y-2">
             <S className="w-3/4 h-4" />
@@ -892,7 +892,7 @@ function SellerStoriesSkeleton() {
           <S key={i} className="w-full h-16 rounded-xl" />
         ))}
       </div>
-      <div className="border border-slate-100 rounded-xl p-4 space-y-3">
+      <div className="border border-white/5 rounded-xl p-4 space-y-3">
         <div className="space-y-2">
           <S className="w-20 h-3" />
           <S className="w-full h-11 rounded-lg" />
@@ -921,7 +921,7 @@ function SellerSettingsSkeleton() {
       {Array.from({ length: 4 }).map((_, section) => (
         <div key={section}>
           <S className="w-20 h-3 mb-2" />
-          <div className="border border-slate-100 rounded-xl divide-y divide-slate-100">
+          <div className="border border-white/5 rounded-xl divide-y divide-white/5">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3 p-4">
                 <S className="w-9 h-9 rounded-lg" />
@@ -950,7 +950,7 @@ function SellerAcademySkeleton() {
       <S className="w-32 h-5" />
       <div className="grid gap-3 sm:grid-cols-2">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="border border-slate-100 rounded-xl p-4">
+          <div key={i} className="border border-white/5 rounded-xl p-4">
             <div className="flex items-start gap-3">
               <S className="w-10 h-10 rounded-lg shrink-0" />
               <div className="flex-1 space-y-2">
@@ -1024,7 +1024,7 @@ function SettingsSkeleton() {
       {Array.from({ length: 5 }).map((_, section) => (
         <div key={section}>
           <S className="w-20 h-3 mb-2" />
-          <div className="border border-slate-100 rounded-xl divide-y divide-slate-100">
+          <div className="border border-white/5 rounded-xl divide-y divide-white/5">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3 p-4">
                 <S className="w-9 h-9 rounded-lg" />
@@ -1049,12 +1049,12 @@ function SettingsSkeleton() {
 function MessengerSkeleton() {
   return (
     <div className="bg-white min-h-screen max-w-2xl mx-auto">
-      <div className="sticky top-0 z-30 bg-white border-b border-slate-100 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center gap-3">
         <S className="w-9 h-9 rounded-full" />
         <S className="w-24 h-6 flex-1" />
         <S className="w-9 h-9 rounded-full" />
       </div>
-      <div className="border-b border-slate-100 px-2 flex gap-1">
+      <div className="border-b border-white/5 px-2 flex gap-1">
         {Array.from({ length: 4 }).map((_, i) => (
           <S key={i} className="w-16 h-6 my-3" />
         ))}
@@ -1079,7 +1079,7 @@ function MessengerSkeleton() {
 function NotificationsSkeleton() {
   return (
     <div className="bg-white min-h-screen max-w-2xl mx-auto">
-      <div className="sticky top-0 z-30 bg-white border-b border-slate-100 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center gap-3">
         <S className="w-9 h-9 rounded-full" />
         <S className="w-28 h-6 flex-1" />
         <S className="w-20 h-3" />
@@ -1104,13 +1104,13 @@ function NotificationsSkeleton() {
 function CreateSkeleton() {
   return (
     <div className="bg-white min-h-screen max-w-md mx-auto">
-      <div className="sticky top-0 z-30 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center justify-between">
         <S className="w-16 h-6" />
         <S className="w-9 h-9 rounded-full" />
       </div>
       <div className="p-4 space-y-2">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100">
+          <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-white/5">
             <S className="w-12 h-12 rounded-xl shrink-0" />
             <div className="flex-1 space-y-1.5">
               <S className="w-24 h-4" />

@@ -101,7 +101,7 @@ export function TryItOnModal({ isOpen, onClose, productName, productCategory, pr
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-100">
+        <div className="flex items-center justify-between p-4 border-b border-white/5">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />

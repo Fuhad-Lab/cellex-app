@@ -135,7 +135,7 @@ export default function SellerVideosPage() {
 
   if (loading) { return <PageSkeleton variant="seller-videos" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
 
   // Filter videos based on tab
   const filteredVideos = videos.filter((v) => {
@@ -154,7 +154,7 @@ export default function SellerVideosPage() {
       </div>
 
       {/* Upload form */}
-      <div className="border border-neutral-200 rounded-md p-4 space-y-3 bg-white">
+      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
         <div className="flex items-center gap-2">
           <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${isReel ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}`}>
             <Clapperboard className="w-4 h-4 inline mr-1" />
@@ -189,7 +189,7 @@ export default function SellerVideosPage() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full border-2 border-dashed border-neutral-300 rounded-md p-4 flex items-center justify-center gap-2 hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
+            className="w-full border-2 border-dashed border-white/15 rounded-md p-4 flex items-center justify-center gap-2 hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
           >
             {uploading ? (
               <>
@@ -243,7 +243,7 @@ export default function SellerVideosPage() {
       {/* Video grid with tabs */}
       <div className="space-y-3">
         {/* Tabs */}
-        <div className="flex border-b border-neutral-200">
+        <div className="flex border-b border-white/10">
           {[
             { key: 'all', label: `All (${videos.length})` },
             { key: 'product', label: `Product Videos (${videos.filter(v => v.product_id).length})` },
@@ -274,7 +274,7 @@ export default function SellerVideosPage() {
             {filteredVideos.map((v) => {
               const isProductVideo = v.product_id !== null && v.product_id !== undefined;
               return (
-                <div key={v.id} className="border border-neutral-200 rounded-md overflow-hidden bg-white">
+                <div key={v.id} className="border border-white/10 rounded-md overflow-hidden bg-white">
                   <div className="aspect-[9/16] bg-black relative">
                     {v.video_url ? (
                       <video src={v.video_url} className="w-full h-full object-cover" muted />

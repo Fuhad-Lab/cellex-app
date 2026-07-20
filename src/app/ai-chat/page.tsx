@@ -153,7 +153,7 @@ export default function AiChatPage() {
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {msg.products.map((p) => (
                     <Link key={p.id} href={`/product?id=${p.id}`}>
-                      <div className="overflow-hidden border border-neutral-200 rounded-md hover:opacity-90 transition-opacity">
+                      <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
                         <div className="aspect-square bg-neutral-50">
                           {p.image_url ? (
                             <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
@@ -210,7 +210,7 @@ export default function AiChatPage() {
       )}
 
       {/* Input */}
-      <div className="flex gap-2 px-4 py-3 border-t border-neutral-200 bg-white">
+      <div className="flex gap-2 px-4 py-3 border-t border-white/10 bg-white">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

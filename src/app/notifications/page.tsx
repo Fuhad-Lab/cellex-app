@@ -100,7 +100,7 @@ export default function NotificationsPage() {
           </Link>
         </div>
       ) : (
-        <div className="divide-y divide-neutral-100">
+        <div className="divide-y divide-white/5">
           {notifications.map((notif) => {
             const Icon = getIcon(notif.type);
             return (

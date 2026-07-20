@@ -75,7 +75,7 @@ function GroupBuyJoinContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-neutral-200 border-t-black rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-white/10 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -125,7 +125,7 @@ function GroupBuyJoinContent() {
 
         {/* Product card */}
         {groupBuy && (
-          <div className="overflow-hidden border border-neutral-200 rounded-md">
+          <div className="overflow-hidden border border-white/10 rounded-md">
             {groupBuy.image_url && (
               <img src={groupBuy.image_url} alt={groupBuy.product_name} className="w-full h-48 object-cover" />
             )}
@@ -143,7 +143,7 @@ function GroupBuyJoinContent() {
         )}
 
         {/* Invitation message */}
-        <div className="border border-neutral-200 rounded-md p-4">
+        <div className="border border-white/10 rounded-md p-4">
           <p className="text-sm text-center leading-relaxed">
             <span className="font-semibold">{initiatorName}</span> invites you to buy{' '}
             <span className="font-semibold">{groupBuy?.product_name}</span> together at a{' '}
@@ -169,7 +169,7 @@ function GroupBuyJoinContent() {
 
         {/* Action */}
         {joined ? (
-          <div className="border border-neutral-200 rounded-md p-6 text-center bg-neutral-50">
+          <div className="border border-white/10 rounded-md p-6 text-center bg-neutral-50">
             <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-3">
               <Check className="w-6 h-6 text-white" />
             </div>
@@ -182,12 +182,12 @@ function GroupBuyJoinContent() {
                 <button className="w-full bg-black text-white font-semibold rounded-md py-2.5">Open Messenger</button>
               </Link>
               <Link href={`/product?id=${groupBuy?.product_id}`} className="flex-1">
-                <button className="w-full bg-white border border-neutral-300 text-black font-semibold rounded-md py-2.5">View Product</button>
+                <button className="w-full bg-white border border-white/15 text-black font-semibold rounded-md py-2.5">View Product</button>
               </Link>
             </div>
           </div>
         ) : !user && !authLoading ? (
-          <div className="border border-neutral-200 rounded-md p-6 text-center bg-neutral-50">
+          <div className="border border-white/10 rounded-md p-6 text-center bg-neutral-50">
             <Lock className="w-8 h-8 text-amber-500 mx-auto mb-2" />
             <h2 className="font-semibold mb-1">Login Required</h2>
             <p className="text-sm text-neutral-600 mb-4">
@@ -198,7 +198,7 @@ function GroupBuyJoinContent() {
                 <button className="w-full bg-black text-white font-semibold rounded-md py-2.5">Login</button>
               </Link>
               <Link href={`/login?next=/group-buy-join?code=${inviteCode}&mode=signup`} className="flex-1">
-                <button className="w-full bg-white border border-neutral-300 text-black font-semibold rounded-md py-2.5">Sign Up</button>
+                <button className="w-full bg-white border border-white/15 text-black font-semibold rounded-md py-2.5">Sign Up</button>
               </Link>
             </div>
           </div>
@@ -236,7 +236,7 @@ function GroupBuyJoinContent() {
 
 export default function GroupBuyJoinPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-2 border-neutral-200 border-t-black rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-2 border-white/10 border-t-black rounded-full animate-spin" /></div>}>
       <GroupBuyJoinContent />
     </Suspense>
   );

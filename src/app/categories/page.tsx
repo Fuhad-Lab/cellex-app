@@ -169,7 +169,7 @@ function CategoriesContent() {
       </div>
 
       {/* Category pills — horizontal scroll */}
-      <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-neutral-100">
+      <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
         {ALL_CATEGORIES.map((cat) => (
           <button
             key={cat.value}
@@ -187,12 +187,12 @@ function CategoriesContent() {
 
       {/* Subcategory chips (only when a category is selected) */}
       {subcats.length > 0 && (
-        <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-neutral-100">
+        <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
           {subcats.map((sub) => (
             <button
               key={sub}
               onClick={() => searchBySubcategory(sub)}
-              className="shrink-0 text-xs font-medium text-black bg-neutral-50 hover:bg-neutral-100 px-3 py-1.5 rounded-full border border-neutral-200"
+              className="shrink-0 text-xs font-medium text-black bg-neutral-50 hover:bg-neutral-100 px-3 py-1.5 rounded-full border border-white/10"
             >
               {sub}
             </button>
@@ -201,14 +201,14 @@ function CategoriesContent() {
       )}
 
       {/* Sort bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
         <div className="text-xs text-neutral-500">
           {loading ? 'Loading...' : `${products.length} products`}
         </div>
         <div className="relative">
           <button
             onClick={() => setShowSortMenu(!showSortMenu)}
-            className="flex items-center gap-1 text-xs font-semibold text-black px-3 py-1.5 rounded-md border border-neutral-200"
+            className="flex items-center gap-1 text-xs font-semibold text-black px-3 py-1.5 rounded-md border border-white/10"
             aria-label="Sort"
           >
             <Filter className="w-3 h-3" />
@@ -216,7 +216,7 @@ function CategoriesContent() {
             <ChevronDown className="w-3 h-3" />
           </button>
           {showSortMenu && (
-            <div className="absolute right-0 top-9 z-10 bg-white border border-neutral-200 rounded-md shadow-lg py-1 min-w-[180px]">
+            <div className="absolute right-0 top-9 z-10 bg-white border border-white/10 rounded-md shadow-lg py-1 min-w-[180px]">
               {SORTS.map((s) => (
                 <button
                   key={s.key}

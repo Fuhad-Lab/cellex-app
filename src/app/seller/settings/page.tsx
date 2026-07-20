@@ -29,7 +29,7 @@ export default function SellerSettingsPage() {
       {/* Account section */}
       <div>
         <h2 className={sectionLabel}>Account</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
           <div className="flex items-center gap-3 px-4 py-3.5">
             <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center shrink-0">
               <Mail className="w-5 h-5 text-neutral-500" />
@@ -68,7 +68,7 @@ export default function SellerSettingsPage() {
       {/* Notifications */}
       <div>
         <h2 className={sectionLabel}>Notifications</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
           {[
             { label: 'New orders', desc: 'Get notified when a customer places an order', defaultOn: true },
             { label: 'Low stock', desc: 'Alert me when a product is running low', defaultOn: true },
@@ -83,7 +83,7 @@ export default function SellerSettingsPage() {
       {/* Region / Language */}
       <div>
         <h2 className={sectionLabel}>Region</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Globe className="w-5 h-5 text-neutral-500 shrink-0" />
             <div className="flex-1">
@@ -104,7 +104,7 @@ export default function SellerSettingsPage() {
       {/* Security */}
       <div>
         <h2 className={sectionLabel}>Security</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Shield className="w-5 h-5 text-neutral-500 shrink-0" />
             <div className="flex-1">
@@ -118,7 +118,7 @@ export default function SellerSettingsPage() {
       {/* Danger zone */}
       <div>
         <h2 className={sectionLabel}>Danger zone</h2>
-        <div className="divide-y divide-neutral-100 border-y border-neutral-100 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Trash2 className="w-5 h-5 text-[#ed4956] shrink-0" />
             <div className="flex-1">

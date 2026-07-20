@@ -170,7 +170,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Profile header */}
-      <div className="px-4 py-6 text-center border-b border-neutral-100">
+      <div className="px-4 py-6 text-center border-b border-white/5">
         <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center mx-auto mb-3 overflow-hidden">
           {seller?.profile_image ? (
             <img src={seller.profile_image} alt="" className="w-full h-full object-cover" />
@@ -199,7 +199,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Stats grid — all numbers are real */}
-      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-neutral-100">
+      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-white/5">
         <StatBox icon={Package} value={totalProducts} label="Products" />
         <StatBox icon={ShoppingBag} value={totalOrders} label="Orders" />
         <StatBox icon={DollarSign} value={formatPrice(totalRevenue)} label="Revenue" small />
@@ -207,7 +207,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Recent orders section — real orders from seller-orders API */}
-      <div className="px-4 py-4 border-b border-neutral-100">
+      <div className="px-4 py-4 border-b border-white/5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide flex items-center gap-1.5">
             <ShoppingBag className="w-3.5 h-3.5" />
@@ -229,7 +229,7 @@ export default function SellerDashboardPage() {
             actionLabel="Add products"
           />
         ) : (
-          <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+          <div className="divide-y divide-white/5 border-y border-white/5">
             {recentOrders.map((o) => {
               const itemCount = (o.items || []).reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
               const firstItemName = o.items?.[0]?.product_name;
@@ -276,7 +276,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Top products section — sorted by units_sold */}
-      <div className="px-4 py-4 border-b border-neutral-100">
+      <div className="px-4 py-4 border-b border-white/5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5" />
@@ -303,7 +303,7 @@ export default function SellerDashboardPage() {
               <Link
                 key={p.id}
                 href={`/product?id=${p.id}`}
-                className="block border border-neutral-200 rounded-lg overflow-hidden hover:shadow-md transition-all"
+                className="block border border-white/10 rounded-lg overflow-hidden hover:shadow-md transition-all"
               >
                 <div className="aspect-square bg-neutral-50 relative">
                   {p.image_url ? (
@@ -335,7 +335,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Quick actions */}
-      <div className="px-4 py-4 border-b border-neutral-100">
+      <div className="px-4 py-4 border-b border-white/5">
         <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-3 flex items-center gap-1.5">
           <PlusCircle className="w-3.5 h-3.5" />
           Quick Actions
@@ -353,7 +353,7 @@ export default function SellerDashboardPage() {
           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">
             {section.title}
           </h3>
-          <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+          <div className="divide-y divide-white/5 border-y border-white/5">
             {section.items.map((item) => {
               const Icon = item.icon;
               return (
@@ -392,7 +392,7 @@ function QuickAction({ href, icon: Icon, label }: { href: string; icon: any; lab
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-1.5 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-colors"
+      className="flex flex-col items-center gap-1.5 py-3 border border-white/10 rounded-lg hover:bg-neutral-50 hover:border-white/15 transition-colors"
     >
       <Icon className="w-5 h-5 text-black" />
       <span className="text-[11px] font-semibold text-black">{label}</span>
@@ -414,7 +414,7 @@ function EmptyStateCard({
   actionLabel?: string;
 }) {
   return (
-    <div className="text-center py-8 px-4 border border-dashed border-neutral-200 rounded-lg">
+    <div className="text-center py-8 px-4 border border-dashed border-white/10 rounded-lg">
       <div className="flex justify-center mb-2">{icon}</div>
       <p className="text-sm font-semibold text-neutral-700">{title}</p>
       <p className="text-xs text-neutral-500 mt-1 max-w-xs mx-auto">{message}</p>

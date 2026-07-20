@@ -36,7 +36,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-neutral-200 border-t-black rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-white/10 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -75,7 +75,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
         })}
       </nav>
 
-      <div className="p-2 border-t border-neutral-100">
+      <div className="p-2 border-t border-white/5">
         <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-600 hover:bg-neutral-100">
           <Store className="w-4 h-4" /> Back to store
         </Link>
@@ -92,12 +92,12 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen bg-neutral-50 flex">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col w-60 bg-white border-r border-neutral-200 fixed inset-y-0 left-0 z-30">
+      <aside className="hidden md:flex md:flex-col w-60 bg-white border-r border-white/10 fixed inset-y-0 left-0 z-30">
         <SidebarContent />
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-white/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
             <Store className="w-4 h-4 text-white" />
