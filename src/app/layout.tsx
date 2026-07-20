@@ -8,6 +8,7 @@ import { OptimisticUIProvider } from "@/components/optimistic-ui";
 import { GlobalSpotlight } from "@/components/global-spotlight";
 import { NavShell } from "@/components/nav-shell";
 import { NativeBackGesture } from "@/components/native-back-gesture";
+import RealisticSmoke from "@/components/RealisticSmoke";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -30,22 +31,13 @@ export const metadata: Metadata = {
   },
 };
 
-// -----------------------------------------------------------------------------
-// Viewport configuration — fixes the "page appears zoomed in on first paint"
-// bug inside the Capacitor WebView.
-//
-//   width=device-width               -> match the device's CSS pixel width
-//   initial-scale=1, maximum-scale=1 -> never auto-zoom on first paint
-//   user-scalable=no                 -> disable pinch-zoom (native app feel)
-//   viewport-fit=cover               -> render into the notch / punch-hole area
-// -----------------------------------------------------------------------------
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#ffffff",
+  themeColor: "#050508",
 };
 
 export default function RootLayout({
@@ -54,22 +46,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${jakarta.variable} ${sora.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
-      >
-        <NativeBackGesture>
-        <AuthProvider>
-          <OTABootstrap />
-          <OptimisticUIProvider>
-            <NavShell>
-              {children}
-            </NavShell>
-            <GlobalSpotlight />
-            <Toaster />
-          </OptimisticUIProvider>
-                </AuthProvider>
-      </NativeBackGesture>
+    <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
+      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-slate-100 bg-[#050508]`}>
+        {/* Background Layer */}
+        <RealisticSmoke />
+        
+        {/* Content Viewport */}
+        <div className="relative z-10 w-full min-h-screen">
+          <NativeBackGesture>
+            <AuthProvider>
+              <OTABootstrap />
+              <OptimisticUIProvider>
+                <NavShell>
+                  {children}
+                </NavShell>
+                <GlobalSpotlight />
+                <Toaster />
+              </OptimisticUIProvider>
+            </AuthProvider>
+          </NativeBackGesture>
+        </div>
       </body>
     </html>
   );

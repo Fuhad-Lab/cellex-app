@@ -563,7 +563,7 @@ html, body {
 .ig-card-spaced {
   margin-left: 12px;
   margin-right: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 /* Cart item card — slightly smaller radius (20px) than feed cards,
@@ -1083,4 +1083,31 @@ body {
 
 .dark body {
   background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 50%, #1a1a1a 100%) !important;
+}
+/* ============================================================
+   LIQUID GLASS — High-fidelity glassmorphism for dark smoke bg
+   ============================================================ */
+
+.liquid-glass {
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.07) 0%, 
+    rgba(255, 255, 255, 0.02) 40%, 
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -10px 20px rgba(255, 255, 255, 0.02),
+    0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.liquid-fluid {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(59, 130, 246, 0.1) 100%);
+  backdrop-filter: blur(8px);
+  box-shadow: 
+    inset 0 4px 6px rgba(255, 255, 255, 0.15),
+    0 4px 15px rgba(59, 130, 246, 0.2);
 }
