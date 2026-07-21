@@ -86,14 +86,15 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
-        const [vidResp, homeResp, storiesResp, liveResp, sellersResp] = await Promise.all([
+        // Use REAL AI-driven feed (Gorse → Chroma personalization → real trending)
+        // No more hardcoded api.products.home() — let the recommender drive the feed.
+        const [vidResp, recommendResp, storiesResp, liveResp, sellersResp] = await Promise.all([
           api.videos.feed(20),
-          api.products.home(),
+          api.recommend.home(40),
           api.stories.activeBar().catch(() => ({ success: false })),
           api.live.list('live').catch(() => ({ success: false })),
           api.social.discover(60).catch(() => ({ success: false })),
         ]);
-
         const sellerMap = new Map<string, { name: string; image?: string; slug?: string }>();
         if (sellersResp.success) {
           const sellersList = sellersResp.sellers || [];
@@ -122,9 +123,10 @@ export default function HomePage() {
               sellerImage: seller.profile_image,
               mediaUrl: v.video_url || '',
               caption: v.caption || '',
+              // REAL counts from DB — no more Math.floor(views/20) fake math
               likes: v.likes_count || 0,
               views: v.views_count || 0,
-              comments: Math.floor((v.views_count || 0) / 20),
+              comments: v.comments_count || 0,
               product: v.product,
               soldCount: v.product?.units_sold,
               createdAt: v.created_at,
@@ -133,14 +135,14 @@ export default function HomePage() {
           });
         }
 
-        if (homeResp.success) {
-          const allProducts = [
-            ...(homeResp.flashDeals || []),
-            ...(homeResp.trending || []),
-            ...(homeResp.newArrivals || []),
-          ].filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i);
+        // AI-driven product feed — posts come from the recommender (Gorse/Chroma/trending).
+        // Each product's likes/views/comments are REAL numbers from Supabase, never faked.
+        if (recommendResp.success) {
+          // The recommend API returns a flat `products` array (regardless of source).
+          // No more flashDeals/trending/newArrivals hardcoded buckets.
+          const allProducts: Product[] = recommendResp.products || [];
 
-          allProducts.forEach((p: Product) => {
+          allProducts.forEach((p: any) => {
             const sellerInfo = p.seller_id ? sellerMap.get(p.seller_id) : null;
             posts.push({
               type: 'product',
@@ -152,8 +154,11 @@ export default function HomePage() {
               sellerImage: sellerInfo?.image,
               mediaUrl: p.image_url || '',
               caption: p.name,
-              likes: Math.floor((p.units_sold || 0) * 0.3),
-              comments: Math.floor((p.units_sold || 0) * 0.1),
+              // REAL counts — no more Math.floor(units_sold * 0.3) fake math.
+              // If a count is not tracked in the DB yet, show 0 (honest) instead of a lie.
+              likes: p.likes_count || 0,
+              views: p._views_count || p.views_count || 0,
+              comments: p.comments_count || p.review_count || 0,
               product: p,
               soldCount: p.units_sold,
               verified: true,
@@ -208,6 +213,7 @@ export default function HomePage() {
   const toggleLike = (postId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!user) { router.push('/login'); return; }
     const post = feed.find(p => p.id === postId);
     if (!post) return;
     const isLiking = !likedPosts.has(postId);
@@ -219,14 +225,15 @@ export default function HomePage() {
       newLiked.delete(postId);
     }
     setLikedPosts(newLiked);
-    // Send real like to API
+    // Persist video likes to the real product_video_likes table via the videos edge function
     if (post.videoId) {
       if (isLiking) api.videos.like(post.videoId);
       else api.videos.unlike(post.videoId);
     }
-    // Send feedback to Gorse (non-blocking)
+    // Send REAL feedback (persists to product_view_log/buyers_wishlist for products,
+    // fires to Gorse for both products and videos)
     const itemId = post.videoId ? String(post.videoId) : post.productId ? String(post.productId) : postId;
-    api.feedback(itemId, isLiking ? 'like' : 'view', isLiking ? 1 : 0);
+    api.feedback(itemId, isLiking ? 'like' : 'unlike', isLiking ? 1 : 0);
   };
 
   const toggleSave = (postId: string, e: React.MouseEvent) => {
@@ -234,6 +241,7 @@ export default function HomePage() {
     e.stopPropagation();
     const post = feed.find(p => p.id === postId);
     if (!post) return;
+    if (!user) { router.push('/login'); return; }
     const isSaving = !savedPosts.has(postId);
     const newSaved = new Set(savedPosts);
     if (isSaving) {
@@ -243,10 +251,13 @@ export default function HomePage() {
       newSaved.delete(postId);
     }
     setSavedPosts(newSaved);
-    // Send feedback to Gorse
-    if (isSaving) {
-      const itemId = post.videoId ? String(post.videoId) : post.productId ? String(post.productId) : postId;
-      api.feedback(itemId, 'click', 0.7);
+    // REAL save: persist to buyers_wishlist via the feedback API
+    // (which writes a real row to Supabase + fires Gorse feedback in background)
+    if (post.productId) {
+      api.feedback(String(post.productId), isSaving ? 'save' : 'unsave', isSaving ? 1 : 0, { page: 'feed' });
+    } else if (post.videoId) {
+      // Video saves — only Gorse feedback (no dedicated table yet)
+      api.feedback(String(post.videoId), isSaving ? 'save' : 'unsave', isSaving ? 1 : 0, { page: 'feed' });
     }
   };
 

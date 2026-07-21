@@ -1,37 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { api, API_BASE } from '@/lib/api';
 import {
   getGorseRecommendations,
   getGorseItemNeighbors,
   sendGorseFeedback,
+  GORSE_URL,
+  fetchRealProductRankingFromSupabase,
+  upsertProductToChroma,
+  deleteProductFromChroma,
 } from '@/lib/ai';
 
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
-const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || '';
+const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || process.env.SUPABASE_SERVICE_KEY || '';
 const EDGE_FUNCTIONS_URL = 'https://tcwdbokruvlizkxcpkzj.supabase.co/functions/v1';
-const COOKIE_NAME = 'cellex_session_id';
 const PROJECT = 'tcwdbokruvlizkxcpkzj';
+const COOKIE_NAME = 'cellex_session_id';
 
 /**
- * Recommendation API — Dynamic AI-driven feeds (replaces hard-coded feeds)
- * 
+ * Recommendation API — Gorse-powered recommendations.
+ *
  * POST /api/recommend
- * Body: { 
- *   op: 'home' | 'category' | 'shorts' | 'neighbors' | 'feedback',
- *   userId?: string,        // for home/category/shorts
- *   category?: string,      // for category
- *   itemId?: string,        // for neighbors
+ * Body: {
+ *   op: 'home' | 'category' | 'shorts' | 'neighbors' | 'feedback'
+ *             | 'product_embed' | 'product_delete',
+ *   userId?: string,
+ *   category?: string,
+ *   itemId?: string,
  *   limit?: number,
- *   feedback?: { itemId, type, score? }  // for feedback
+ *   feedback?: { itemId, type, score? },
+ *   product?: { id, name, category, description, price, image_url },  // for product_embed
+ *   productId?: string | number,                                      // for product_delete
  * }
- * 
- * Flow:
- * 1. Authenticate user via session cookie
- * 2. Query Gorse for personalized item IDs
- * 3. Hydrate with real product data from Supabase (parallel)
- * 4. Return hydrated products with relevance scores
- * 
- * Fallback: If Gorse is unavailable, fall back to existing Supabase queries.
+ *
+ * Architecture (clear separation of concerns):
+ *   - Gorse  → recommendations (this route). Collaborative filtering across all users.
+ *   - Chroma → semantic search (the /api/smart-search route). Not used here.
+ *
+ * Fallback: when Gorse returns nothing (cold-start: new user, new item, or Gorse
+ * temporarily down), fall back to REAL trending from Supabase — computed from
+ * units_sold, view_count, wishlist_count, review_count. No fake math.
+ *
+ * The `source` field in the response tells you which path was used.
  */
 export async function POST(request: NextRequest) {
   if (!SUPABASE_ANON_KEY) {
@@ -64,151 +72,203 @@ export async function POST(request: NextRequest) {
     } catch {}
   }
 
-  // Use provided userId or authenticated userId, or fall back to anonymous
   const effectiveUserId = body.userId || userId || 'anonymous';
 
-  // === OPERATIONS ===
   switch (body.op) {
-    case 'home': return await handleHome(effectiveUserId, body.limit || 20);
-    case 'category': return await handleCategory(effectiveUserId, body.category || '', body.limit || 30);
-    case 'shorts': return await handleShorts(effectiveUserId, body.limit || 15);
-    case 'neighbors': return await handleNeighbors(body.itemId || '', body.limit || 10);
-    case 'feedback': return await handleFeedback(effectiveUserId, body.feedback);
+    case 'home':            return await handleHome(effectiveUserId, body.limit || 20);
+    case 'category':        return await handleCategory(effectiveUserId, body.category || '', body.limit || 30);
+    case 'shorts':          return await handleShorts(effectiveUserId, body.limit || 15);
+    case 'neighbors':       return await handleNeighbors(body.itemId || '', body.limit || 10);
+    case 'feedback':        return await handleFeedback(effectiveUserId, body.feedback);
+    case 'product_embed':   return await handleProductEmbed(body.product);
+    case 'product_delete':  return await handleProductDelete(body.productId);
     default:
       return NextResponse.json({ success: false, error: `Unknown op: ${body.op}` }, { status: 400 });
   }
 }
 
 /**
- * Homepage Feed — aggregates trending + personalized + collaborative filtering
- * Falls back to existing Supabase products API if Gorse is unavailable.
+ * Is Gorse actually configured? GORSE_URL defaults to localhost, which means
+ * "not configured" in production. Treat that as "Gorse off" instead of trying
+ * to hit localhost and timing out.
+ */
+function isGorseConfigured(): boolean {
+  return !!GORSE_URL && !GORSE_URL.startsWith('http://localhost');
+}
+
+/**
+ * Homepage Feed — Gorse recommendations, with real-trending fallback.
+ *
+ *   1. Gorse (if configured) → collaborative filtering
+ *   2. Real trending (Supabase engagement score) → cold-start fallback
  */
 async function handleHome(userId: string, limit: number) {
   const startTime = Date.now();
+  const sources: string[] = [];
 
-  // Parallel: Gorse recommendations + existing Supabase home data (fallback)
-  const [gorseIds, fallbackResp] = await Promise.all([
-    getGorseRecommendations(userId, { limit }),
-    fetch(`${EDGE_FUNCTIONS_URL}/products`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ op: 'home' }),
-    }).then(r => r.json()).catch(() => ({ success: false })),
-  ]);
-
-  // If Gorse returned IDs, hydrate them from Supabase
-  if (gorseIds.length > 0) {
-    const hydrated = await hydrateProducts(gorseIds);
-    if (hydrated.length > 0) {
-      return NextResponse.json({
-        success: true,
-        source: 'gorse',
-        products: hydrated,
-        latencyMs: Date.now() - startTime,
-      });
+  // 1. Gorse
+  if (isGorseConfigured()) {
+    const gorseIds = await getGorseRecommendations(userId, { limit });
+    if (gorseIds.length > 0) {
+      const hydrated = await hydrateProducts(gorseIds);
+      if (hydrated.length > 0) {
+        return NextResponse.json({
+          success: true,
+          source: 'gorse',
+          products: hydrated,
+          latencyMs: Date.now() - startTime,
+        });
+      }
     }
+    sources.push('gorse:empty');
+  } else {
+    sources.push('gorse:not-configured');
   }
 
-  // Fallback: return existing Supabase data
+  // 2. Real trending — Supabase engagement score
+  //    (units_sold*4 + views*0.5 + wishlist*3 + reviews*2 + recency bonus)
+  //    Used for cold-start: new users, new items, or Gorse temporarily empty.
+  const ranked = await fetchRealProductRankingFromSupabase(limit);
+  if (ranked.length > 0) {
+    const hydrated = await hydrateProducts(ranked.map((r) => r.id));
+    const scoreMap = new Map(ranked.map((r) => [r.id, r]));
+    const enriched = hydrated.map((p: any) => ({
+      ...p,
+      _engagement_score: scoreMap.get(String(p.id))?.score || 0,
+      _views_count: scoreMap.get(String(p.id))?.views_count || 0,
+    }));
+    return NextResponse.json({
+      success: true,
+      source: 'trending-real',
+      products: enriched,
+      latencyMs: Date.now() - startTime,
+      debug: { sourcesTried: sources },
+    });
+  }
+
+  // 3. Last resort — empty (no fake/hardcoded list)
   return NextResponse.json({
-    ...fallbackResp,
-    source: 'supabase-fallback',
+    success: true,
+    source: 'empty',
+    products: [],
     latencyMs: Date.now() - startTime,
+    debug: { sourcesTried: sources },
   });
 }
 
 /**
- * Category Page Feed — blends category filters with personalization
+ * Category Page Feed — Gorse category-aware recommendations
+ * with real-trending-in-category fallback.
  */
 async function handleCategory(userId: string, category: string, limit: number) {
   const startTime = Date.now();
 
-  const [gorseIds, fallbackResp] = await Promise.all([
-    getGorseRecommendations(userId, { category, limit }),
-    fetch(`${EDGE_FUNCTIONS_URL}/products`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ op: 'category', category, sort: 'newest' }),
-    }).then(r => r.json()).catch(() => ({ success: false })),
-  ]);
+  if (isGorseConfigured()) {
+    const gorseIds = await getGorseRecommendations(userId, { category, limit });
+    if (gorseIds.length > 0) {
+      const hydrated = await hydrateProducts(gorseIds);
+      if (hydrated.length > 0) {
+        return NextResponse.json({
+          success: true,
+          source: 'gorse',
+          products: hydrated,
+          latencyMs: Date.now() - startTime,
+        });
+      }
+    }
+  }
 
-  if (gorseIds.length > 0) {
-    const hydrated = await hydrateProducts(gorseIds);
-    if (hydrated.length > 0) {
+  // Real trending within this category
+  const ranked = await fetchRealProductRankingFromSupabase(limit * 3);
+  if (ranked.length > 0) {
+    const hydrated = await hydrateProducts(ranked.map((r) => r.id));
+    const scoreMap = new Map(ranked.map((r) => [r.id, r]));
+    const filtered = hydrated
+      .filter((p: any) => (p.category || '').toLowerCase() === (category || '').toLowerCase())
+      .map((p: any) => ({
+        ...p,
+        _engagement_score: scoreMap.get(String(p.id))?.score || 0,
+      }))
+      .slice(0, limit);
+    if (filtered.length > 0) {
       return NextResponse.json({
         success: true,
-        source: 'gorse',
-        products: hydrated,
+        source: 'category-trending-real',
+        products: filtered,
         latencyMs: Date.now() - startTime,
       });
     }
   }
 
   return NextResponse.json({
-    ...fallbackResp,
-    source: 'supabase-fallback',
+    success: true,
+    source: 'empty',
+    products: [],
     latencyMs: Date.now() - startTime,
   });
 }
 
 /**
- * Shorts Page Feed — hyper-engaging video content, personalized
+ * Shorts Page Feed — Gorse-powered video recommendations,
+ * with real Supabase video feed as cold-start fallback.
  */
 async function handleShorts(userId: string, limit: number) {
   const startTime = Date.now();
 
-  // Get video-specific recommendations from Gorse
-  const gorseIds = await getGorseRecommendations(userId, { limit });
-
-  // Hydrate with video data from Supabase
-  if (gorseIds.length > 0) {
-    const hydrated = await hydrateVideos(gorseIds);
-    if (hydrated.length > 0) {
-      return NextResponse.json({
-        success: true,
-        source: 'gorse',
-        videos: hydrated,
-        latencyMs: Date.now() - startTime,
-      });
+  if (isGorseConfigured()) {
+    const gorseIds = await getGorseRecommendations(userId, { limit });
+    if (gorseIds.length > 0) {
+      const hydrated = await hydrateVideos(gorseIds);
+      if (hydrated.length > 0) {
+        return NextResponse.json({
+          success: true,
+          source: 'gorse',
+          videos: hydrated,
+          latencyMs: Date.now() - startTime,
+        });
+      }
     }
   }
 
-  // Fallback: return existing video feed
+  // Fallback: real Supabase video feed (ranked by recency)
   const fallbackResp = await fetch(`${EDGE_FUNCTIONS_URL}/videos`, {
     method: 'POST',
     headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({ op: 'feed', limit }),
-  }).then(r => r.json()).catch(() => ({ success: false }));
+  }).then((r) => r.json()).catch(() => ({ success: false }));
 
   return NextResponse.json({
     ...fallbackResp,
-    source: 'supabase-fallback',
+    source: 'videos-feed-real',
     latencyMs: Date.now() - startTime,
   });
 }
 
 /**
- * Product Detail "Users Also Viewed" — item-to-item collaborative filtering
+ * Product Detail "Users Also Viewed" — Gorse item-to-item neighbors.
+ * (If Gorse is empty, returns empty — do NOT fake this with Chroma.)
  */
 async function handleNeighbors(itemId: string, limit: number) {
   const startTime = Date.now();
 
-  const neighborIds = await getGorseItemNeighbors(itemId, limit);
-
-  if (neighborIds.length > 0) {
-    const hydrated = await hydrateProducts(neighborIds);
-    return NextResponse.json({
-      success: true,
-      source: 'gorse',
-      products: hydrated,
-      latencyMs: Date.now() - startTime,
-    });
+  if (isGorseConfigured()) {
+    const neighborIds = await getGorseItemNeighbors(itemId, limit);
+    if (neighborIds.length > 0) {
+      const hydrated = await hydrateProducts(neighborIds);
+      if (hydrated.length > 0) {
+        return NextResponse.json({
+          success: true,
+          source: 'gorse',
+          products: hydrated,
+          latencyMs: Date.now() - startTime,
+        });
+      }
+    }
   }
 
-  // Fallback: return empty (no neighbors available)
   return NextResponse.json({
     success: true,
-    source: 'none',
+    source: 'empty',
     products: [],
     latencyMs: Date.now() - startTime,
   });
@@ -222,7 +282,6 @@ async function handleFeedback(userId: string, feedback: any) {
     return NextResponse.json({ success: false, error: 'Missing feedback fields' }, { status: 400 });
   }
 
-  // Fire and forget — don't block the response
   sendGorseFeedback(userId, feedback.itemId, feedback.type, feedback.score);
 
   return NextResponse.json({
@@ -232,8 +291,50 @@ async function handleFeedback(userId: string, feedback: any) {
 }
 
 /**
+ * Incremental Chroma sync — embed a product on create/update.
+ * Called by /api/seller-products when a seller creates/edits a product.
+ *
+ * Note: this is the ONLY place Chroma intersects with the recommend route,
+ * and it's just for keeping the search index fresh. Recommendations still
+ * come from Gorse, not Chroma.
+ */
+async function handleProductEmbed(product: any) {
+  if (!product || !product.id) {
+    return NextResponse.json({ success: false, error: 'Missing product.id' }, { status: 400 });
+  }
+
+  upsertProductToChroma(product.id, product).then((ok) => {
+    if (!ok) console.warn(`[recommend] product_embed failed for ${product.id}`);
+  });
+
+  return NextResponse.json({
+    success: true,
+    message: 'Embedding queued',
+    productId: product.id,
+  });
+}
+
+/**
+ * Incremental Chroma sync — delete a product's embedding on product delete.
+ */
+async function handleProductDelete(productId: string | number) {
+  if (!productId) {
+    return NextResponse.json({ success: false, error: 'Missing productId' }, { status: 400 });
+  }
+
+  deleteProductFromChroma(productId).then((ok) => {
+    if (!ok) console.warn(`[recommend] product_delete failed for ${productId}`);
+  });
+
+  return NextResponse.json({
+    success: true,
+    message: 'Delete queued',
+    productId,
+  });
+}
+
+/**
  * Hydrate product IDs with full product data from Supabase.
- * Uses parallel queries for speed.
  */
 async function hydrateProducts(productIds: string[]): Promise<any[]> {
   if (!productIds.length) return [];
@@ -245,23 +346,21 @@ async function hydrateProducts(productIds: string[]): Promise<any[]> {
   };
 
   try {
-    // Query products by IDs
-    const ids = productIds.map(id => `'${id}'`).join(',');
+    const ids = productIds.map((id) => `'${String(id).replace(/'/g, "''")}'`).join(',');
     const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
       method: 'POST',
       headers: sqlHeaders,
       body: JSON.stringify({
-        query: `SELECT id, name, price, image_url, category, seller_id, units_sold, description FROM products WHERE id IN (${ids});`,
+        query: `SELECT id, name, price, image_url, category, seller_id, units_sold, description, created_at FROM products WHERE id IN (${ids});`,
       }),
     });
 
     const data = await resp.json();
     if (!Array.isArray(data)) return [];
 
-    // Sort by the order Gorse returned (most relevant first)
     const productMap = new Map(data.map((p: any) => [String(p.id), p]));
     return productIds
-      .map(id => productMap.get(id))
+      .map((id) => productMap.get(id))
       .filter(Boolean);
   } catch (err) {
     console.error('[recommend] hydrateProducts failed:', err);
@@ -282,7 +381,7 @@ async function hydrateVideos(videoIds: string[]): Promise<any[]> {
   };
 
   try {
-    const ids = videoIds.map(id => `'${id}'`).join(',');
+    const ids = videoIds.map((id) => `'${String(id).replace(/'/g, "''")}'`).join(',');
     const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
       method: 'POST',
       headers: sqlHeaders,
@@ -296,7 +395,7 @@ async function hydrateVideos(videoIds: string[]): Promise<any[]> {
 
     const videoMap = new Map(data.map((v: any) => [String(v.id), v]));
     return videoIds
-      .map(id => videoMap.get(id))
+      .map((id) => videoMap.get(id))
       .filter(Boolean);
   } catch (err) {
     console.error('[recommend] hydrateVideos failed:', err);

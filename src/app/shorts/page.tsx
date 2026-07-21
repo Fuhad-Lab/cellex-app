@@ -183,7 +183,7 @@ export default function ShortsPage() {
                   aria-label="Comments"
                 >
                   <Send className="w-8 h-8" strokeWidth={1.5} />
-                  <span className="text-[10px] font-semibold">{formatCount(Math.floor(views / 20))}</span>
+                  <span className="text-[10px] font-semibold">{formatCount(video.comments_count || 0)}</span>
                 </button>
 
                 {/* Share */}
