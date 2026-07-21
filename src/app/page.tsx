@@ -16,6 +16,8 @@ import { PageSkeleton } from '@/components/page-skeleton';
 interface FeedPost {
   type: 'video' | 'product';
   id: string;
+  videoId?: number;
+  productId?: number;
   sellerId?: string;
   sellerSlug?: string;
   sellerName: string;
@@ -30,6 +32,7 @@ interface FeedPost {
   createdAt?: string;
   isLive?: boolean;
   verified?: boolean;
+  liked?: boolean;
 }
 
 export default function HomePage() {
@@ -45,6 +48,7 @@ export default function HomePage() {
   const [shorts, setShorts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const viewedPosts = useRef<Set<string>>(new Set());
   const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
   const [following, setFollowing] = useState<Set<string>>(new Set());
 
@@ -67,6 +71,14 @@ export default function HomePage() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Track views — when a post enters the viewport, send a view feedback to Gorse
+  const trackView = (postId: string, videoId?: number, productId?: number) => {
+    if (viewedPosts.current.has(postId)) return;
+    viewedPosts.current.add(postId);
+    const itemId = videoId ? String(videoId) : productId ? String(productId) : postId;
+    api.feedback(itemId, 'view', 0.3);
+  };
 
   // Note: unreadMessages is fetched by AuthProvider (shared across all pages
   // via useAuth context) and polled every 30 seconds. No duplicate fetch here.
@@ -101,6 +113,9 @@ export default function HomePage() {
             posts.push({
               type: 'video',
               id: `vid-${v.id}`,
+              videoId: v.id,
+              productId: v.product?.id,
+              liked: v.liked || false,
               sellerId: seller.id,
               sellerSlug: seller.slug || sellerInfo?.slug,
               sellerName: seller.business_name || 'Seller',
@@ -130,6 +145,7 @@ export default function HomePage() {
             posts.push({
               type: 'product',
               id: `prod-${p.id}`,
+              productId: p.id,
               sellerId: p.seller_id,
               sellerSlug: sellerInfo?.slug,
               sellerName: sellerInfo?.name || 'Cellex Seller',
@@ -155,6 +171,12 @@ export default function HomePage() {
           if (i < productPosts.length) interleaved.push(productPosts[i]);
         }
         setFeed(interleaved);
+        // Initialize liked posts from API response
+        const initialLiked = new Set<string>();
+        interleaved.forEach(p => {
+          if (p.liked) initialLiked.add(p.id);
+        });
+        setLikedPosts(initialLiked);
 
         if (storiesResp.success) setStories(storiesResp.stories || []);
         if (liveResp.success) setLiveSessions(liveResp.sessions || []);
@@ -186,27 +208,46 @@ export default function HomePage() {
   const toggleLike = (postId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const post = feed.find(p => p.id === postId);
+    if (!post) return;
+    const isLiking = !likedPosts.has(postId);
     const newLiked = new Set(likedPosts);
-    if (newLiked.has(postId)) {
-      newLiked.delete(postId);
-    } else {
+    if (isLiking) {
       newLiked.add(postId);
       burst(e.clientX, e.clientY, 'heart');
+    } else {
+      newLiked.delete(postId);
     }
     setLikedPosts(newLiked);
+    // Send real like to API
+    if (post.videoId) {
+      if (isLiking) api.videos.like(post.videoId);
+      else api.videos.unlike(post.videoId);
+    }
+    // Send feedback to Gorse (non-blocking)
+    const itemId = post.videoId ? String(post.videoId) : post.productId ? String(post.productId) : postId;
+    api.feedback(itemId, isLiking ? 'like' : 'view', isLiking ? 1 : 0);
   };
 
   const toggleSave = (postId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const post = feed.find(p => p.id === postId);
+    if (!post) return;
+    const isSaving = !savedPosts.has(postId);
     const newSaved = new Set(savedPosts);
-    if (newSaved.has(postId)) {
-      newSaved.delete(postId);
-    } else {
+    if (isSaving) {
       newSaved.add(postId);
       toast({ title: 'Saved!' });
+    } else {
+      newSaved.delete(postId);
     }
     setSavedPosts(newSaved);
+    // Send feedback to Gorse
+    if (isSaving) {
+      const itemId = post.videoId ? String(post.videoId) : post.productId ? String(post.productId) : postId;
+      api.feedback(itemId, 'click', 0.7);
+    }
   };
 
   const toggleFollow = (sellerId: string, e: React.MouseEvent) => {
@@ -231,6 +272,8 @@ export default function HomePage() {
     api.cart.add(product.id, 1);
     burst(e.clientX, e.clientY, 'check');
     toast({ title: 'Added to cart!', description: product.name });
+    // Send feedback to Gorse (strong signal — intent to buy)
+    api.feedback(String(product.id), 'click', 1.5, { page: 'feed' });
   };
 
   if (loading) {
@@ -368,6 +411,7 @@ export default function HomePage() {
                 onSave={(e) => toggleSave(post.id, e)}
                 onFollow={(e) => post.sellerId && toggleFollow(post.sellerId, e)}
                 onAddToCart={(e) => post.product && addToCart(post.product, e)}
+                trackView={trackView}
               />
               {showSellers && sellerBatch.length > 0 && (
                 <SuggestedSellersCarousel
@@ -395,7 +439,7 @@ export default function HomePage() {
 }
 
 function FeedPostCard({
-  post, index, liked, saved, isFollowing, onLike, onSave, onFollow, onAddToCart
+  post, index, liked, saved, isFollowing, onLike, onSave, onFollow, onAddToCart, trackView
 }: {
   post: FeedPost;
   index: number;
@@ -406,13 +450,19 @@ function FeedPostCard({
   onSave: (e: React.MouseEvent) => void;
   onFollow: (e: React.MouseEvent) => void;
   onAddToCart: (e: React.MouseEvent) => void;
+  trackView: (postId: string, videoId?: number, productId?: number) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          trackView(post.id, post.videoId, post.productId);
+        }
+      },
       { threshold: 0.5 }
     );
     if (videoRef.current) observer.observe(videoRef.current);
