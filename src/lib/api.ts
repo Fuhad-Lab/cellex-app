@@ -258,6 +258,26 @@ export const api = {
   sellerOrders: {
     list: () => apiCall('seller-orders', { op: 'list' }),
   },
+
+  // ===== AI Recommendations (Gorse + NVIDIA + Chroma) =====
+  recommend: {
+    home: (limit?: number) =>
+      apiCall('recommend', { op: 'home', limit }),
+    category: (category: string, limit?: number) =>
+      apiCall('recommend', { op: 'category', category, limit }),
+    shorts: (limit?: number) =>
+      apiCall('recommend', { op: 'shorts', limit }),
+    neighbors: (itemId: string | number, limit?: number) =>
+      apiCall('recommend', { op: 'neighbors', itemId: String(itemId), limit }),
+  },
+
+  // ===== Smart Search (NVIDIA + Chroma) =====
+  smartSearch: (query: string, limit?: number) =>
+    apiCall('smart-search', { query, limit }),
+
+  // ===== Feedback Sync (non-blocking) =====
+  feedback: (itemId: string | number, type: string, score?: number, metadata?: any) =>
+    apiCall('feedback', { itemId: String(itemId), type, score, metadata }),
 };
 
 // ===== Utility functions =====
