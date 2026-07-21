@@ -97,13 +97,13 @@ export default function GoLivePage() {
     }
   };
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   return (
     <div className="space-y-4 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold">Go Live</h1>
-        <p className="text-sm text-neutral-500">Start a live shopping session with video streaming</p>
+        <p className="text-sm text-slate-400">Start a live shopping session with video streaming</p>
       </div>
 
       {/* If another seller is already live, show a warning */}
@@ -130,14 +130,14 @@ export default function GoLivePage() {
       {activeSession ? (
         <div className="space-y-4">
           {/* Active session banner */}
-          <div className="border border-white/10 rounded-md p-4 bg-neutral-50">
+          <div className="border border-white/10 rounded-md p-4 bg-white/5">
             <div className="flex items-center gap-2 mb-3">
-              <span className="bg-[#ed4956] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
+              <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-white/10 rounded-full animate-pulse" /> LIVE
               </span>
-              <span className="text-xs font-semibold text-black">{activeSession.title}</span>
+              <span className="text-xs font-semibold text-white">{activeSession.title}</span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-neutral-700 mb-3">
+            <div className="flex items-center gap-4 text-sm text-slate-300 mb-3">
               <span className="flex items-center gap-1">
                 <Eye className="w-4 h-4" /> {activeSession.viewer_count || 0} viewers
               </span>
@@ -145,49 +145,49 @@ export default function GoLivePage() {
             <a
               href={`/live-watch?id=${activeSession.id}`}
               target="_blank"
-              className="text-xs text-black font-medium block mb-3 underline"
+              className="text-xs text-white font-medium block mb-3 underline"
             >
               View public watch page
             </a>
-            <button onClick={endLive} className="w-full bg-[#ed4956] text-white font-semibold rounded-md py-2.5 hover:opacity-90">
+            <button onClick={endLive} className="w-full bg-red-500 text-white font-semibold rounded-md py-2.5 hover:opacity-90">
               <Square className="w-4 h-4 inline mr-1" /> End session
             </button>
           </div>
 
           {/* Streaming instructions — shown when session is active */}
-          <div className="border border-white/10 rounded-md p-4 bg-white space-y-3">
+          <div className="border border-white/10 rounded-md p-4 bg-white/10 space-y-3">
             <h3 className="font-semibold text-sm flex items-center gap-2">
               <Video className="w-4 h-4" /> How to start streaming
             </h3>
-            <p className="text-xs text-neutral-600">
+            <p className="text-xs text-slate-400">
               Your live session is created. Now connect your streaming software (OBS, Streamlabs, or your phone&apos;s live streaming app) to start broadcasting video.
             </p>
 
             {/* RTMP details */}
             <div className="space-y-2">
-              <div className="bg-neutral-50 border border-white/10 rounded-md p-3">
-                <div className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wide mb-1">RTMP Server</div>
+              <div className="bg-white/5 border border-white/10 rounded-md p-3">
+                <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">RTMP Server</div>
                 <div className="flex items-center justify-between gap-2">
-                  <code className="text-xs text-black flex-1 truncate">{OWNCAST_RTMP_SERVER}</code>
+                  <code className="text-xs text-white flex-1 truncate">{OWNCAST_RTMP_SERVER}</code>
                   <button
                     onClick={() => copyToClipboard(OWNCAST_RTMP_SERVER, 'RTMP server')}
-                    className="shrink-0 p-1.5 hover:bg-neutral-200 rounded transition-colors"
+                    className="shrink-0 p-1.5 hover:bg-white/10 rounded transition-colors"
                     aria-label="Copy RTMP server"
                   >
-                    <Copy className="w-3.5 h-3.5 text-neutral-600" />
+                    <Copy className="w-3.5 h-3.5 text-slate-400" />
                   </button>
                 </div>
               </div>
-              <div className="bg-neutral-50 border border-white/10 rounded-md p-3">
-                <div className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wide mb-1">Stream Key</div>
+              <div className="bg-white/5 border border-white/10 rounded-md p-3">
+                <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">Stream Key</div>
                 <div className="flex items-center justify-between gap-2">
-                  <code className="text-xs text-black flex-1 truncate">{OWNCAST_STREAM_KEY}</code>
+                  <code className="text-xs text-white flex-1 truncate">{OWNCAST_STREAM_KEY}</code>
                   <button
                     onClick={() => copyToClipboard(OWNCAST_STREAM_KEY, 'Stream key')}
-                    className="shrink-0 p-1.5 hover:bg-neutral-200 rounded transition-colors"
+                    className="shrink-0 p-1.5 hover:bg-white/10 rounded transition-colors"
                     aria-label="Copy stream key"
                   >
-                    <Copy className="w-3.5 h-3.5 text-neutral-600" />
+                    <Copy className="w-3.5 h-3.5 text-slate-400" />
                   </button>
                 </div>
               </div>
@@ -208,9 +208,9 @@ export default function GoLivePage() {
             </div>
 
             {/* Phone streaming */}
-            <div className="bg-neutral-50 border border-white/10 rounded-md p-3">
-              <div className="text-xs font-semibold text-neutral-700 mb-1">Streaming from your phone?</div>
-              <p className="text-xs text-neutral-600">
+            <div className="bg-white/5 border border-white/10 rounded-md p-3">
+              <div className="text-xs font-semibold text-slate-300 mb-1">Streaming from your phone?</div>
+              <p className="text-xs text-slate-400">
                 Use any RTMP streaming app (e.g. Larix Broadcaster for iOS/Android).
                 Set the RTMP URL and stream key above, then start streaming.
               </p>
@@ -220,7 +220,7 @@ export default function GoLivePage() {
             <a
               href={OWNCAST_URL}
               target="_blank"
-              className="flex items-center justify-center gap-2 text-xs font-semibold text-black border border-white/15 rounded-md py-2.5 hover:bg-neutral-50 transition-colors"
+              className="flex items-center justify-center gap-2 text-xs font-semibold text-white border border-white/15 rounded-md py-2.5 hover:bg-white/5 transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               Open stream preview (opens in new tab)
@@ -228,19 +228,19 @@ export default function GoLivePage() {
           </div>
         </div>
       ) : (
-        <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
+        <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white/10">
           {/* Camera preview placeholder */}
-          <div className="aspect-video bg-black rounded-md flex items-center justify-center text-white relative">
+          <div className="aspect-video bg-indigo-600 rounded-md flex items-center justify-center text-white relative">
             <Video className="w-12 h-12" />
             <span className="absolute bottom-2 left-2 text-xs opacity-70">Video will stream via Owncast</span>
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-neutral-700">Session title *</Label>
+            <Label className="text-xs font-semibold text-slate-300">Session title *</Label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Friday Tech Deals — Up to 30% off!" className={inputClass} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-neutral-700">Featured product</Label>
+            <Label className="text-xs font-semibold text-slate-300">Featured product</Label>
             <select
               value={featuredProductId}
               onChange={(e) => setFeaturedProductId(e.target.value ? Number(e.target.value) : '')}
@@ -268,7 +268,7 @@ export default function GoLivePage() {
           <button
             onClick={startLive}
             disabled={starting || !!otherLive}
-            className="w-full bg-[#ed4956] text-white font-semibold rounded-md py-3 hover:opacity-90 disabled:opacity-50"
+            className="w-full bg-red-500 text-white font-semibold rounded-md py-3 hover:opacity-90 disabled:opacity-50"
           >
             <Radio className="w-4 h-4 inline mr-1" />
             {starting ? 'Starting...' : otherLive ? 'Another seller is live' : 'Go Live'}
@@ -276,9 +276,9 @@ export default function GoLivePage() {
         </div>
       )}
 
-      <div className="border border-white/10 rounded-md p-4 bg-neutral-50">
+      <div className="border border-white/10 rounded-md p-4 bg-white/5">
         <h3 className="font-semibold text-sm mb-2">Tips for a great live session</h3>
-        <ul className="text-xs text-neutral-600 space-y-1 list-disc list-inside">
+        <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
           <li>Test your stream 5 minutes before going live</li>
           <li>Have good lighting and a clear background</li>
           <li>Introduce yourself and what you&apos;ll showcase</li>

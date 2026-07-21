@@ -137,18 +137,18 @@ h1 { font-size: 1.5rem; line-height: 1.3; }
 h2 { font-size: 1.25rem; line-height: 1.35; }
 h3 { font-size: 1.125rem; line-height: 1.4; }
 
-/* Brand — solid black, no gradient */
+/* Brand — indigo gradient for dark theme */
 .brand-gradient {
-  background: #000000;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
 }
 
 .brand-text {
-  color: #000000;
+  color: #ffffff;
 }
 
-/* Price — black, bold */
+/* Price — white bold (dark theme) */
 .price {
-  color: #000000;
+  color: #ffffff;
   font-weight: 700;
 }
 
@@ -165,9 +165,9 @@ h3 { font-size: 1.125rem; line-height: 1.4; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Sale badge — black */
+/* Sale badge — indigo */
 .sale-badge {
-  background: #000000;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: #ffffff;
   font-weight: 700;
   border-radius: 4px;
@@ -186,9 +186,9 @@ h3 { font-size: 1.125rem; line-height: 1.4; }
   font-size: 12px;
 }
 
-/* Buy Now button — solid black */
+/* Buy Now button — indigo gradient */
 .btn-buy-now {
-  background: #000000;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: #ffffff;
   font-weight: 700;
   font-size: 16px;
@@ -198,13 +198,14 @@ h3 { font-size: 1.125rem; line-height: 1.4; }
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 44px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
 }
-.btn-buy-now:hover { background: #1a1a1a; transform: translateY(-1px); }
+.btn-buy-now:hover { background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); transform: translateY(-1px); }
 .btn-buy-now:active { transform: translateY(0); }
 
-/* Urgency — black */
+/* Urgency — indigo */
 .urgency {
-  color: #000000;
+  color: #a5b4fc;
   font-weight: 700;
 }
 
@@ -290,14 +291,14 @@ button {
 
 /* Skeleton shimmer */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
 /* Shimmer utility — used by loading.tsx skeleton */
 .shimmer {
-  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -339,7 +340,7 @@ button, a {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #ffffff;
+  background: #050508;
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -358,7 +359,7 @@ button, a {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #000000;
+  background: #6366f1;
   margin: 0 3px;
   animation: loadingDots 1.4s infinite ease-in-out;
 }
@@ -451,10 +452,10 @@ html, body {
   left: 0;
   right: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.70) !important;
-  backdrop-filter: blur(25px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(120%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(5, 5, 8, 0.6) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   height: 54px;
   display: flex;
   align-items: center;
@@ -478,12 +479,11 @@ html, body {
 
 /* IG logo — bold serif-style wordmark */
 .ig-logo {
-  color: #ffffff !important;
   font-family: var(--font-ig);
   font-weight: 800;
   font-size: 22px;
   letter-spacing: -0.5px;
-  color: #000000;
+  color: #ffffff;
 }
 
 /* IG-style stories ring — gradient border around avatar */
@@ -510,10 +510,10 @@ html, body {
   border: none;
   padding: 4px;
   cursor: pointer;
-  color: #000000;
+  color: #ffffff;
 }
 .ig-action-bar button:hover {
-  color: #262626;
+  color: #cbd5e1;
 }
 
 /* IG-style icon button — used in top bar */
@@ -526,36 +526,40 @@ html, body {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #000000;
+  color: #ffffff;
   border-radius: 50%;
   transition: background 0.15s ease;
 }
 .ig-icon-btn:hover {
-  background: #f5f5f5;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* IG-style feed card — kept for backwards compat. New feed cards use
    .ig-card (rounded iOS-style card with soft shadow). */
 .ig-feed-card {
-  background: #ffffff;
-  border-bottom: 1px solid #efefef;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* iOS-style rounded card — used for feed posts, suggested sellers,
    live auctions, shorts and any self-contained content block.
-   - Solid white background (the body has a subtle gradient so cards "float")
+   - Dark glass background (the body has a subtle gradient so cards "float")
    - 24px radius (matches iOS large corner radius)
    - overflow: hidden so media conforms to the rounded corners
-   - Soft 4% shadow for depth without being heavy */
+   - Soft shadow for depth without being heavy */
 .ig-card {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
 }
 
 .dark .ig-card {
-  background: rgba(18, 18, 18, 0.95);
+  background: rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -570,14 +574,18 @@ html, body {
 /* Cart item card — slightly smaller radius (20px) than feed cards,
    with the same soft shadow. */
 .ig-cart-card {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
 }
 
 .dark .ig-cart-card {
-  background: rgba(18, 18, 18, 0.95);
+  background: rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -585,7 +593,7 @@ html, body {
 .ig-media {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #fafafa;
+  background: rgba(255, 255, 255, 0.04);
   position: relative;
   overflow: hidden;
 }
@@ -600,14 +608,14 @@ html, body {
 .ig-likes {
   font-weight: 600;
   font-size: 14px;
-  color: #000000;
+  color: #ffffff;
   padding: 0 12px 4px;
 }
 
 /* IG-style caption — bold username + text */
 .ig-caption {
   font-size: 14px;
-  color: #000000;
+  color: #ffffff;
   padding: 0 12px 8px;
   line-height: 1.4;
 }
@@ -619,7 +627,7 @@ html, body {
 /* IG-style timestamp — uppercase, small, gray */
 .ig-timestamp {
   font-size: 10px;
-  color: #8e8e8e;
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   padding: 0 12px 12px;
@@ -628,13 +636,13 @@ html, body {
 /* IG-style "View all comments" link */
 .ig-comments-link {
   font-size: 14px;
-  color: #8e8e8e;
+  color: #94a3b8;
   padding: 0 12px 4px;
   display: inline-block;
   cursor: pointer;
 }
 .ig-comments-link:hover {
-  color: #262626;
+  color: #cbd5e1;
 }
 
 /* Bottom nav — now a floating glass island (WhatsApp Liquid Glass style).
@@ -671,11 +679,11 @@ html, body {
 .ig-profile-stat .num {
   font-weight: 600;
   font-size: 16px;
-  color: #000000;
+  color: #ffffff;
 }
 .ig-profile-stat .label {
   font-size: 12px;
-  color: #8e8e8e;
+  color: #94a3b8;
 }
 
 /* IG-style post grid — 3 columns, no gaps */
@@ -683,12 +691,12 @@ html, body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: #dbdbdb;
-  border-top: 1px solid #dbdbdb;
+  background: rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 .ig-post-grid > * {
   aspect-ratio: 1 / 1;
-  background: #fafafa;
+  background: rgba(255, 255, 255, 0.02);
   overflow: hidden;
 }
 .ig-post-grid img {
@@ -700,7 +708,7 @@ html, body {
 /* IG-style tab bar under profile header */
 .ig-tab-bar {
   display: flex;
-  border-top: 1px solid #dbdbdb;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   height: 44px;
 }
 .ig-tab {
@@ -711,20 +719,20 @@ html, body {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #8e8e8e;
+  color: #94a3b8;
   border-top: 1px solid transparent;
   margin-top: -1px;
 }
 .ig-tab.active {
-  color: #000000;
-  border-top-color: #000000;
+  color: #ffffff;
+  border-top-color: #6366f1;
 }
 
 /* IG-style button — outlined (Edit Profile style) */
 .ig-btn-outline {
-  background: #ffffff;
-  border: 1px solid #dbdbdb;
-  color: #262626;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   font-weight: 600;
   font-size: 14px;
   padding: 6px 16px;
@@ -733,12 +741,12 @@ html, body {
   transition: background 0.15s ease;
 }
 .ig-btn-outline:hover {
-  background: #f5f5f5;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* IG-style primary button — solid black */
+/* IG-style primary button — indigo */
 .ig-btn-primary {
-  background: #0095f6; /* IG blue, used for Follow CTA */
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   border: none;
   color: #ffffff;
   font-weight: 600;
@@ -747,34 +755,38 @@ html, body {
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s ease;
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
 }
 .ig-btn-primary:hover {
-  background: #1877f2;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
 }
 .ig-btn-primary.following {
-  background: #efefef;
-  color: #262626;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: none;
 }
 .ig-btn-primary.following:hover {
-  background: #dbdbdb;
+  background: rgba(255, 255, 255, 0.12);
 }
 
-/* IG-style search input — gray pill, no border */
+/* IG-style search input — glass pill, no border */
 .ig-search-input {
-  background: #efefef;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 14px;
-  color: #262626;
+  color: #ffffff;
   width: 100%;
 }
 .ig-search-input:focus {
-  background: #e3e3e3;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(99, 102, 241, 0.5);
   outline: none;
 }
 .ig-search-input::placeholder {
-  color: #8e8e8e;
+  color: #64748b;
 }
 
 /* Hide elements at IG breakpoints (desktop sidebar shows at >=768px) */
@@ -865,7 +877,7 @@ html, body {
   100% { background-position: 200% 0; }
 }
 .ig-shimmer {
-  background: linear-gradient(90deg, #000 0%, #555 50%, #000 100%);
+  background: linear-gradient(90deg, #6366f1 0%, #a5b4fc 50%, #6366f1 100%);
   background-size: 200% 100%;
   animation: shimmerMove 3s linear infinite;
   -webkit-background-clip: text;
@@ -897,7 +909,7 @@ html, body {
 
 /* Subtle gradient background — applied to the homepage hero area */
 .ig-hero-bg {
-  background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(5, 5, 8, 0) 100%);
 }
 
 /* Floating animation — for the LIVE indicator dot */
@@ -911,7 +923,7 @@ html, body {
 
 /* Skeleton with IG gradient shimmer */
 .ig-skeleton {
-  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
   background-size: 200% 100%;
   animation: shimmerMove 1.5s infinite;
   border-radius: 4px;
@@ -929,7 +941,7 @@ html, body {
 /* Gradient border — for featured seller cards */
 .ig-gradient-border {
   position: relative;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 12px;
 }
 .ig-gradient-border::before {
@@ -955,48 +967,48 @@ html, body {
 
 /* Base glass container */
 .glass {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(25px) saturate(120%);
-  -webkit-backdrop-filter: blur(25px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease-in-out;
 }
 
 .dark .glass {
-  background: rgba(18, 18, 18, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
 }
 
-/* Glass topbar — transparent with blur */
+/* Glass topbar — dark glass with blur */
 .glass-topbar {
-  background: rgba(255, 255, 255, 0.70) !important;
-  backdrop-filter: blur(25px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(120%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+  background: rgba(5, 5, 8, 0.6) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
 .dark .glass-topbar {
-  background: rgba(18, 18, 18, 0.75) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(5, 5, 8, 0.6) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
 /* Glass bottom nav — floating island */
 .glass-nav {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(25px) saturate(120%);
-  -webkit-backdrop-filter: blur(25px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(15, 15, 25, 0.7);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 32px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease-in-out;
 }
 
 .dark .glass-nav {
-  background: rgba(18, 18, 18, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
+  background: rgba(15, 15, 25, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* Active tab indicator */
@@ -1012,57 +1024,57 @@ html, body {
 
 /* Glass card */
 .glass-card {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(25px) saturate(120%);
-  -webkit-backdrop-filter: blur(25px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .dark .glass-card {
-  background: rgba(18, 18, 18, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
 }
 
 /* Glass modal/sheet */
 .glass-modal {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(25px) saturate(120%);
-  -webkit-backdrop-filter: blur(25px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  background: rgba(15, 15, 25, 0.85);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .dark .glass-modal {
-  background: rgba(18, 18, 18, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 15, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
 }
 
 /* Glass input */
 .glass-input {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(25px) saturate(120%);
-  -webkit-backdrop-filter: blur(25px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dark .glass-input {
-  background: rgba(18, 18, 18, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Glass section — for content blocks, list sections */
 .glass-section {
-  background: rgba(255, 255, 255, 0.60);
-  backdrop-filter: blur(15px) saturate(120%);
-  -webkit-backdrop-filter: blur(15px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.30);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dark .glass-section {
-  background: rgba(18, 18, 18, 0.60);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -1078,12 +1090,12 @@ html, body {
 
 /* Subtle page background gradient for glass to look good */
 body {
-  background: linear-gradient(180deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%) !important;
+  background: linear-gradient(180deg, #050508 0%, #0a0a14 50%, #050508 100%) !important;
   min-height: 100vh;
 }
 
 .dark body {
-  background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 50%, #1a1a1a 100%) !important;
+  background: linear-gradient(180deg, #050508 0%, #0a0a14 50%, #050508 100%) !important;
 }
 /* ============================================================
    LIQUID GLASS — High-fidelity glassmorphism for dark smoke bg

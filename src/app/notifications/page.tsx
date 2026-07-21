@@ -68,14 +68,14 @@ export default function NotificationsPage() {
   return (
     <div className="ig-container min-h-screen ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.push('/')} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Notifications</h1>
         <button
           onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
-          className="text-xs font-semibold text-neutral-500 hover:text-black px-3"
+          className="text-xs font-semibold text-slate-400 hover:text-white px-3"
           aria-label="Mark all read"
         >
           Mark all read
@@ -85,16 +85,16 @@ export default function NotificationsPage() {
       {/* Notifications list */}
       {notifications.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-          <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
-            <Bell className="w-8 h-8 text-neutral-400" />
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+            <Bell className="w-8 h-8 text-slate-500" />
           </div>
           <h2 className="text-base font-semibold mb-1">No notifications yet</h2>
-          <p className="text-sm text-neutral-500 mb-6">
+          <p className="text-sm text-slate-400 mb-6">
             When you get order updates, new followers, or deal alerts, they&apos;ll show up here.
           </p>
           <Link
             href="/categories"
-            className="bg-black text-white text-sm font-semibold px-6 py-3 rounded-md"
+            className="bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-md"
           >
             Browse Products
           </Link>
@@ -107,19 +107,19 @@ export default function NotificationsPage() {
               <Link
                 key={notif.id}
                 href={notif.href || '#'}
-                className={`flex items-start gap-3 px-4 py-3.5 hover:bg-neutral-50 transition-colors ${
-                  !notif.read ? 'bg-neutral-50/50' : ''
+                className={`flex items-start gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors ${
+                  !notif.read ? 'bg-white/5/50' : ''
                 }`}
               >
-                <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 text-black" />
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-sm">{notif.title}</span>
-                    <span className="text-[10px] text-neutral-400 shrink-0">{notif.timestamp}</span>
+                    <span className="text-[10px] text-slate-500 shrink-0">{notif.timestamp}</span>
                   </div>
-                  <p className="text-xs text-neutral-600 mt-0.5 line-clamp-2">{notif.body}</p>
+                  <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{notif.body}</p>
                 </div>
                 {!notif.read && (
                   <span className="w-2 h-2 rounded-full bg-[#0095f6] shrink-0 mt-2" />

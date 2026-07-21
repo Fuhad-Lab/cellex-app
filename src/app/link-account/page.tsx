@@ -62,12 +62,12 @@ export default function LinkAccountPage() {
 
   if (authLoading) { return <PageSkeleton variant="link-account" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -77,8 +77,8 @@ export default function LinkAccountPage() {
       <div className="px-4 py-4 space-y-4">
         {/* Intro */}
         <div className="flex items-start gap-2">
-          <MessageCircle className="w-5 h-5 text-black shrink-0 mt-0.5" />
-          <div className="text-sm text-neutral-700">
+          <MessageCircle className="w-5 h-5 text-white shrink-0 mt-0.5" />
+          <div className="text-sm text-slate-300">
             <p className="font-semibold mb-1">Shop without opening the app!</p>
             <p className="text-xs">
               Link your WhatsApp number to your Cellex account and shop by chatting with our bot.
@@ -93,9 +93,9 @@ export default function LinkAccountPage() {
             <h3 className="font-semibold text-sm mb-3">Step 1: Generate link code</h3>
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-neutral-700">Your WhatsApp phone number</Label>
+                <Label className="text-xs font-semibold text-slate-300">Your WhatsApp phone number</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <Input
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -107,26 +107,26 @@ export default function LinkAccountPage() {
               <button
                 onClick={generateCode}
                 disabled={loadingCode}
-                className="w-full bg-black text-white font-semibold rounded-md py-2.5 hover:bg-neutral-800 disabled:opacity-50"
+                className="w-full bg-indigo-600 text-white font-semibold rounded-md py-2.5 hover:bg-white/10 disabled:opacity-50"
               >
                 {loadingCode ? 'Generating...' : 'Generate code'}
               </button>
             </div>
           </div>
         ) : (
-          <div className="border-2 border-black rounded-md p-4">
+          <div className="border-2 border-white/10 rounded-md p-4">
             <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" /> Code generated!
             </h3>
-            <div className="bg-neutral-50 border border-white/10 rounded-md p-4 text-center my-3">
-              <div className="text-xs text-neutral-500 mb-1">Your link code</div>
-              <div className="text-4xl font-bold tracking-[0.3em] text-black">{linkCode}</div>
+            <div className="bg-white/5 border border-white/10 rounded-md p-4 text-center my-3">
+              <div className="text-xs text-slate-400 mb-1">Your link code</div>
+              <div className="text-4xl font-bold tracking-[0.3em] text-white">{linkCode}</div>
             </div>
             <div className="space-y-2 text-sm">
               <p className="font-semibold">Step 2: Send the code to our WhatsApp bot</p>
-              <ol className="space-y-1 text-xs text-neutral-600 list-decimal list-inside">
+              <ol className="space-y-1 text-xs text-slate-400 list-decimal list-inside">
                 <li>Open WhatsApp and message our bot</li>
-                <li>Send the code: <code className="bg-neutral-100 px-1 rounded font-mono">link {linkCode}</code></li>
+                <li>Send the code: <code className="bg-white/5 px-1 rounded font-mono">link {linkCode}</code></li>
                 <li>Your account will be linked instantly</li>
               </ol>
             </div>
@@ -138,7 +138,7 @@ export default function LinkAccountPage() {
             </button>
             <button
               onClick={() => { setLinkCode(null); setPhone(''); loadLinks(); }}
-              className="w-full mt-2 bg-white border border-white/10 text-black font-semibold rounded-md py-2.5 hover:bg-neutral-50"
+              className="w-full mt-2 bg-white/10 border border-white/10 text-white font-semibold rounded-md py-2.5 hover:bg-white/5"
             >
               Done
             </button>
@@ -149,17 +149,17 @@ export default function LinkAccountPage() {
         <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">Linked phones ({links.length})</h3>
           {links.length === 0 ? (
-            <p className="text-xs text-neutral-400 text-center py-3">No phones linked yet</p>
+            <p className="text-xs text-slate-500 text-center py-3">No phones linked yet</p>
           ) : (
             <div className="space-y-2">
               {links.map((l) => (
-                <div key={l.id} className="flex items-center gap-3 p-2 bg-neutral-50 rounded-md">
-                  <div className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center">
-                    <Phone className="w-4 h-4 text-black" />
+                <div key={l.id} className="flex items-center gap-3 p-2 bg-white/5 rounded-md">
+                  <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center">
+                    <Phone className="w-4 h-4 text-white" />
                   </div>
                   <div className="flex-1">
                     <div className="text-sm font-semibold">{l.phone_number}</div>
-                    <div className="text-[10px] text-neutral-500 flex items-center gap-1">
+                    <div className="text-[10px] text-slate-400 flex items-center gap-1">
                       {l.confirmed_at ? (
                         <><Check className="w-3 h-3 text-green-500" /> Linked {new Date(l.confirmed_at).toLocaleDateString()}</>
                       ) : (
@@ -169,7 +169,7 @@ export default function LinkAccountPage() {
                   </div>
                   <button
                     onClick={() => unlink(l.phone_number)}
-                    className="text-[#ed4956] hover:opacity-70 p-1"
+                    className="text-red-400 hover:opacity-70 p-1"
                     aria-label="Unlink"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -195,8 +195,8 @@ export default function LinkAccountPage() {
               { cmd: 'link <code>', desc: 'Link your account' },
             ].map((c) => (
               <div key={c.cmd} className="flex items-center gap-3">
-                <code className="bg-neutral-100 px-2 py-1 rounded font-mono text-black font-semibold whitespace-nowrap">{c.cmd}</code>
-                <span className="text-neutral-600">{c.desc}</span>
+                <code className="bg-white/5 px-2 py-1 rounded font-mono text-white font-semibold whitespace-nowrap">{c.cmd}</code>
+                <span className="text-slate-400">{c.desc}</span>
               </div>
             ))}
           </div>

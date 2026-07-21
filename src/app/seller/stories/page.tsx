@@ -94,22 +94,22 @@ export default function SellerStoriesPage() {
 
   if (loading) { return <PageSkeleton variant="seller-stories" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   return (
     <div className="space-y-4 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold">Stories</h1>
-        <p className="text-sm text-neutral-500">Post 24-hour stories to engage your followers</p>
+        <p className="text-sm text-slate-400">Post 24-hour stories to engage your followers</p>
       </div>
 
       {/* Post form */}
-      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
+      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white/10">
         <h3 className="font-semibold text-sm">Post a story</h3>
 
         {/* Story type */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Story type</Label>
+          <Label className="text-xs font-semibold text-slate-300">Story type</Label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {STORY_TYPES.map((t) => {
               const Icon = t.icon;
@@ -119,7 +119,7 @@ export default function SellerStoriesPage() {
                   key={t.key}
                   onClick={() => setStoryType(t.key)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md border-2 text-[10px] font-semibold transition-all ${
-                    isActive ? 'border-black bg-neutral-50 text-black' : 'border-white/10 text-neutral-500'
+                    isActive ? 'border-white/10 bg-white/5 text-white' : 'border-white/10 text-slate-400'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -131,17 +131,17 @@ export default function SellerStoriesPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Image URL (optional)</Label>
+          <Label className="text-xs font-semibold text-slate-300">Image URL (optional)</Label>
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." className={inputClass} />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Caption</Label>
+          <Label className="text-xs font-semibold text-slate-300">Caption</Label>
           <Textarea value={caption} onChange={(e) => setCaption(e.target.value)} rows={2} placeholder="Big announcement! 30% off everything today!" className={inputClass} />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Link to product (optional)</Label>
+          <Label className="text-xs font-semibold text-slate-300">Link to product (optional)</Label>
           <select
             value={productId}
             onChange={(e) => setProductId(e.target.value ? Number(e.target.value) : '')}
@@ -154,7 +154,7 @@ export default function SellerStoriesPage() {
           </select>
         </div>
 
-        <button onClick={post} disabled={posting} className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50">
+        <button onClick={post} disabled={posting} className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50">
           <Send className="w-4 h-4 inline mr-1" />
           {posting ? 'Posting...' : 'Post story (24h)'}
         </button>
@@ -172,18 +172,18 @@ export default function SellerStoriesPage() {
           <h3 className="font-semibold text-sm">Active stories ({stories.length})</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {stories.map((s) => (
-              <div key={s.id} className="border border-white/10 rounded-md overflow-hidden bg-white relative">
-                <div className="aspect-[9/16] bg-neutral-100 relative">
+              <div key={s.id} className="border border-white/10 rounded-md overflow-hidden bg-white/10 relative">
+                <div className="aspect-[9/16] bg-white/5 relative">
                   {s.image_url ? (
                     <img src={s.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                    <div className="w-full h-full flex items-center justify-center text-slate-600">
                       <BookOpen className="w-8 h-8" />
                     </div>
                   )}
                   <button
                     onClick={() => remove(s.id)}
-                    className="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-[#ed4956]"
+                    className="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-red-500/80"
                     aria-label="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export default function SellerStoriesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="px-2 py-1 text-[10px] text-neutral-400">
+                <div className="px-2 py-1 text-[10px] text-slate-500">
                   {timeAgo(s.created_at)}
                 </div>
               </div>

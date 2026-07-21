@@ -79,18 +79,18 @@ export default function SellerProfilePage() {
 
   if (loading) { return <PageSkeleton variant="seller-profile" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   return (
     <div className="space-y-4 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold">Seller Profile</h1>
-        <p className="text-sm text-neutral-500">This is your public storefront</p>
+        <p className="text-sm text-slate-400">This is your public storefront</p>
       </div>
 
-      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
+      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-md bg-black flex items-center justify-center overflow-hidden">
+          <div className="w-16 h-16 rounded-md bg-indigo-600 flex items-center justify-center overflow-hidden">
             {profileImage ? (
               <img src={profileImage} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -99,18 +99,18 @@ export default function SellerProfilePage() {
           </div>
           <div className="flex-1">
             <div className="font-semibold">{businessName || 'Your store name'}</div>
-            <div className="text-xs text-neutral-500">{businessCategory}</div>
+            <div className="text-xs text-slate-400">{businessCategory}</div>
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Business / Store name</Label>
+          <Label className="text-xs font-semibold text-slate-300">Business / Store name</Label>
           <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. TechHub Nigeria" className={inputClass} />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-neutral-700">Category</Label>
+            <Label className="text-xs font-semibold text-slate-300">Category</Label>
             <select
               value={businessCategory}
               onChange={(e) => setBusinessCategory(e.target.value)}
@@ -120,7 +120,7 @@ export default function SellerProfilePage() {
             </select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-neutral-700">Seller type</Label>
+            <Label className="text-xs font-semibold text-slate-300">Seller type</Label>
             <select
               value={sellerType}
               onChange={(e) => setSellerType(e.target.value)}
@@ -132,24 +132,24 @@ export default function SellerProfilePage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Location</Label>
+          <Label className="text-xs font-semibold text-slate-300">Location</Label>
           <Input value={businessLocation} onChange={(e) => setBusinessLocation(e.target.value)} placeholder="e.g. Lagos, Nigeria" className={inputClass} />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Profile image URL</Label>
+          <Label className="text-xs font-semibold text-slate-300">Profile image URL</Label>
           <Input value={profileImage} onChange={(e) => setProfileImage(e.target.value)} placeholder="https://..." className={inputClass} />
         </div>
 
         {sellerType === 'farmer' && (
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-neutral-700">Farm name</Label>
+            <Label className="text-xs font-semibold text-slate-300">Farm name</Label>
             <Input value={farmName} onChange={(e) => setFarmName(e.target.value)} placeholder="e.g. Green Valley Farm" className={inputClass} />
           </div>
         )}
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Description</Label>
+          <Label className="text-xs font-semibold text-slate-300">Description</Label>
           <Textarea
             value={businessDescription}
             onChange={(e) => setBusinessDescription(e.target.value)}
@@ -159,7 +159,7 @@ export default function SellerProfilePage() {
           />
         </div>
 
-        <button onClick={save} disabled={saving} className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50">
+        <button onClick={save} disabled={saving} className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50">
           <Save className="w-4 h-4 inline mr-1" />
           {saving ? 'Saving...' : 'Save profile'}
         </button>

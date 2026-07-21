@@ -67,19 +67,19 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="ig-container min-h-screen ig-topbar-offset">
-        <div className="ig-topbar">
+        <div className="fx-topbar ig-topbar">
           <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <h1 className="text-base font-semibold flex-1 ml-2">Cart</h1>
         </div>
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-          <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
-            <ShoppingCart className="w-10 h-10 text-neutral-300" />
+          <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4">
+            <ShoppingCart className="w-10 h-10 text-slate-600" />
           </div>
           <h2 className="text-lg font-bold mb-1">Your cart is empty</h2>
-          <p className="text-sm text-neutral-500 mb-6 max-w-xs">Browse our marketplace and find great deals from local Nigerian sellers.</p>
-          <Link href="/categories" className="bg-black text-white font-semibold rounded-full px-6 py-3 text-sm hover:bg-neutral-800 transition-colors">
+          <p className="text-sm text-slate-400 mb-6 max-w-xs">Browse our marketplace and find great deals from local Nigerian sellers.</p>
+          <Link href="/categories" className="bg-indigo-600 text-white font-semibold rounded-full px-6 py-3 text-sm hover:bg-white/10 transition-colors">
             Start shopping
           </Link>
         </div>
@@ -90,12 +90,12 @@ export default function CartPage() {
   return (
     <div className="ig-container min-h-screen ig-topbar-offset pb-44">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Cart ({items.length})</h1>
-        <button onClick={clearCart} className="text-xs font-semibold text-[#ed4956] hover:underline px-3" aria-label="Clear cart">
+        <button onClick={clearCart} className="text-xs font-semibold text-red-400 hover:underline px-3" aria-label="Clear cart">
           Clear all
         </button>
       </div>
@@ -103,25 +103,25 @@ export default function CartPage() {
       {/* Cart items — each is a floating glass card */}
       <div className="px-3 pt-3 space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="ig-card relative" style={{ borderRadius: '20px' }}>
+          <div key={item.id} className="fx-card ig-card relative" style={{ borderRadius: '20px' }}>
             {/* Remove button — top right corner */}
             <button
               onClick={() => removeItem(item.id)}
               disabled={updating === item.id}
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-[#ed4956] hover:text-white transition-colors z-10"
+              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-500/80 hover:text-white transition-colors z-10"
               aria-label="Remove item"
             >
-              <Trash2 className="w-4 h-4 text-neutral-400" />
+              <Trash2 className="w-4 h-4 text-slate-500" />
             </button>
 
             <div className="p-4 flex gap-3">
               {/* Product image */}
               <Link href={`/product?id=${item.product_id}`} className="shrink-0">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-neutral-50">
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5">
                   {item.products?.image_url ? (
                     <img src={item.products.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                    <div className="w-full h-full flex items-center justify-center text-slate-600">
                       <Store className="w-8 h-8" />
                     </div>
                   )}
@@ -131,14 +131,14 @@ export default function CartPage() {
               {/* Product details */}
               <div className="flex-1 min-w-0 pr-8">
                 <Link href={`/product?id=${item.product_id}`}>
-                  <h3 className="font-semibold text-sm text-black line-clamp-2 hover:opacity-70">
+                  <h3 className="font-semibold text-sm text-white line-clamp-2 hover:opacity-70">
                     {item.products?.name || 'Product'}
                   </h3>
                 </Link>
                 {item.products?.category && (
-                  <span className="inline-block text-[10px] text-neutral-500 mt-1">{item.products.category}</span>
+                  <span className="inline-block text-[10px] text-slate-400 mt-1">{item.products.category}</span>
                 )}
-                <div className="text-black font-bold text-base mt-1">{formatPrice(item.products?.price || 0)}</div>
+                <div className="text-white font-bold text-base mt-1">{formatPrice(item.products?.price || 0)}</div>
               </div>
             </div>
 
@@ -148,7 +148,7 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQty(item.id, -1)}
                   disabled={updating === item.id}
-                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-50"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-3 h-3" />
@@ -157,14 +157,14 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQty(item.id, 1)}
                   disabled={updating === item.id}
-                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-50"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-3 h-3" />
                 </button>
               </div>
-              <div className="text-xs text-neutral-500">
-                Subtotal: <span className="font-semibold text-black">{formatPrice((item.products?.price || 0) * item.quantity)}</span>
+              <div className="text-xs text-slate-400">
+                Subtotal: <span className="font-semibold text-white">{formatPrice((item.products?.price || 0) * item.quantity)}</span>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function CartPage() {
       <div className="px-3 py-4">
         <Link
           href="/categories"
-          className="block text-center text-sm font-semibold text-black border border-white/10 rounded-full py-3 hover:bg-neutral-50 transition-colors"
+          className="block text-center text-sm font-semibold text-white border border-white/10 rounded-full py-3 hover:bg-white/5 transition-colors"
         >
           Continue shopping
         </Link>
@@ -194,32 +194,32 @@ export default function CartPage() {
       >
         <div className="space-y-1.5 text-sm mb-4">
           <div className="flex justify-between">
-            <span className="text-neutral-600">Subtotal</span>
+            <span className="text-slate-400">Subtotal</span>
             <span className="font-semibold">{formatPrice(subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-neutral-600">Shipping</span>
+            <span className="text-slate-400">Shipping</span>
             <span className="font-semibold">
               {shipping === 0 ? <span className="text-green-600">FREE</span> : formatPrice(shipping)}
             </span>
           </div>
           {shipping > 0 && subtotal < 50000 && (
-            <div className="text-[10px] text-neutral-400">
+            <div className="text-[10px] text-slate-500">
               Add {formatPrice(50000 - subtotal)} more for free shipping
             </div>
           )}
           <div className="flex justify-between pt-2 border-t border-white/5">
             <span className="font-bold">Total</span>
-            <span className="font-extrabold text-black text-lg">{formatPrice(total)}</span>
+            <span className="font-extrabold text-white text-lg">{formatPrice(total)}</span>
           </div>
         </div>
         <button
           onClick={() => router.push('/checkout')}
-          className="w-full bg-black text-white font-semibold rounded-full py-3.5 hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-indigo-600 text-white font-semibold rounded-full py-3.5 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
         >
           Checkout <ArrowRight className="w-4 h-4" />
         </button>
-        <div className="mt-2 text-center text-[10px] text-neutral-400">
+        <div className="mt-2 text-center text-[10px] text-slate-500">
           Secure payment via PalmPay bank transfer
         </div>
       </div>

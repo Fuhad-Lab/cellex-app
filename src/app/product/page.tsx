@@ -153,9 +153,9 @@ function ProductContent() {
   if (!product) {
     return (
       <div className="ig-container text-center py-20 px-4 ig-topbar-offset">
-        <Store className="w-12 h-12 mx-auto text-neutral-300 mb-3" />
-        <p className="text-neutral-700 font-semibold">Product not found</p>
-        <Link href="/" className="inline-block mt-4 bg-black text-white text-sm font-semibold px-6 py-2.5 rounded-lg">Back to home</Link>
+        <Store className="w-12 h-12 mx-auto text-slate-600 mb-3" />
+        <p className="text-slate-300 font-semibold">Product not found</p>
+        <Link href="/" className="inline-block mt-4 bg-indigo-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg">Back to home</Link>
       </div>
     );
   }
@@ -166,7 +166,7 @@ function ProductContent() {
   return (
     <div className="ig-container min-h-screen pb-32">
       {/* Top bar — IG-style: back + share + save */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button
           onClick={() => router.back()}
           className="ig-icon-btn"
@@ -179,16 +179,16 @@ function ProductContent() {
           <Send className="w-6 h-6" />
         </button>
         <button onClick={addToWishlist} className="ig-icon-btn" aria-label="Save">
-          <Bookmark className={`w-6 h-6 ${saved ? 'fill-black' : ''}`} />
+          <Bookmark className={`w-6 h-6 ${saved ? 'fill-indigo-600' : ''}`} />
         </button>
       </div>
 
       {/* Image gallery — IG-style square with dot pagination */}
-      <div className="relative aspect-square bg-neutral-50">
+      <div className="relative aspect-square bg-white/5">
         {images[activeImage] ? (
           <img src={images[activeImage]} alt={product.name} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-neutral-300">
+          <div className="w-full h-full flex items-center justify-center text-slate-600">
             <Store className="w-16 h-16" />
           </div>
         )}
@@ -224,28 +224,28 @@ function ProductContent() {
       {/* Action bar — IG-style: 24px icons */}
       <div className="ig-action-bar">
         <button onClick={addToWishlist} aria-label="Like">
-          <Heart className={`w-7 h-7 ${saved ? 'fill-red-500 text-red-500' : 'text-black'}`} strokeWidth={1.5} />
+          <Heart className={`w-7 h-7 ${saved ? 'fill-red-500 text-red-500' : 'text-white'}`} strokeWidth={1.5} />
         </button>
         <button aria-label="Comment">
-          <MessageCircle className="w-7 h-7 text-black" strokeWidth={1.5} />
+          <MessageCircle className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button onClick={() => shareProduct('whatsapp')} aria-label="Share">
-          <Send className="w-7 h-7 text-black" strokeWidth={1.5} />
+          <Send className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
       </div>
 
       {/* Price — IG-style bold */}
       <div className="px-3 pb-2">
         <div className="flex items-baseline justify-between">
-          <span className="text-2xl font-bold text-black">{formatPrice(product.price)}</span>
+          <span className="text-2xl font-bold text-white">{formatPrice(product.price)}</span>
           {typeof product.units_sold === 'number' && product.units_sold > 0 && (
-            <span className="text-xs text-neutral-500">{product.units_sold} sold</span>
+            <span className="text-xs text-slate-400">{product.units_sold} sold</span>
           )}
         </div>
       </div>
 
       {/* Title + category */}
-      <h1 className="text-base font-semibold text-black leading-snug px-3 pb-1">{product.name}</h1>
+      <h1 className="text-base font-semibold text-white leading-snug px-3 pb-1">{product.name}</h1>
       {product.category && (
         <div className="px-3 pb-2">
           <span className="text-xs text-sky-500">#{product.category.toLowerCase().replace(/\s+/g, '')}</span>
@@ -258,11 +258,11 @@ function ProductContent() {
           {[1, 2, 3, 4, 5].map((s) => (
             <Star
               key={s}
-              className={`w-3.5 h-3.5 ${s <= Math.round(reviewSummary.avg) ? 'fill-yellow-400 text-yellow-400' : 'text-neutral-200'}`}
+              className={`w-3.5 h-3.5 ${s <= Math.round(reviewSummary.avg) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-700'}`}
             />
           ))}
         </div>
-        <span className="text-xs text-neutral-600">
+        <span className="text-xs text-slate-400">
           {reviewSummary.count > 0
             ? `${reviewSummary.avg.toFixed(1)} · ${reviewSummary.count} review${reviewSummary.count === 1 ? '' : 's'}`
             : 'No reviews yet'}
@@ -274,7 +274,7 @@ function ProductContent() {
         <div className="px-3 pb-3">
           <button
             onClick={() => setShowTryOn(true)}
-            className="w-full bg-neutral-900 text-white rounded-lg px-4 py-3 flex items-center justify-between hover:bg-neutral-800 transition-colors"
+            className="w-full bg-white/5 text-white rounded-lg px-4 py-3 flex items-center justify-between hover:bg-white/10 transition-colors"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
@@ -295,19 +295,19 @@ function ProductContent() {
         <div className="px-3 pb-3">
           <div className="border border-white/10 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-                <Users className="w-4 h-4 text-neutral-700" />
+              <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                <Users className="w-4 h-4 text-slate-300" />
               </div>
               <div className="flex-1">
-                <div className="font-semibold text-sm text-black">Group Buy</div>
-                <div className="text-xs text-neutral-500">
+                <div className="font-semibold text-sm text-white">Group Buy</div>
+                <div className="text-xs text-slate-400">
                   {product.group_buy_discount_pct || 20}% off when {product.group_buy_target_count || 3} buyers join
                 </div>
               </div>
             </div>
             <button
               onClick={startGroupBuy}
-              className="w-full bg-black text-white text-sm font-semibold py-2.5 rounded-md hover:bg-neutral-800 transition-colors"
+              className="w-full bg-indigo-600 text-white text-sm font-semibold py-2.5 rounded-md hover:bg-white/10 transition-colors"
             >
               Start a Group Buy · Save {product.group_buy_discount_pct || 20}%
             </button>
@@ -320,21 +320,21 @@ function ProductContent() {
         <div className="px-3 py-3 border-t border-white/5">
           <div className="flex items-center gap-3">
             <Link href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`}>
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200 shrink-0">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 shrink-0">
                 {seller.profile_image ? (
                   <img src={seller.profile_image} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white font-bold text-sm">
+                  <div className="w-full h-full flex items-center justify-center bg-white/10 text-white font-bold text-sm">
                     {(seller.business_name || 'S').charAt(0)}
                   </div>
                 )}
               </div>
             </Link>
             <div className="flex-1 min-w-0">
-              <Link href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`} className="text-sm font-semibold text-black hover:opacity-70 truncate block">
+              <Link href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`} className="text-sm font-semibold text-white hover:opacity-70 truncate block">
                 {seller.business_name || 'Unnamed store'}
               </Link>
-              <div className="text-xs text-neutral-500">{product.units_sold || 0} sold · {seller.business_location || 'Nigeria'}</div>
+              <div className="text-xs text-slate-400">{product.units_sold || 0} sold · {seller.business_location || 'Nigeria'}</div>
             </div>
             <Link
               href={seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`}
@@ -349,8 +349,8 @@ function ProductContent() {
       {/* Description — IG-style caption block */}
       {product.description && (
         <div className="px-3 py-3 border-t border-white/5">
-          <div className="text-sm font-semibold text-black mb-1">Description</div>
-          <p className="text-sm text-neutral-700 whitespace-pre-wrap leading-relaxed">{product.description}</p>
+          <div className="text-sm font-semibold text-white mb-1">Description</div>
+          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{product.description}</p>
         </div>
       )}
 
@@ -358,10 +358,10 @@ function ProductContent() {
       {product.video_url && (
         <section className="px-3 py-3 border-t border-white/5">
           <div className="flex items-center gap-2 mb-2">
-            <VideoIcon className="w-4 h-4 text-black" />
+            <VideoIcon className="w-4 h-4 text-white" />
             <h3 className="font-semibold text-sm">Video</h3>
           </div>
-          <div className="rounded-lg overflow-hidden bg-black aspect-video">
+          <div className="rounded-lg overflow-hidden bg-indigo-600 aspect-video">
             {product.video_url.includes('youtube.com') || product.video_url.includes('youtu.be') ? (
               <iframe
                 src={product.video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
@@ -384,16 +384,16 @@ function ProductContent() {
       {/* Shipping info — IG-style minimal row */}
       <div className="px-3 py-3 border-t border-white/5">
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-xs text-neutral-700">
-            <RotateCcw className="w-4 h-4 text-neutral-700" />
+          <div className="flex items-center gap-2 text-xs text-slate-300">
+            <RotateCcw className="w-4 h-4 text-slate-300" />
             <span>7-day free returns</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-neutral-700">
-            <Truck className="w-4 h-4 text-neutral-700" />
+          <div className="flex items-center gap-2 text-xs text-slate-300">
+            <Truck className="w-4 h-4 text-slate-300" />
             <span>Ships within 48 hours</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-neutral-700">
-            <Shield className="w-4 h-4 text-neutral-700" />
+          <div className="flex items-center gap-2 text-xs text-slate-300">
+            <Shield className="w-4 h-4 text-slate-300" />
             <span>Secure checkout · Pay on delivery available</span>
           </div>
         </div>
@@ -402,9 +402,9 @@ function ProductContent() {
       {/* Reviews — IG-style comments section */}
       <section className="px-3 py-3 border-t border-white/5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-black">Reviews · {reviewSummary.count}</h2>
+          <h2 className="text-sm font-semibold text-white">Reviews · {reviewSummary.count}</h2>
           {reviewSummary.count > 0 && (
-            <button className="text-xs text-neutral-500">See all</button>
+            <button className="text-xs text-slate-400">See all</button>
           )}
         </div>
 
@@ -415,7 +415,7 @@ function ProductContent() {
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <button key={s} onClick={() => setReviewRating(s)} aria-label={`${s} stars`}>
-                    <Star className={`w-6 h-6 ${s <= reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-neutral-200'}`} />
+                    <Star className={`w-6 h-6 ${s <= reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-700'}`} />
                   </button>
                 ))}
               </div>
@@ -425,7 +425,7 @@ function ProductContent() {
               value={reviewTitle}
               onChange={(e) => setReviewTitle(e.target.value)}
               placeholder="Title (optional)"
-              className="w-full px-3 py-2 border border-white/10 rounded-md text-sm bg-white"
+              className="w-full px-3 py-2 border border-white/10 rounded-md text-sm bg-white/10"
             />
             <Textarea
               value={reviewComment}
@@ -434,14 +434,14 @@ function ProductContent() {
               rows={3}
               className="text-sm"
             />
-            <Button onClick={submitReview} className="bg-black text-white hover:bg-neutral-800">Submit review</Button>
+            <Button onClick={submitReview} className="bg-indigo-600 text-white hover:bg-white/10">Submit review</Button>
           </div>
         )}
 
         {reviews.length === 0 ? (
           <div className="text-center py-6">
-            <MessageSquare className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
-            <p className="text-sm text-neutral-600">No reviews yet</p>
+            <MessageSquare className="w-8 h-8 mx-auto text-slate-600 mb-2" />
+            <p className="text-sm text-slate-400">No reviews yet</p>
             {user && (
               <button
                 onClick={() => setShowReviewForm(!showReviewForm)}
@@ -463,27 +463,27 @@ function ProductContent() {
             )}
             {reviews.slice(0, 3).map((r) => (
               <div key={r.id} className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-xs shrink-0">
                   {(r.reviewer_name || 'A').charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="font-semibold text-sm text-black">{r.reviewer_name || 'Anonymous'}</span>
+                    <span className="font-semibold text-sm text-white">{r.reviewer_name || 'Anonymous'}</span>
                     {r.verified_purchase && (
                       <span className="text-[10px] text-green-600 flex items-center gap-0.5">
                         <CheckCircle className="w-3 h-3" /> Verified
                       </span>
                     )}
-                    <span className="text-[10px] text-neutral-400">· {timeAgo(r.created_at)}</span>
+                    <span className="text-[10px] text-slate-500">· {timeAgo(r.created_at)}</span>
                   </div>
                   <div className="flex my-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className={`w-3 h-3 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-neutral-200'}`} />
+                      <Star key={s} className={`w-3 h-3 ${s <= r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-700'}`} />
                     ))}
                   </div>
-                  {r.title && <div className="font-semibold text-sm text-black">{r.title}</div>}
-                  {r.comment && <p className="text-sm text-neutral-700 mt-0.5">{r.comment}</p>}
-                  <button className="flex items-center gap-1 text-xs text-neutral-500 mt-1.5 hover:text-black">
+                  {r.title && <div className="font-semibold text-sm text-white">{r.title}</div>}
+                  {r.comment && <p className="text-sm text-slate-300 mt-0.5">{r.comment}</p>}
+                  <button className="flex items-center gap-1 text-xs text-slate-400 mt-1.5 hover:text-white">
                     <ThumbsUp className="w-3 h-3" /> Helpful
                   </button>
                 </div>
@@ -505,18 +505,18 @@ function ProductContent() {
       )}
 
       {/* Fixed bottom bar — Add to cart + Buy now (IG-style minimal) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-white/10 px-3 py-2.5 flex items-center gap-2" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' }}>
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/10 border-t border-white/10 px-3 py-2.5 flex items-center gap-2" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' }}>
         <button
           onClick={addToCart}
           disabled={adding}
-          className="flex-1 bg-white border border-white/15 text-black font-semibold text-sm py-2.5 rounded-lg hover:bg-neutral-50 disabled:opacity-50"
+          className="flex-1 bg-white/10 border border-white/15 text-white font-semibold text-sm py-2.5 rounded-lg hover:bg-white/5 disabled:opacity-50"
         >
           Add to cart
         </button>
         <button
           onClick={buyNow}
           disabled={adding}
-          className="flex-1 bg-black text-white font-semibold text-sm py-2.5 rounded-lg hover:bg-neutral-800 disabled:opacity-50"
+          className="flex-1 bg-indigo-600 text-white font-semibold text-sm py-2.5 rounded-lg hover:bg-white/10 disabled:opacity-50"
         >
           Buy now
         </button>

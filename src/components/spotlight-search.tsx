@@ -159,7 +159,7 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
             <div className="w-full max-w-2xl glass-modal rounded-3xl overflow-hidden">
               {/* Input */}
               <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
-                <Search className="w-5 h-5 text-neutral-400 shrink-0" />
+                <Search className="w-5 h-5 text-slate-500 shrink-0" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -167,14 +167,14 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
                   onChange={(e) => { setQuery(e.target.value); setActiveIndex(-1); }}
                   onKeyDown={handleKeyDown}
                   placeholder="Search for products, categories..."
-                  className="flex-1 bg-transparent outline-none text-lg text-black placeholder:text-neutral-400"
+                  className="flex-1 bg-transparent outline-none text-lg text-white placeholder:text-slate-500"
                 />
                 {query ? (
-                  <button onClick={() => setQuery('')} className="shrink-0 w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors">
-                    <X className="w-3.5 h-3.5 text-neutral-600" />
+                  <button onClick={() => setQuery('')} className="shrink-0 w-6 h-6 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                    <X className="w-3.5 h-3.5 text-slate-400" />
                   </button>
                 ) : (
-                  <kbd className="shrink-0 hidden sm:flex items-center gap-0.5 px-2 py-1 bg-neutral-100 rounded-md text-[10px] font-bold text-neutral-500">
+                  <kbd className="shrink-0 hidden sm:flex items-center gap-0.5 px-2 py-1 bg-white/5 rounded-md text-[10px] font-bold text-slate-400">
                     <Command className="w-3 h-3" /> K
                   </kbd>
                 )}
@@ -185,7 +185,7 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
                 {/* Product polaroids (when searching) */}
                 {query.trim() && products.length > 0 && (
                   <div className="mb-4">
-                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2 px-2">Products</div>
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">Products</div>
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                       {products.map((p, i) => (
                         <motion.button
@@ -196,17 +196,17 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
                           onClick={() => go(`/product?id=${p.id}`)}
                           className="text-left group"
                         >
-                          <div className="aspect-square rounded-xl overflow-hidden bg-neutral-50 mb-1 img-zoom">
+                          <div className="aspect-square rounded-xl overflow-hidden bg-white/5 mb-1 img-zoom">
                             {p.image_url ? (
                               <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                              <div className="w-full h-full flex items-center justify-center text-slate-600">
                                 <Store className="w-6 h-6" />
                               </div>
                             )}
                           </div>
-                          <div className="text-[11px] font-medium text-black line-clamp-1">{p.name}</div>
-                          <div className="text-xs font-bold text-black">{formatPrice(p.price)}</div>
+                          <div className="text-[11px] font-medium text-white line-clamp-1">{p.name}</div>
+                          <div className="text-xs font-bold text-white">{formatPrice(p.price)}</div>
                         </motion.button>
                       ))}
                     </div>
@@ -216,7 +216,7 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
                 {/* Recent searches (when empty) */}
                 {!query.trim() && recent.length > 0 && (
                   <div className="mb-3">
-                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2 px-2">Recent</div>
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">Recent</div>
                     {recent.map((r, i) => {
                       itemIndex++;
                       const isActive = activeIndex === itemIndex;
@@ -229,11 +229,11 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
                           onClick={() => go(`/search?q=${encodeURIComponent(r)}`, r)}
                           onMouseEnter={() => setActiveIndex(itemIndex)}
                           className={`w-full flex items-center gap-3 px-2 py-2.5 rounded-xl transition-colors ${
-                            isActive ? 'bg-black' : 'hover:bg-neutral-50'
+                            isActive ? 'bg-indigo-600' : 'hover:bg-white/5'
                           }`}
                         >
-                          <Clock className={`w-4 h-4 ${isActive ? 'text-white' : 'text-neutral-400'}`} />
-                          <span className={`text-sm ${isActive ? 'text-white' : 'text-neutral-700'}`}>{r}</span>
+                          <Clock className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                          <span className={`text-sm ${isActive ? 'text-white' : 'text-slate-300'}`}>{r}</span>
                         </motion.button>
                       );
                     })}
@@ -258,25 +258,25 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
                       onClick={() => go(item.href, item.label)}
                       onMouseEnter={() => setActiveIndex(i)}
                       className={`w-full flex items-center gap-3 px-2 py-2.5 rounded-xl transition-colors ${
-                        isActive ? 'bg-black' : 'hover:bg-neutral-50'
+                        isActive ? 'bg-indigo-600' : 'hover:bg-white/5'
                       }`}
                     >
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                        isActive ? 'bg-white/10' : 'bg-neutral-100'
+                        isActive ? 'bg-white/10' : 'bg-white/5'
                       }`}>
                         {isQuick && quickAction?.icon ? (
                           <span className="text-sm">{quickAction.icon}</span>
                         ) : isTrending ? (
-                          <TrendingUp className={`w-4 h-4 ${isActive ? 'text-white' : 'text-neutral-500'}`} />
+                          <TrendingUp className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                         ) : isCategory ? (
                           <span className="text-sm">📂</span>
                         ) : (
-                          <Search className={`w-4 h-4 ${isActive ? 'text-white' : 'text-neutral-500'}`} />
+                          <Search className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                         )}
                       </div>
                       <div className="flex-1 text-left">
-                        <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-black'}`}>{item.label}</div>
-                        <div className={`text-[10px] ${isActive ? 'text-white/60' : 'text-neutral-400'}`}>
+                        <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-white'}`}>{item.label}</div>
+                        <div className={`text-[10px] ${isActive ? 'text-white/60' : 'text-slate-500'}`}>
                           {isQuick ? 'Quick action' : isTrending ? 'Trending' : isCategory ? 'Category' : 'Search'}
                         </div>
                       </div>
@@ -286,19 +286,19 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-2.5 border-t border-white/5 bg-neutral-50/50 flex items-center justify-between">
-                <div className="flex items-center gap-3 text-[10px] text-neutral-400">
+              <div className="px-4 py-2.5 border-t border-white/5 bg-white/5/50 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-[10px] text-slate-500">
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-white/10 text-[9px] font-bold">↑↓</kbd> Navigate
+                    <kbd className="px-1.5 py-0.5 bg-white/10 rounded border border-white/10 text-[9px] font-bold">↑↓</kbd> Navigate
                   </span>
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-white/10 text-[9px] font-bold">↵</kbd> Select
+                    <kbd className="px-1.5 py-0.5 bg-white/10 rounded border border-white/10 text-[9px] font-bold">↵</kbd> Select
                   </span>
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 bg-white rounded border border-white/10 text-[9px] font-bold">Esc</kbd> Close
+                    <kbd className="px-1.5 py-0.5 bg-white/10 rounded border border-white/10 text-[9px] font-bold">Esc</kbd> Close
                   </span>
                 </div>
-                <span className="text-[10px] text-neutral-400 font-medium">Cellex Search</span>
+                <span className="text-[10px] text-slate-500 font-medium">Cellex Search</span>
               </div>
             </div>
           </motion.div>

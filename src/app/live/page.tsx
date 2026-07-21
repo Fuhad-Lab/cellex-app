@@ -30,7 +30,7 @@ export default function LivePage() {
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -40,44 +40,44 @@ export default function LivePage() {
       {/* Live Now */}
       <section className="px-4 py-4">
         <h2 className="font-semibold text-sm mb-3 flex items-center gap-2">
-          <span className="w-2 h-2 bg-[#ed4956] rounded-full animate-pulse" />
+          <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
           LIVE NOW ({liveNow.length})
         </h2>
         {liveNow.length === 0 ? (
           <div className="text-center py-8">
-            <Radio className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
-            <p className="text-sm text-neutral-500">No live sessions right now</p>
-            <p className="text-xs text-neutral-400 mt-1">Check back later or follow your favorite sellers</p>
+            <Radio className="w-8 h-8 mx-auto text-slate-600 mb-2" />
+            <p className="text-sm text-slate-400">No live sessions right now</p>
+            <p className="text-xs text-slate-500 mt-1">Check back later or follow your favorite sellers</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {liveNow.map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
                 <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
-                  <div className="aspect-video bg-black relative">
+                  <div className="aspect-video bg-indigo-600 relative">
                     <div className="w-full h-full flex items-center justify-center text-white">
                       <Radio className="w-10 h-10" />
                     </div>
-                    <div className="absolute top-2 left-2 bg-[#ed4956] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                    <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-white/10 rounded-full animate-pulse" />
                       LIVE
                     </div>
                     <div className="absolute top-2 right-2 bg-black/50 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                       <Eye className="w-3 h-3" /> {s.viewer_count || 0}
                     </div>
                   </div>
-                  <div className="p-3 bg-white">
+                  <div className="p-3 bg-white/10">
                     <h3 className="font-semibold text-sm line-clamp-1">{s.title}</h3>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-neutral-500">
-                      <div className="w-5 h-5 rounded-full bg-black flex items-center justify-center text-white text-[10px] font-bold">
+                    <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                      <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold">
                         {(s.seller_name || 'S').charAt(0)}
                       </div>
                       <span>{s.seller_name}</span>
                     </div>
                     {s.featured_product && (
                       <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-xs text-neutral-500 line-clamp-1">{s.featured_product.name}</span>
-                        <span className="text-sm font-bold text-black">{formatPrice(s.featured_product.price)}</span>
+                        <span className="text-xs text-slate-400 line-clamp-1">{s.featured_product.name}</span>
+                        <span className="text-sm font-bold text-white">{formatPrice(s.featured_product.price)}</span>
                       </div>
                     )}
                   </div>
@@ -96,12 +96,12 @@ export default function LivePage() {
             {recent.slice(0, 6).map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
                 <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
-                  <div className="aspect-video bg-neutral-100 flex items-center justify-center">
-                    <Radio className="w-6 h-6 text-neutral-300" />
+                  <div className="aspect-video bg-white/5 flex items-center justify-center">
+                    <Radio className="w-6 h-6 text-slate-600" />
                   </div>
-                  <div className="p-2 bg-white">
+                  <div className="p-2 bg-white/10">
                     <h3 className="font-semibold text-xs line-clamp-1">{s.title}</h3>
-                    <div className="text-[10px] text-neutral-500 mt-0.5">{s.seller_name}</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">{s.seller_name}</div>
                   </div>
                 </div>
               </Link>
@@ -118,7 +118,7 @@ export default function LivePage() {
             message="Sellers can go live to showcase their products in real-time. Follow sellers to get notified when they go live."
             action={
               <Link href="/categories">
-                <button className="bg-black text-white font-semibold rounded-md px-4 py-2.5 hover:bg-neutral-800">
+                <button className="bg-indigo-600 text-white font-semibold rounded-md px-4 py-2.5 hover:bg-white/10">
                   Browse products
                 </button>
               </Link>

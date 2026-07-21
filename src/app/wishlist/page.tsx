@@ -56,7 +56,7 @@ export default function WishlistPage() {
   if (items.length === 0) {
     return (
       <div className="ig-container min-h-screen ig-topbar-offset">
-        <div className="ig-topbar">
+        <div className="fx-topbar ig-topbar">
           <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -69,7 +69,7 @@ export default function WishlistPage() {
             message="Save items you love and come back to them later."
             action={
               <Link href="/categories">
-                <button className="bg-black text-white font-semibold rounded-md px-4 py-2.5 hover:bg-neutral-800">
+                <button className="bg-indigo-600 text-white font-semibold rounded-md px-4 py-2.5 hover:bg-white/10">
                   Discover products
                 </button>
               </Link>
@@ -83,7 +83,7 @@ export default function WishlistPage() {
   return (
     <div className="ig-container min-h-screen">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -97,11 +97,11 @@ export default function WishlistPage() {
           return (
             <div key={item.id} className="p-4 flex gap-3">
               <Link href={`/product?id=${product.id}`} className="shrink-0">
-                <div className="w-20 h-20 rounded-md bg-neutral-50 overflow-hidden">
+                <div className="w-20 h-20 rounded-md bg-white/5 overflow-hidden">
                   {product.image_url ? (
                     <img src={product.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                    <div className="w-full h-full flex items-center justify-center text-slate-600">
                       <Store className="w-8 h-8" />
                     </div>
                   )}
@@ -109,19 +109,19 @@ export default function WishlistPage() {
               </Link>
               <div className="flex-1 min-w-0 flex flex-col">
                 <Link href={`/product?id=${product.id}`}>
-                  <h3 className="font-semibold text-sm text-black hover:opacity-70 line-clamp-2">{product.name}</h3>
+                  <h3 className="font-semibold text-sm text-white hover:opacity-70 line-clamp-2">{product.name}</h3>
                 </Link>
-                <div className="text-black font-bold mt-1">{formatPrice(product.price)}</div>
+                <div className="text-white font-bold mt-1">{formatPrice(product.price)}</div>
                 <div className="flex gap-2 mt-auto">
                   <button
                     onClick={() => addToCart(product)}
-                    className="flex-1 bg-black text-white font-semibold rounded-md py-2 text-xs hover:bg-neutral-800"
+                    className="flex-1 bg-indigo-600 text-white font-semibold rounded-md py-2 text-xs hover:bg-white/10"
                   >
                     <ShoppingCart className="w-3.5 h-3.5 inline mr-1" /> Add
                   </button>
                   <button
                     onClick={() => remove(item.id)}
-                    className="text-[#ed4956] border border-white/10 hover:bg-neutral-50 rounded-md px-3"
+                    className="text-red-400 border border-white/10 hover:bg-white/5 rounded-md px-3"
                     aria-label="Remove"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

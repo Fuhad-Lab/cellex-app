@@ -110,17 +110,17 @@ export default function AiChatPage() {
   return (
     <div className="ig-container min-h-screen flex flex-col h-screen ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 ml-1 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
             <h1 className="font-semibold text-sm leading-tight">AI Shopping Assistant</h1>
-            <p className="text-[10px] text-neutral-500 leading-tight">Powered by Qwen2.5-72B</p>
+            <p className="text-[10px] text-slate-400 leading-tight">Powered by Qwen2.5-72B</p>
           </div>
         </div>
         <button onClick={reset} className="ig-icon-btn shrink-0" aria-label="Reset conversation">
@@ -133,17 +133,17 @@ export default function AiChatPage() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
-              msg.role === 'user' ? 'bg-neutral-200' : 'bg-black'
+              msg.role === 'user' ? 'bg-white/10' : 'bg-indigo-600'
             }`}>
               {msg.role === 'user'
-                ? <User className="w-4 h-4 text-neutral-700" />
+                ? <User className="w-4 h-4 text-slate-300" />
                 : <Bot className="w-4 h-4 text-white" />}
             </div>
             <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`rounded-2xl px-4 py-2.5 text-sm ${
                 msg.role === 'user'
-                  ? 'bg-black text-white rounded-br-md'
-                  : 'bg-neutral-100 text-black rounded-bl-md'
+                  ? 'bg-indigo-600 text-white rounded-br-md'
+                  : 'bg-white/5 text-white rounded-bl-md'
               }`}>
                 <p className="whitespace-pre-wrap">{msg.content}</p>
               </div>
@@ -154,18 +154,18 @@ export default function AiChatPage() {
                   {msg.products.map((p) => (
                     <Link key={p.id} href={`/product?id=${p.id}`}>
                       <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
-                        <div className="aspect-square bg-neutral-50">
+                        <div className="aspect-square bg-white/5">
                           {p.image_url ? (
                             <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                            <div className="w-full h-full flex items-center justify-center text-slate-600">
                               <Store className="w-6 h-6" />
                             </div>
                           )}
                         </div>
-                        <div className="p-2 bg-white">
+                        <div className="p-2 bg-white/10">
                           <div className="text-xs font-medium line-clamp-2 h-8 overflow-hidden">{p.name}</div>
-                          <div className="text-sm font-bold text-black mt-1">{formatPrice(p.price)}</div>
+                          <div className="text-sm font-bold text-white mt-1">{formatPrice(p.price)}</div>
                         </div>
                       </div>
                     </Link>
@@ -178,14 +178,14 @@ export default function AiChatPage() {
 
         {loading && (
           <div className="flex gap-2">
-            <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
               <Bot className="w-4 h-4 text-white" />
             </div>
-            <div className="bg-neutral-100 rounded-2xl rounded-bl-md px-4 py-3">
+            <div className="bg-white/5 rounded-2xl rounded-bl-md px-4 py-3">
               <div className="flex gap-1">
-                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" />
-                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                <span className="w-2 h-2 bg-white/20 rounded-full animate-bounce" />
+                <span className="w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                <span className="w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function AiChatPage() {
             <button
               key={s}
               onClick={() => send(s)}
-              className="shrink-0 text-xs bg-neutral-100 hover:bg-neutral-200 text-black rounded-full px-3 py-1.5 transition-colors"
+              className="shrink-0 text-xs bg-white/5 hover:bg-white/10 text-white rounded-full px-3 py-1.5 transition-colors"
             >
               {s}
             </button>
@@ -210,18 +210,18 @@ export default function AiChatPage() {
       )}
 
       {/* Input */}
-      <div className="flex gap-2 px-4 py-3 border-t border-white/10 bg-white">
+      <div className="flex gap-2 px-4 py-3 border-t border-white/10 bg-white/10">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && send()}
           placeholder="Ask me anything about shopping..."
-          className="flex-1 bg-neutral-100 rounded-md px-3 py-2.5 text-sm outline-none focus:bg-white focus:ring-1 focus:ring-neutral-300"
+          className="flex-1 bg-white/5 rounded-md px-3 py-2.5 text-sm outline-none focus:bg-white/10 focus:ring-1 focus:ring-white/20"
         />
         <button
           onClick={() => send()}
           disabled={loading || !input.trim()}
-          className="bg-black text-white rounded-md px-4 disabled:opacity-30 hover:bg-neutral-800"
+          className="bg-indigo-600 text-white rounded-md px-4 disabled:opacity-30 hover:bg-white/10"
           aria-label="Send message"
         >
           <Send className="w-4 h-4" />

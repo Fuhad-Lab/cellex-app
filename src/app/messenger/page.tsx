@@ -243,8 +243,8 @@ export default function MessengerPage() {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {decryptedMessages.length === 0 && (
             <div className="text-center py-12">
-              <Lock className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
-              <p className="text-sm text-neutral-500">Messages are end-to-end encrypted. Start the conversation.</p>
+              <Lock className="w-10 h-10 mx-auto text-slate-600 mb-2" />
+              <p className="text-sm text-slate-400">Messages are end-to-end encrypted. Start the conversation.</p>
             </div>
           )}
           {decryptedMessages.map((m) => {
@@ -252,10 +252,10 @@ export default function MessengerPage() {
             return (
               <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
-                  isMe ? 'bg-black text-white rounded-br-md' : 'bg-neutral-100 text-black rounded-bl-md'
+                  isMe ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-white/5 text-white rounded-bl-md'
                 }`}>
                   <p className="text-sm whitespace-pre-wrap break-words">{m.text}</p>
-                  <p className={`text-[9px] mt-1 ${isMe ? 'text-white/60' : 'text-neutral-400'}`}>
+                  <p className={`text-[9px] mt-1 ${isMe ? 'text-white/60' : 'text-slate-500'}`}>
                     {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
@@ -266,19 +266,19 @@ export default function MessengerPage() {
         </div>
 
         {/* Input bar */}
-        <div className="border-t border-white/10 px-4 py-3 flex items-center gap-2 bg-white">
+        <div className="border-t border-white/10 px-4 py-3 flex items-center gap-2 bg-white/10">
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Type a message..."
-            className="flex-1 bg-neutral-100 rounded-full px-4 py-2.5 text-sm outline-none focus:bg-white focus:ring-1 focus:ring-neutral-300"
+            className="flex-1 bg-white/5 rounded-full px-4 py-2.5 text-sm outline-none focus:bg-white/10 focus:ring-1 focus:ring-white/20"
           />
           <button
             onClick={sendMessage}
             disabled={!inputText.trim() || sending}
-            className="w-10 h-10 rounded-full bg-black flex items-center justify-center disabled:opacity-30 shrink-0"
+            className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center disabled:opacity-30 shrink-0"
             aria-label="Send"
           >
             <Send className="w-4 h-4 text-white" />
@@ -303,7 +303,7 @@ export default function MessengerPage() {
       </div>
 
       {/* AI Assistant widget */}
-      <Link href="/ai-chat" className="mx-4 mt-3 block bg-black rounded-md p-4 flex items-center gap-3 hover:bg-neutral-800 transition-colors">
+      <Link href="/ai-chat" className="mx-4 mt-3 block bg-indigo-600 rounded-md p-4 flex items-center gap-3 hover:bg-white/10 transition-colors">
         <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center shrink-0">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
@@ -315,13 +315,13 @@ export default function MessengerPage() {
       </Link>
 
       {/* Encryption badge */}
-      <div className="flex items-center justify-center gap-1.5 py-2 text-[10px] text-neutral-400">
+      <div className="flex items-center justify-center gap-1.5 py-2 text-[10px] text-slate-500">
         <Lock className="w-3 h-3" />
         <span>All messages are end-to-end encrypted</span>
       </div>
 
       {/* Tabs */}
-      <div className="sticky top-[54px] z-20 bg-white border-b border-white/10 px-2 flex items-center gap-1">
+      <div className="sticky top-[54px] z-20 bg-white/10 border-b border-white/10 px-2 flex items-center gap-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.key;
@@ -330,7 +330,7 @@ export default function MessengerPage() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
               className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
-                isActive ? 'border-black text-black font-semibold' : 'border-transparent text-neutral-500 hover:text-black'
+                isActive ? 'border-white/10 text-white font-semibold' : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -344,16 +344,16 @@ export default function MessengerPage() {
       <div className="pb-24">
         {filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
-              <MessageCircle className="w-8 h-8 text-neutral-400" />
+            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+              <MessageCircle className="w-8 h-8 text-slate-500" />
             </div>
             <h2 className="text-base font-semibold mb-1">No messages yet</h2>
-            <p className="text-sm text-neutral-500 mb-6 max-w-xs">
+            <p className="text-sm text-slate-400 mb-6 max-w-xs">
               {isSeller
                 ? 'When buyers message you about products or group buys, conversations will appear here.'
                 : 'Message sellers about products, join group buys, or ask questions. Your messages are encrypted.'}
             </p>
-            <Link href="/categories" className="bg-black text-white text-sm font-semibold px-6 py-3 rounded-md">
+            <Link href="/categories" className="bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-md">
               Browse Products
             </Link>
           </div>
@@ -363,24 +363,24 @@ export default function MessengerPage() {
               <button
                 key={conv.id}
                 onClick={() => setActiveConversation(conv)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
               >
-                <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center shrink-0 relative">
-                  <span className="font-semibold text-neutral-500 text-sm">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center shrink-0 relative">
+                  <span className="font-semibold text-slate-400 text-sm">
                     {(conv.otherUserName || conv.otherUserEmail || '?').charAt(0).toUpperCase()}
                   </span>
                   {conv.type === 'group_buy' && (
-                    <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-black flex items-center justify-center">
+                    <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
                       <Users className="w-3 h-3 text-white" />
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm truncate">{conv.otherUserName || conv.otherUserEmail}</div>
-                  <div className="text-xs text-neutral-500 truncate">{conv.lastMessage || 'Tap to start chatting'}</div>
+                  <div className="text-xs text-slate-400 truncate">{conv.lastMessage || 'Tap to start chatting'}</div>
                 </div>
                 {conv.lastMessageAt && (
-                  <span className="text-[10px] text-neutral-400 shrink-0">
+                  <span className="text-[10px] text-slate-500 shrink-0">
                     {new Date(conv.lastMessageAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                   </span>
                 )}

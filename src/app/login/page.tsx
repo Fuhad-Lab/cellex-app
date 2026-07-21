@@ -173,16 +173,16 @@ function LoginContent() {
     router.push(next);
   };
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-white">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-white/10">
       <div className="w-full max-w-md space-y-6">
         {/* Top bar back button */}
         {next !== '/' && (
           <button
             onClick={() => router.push('/')}
-            className="inline-flex items-center text-xs text-neutral-500 hover:text-black"
+            className="inline-flex items-center text-xs text-slate-400 hover:text-white"
           >
             <ChevronLeft className="w-4 h-4" /> Back to home
           </button>
@@ -190,20 +190,20 @@ function LoginContent() {
 
         {/* Logo header */}
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-black" style={{ fontFamily: 'var(--font-geist-mono)' }}>
+          <h1 className="text-3xl font-extrabold text-white" style={{ fontFamily: 'var(--font-geist-mono)' }}>
             Cellex
           </h1>
-          <p className="text-sm text-neutral-500 mt-2">Nigeria&apos;s #1 social marketplace</p>
+          <p className="text-sm text-slate-400 mt-2">Nigeria&apos;s #1 social marketplace</p>
         </div>
 
         <div className="border border-white/10 rounded-md p-6">
           {/* Tabs */}
-          <div className="grid grid-cols-2 gap-1 p-1 bg-neutral-100 rounded-md mb-5">
+          <div className="grid grid-cols-2 gap-1 p-1 bg-white/5 rounded-md mb-5">
             <button
               type="button"
               onClick={() => { setMode('login'); setError(''); }}
               className={`py-2 rounded-md text-sm font-semibold transition-all ${
-                mode === 'login' ? 'bg-white shadow text-black' : 'text-neutral-500'
+                mode === 'login' ? 'bg-white/10 shadow text-white' : 'text-slate-400'
               }`}
             >
               Login
@@ -212,7 +212,7 @@ function LoginContent() {
               type="button"
               onClick={() => { setMode('signup'); setError(''); }}
               className={`py-2 rounded-md text-sm font-semibold transition-all ${
-                mode === 'signup' ? 'bg-white shadow text-black' : 'text-neutral-500'
+                mode === 'signup' ? 'bg-white/10 shadow text-white' : 'text-slate-400'
               }`}
             >
               Sign up
@@ -228,7 +228,7 @@ function LoginContent() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="relative w-24 h-24 rounded-full bg-neutral-100 border-2 border-dashed border-white/15 hover:border-black hover:bg-neutral-50 transition-colors flex items-center justify-center overflow-hidden group"
+                    className="relative w-24 h-24 rounded-full bg-white/5 border-2 border-dashed border-white/15 hover:border-white/10 hover:bg-white/5 transition-colors flex items-center justify-center overflow-hidden group"
                     aria-label="Upload profile picture"
                   >
                     {profileImagePreview ? (
@@ -239,7 +239,7 @@ function LoginContent() {
                         </div>
                       </>
                     ) : (
-                      <div className="flex flex-col items-center gap-1 text-neutral-400">
+                      <div className="flex flex-col items-center gap-1 text-slate-500">
                         <Camera className="w-7 h-7" />
                         <span className="text-[10px] font-medium">Add photo</span>
                       </div>
@@ -259,7 +259,7 @@ function LoginContent() {
                       <button
                         type="button"
                         onClick={removeImage}
-                        className="text-neutral-500 font-medium hover:text-red-500 inline-flex items-center gap-0.5"
+                        className="text-slate-400 font-medium hover:text-red-500 inline-flex items-center gap-0.5"
                       >
                         <X className="w-3 h-3" /> Remove
                       </button>
@@ -280,9 +280,9 @@ function LoginContent() {
 
                 {/* Full name */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="fullName" className="text-xs font-semibold text-neutral-700">Full name</Label>
+                  <Label htmlFor="fullName" className="text-xs font-semibold text-slate-300">Full name</Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                     <Input
                       id="fullName"
                       type="text"
@@ -299,9 +299,9 @@ function LoginContent() {
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-neutral-700">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-slate-300">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <Input
                   id="email"
                   type="email"
@@ -315,9 +315,9 @@ function LoginContent() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-semibold text-neutral-700">Password</Label>
+              <Label htmlFor="password" className="text-xs font-semibold text-slate-300">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <Input
                   id="password"
                   type="password"
@@ -333,7 +333,7 @@ function LoginContent() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-md p-3">
+              <div className="bg-red-500/10 border border-red-200 text-red-700 text-xs rounded-md p-3">
                 {error}
               </div>
             )}
@@ -341,7 +341,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50 inline-flex items-center justify-center gap-2"
+              className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50 inline-flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -352,7 +352,7 @@ function LoginContent() {
             </button>
           </form>
 
-          <div className="mt-4 text-center text-xs text-neutral-400">
+          <div className="mt-4 text-center text-xs text-slate-500">
             By continuing, you agree to Cellex&apos;s Terms & Privacy Policy
           </div>
         </div>

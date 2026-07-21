@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
   if (authLoading) { return <PageSkeleton variant="profile" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   // Show "Store" tab only for sellers
   const tabs: { key: View; label: string; icon: any }[] = [
@@ -129,7 +129,7 @@ export default function ProfilePage() {
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -139,7 +139,7 @@ export default function ProfilePage() {
       {/* Profile header — IG-style */}
       <div className="px-4 py-5">
         <div className="flex items-center gap-6">
-          <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center text-white font-bold text-2xl shrink-0 overflow-hidden">
+          <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-2xl shrink-0 overflow-hidden">
             {profile?.profile_image ? (
               <img src={profile.profile_image} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -149,15 +149,15 @@ export default function ProfilePage() {
           <div className="flex-1 grid grid-cols-3 gap-2 text-center">
             <div>
               <div className="font-semibold text-base">{orders.length}</div>
-              <div className="text-xs text-neutral-500">Orders</div>
+              <div className="text-xs text-slate-400">Orders</div>
             </div>
             <div>
               <div className="font-semibold text-base">{wishlistCount}</div>
-              <div className="text-xs text-neutral-500">Wishlist</div>
+              <div className="text-xs text-slate-400">Wishlist</div>
             </div>
             <div>
               <div className="font-semibold text-base">{isSeller ? 'Yes' : 'No'}</div>
-              <div className="text-xs text-neutral-500">Seller</div>
+              <div className="text-xs text-slate-400">Seller</div>
             </div>
           </div>
         </div>
@@ -167,25 +167,25 @@ export default function ProfilePage() {
           <div className="font-semibold text-sm flex items-center gap-1.5">
             {fullName || user?.email?.split('@')[0]}
             {isSeller && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold bg-black text-white px-1.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold bg-indigo-600 text-white px-1.5 py-0.5 rounded-full">
                 <Store className="w-2.5 h-2.5" /> SELLER
               </span>
             )}
           </div>
-          <div className="text-xs text-neutral-500">{user?.email}</div>
+          <div className="text-xs text-slate-400">{user?.email}</div>
         </div>
 
         {/* Quick action button */}
         <button
           onClick={() => setView('settings')}
-          className="w-full mt-4 bg-neutral-50 border border-white/10 text-black font-semibold rounded-md py-2 text-sm hover:bg-neutral-100"
+          className="w-full mt-4 bg-white/5 border border-white/10 text-white font-semibold rounded-md py-2 text-sm hover:bg-white/5"
         >
           Edit profile
         </button>
       </div>
 
       {/* Tab bar — IG-style */}
-      <div className="ig-tab-bar sticky top-[54px] z-20 bg-white">
+      <div className="ig-tab-bar sticky top-[54px] z-20 bg-white/10">
         {tabs.map((t) => {
           const Icon = t.icon;
           return (
@@ -217,16 +217,16 @@ export default function ProfilePage() {
               const Icon = item.icon;
               const content = (
                 <>
-                  <Icon className="w-5 h-5 text-black mb-1.5" strokeWidth={1.5} />
-                  <div className="text-[11px] font-semibold text-black">{item.label}</div>
-                  {item.sub && <div className="text-[10px] text-neutral-500">{item.sub}</div>}
+                  <Icon className="w-5 h-5 text-white mb-1.5" strokeWidth={1.5} />
+                  <div className="text-[11px] font-semibold text-white">{item.label}</div>
+                  {item.sub && <div className="text-[10px] text-slate-400">{item.sub}</div>}
                 </>
               );
               return item.href ? (
                 <Link
                   key={i}
                   href={item.href}
-                  className="flex flex-col items-center justify-center p-3 border border-white/10 rounded-md hover:bg-neutral-50 transition-colors"
+                  className="flex flex-col items-center justify-center p-3 border border-white/10 rounded-md hover:bg-white/5 transition-colors"
                 >
                   {content}
                 </Link>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                 <button
                   key={i}
                   onClick={() => item.view && setView(item.view)}
-                  className="flex flex-col items-center justify-center p-3 border border-white/10 rounded-md hover:bg-neutral-50 transition-colors"
+                  className="flex flex-col items-center justify-center p-3 border border-white/10 rounded-md hover:bg-white/5 transition-colors"
                 >
                   {content}
                 </button>
@@ -252,8 +252,8 @@ export default function ProfilePage() {
             </div>
             {orders.length === 0 ? (
               <div className="text-center py-6">
-                <Package className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
-                <p className="text-xs text-neutral-500">No orders yet</p>
+                <Package className="w-8 h-8 mx-auto text-slate-600 mb-2" />
+                <p className="text-xs text-slate-400">No orders yet</p>
                 <Link href="/categories" className="inline-block mt-2 text-xs font-semibold text-sky-500">
                   Start shopping
                 </Link>
@@ -262,18 +262,18 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 {orders.slice(0, 3).map((order) => (
                   <div key={order.id} className="flex items-center gap-3 p-2 border border-white/5 rounded-md">
-                    <div className="w-10 h-10 rounded bg-neutral-100 flex items-center justify-center shrink-0">
-                      <Package className="w-5 h-5 text-neutral-400" />
+                    <div className="w-10 h-10 rounded bg-white/5 flex items-center justify-center shrink-0">
+                      <Package className="w-5 h-5 text-slate-500" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold truncate">
                         Order #{String(order.id).slice(-6)}
                       </div>
-                      <div className="text-[10px] text-neutral-500">
+                      <div className="text-[10px] text-slate-400">
                         {order.items?.length || 0} item(s) · {formatPrice(order.total || 0)}
                       </div>
                     </div>
-                    <span className="text-[10px] font-semibold text-neutral-600 px-2 py-0.5 bg-neutral-100 rounded-full">
+                    <span className="text-[10px] font-semibold text-slate-400 px-2 py-0.5 bg-white/5 rounded-full">
                       {order.status || 'pending'}
                     </span>
                   </div>
@@ -286,7 +286,7 @@ export default function ProfilePage() {
           {!isSeller && (
             <Link
               href="/become-seller"
-              className="block mx-4 my-4 bg-black text-white rounded-xl p-4 flex items-center gap-3 hover:bg-neutral-800 transition-colors"
+              className="block mx-4 my-4 bg-indigo-600 text-white rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors"
             >
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                 <Store className="w-5 h-5" />
@@ -306,10 +306,10 @@ export default function ProfilePage() {
         <div className="animate-fade-in">
           {orders.length === 0 ? (
             <div className="text-center py-16 px-4">
-              <Package className="w-10 h-10 mx-auto text-neutral-300 mb-3" />
-              <p className="text-sm font-medium text-neutral-700">No orders yet</p>
-              <p className="text-xs text-neutral-400 mt-1">When you place orders, they'll appear here.</p>
-              <Link href="/categories" className="inline-block mt-4 bg-black text-white text-sm font-semibold px-6 py-2.5 rounded-md">
+              <Package className="w-10 h-10 mx-auto text-slate-600 mb-3" />
+              <p className="text-sm font-medium text-slate-300">No orders yet</p>
+              <p className="text-xs text-slate-500 mt-1">When you place orders, they'll appear here.</p>
+              <Link href="/categories" className="inline-block mt-4 bg-indigo-600 text-white text-sm font-semibold px-6 py-2.5 rounded-md">
                 Start shopping
               </Link>
             </div>
@@ -320,23 +320,23 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <div className="text-sm font-semibold">Order #{String(order.id).slice(-6)}</div>
-                      <div className="text-[10px] text-neutral-500">
+                      <div className="text-[10px] text-slate-400">
                         {order.created_at ? timeAgo(order.created_at) : ''} · {formatPrice(order.total || 0)}
                       </div>
                     </div>
-                    <span className="text-[10px] font-semibold px-2 py-1 bg-neutral-100 rounded-full text-neutral-700">
+                    <span className="text-[10px] font-semibold px-2 py-1 bg-white/5 rounded-full text-slate-300">
                       {order.status || 'pending'}
                     </span>
                   </div>
                   {/* Order items */}
                   <div className="flex gap-2 overflow-x-auto no-scrollbar">
                     {(order.items || []).slice(0, 4).map((item: any, i: number) => (
-                      <div key={i} className="w-12 h-12 rounded bg-neutral-100 overflow-hidden shrink-0">
+                      <div key={i} className="w-12 h-12 rounded bg-white/5 overflow-hidden shrink-0">
                         {item.product?.image_url || item.image_url ? (
                           <img src={item.product?.image_url || item.image_url} alt="" className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Package className="w-5 h-5 text-neutral-300" />
+                            <Package className="w-5 h-5 text-slate-600" />
                           </div>
                         )}
                       </div>
@@ -354,7 +354,7 @@ export default function ProfilePage() {
         <div className="animate-fade-in px-4 py-4 space-y-3">
           <Link
             href="/seller-dashboard"
-            className="block bg-black text-white rounded-xl p-4 flex items-center gap-3 hover:bg-neutral-800 transition-colors"
+            className="block bg-indigo-600 text-white rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition-colors"
           >
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
               <Store className="w-5 h-5" />
@@ -378,9 +378,9 @@ export default function ProfilePage() {
                 <Link
                   key={i}
                   href={item.href}
-                  className="flex flex-col items-start p-3 border border-white/10 rounded-md hover:bg-neutral-50 transition-colors"
+                  className="flex flex-col items-start p-3 border border-white/10 rounded-md hover:bg-white/5 transition-colors"
                 >
-                  <Icon className="w-5 h-5 text-black mb-2" strokeWidth={1.5} />
+                  <Icon className="w-5 h-5 text-white mb-2" strokeWidth={1.5} />
                   <span className="text-xs font-semibold">{item.label}</span>
                 </Link>
               );
@@ -399,28 +399,28 @@ export default function ProfilePage() {
             {!editing ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <User className="w-4 h-4 text-neutral-400" />
-                  <span className="text-neutral-700">{fullName || 'Not set'}</span>
+                  <User className="w-4 h-4 text-slate-500" />
+                  <span className="text-slate-300">{fullName || 'Not set'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Mail className="w-4 h-4 text-neutral-400" />
-                  <span className="text-neutral-700">{user?.email}</span>
+                  <Mail className="w-4 h-4 text-slate-500" />
+                  <span className="text-slate-300">{user?.email}</span>
                 </div>
                 {phone && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="w-4 h-4 text-neutral-400" />
-                    <span className="text-neutral-700">{phone}</span>
+                    <Phone className="w-4 h-4 text-slate-500" />
+                    <span className="text-slate-300">{phone}</span>
                   </div>
                 )}
                 {address && (
                   <div className="flex items-start gap-2 text-sm">
-                    <MapPin className="w-4 h-4 text-neutral-400 mt-0.5" />
-                    <span className="text-neutral-700">{address}</span>
+                    <MapPin className="w-4 h-4 text-slate-500 mt-0.5" />
+                    <span className="text-slate-300">{address}</span>
                   </div>
                 )}
                 <button
                   onClick={() => setEditing(true)}
-                  className="w-full mt-2 bg-neutral-50 border border-white/10 text-black font-semibold rounded-md py-2 text-sm hover:bg-neutral-100"
+                  className="w-full mt-2 bg-white/5 border border-white/10 text-white font-semibold rounded-md py-2 text-sm hover:bg-white/5"
                 >
                   Edit profile
                 </button>
@@ -428,22 +428,22 @@ export default function ProfilePage() {
             ) : (
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-neutral-700">Full name</Label>
+                  <Label className="text-xs font-semibold text-slate-300">Full name</Label>
                   <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your name" className={inputClass} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-neutral-700">Phone</Label>
+                  <Label className="text-xs font-semibold text-slate-300">Phone</Label>
                   <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08012345678" className={inputClass} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-neutral-700">Default shipping address</Label>
+                  <Label className="text-xs font-semibold text-slate-300">Default shipping address</Label>
                   <Textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={2} placeholder="House, street, area, city" className={inputClass} />
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={saveProfile} disabled={saving} className="flex-1 bg-black text-white font-semibold rounded-md py-2.5 text-sm hover:bg-neutral-800 disabled:opacity-50">
+                  <button onClick={saveProfile} disabled={saving} className="flex-1 bg-indigo-600 text-white font-semibold rounded-md py-2.5 text-sm hover:bg-white/10 disabled:opacity-50">
                     {saving ? 'Saving...' : 'Save'}
                   </button>
-                  <button onClick={() => setEditing(false)} className="flex-1 bg-white border border-white/10 text-black font-semibold rounded-md py-2.5 text-sm hover:bg-neutral-50">
+                  <button onClick={() => setEditing(false)} className="flex-1 bg-white/10 border border-white/10 text-white font-semibold rounded-md py-2.5 text-sm hover:bg-white/5">
                     Cancel
                   </button>
                 </div>
@@ -465,14 +465,14 @@ export default function ProfilePage() {
                 <div key={i} className="flex items-center justify-between">
                   <div className="flex-1 pr-3">
                     <div className="text-sm font-medium">{item.label}</div>
-                    <div className="text-[11px] text-neutral-500">{item.sub}</div>
+                    <div className="text-[11px] text-slate-400">{item.sub}</div>
                   </div>
                   <button
                     onClick={() => item.set(!item.state)}
-                    className={`relative w-11 h-6 rounded-full transition-colors ${item.state ? 'bg-black' : 'bg-neutral-200'}`}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${item.state ? 'bg-indigo-600' : 'bg-white/10'}`}
                     aria-label={`Toggle ${item.label}`}
                   >
-                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${item.state ? 'translate-x-5' : 'translate-x-0'}`} />
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white/10 shadow transition-transform ${item.state ? 'translate-x-5' : 'translate-x-0'}`} />
                   </button>
                 </div>
               ))}
@@ -486,15 +486,15 @@ export default function ProfilePage() {
             </h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-600">Currency</span>
+                <span className="text-slate-400">Currency</span>
                 <span className="font-medium">₦ (Naira)</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-600">Language</span>
+                <span className="text-slate-400">Language</span>
                 <span className="font-medium">English</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-600">Country</span>
+                <span className="text-slate-400">Country</span>
                 <span className="font-medium">Nigeria</span>
               </div>
             </div>
@@ -508,12 +508,12 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm py-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
-                <span className="flex-1 text-neutral-700">HTTP-only cookie auth</span>
+                <span className="flex-1 text-slate-300">HTTP-only cookie auth</span>
                 <span className="text-[10px] text-green-600 font-semibold">ACTIVE</span>
               </div>
               <div className="flex items-center gap-2 text-sm py-2">
-                <Shield className="w-4 h-4 text-neutral-400" />
-                <span className="flex-1 text-neutral-700">Rate limiting on login</span>
+                <Shield className="w-4 h-4 text-slate-500" />
+                <span className="flex-1 text-slate-300">Rate limiting on login</span>
                 <span className="text-[10px] text-green-600 font-semibold">ACTIVE</span>
               </div>
             </div>
@@ -526,14 +526,14 @@ export default function ProfilePage() {
             </h3>
             <div className="space-y-1">
               <Link href="/ai-chat" className="flex items-center gap-2 text-sm py-2 hover:opacity-70">
-                <HelpCircle className="w-4 h-4 text-neutral-400" />
+                <HelpCircle className="w-4 h-4 text-slate-500" />
                 <span className="flex-1">Help Center</span>
-                <ChevronRight className="w-4 h-4 text-neutral-300" />
+                <ChevronRight className="w-4 h-4 text-slate-600" />
               </Link>
               <Link href="/link-account" className="flex items-center gap-2 text-sm py-2 hover:opacity-70">
-                <Link2 className="w-4 h-4 text-neutral-400" />
+                <Link2 className="w-4 h-4 text-slate-500" />
                 <span className="flex-1">Link WhatsApp for support</span>
-                <ChevronRight className="w-4 h-4 text-neutral-300" />
+                <ChevronRight className="w-4 h-4 text-slate-600" />
               </Link>
             </div>
           </div>
@@ -542,13 +542,13 @@ export default function ProfilePage() {
           <div className="px-4 py-6">
             <button
               onClick={handleLogout}
-              className="w-full text-[#ed4956] border border-white/10 hover:bg-neutral-50 rounded-md py-2.5 text-sm font-semibold"
+              className="w-full text-red-400 border border-white/10 hover:bg-white/5 rounded-md py-2.5 text-sm font-semibold"
             >
               <LogOut className="w-4 h-4 inline mr-2" /> Logout
             </button>
           </div>
 
-          <div className="text-center text-[10px] text-neutral-400 pb-4">
+          <div className="text-center text-[10px] text-slate-500 pb-4">
             Cellex · Nigeria's #1 social marketplace
           </div>
         </div>

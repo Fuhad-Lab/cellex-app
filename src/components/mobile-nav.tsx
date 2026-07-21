@@ -37,7 +37,7 @@ export function MobileNav() {
 
   return (
     <div
-      className="glass-nav fixed left-1/2 -translate-x-1/2 z-50 md:hidden"
+      className="fx-nav glass-nav fixed left-1/2 -translate-x-1/2 z-50 md:hidden"
       style={{
         bottom: 'calc(env(safe-area-inset-bottom) + 16px)',
         width: '90%',
@@ -96,7 +96,7 @@ export function MobileNav() {
               <div className="relative flex items-center justify-center">
                 <Icon
                   className={`w-6 h-6 transition-all duration-300 ${
-                    isActive ? 'text-black scale-110' : 'text-neutral-500'
+                    isActive ? 'text-white scale-110' : 'text-slate-400'
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
                   fill={isActive && (item.label === 'Home' || item.label === 'Messages') ? 'currentColor' : 'none'}

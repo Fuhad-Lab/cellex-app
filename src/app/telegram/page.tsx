@@ -31,7 +31,7 @@ export default function TelegramPage() {
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -47,7 +47,7 @@ export default function TelegramPage() {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold">{info?.channelTitle || 'Cellex Official'}</h3>
-              <div className="text-xs text-neutral-500 flex items-center gap-3">
+              <div className="text-xs text-slate-400 flex items-center gap-3">
                 <span className="flex items-center gap-1">
                   <Users className="w-3 h-3" /> {info?.subscriberCount || 0} subscribers
                 </span>
@@ -82,10 +82,10 @@ export default function TelegramPage() {
               { title: 'Flash deals', desc: 'Limited-time offers and discounts' },
             ].map((item) => (
               <div key={item.title} className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-black rounded-full mt-2 shrink-0" />
+                <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full mt-2 shrink-0" />
                 <div>
                   <div className="font-medium">{item.title}</div>
-                  <div className="text-xs text-neutral-500">{item.desc}</div>
+                  <div className="text-xs text-slate-400">{item.desc}</div>
                 </div>
               </div>
             ))}
@@ -95,21 +95,21 @@ export default function TelegramPage() {
         {/* Recent broadcasts */}
         <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-black" /> Recent broadcasts
+            <MessageSquare className="w-4 h-4 text-white" /> Recent broadcasts
           </h3>
           {recent.length === 0 ? (
-            <p className="text-xs text-neutral-400 text-center py-3">No broadcasts yet</p>
+            <p className="text-xs text-slate-500 text-center py-3">No broadcasts yet</p>
           ) : (
             <div className="space-y-2">
               {recent.map((b) => (
-                <div key={b.id} className="p-2 bg-neutral-50 rounded-md">
+                <div key={b.id} className="p-2 bg-white/5 rounded-md">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold uppercase text-black bg-neutral-200 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase text-white bg-white/10 px-1.5 py-0.5 rounded">
                       {b.broadcast_type?.replace(/_/g, ' ')}
                     </span>
-                    <span className="text-[10px] text-neutral-400">{timeAgo(b.created_at)}</span>
+                    <span className="text-[10px] text-slate-500">{timeAgo(b.created_at)}</span>
                   </div>
-                  <p className="text-xs text-neutral-700 line-clamp-2">{b.message}</p>
+                  <p className="text-xs text-slate-300 line-clamp-2">{b.message}</p>
                 </div>
               ))}
             </div>
@@ -119,7 +119,7 @@ export default function TelegramPage() {
         {/* Bot commands */}
         <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">Telegram bot commands</h3>
-          <p className="text-xs text-neutral-500 mb-3">
+          <p className="text-xs text-slate-400 mb-3">
             Chat with our bot to interact with Cellex right from Telegram:
           </p>
           <div className="space-y-2 text-xs">
@@ -132,8 +132,8 @@ export default function TelegramPage() {
               { cmd: '/unsubscribe', desc: 'Stop receiving broadcasts' },
             ].map((c) => (
               <div key={c.cmd} className="flex items-center gap-3">
-                <code className="bg-neutral-100 px-2 py-1 rounded font-mono text-black font-semibold whitespace-nowrap">{c.cmd}</code>
-                <span className="text-neutral-600">{c.desc}</span>
+                <code className="bg-white/5 px-2 py-1 rounded font-mono text-white font-semibold whitespace-nowrap">{c.cmd}</code>
+                <span className="text-slate-400">{c.desc}</span>
               </div>
             ))}
           </div>

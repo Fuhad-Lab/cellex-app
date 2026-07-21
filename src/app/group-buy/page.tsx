@@ -52,25 +52,25 @@ function GroupBuyContent() {
   if (!gb) {
     return (
       <div className="ig-container min-h-screen ig-topbar-offset">
-        <div className="ig-topbar">
+        <div className="fx-topbar ig-topbar">
           <button onClick={() => router.push('/categories')} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <h1 className="text-base font-semibold flex-1 ml-2">Group Buy</h1>
         </div>
         <div className="text-center py-20 px-4">
-          <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-            <Users className="w-8 h-8 text-neutral-400" />
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <Users className="w-8 h-8 text-slate-500" />
           </div>
           <h2 className="text-base font-semibold mb-1">
             {groupBuyId ? 'Group buy not found' : 'No group buy selected'}
           </h2>
-          <p className="text-sm text-neutral-500 mb-6 max-w-xs mx-auto">
+          <p className="text-sm text-slate-400 mb-6 max-w-xs mx-auto">
             {groupBuyId
               ? 'This group buy may have ended or been cancelled.'
               : 'Browse products and look for group buy badges to join bulk discounts.'}
           </p>
-          <Link href="/categories" className="inline-block bg-black text-white text-sm font-semibold px-6 py-3 rounded-md">
+          <Link href="/categories" className="inline-block bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-md">
             Browse Products
           </Link>
         </div>
@@ -85,7 +85,7 @@ function GroupBuyContent() {
   return (
     <div className="ig-container min-h-screen pb-24">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.push(`/product?id=${gb.product_id}`)} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -98,7 +98,7 @@ function GroupBuyContent() {
       </div>
 
       {/* Hero */}
-      <div className="bg-black text-white p-4">
+      <div className="bg-indigo-600 text-white p-4">
         <div className="flex items-center gap-2 mb-1">
           <Users className="w-5 h-5" />
           <h2 className="font-semibold">Group Buy</h2>
@@ -111,7 +111,7 @@ function GroupBuyContent() {
         {gb.product && (
           <div className="border border-white/10 rounded-md p-3 flex gap-3">
             <Link href={`/product?id=${gb.product_id}`}>
-              <div className="w-20 h-20 rounded-md bg-neutral-50 overflow-hidden">
+              <div className="w-20 h-20 rounded-md bg-white/5 overflow-hidden">
                 {gb.product.image_url && (
                   <img src={gb.product.image_url} alt="" className="w-full h-full object-cover" />
                 )}
@@ -122,8 +122,8 @@ function GroupBuyContent() {
                 <h3 className="font-semibold text-sm hover:opacity-70 line-clamp-2">{gb.product.name}</h3>
               </Link>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-black font-bold">{formatPrice(discountedPrice)}</span>
-                <span className="text-xs text-neutral-400 line-through">{formatPrice(gb.product.price)}</span>
+                <span className="text-white font-bold">{formatPrice(discountedPrice)}</span>
+                <span className="text-xs text-slate-500 line-through">{formatPrice(gb.product.price)}</span>
                 <span className="bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded">-{gb.discount_pct}%</span>
               </div>
             </div>
@@ -136,15 +136,15 @@ function GroupBuyContent() {
             <span className="text-sm font-semibold">
               {gb.current_count || 0} / {gb.target_count} joined
             </span>
-            <span className="text-xs text-neutral-500">{progress.toFixed(0)}%</span>
+            <span className="text-xs text-slate-400">{progress.toFixed(0)}%</span>
           </div>
-          <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-black transition-all"
+              className="h-full bg-indigo-600 transition-all"
               style={{ width: `${Math.min(100, progress)}%` }}
             />
           </div>
-          <div className="text-xs text-neutral-500 mt-2">
+          <div className="text-xs text-slate-400 mt-2">
             {isComplete
               ? `Target reached. Everyone gets ${gb.discount_pct}% off.`
               : `${(gb.target_count || 0) - (gb.current_count || 0)} more needed to unlock discount`}
@@ -154,19 +154,19 @@ function GroupBuyContent() {
         {/* Member avatars */}
         {gb.members && gb.members.length > 0 && (
           <div className="border border-white/10 rounded-md p-3">
-            <div className="text-xs text-neutral-500 mb-2">Members</div>
+            <div className="text-xs text-slate-400 mb-2">Members</div>
             <div className="flex flex-wrap gap-2">
               {gb.members.slice(0, 10).map((m: any, i: number) => (
                 <div
                   key={i}
-                  className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white text-xs font-bold"
+                  className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold"
                   title={m.user_id}
                 >
                   {i === 0 ? <Users className="w-3 h-3" /> : (i + 1).toString()}
                 </div>
               ))}
               {gb.members.length > 10 && (
-                <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-600">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-slate-400">
                   +{gb.members.length - 10}
                 </div>
               )}
@@ -180,17 +180,17 @@ function GroupBuyContent() {
             <button
               onClick={join}
               disabled={joining}
-              className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50"
+              className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50"
             >
               {joining ? 'Joining...' : 'Join group buy'}
             </button>
-            <button onClick={share} className="w-full bg-white border border-white/15 text-black font-semibold rounded-md py-3 hover:bg-neutral-50">
+            <button onClick={share} className="w-full bg-white/10 border border-white/15 text-white font-semibold rounded-md py-3 hover:bg-white/5">
               <Share2 className="w-4 h-4 inline mr-1" /> Share to WhatsApp
             </button>
           </div>
         ) : (
           <Link href={`/product?id=${gb.product_id}`}>
-            <button className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800">
+            <button className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10">
               Buy now at {formatPrice(discountedPrice)}
             </button>
           </Link>
@@ -199,17 +199,17 @@ function GroupBuyContent() {
         {/* How it works */}
         <div className="border border-white/10 rounded-md p-4">
           <h3 className="font-semibold text-sm mb-3">How group buys work</h3>
-          <ol className="space-y-2 text-xs text-neutral-600">
+          <ol className="space-y-2 text-xs text-slate-400">
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-neutral-100 text-black font-bold flex items-center justify-center shrink-0">1</span>
+              <span className="w-5 h-5 rounded-full bg-white/5 text-white font-bold flex items-center justify-center shrink-0">1</span>
               <span>Join the group buy or share with friends on WhatsApp</span>
             </li>
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-neutral-100 text-black font-bold flex items-center justify-center shrink-0">2</span>
+              <span className="w-5 h-5 rounded-full bg-white/5 text-white font-bold flex items-center justify-center shrink-0">2</span>
               <span>When {gb.target_count} people join, everyone unlocks the discount</span>
             </li>
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-neutral-100 text-black font-bold flex items-center justify-center shrink-0">3</span>
+              <span className="w-5 h-5 rounded-full bg-white/5 text-white font-bold flex items-center justify-center shrink-0">3</span>
               <span>Each person buys individually at the discounted price</span>
             </li>
           </ol>

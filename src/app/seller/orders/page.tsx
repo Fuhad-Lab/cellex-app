@@ -32,25 +32,25 @@ export default function SellerOrdersPage() {
       ) : (
         <div className="space-y-3">
           {orders.map((o) => (
-            <div key={o.id} className="border border-white/10 rounded-md p-4 bg-white">
+            <div key={o.id} className="border border-white/10 rounded-md p-4 bg-white/10">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">#{o.id?.slice(0, 8)}</span>
-                  <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded-full">{o.status}</span>
+                  <span className="text-[10px] font-medium bg-white/5 text-slate-300 px-2 py-0.5 rounded-full">{o.status}</span>
                 </div>
-                <span className="text-xs text-neutral-500">{timeAgo(o.created_at)}</span>
+                <span className="text-xs text-slate-400">{timeAgo(o.created_at)}</span>
               </div>
               <div className="space-y-1">
                 {o.items?.map((item: any, i: number) => (
                   <div key={i} className="flex items-center justify-between text-sm">
-                    <span className="text-neutral-700">{item.product_name} × {item.quantity}</span>
+                    <span className="text-slate-300">{item.product_name} × {item.quantity}</span>
                     <span className="font-semibold">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
-                <span className="text-xs text-neutral-500">Total</span>
-                <span className="font-bold text-black">{formatPrice(o.total)}</span>
+                <span className="text-xs text-slate-400">Total</span>
+                <span className="font-bold text-white">{formatPrice(o.total)}</span>
               </div>
             </div>
           ))}

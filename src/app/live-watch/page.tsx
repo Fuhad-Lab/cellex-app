@@ -98,15 +98,15 @@ function LiveWatchContent() {
   if (!session) {
     return (
       <div className="ig-container min-h-screen ig-topbar-offset">
-        <div className="ig-topbar">
+        <div className="fx-topbar ig-topbar">
           <button onClick={() => router.push('/live')} className="ig-icon-btn" aria-label="Back">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <h1 className="text-base font-semibold flex-1 ml-2">Live</h1>
         </div>
         <div className="text-center py-20">
-          <p className="text-neutral-500">Session not found</p>
-          <Link href="/live" className="text-black font-semibold mt-3 inline-block">Back to live</Link>
+          <p className="text-slate-400">Session not found</p>
+          <Link href="/live" className="text-white font-semibold mt-3 inline-block">Back to live</Link>
         </div>
       </div>
     );
@@ -119,7 +119,7 @@ function LiveWatchContent() {
   return (
     <div className="ig-container min-h-screen pb-24">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.push('/live')} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -127,7 +127,7 @@ function LiveWatchContent() {
       </div>
 
       {/* Stream — Owncast player */}
-      <div className="aspect-video bg-black relative">
+      <div className="aspect-video bg-indigo-600 relative">
         {usesOwncast ? (
           <>
             {/* Owncast HLS player */}
@@ -156,7 +156,7 @@ function LiveWatchContent() {
 
             {/* Offline session overlay */}
             {!isLive && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-indigo-600">
                 <Radio className="w-12 h-12 text-white/30 mb-2" />
                 <p className="text-sm font-semibold">Session has ended</p>
                 <p className="text-xs text-white/50 mt-1">This live session is no longer active</p>
@@ -185,8 +185,8 @@ function LiveWatchContent() {
         {/* LIVE badge + viewer count */}
         <div className="absolute top-2 left-2 flex items-center gap-2 pointer-events-none">
           {isLive && (
-            <span className="bg-[#ed4956] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
+            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-white/10 rounded-full animate-pulse" /> LIVE
             </span>
           )}
           <span className="bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -198,26 +198,26 @@ function LiveWatchContent() {
       {/* Meta */}
       <div className="p-4">
         <h2 className="font-semibold text-base">{session.title}</h2>
-        <div className="text-xs text-neutral-500 mt-0.5">
+        <div className="text-xs text-slate-400 mt-0.5">
           by{' '}
-          <Link href={session.seller_slug ? `/${session.seller_slug}` : `/seller-profile?id=${session.seller_id}`} className="text-black font-medium">
+          <Link href={session.seller_slug ? `/${session.seller_slug}` : `/seller-profile?id=${session.seller_id}`} className="text-white font-medium">
             {session.seller_name}
           </Link>
         </div>
 
         {session.featured_product && (
           <div className="mt-3 border border-white/10 rounded-md p-3 flex items-center gap-3">
-            <div className="w-16 h-16 rounded-md bg-neutral-50 overflow-hidden">
+            <div className="w-16 h-16 rounded-md bg-white/5 overflow-hidden">
               {session.featured_product.image_url && (
                 <img src={session.featured_product.image_url} alt="" className="w-full h-full object-cover" />
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-sm line-clamp-1">{session.featured_product.name}</div>
-              <div className="text-black font-bold">{formatPrice(session.featured_product.price)}</div>
+              <div className="text-white font-bold">{formatPrice(session.featured_product.price)}</div>
             </div>
             <Link href={`/product?id=${session.featured_product.id}`}>
-              <button className="bg-black text-white font-semibold rounded-md px-3 py-2 text-xs hover:bg-neutral-800">
+              <button className="bg-indigo-600 text-white font-semibold rounded-md px-3 py-2 text-xs hover:bg-white/10">
                 <ShoppingBag className="w-3.5 h-3.5 inline mr-1" /> Buy
               </button>
             </Link>
@@ -229,7 +229,7 @@ function LiveWatchContent() {
           <a
             href={OWNCAST_URL}
             target="_blank"
-            className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-black mt-3 transition-colors"
+            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white mt-3 transition-colors"
           >
             <ExternalLink className="w-3 h-3" /> Open in full screen
           </a>
@@ -241,11 +241,11 @@ function LiveWatchContent() {
         <div className="px-4 py-3 border-b border-white/5 font-semibold text-sm">Live Chat</div>
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {messages.length === 0 && (
-            <p className="text-center text-xs text-neutral-400 mt-8">No messages yet. Be the first.</p>
+            <p className="text-center text-xs text-slate-500 mt-8">No messages yet. Be the first.</p>
           )}
           {messages.map((m) => (
             <div key={m.id} className="text-sm">
-              <span className={`font-semibold ${m.message_type === 'system' ? 'text-amber-600' : m.message_type === 'purchase' ? 'text-green-600' : 'text-black'}`}>
+              <span className={`font-semibold ${m.message_type === 'system' ? 'text-amber-600' : m.message_type === 'purchase' ? 'text-green-600' : 'text-white'}`}>
                 {m.name || m.sender_name || 'Anonymous'}:
               </span>{' '}
               <span className="text-neutral-800">{m.message}</span>
@@ -260,12 +260,12 @@ function LiveWatchContent() {
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder={user ? 'Type a message...' : 'Login to chat'}
             disabled={!user || !isLive}
-            className="flex-1 bg-neutral-50 border border-white/10 rounded-md px-3 py-2 text-sm disabled:opacity-50 focus:bg-white focus:border-neutral-400 outline-none"
+            className="flex-1 bg-white/5 border border-white/10 rounded-md px-3 py-2 text-sm disabled:opacity-50 focus:bg-white/10 focus:border-white/10 outline-none"
           />
           <button
             onClick={sendMessage}
             disabled={!user || !isLive || !chatInput.trim()}
-            className="bg-black text-white rounded-md px-4 disabled:opacity-30 hover:bg-neutral-800"
+            className="bg-indigo-600 text-white rounded-md px-4 disabled:opacity-30 hover:bg-white/10"
             aria-label="Send"
           >
             <Send className="w-4 h-4" />

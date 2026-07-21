@@ -101,14 +101,14 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
   if (notFound || !seller) {
     return (
       <div className="ig-container min-h-screen flex flex-col items-center justify-center text-center px-6">
-        <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-          <Store className="w-10 h-10 text-neutral-400" />
+        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+          <Store className="w-10 h-10 text-slate-500" />
         </div>
         <h1 className="text-xl font-bold mb-2">Storefront Not Found</h1>
-        <p className="text-sm text-neutral-500 max-w-xs mb-6">
+        <p className="text-sm text-slate-400 max-w-xs mb-6">
           The store <span className="font-mono font-semibold">/{slug}</span> doesn&apos;t exist, or the seller may have changed their name.
         </p>
-        <Link href="/" className="bg-black text-white text-sm font-semibold px-6 py-3 rounded-md">
+        <Link href="/" className="bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-md">
           Go to homepage
         </Link>
       </div>
@@ -121,14 +121,14 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
   return (
     <div className="ig-container min-h-screen ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 min-w-0 ml-2">
           <h1 className="text-base font-semibold truncate">{name}</h1>
           {seller.business_category && (
-            <p className="text-[11px] text-neutral-500 -mt-0.5 truncate">{seller.business_category}</p>
+            <p className="text-[11px] text-slate-400 -mt-0.5 truncate">{seller.business_category}</p>
           )}
         </div>
         <button onClick={shareStore} className="ig-icon-btn" aria-label="Share store">
@@ -142,7 +142,7 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
           {seller.profile_image ? (
             <img src={seller.profile_image} alt={name} className="ig-avatar-lg" />
           ) : (
-            <div className="ig-avatar-lg bg-neutral-800 flex items-center justify-center text-white font-bold text-2xl">
+            <div className="ig-avatar-lg bg-white/10 flex items-center justify-center text-white font-bold text-2xl">
               {name.charAt(0).toUpperCase()}
             </div>
           )}
@@ -165,12 +165,12 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
 
       {/* Bio */}
       <div className="px-4 pb-3">
-        <div className="text-sm font-semibold text-black flex items-center gap-1">
+        <div className="text-sm font-semibold text-white flex items-center gap-1">
           {name}
           <CheckCircle className="w-3.5 h-3.5 text-sky-500 fill-sky-500 stroke-white" />
         </div>
         {seller.business_description && (
-          <p className="text-sm text-neutral-700 leading-snug mt-1 whitespace-pre-line">{seller.business_description}</p>
+          <p className="text-sm text-slate-300 leading-snug mt-1 whitespace-pre-line">{seller.business_description}</p>
         )}
         {/* Store URL display */}
         <div className="mt-2 flex items-center gap-1.5 text-xs text-sky-500 font-medium">
@@ -178,7 +178,7 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
             cellex.app/{slug}
           </Link>
         </div>
-        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-neutral-500">
+        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-400">
           {seller.business_location && (
             <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {seller.business_location}</span>
           )}
@@ -226,9 +226,9 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
       {tab === 'products' && (
         products.length === 0 ? (
           <div className="text-center py-16 px-4">
-            <Package className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
-            <p className="text-sm font-medium text-neutral-700">No products yet</p>
-            <p className="text-xs text-neutral-400 mt-1">When this store adds products, they&apos;ll appear here.</p>
+            <Package className="w-10 h-10 mx-auto text-slate-600 mb-2" />
+            <p className="text-sm font-medium text-slate-300">No products yet</p>
+            <p className="text-xs text-slate-500 mt-1">When this store adds products, they&apos;ll appear here.</p>
           </div>
         ) : (
           <div className="ig-post-grid">
@@ -253,14 +253,14 @@ export default function SellerStorefront({ params }: { params: Promise<{ slug: s
       {tab === 'videos' && (
         videos.length === 0 ? (
           <div className="text-center py-16 px-4">
-            <Film className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
-            <p className="text-sm font-medium text-neutral-700">No videos yet</p>
-            <p className="text-xs text-neutral-400 mt-1">When this store posts videos, they&apos;ll appear here.</p>
+            <Film className="w-10 h-10 mx-auto text-slate-600 mb-2" />
+            <p className="text-sm font-medium text-slate-300">No videos yet</p>
+            <p className="text-xs text-slate-500 mt-1">When this store posts videos, they&apos;ll appear here.</p>
           </div>
         ) : (
           <div className="ig-post-grid">
             {videos.map((v) => (
-              <Link key={v.id} href="/shorts" className="block relative group bg-black">
+              <Link key={v.id} href="/shorts" className="block relative group bg-indigo-600">
                 {v.video_url ? (
                   <video src={v.video_url} muted className="w-full h-full object-cover" />
                 ) : (

@@ -16,50 +16,50 @@ export default function SellerSettingsPage() {
     router.push('/');
   };
 
-  const sectionLabel = "text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2";
+  const sectionLabel = "text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2";
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-sm text-neutral-500 mt-0.5">Account preferences</p>
+        <p className="text-sm text-slate-400 mt-0.5">Account preferences</p>
       </div>
 
       {/* Account section */}
       <div>
         <h2 className={sectionLabel}>Account</h2>
-        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white/10">
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center shrink-0">
-              <Mail className="w-5 h-5 text-neutral-500" />
+            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+              <Mail className="w-5 h-5 text-slate-400" />
             </div>
             <div className="flex-1">
-              <div className="text-xs text-neutral-500 uppercase tracking-wide">Signed in as</div>
-              <div className="font-semibold text-black text-sm">{user?.email || 'Unknown'}</div>
+              <div className="text-xs text-slate-400 uppercase tracking-wide">Signed in as</div>
+              <div className="font-semibold text-white text-sm">{user?.email || 'Unknown'}</div>
             </div>
           </div>
 
           <button
             onClick={() => router.push('/profile')}
-            className="w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-neutral-50 transition-colors"
+            className="w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors"
           >
-            <User className="w-5 h-5 text-black shrink-0" />
+            <User className="w-5 h-5 text-white shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Edit buyer profile</div>
-              <div className="text-xs text-neutral-500">Update name, phone, address</div>
+              <div className="text-xs text-slate-400">Update name, phone, address</div>
             </div>
-            <ChevronRight className="w-4 h-4 text-neutral-300" />
+            <ChevronRight className="w-4 h-4 text-slate-600" />
           </button>
 
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+            className="w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors disabled:opacity-50"
           >
-            <LogOut className="w-5 h-5 text-[#ed4956] shrink-0" />
+            <LogOut className="w-5 h-5 text-red-400 shrink-0" />
             <div className="flex-1">
-              <div className="font-medium text-sm text-[#ed4956]">{loggingOut ? 'Signing out…' : 'Sign out'}</div>
+              <div className="font-medium text-sm text-red-400">{loggingOut ? 'Signing out…' : 'Sign out'}</div>
             </div>
           </button>
         </div>
@@ -68,7 +68,7 @@ export default function SellerSettingsPage() {
       {/* Notifications */}
       <div>
         <h2 className={sectionLabel}>Notifications</h2>
-        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white/10">
           {[
             { label: 'New orders', desc: 'Get notified when a customer places an order', defaultOn: true },
             { label: 'Low stock', desc: 'Alert me when a product is running low', defaultOn: true },
@@ -83,19 +83,19 @@ export default function SellerSettingsPage() {
       {/* Region / Language */}
       <div>
         <h2 className={sectionLabel}>Region</h2>
-        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white/10">
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <Globe className="w-5 h-5 text-neutral-500 shrink-0" />
+            <Globe className="w-5 h-5 text-slate-400 shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Currency</div>
-              <div className="text-xs text-neutral-500">Nigerian Naira (₦)</div>
+              <div className="text-xs text-slate-400">Nigerian Naira (₦)</div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <Globe className="w-5 h-5 text-neutral-500 shrink-0" />
+            <Globe className="w-5 h-5 text-slate-400 shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Language</div>
-              <div className="text-xs text-neutral-500">English</div>
+              <div className="text-xs text-slate-400">English</div>
             </div>
           </div>
         </div>
@@ -104,12 +104,12 @@ export default function SellerSettingsPage() {
       {/* Security */}
       <div>
         <h2 className={sectionLabel}>Security</h2>
-        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white/10">
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <Shield className="w-5 h-5 text-neutral-500 shrink-0" />
+            <Shield className="w-5 h-5 text-slate-400 shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Account Security</div>
-              <div className="text-xs text-neutral-500">HTTP-only cookie auth · 30-day session</div>
+              <div className="text-xs text-slate-400">HTTP-only cookie auth · 30-day session</div>
             </div>
           </div>
         </div>
@@ -118,12 +118,12 @@ export default function SellerSettingsPage() {
       {/* Danger zone */}
       <div>
         <h2 className={sectionLabel}>Danger zone</h2>
-        <div className="divide-y divide-white/5 border-y border-white/5 bg-white">
+        <div className="divide-y divide-white/5 border-y border-white/5 bg-white/10">
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <Trash2 className="w-5 h-5 text-[#ed4956] shrink-0" />
+            <Trash2 className="w-5 h-5 text-red-400 shrink-0" />
             <div className="flex-1">
-              <div className="font-medium text-sm text-[#ed4956]">Delete account</div>
-              <div className="text-xs text-neutral-500">Permanent. Contact support to proceed.</div>
+              <div className="font-medium text-sm text-red-400">Delete account</div>
+              <div className="text-xs text-slate-400">Permanent. Contact support to proceed.</div>
             </div>
           </div>
         </div>
@@ -138,19 +138,19 @@ function ToggleRow({ label, desc, defaultOn }: { label: string; desc: string; de
     <div className="flex items-start gap-3 px-4 py-3.5">
       <div className="flex-1">
         <div className="font-medium text-sm">{label}</div>
-        <div className="text-xs text-neutral-500 mt-0.5">{desc}</div>
+        <div className="text-xs text-slate-400 mt-0.5">{desc}</div>
       </div>
       <button
         type="button"
         onClick={() => setOn(!on)}
         className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
-          on ? 'bg-black' : 'bg-neutral-200'
+          on ? 'bg-indigo-600' : 'bg-white/10'
         }`}
         aria-pressed={on}
         aria-label={label}
       >
         <span
-          className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+          className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white/10 shadow transition-transform ${
             on ? 'translate-x-5' : 'translate-x-0'
           }`}
         />

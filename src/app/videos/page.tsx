@@ -39,7 +39,7 @@ export default function VideosPage() {
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
-      <div className="ig-topbar">
+      <div className="fx-topbar ig-topbar">
         <button onClick={() => router.back()} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -66,16 +66,16 @@ export default function VideosPage() {
 
       {/* Section header */}
       <div className="px-3 pt-4 pb-2 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-black">All Videos</h2>
-        <span className="text-xs text-neutral-500">{videos.length} videos</span>
+        <h2 className="text-sm font-semibold text-white">All Videos</h2>
+        <span className="text-xs text-slate-400">{videos.length} videos</span>
       </div>
 
       {/* Video grid — 2 columns of 9:16 thumbnails */}
       {videos.length === 0 ? (
         <div className="text-center py-16 px-4">
-          <Play className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
-          <p className="text-sm font-medium text-neutral-700">No videos yet</p>
-          <p className="text-xs text-neutral-400 mt-1">Videos from sellers will appear here.</p>
+          <Play className="w-10 h-10 mx-auto text-slate-600 mb-2" />
+          <p className="text-sm font-medium text-slate-300">No videos yet</p>
+          <p className="text-xs text-slate-500 mt-1">Videos from sellers will appear here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-1 px-1">
@@ -91,7 +91,7 @@ export default function VideosPage() {
               <Link
                 key={video.id}
                 href="/shorts"
-                className="relative aspect-[9/16] bg-neutral-900 overflow-hidden group"
+                className="relative aspect-[9/16] bg-white/5 overflow-hidden group"
               >
                 {video.video_url ? (
                   <video

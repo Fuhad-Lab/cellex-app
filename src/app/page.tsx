@@ -242,7 +242,7 @@ export default function HomePage() {
       {/* Top bar — IG-style: logo left, search center, icons right */}
       <div
         ref={searchBarRef}
-        className="ig-topbar"
+        className="fx-topbar ig-topbar"
       >
         {/* Logo */}
         <Link href="/" className="shrink-0">
@@ -254,12 +254,12 @@ export default function HomePage() {
             search bar, or via Cmd+K on physical keyboards. */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-          className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-neutral-200 transition-colors"
-          style={{ background: '#efefef', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
+          className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-white/10 transition-colors"
+          style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
           aria-label="Search"
         >
-          <Search className="w-4 h-4 text-neutral-500 mr-2" />
-          <span className="text-sm text-neutral-500 text-left flex-1">Search</span>
+          <Search className="w-4 h-4 text-slate-400 mr-2" />
+          <span className="text-sm text-slate-400 text-left flex-1">Search</span>
         </button>
 
         {/* Spacer on mobile (search hidden) */}
@@ -311,17 +311,17 @@ export default function HomePage() {
               return (
                 <Link key={i} href={storyHref} className="shrink-0 flex flex-col items-center gap-1">
                   <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
-                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
+                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-white/5">
                       {s.profile_image ? (
                         <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Store className="w-5 h-5 text-neutral-300" />
+                          <Store className="w-5 h-5 text-slate-600" />
                         </div>
                       )}
                     </div>
                   </div>
-                  <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
+                  <span className="text-[10px] text-slate-300 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
                 </Link>
               );
             })}
@@ -385,10 +385,10 @@ export default function HomePage() {
       {/* End of feed — IG-style */}
       <div className="text-center py-12 px-4">
         <div className="w-14 h-14 rounded-full border-2 border-white/15 flex items-center justify-center mx-auto mb-3">
-          <Sparkles className="w-6 h-6 text-neutral-400" />
+          <Sparkles className="w-6 h-6 text-slate-500" />
         </div>
-        <p className="text-sm font-semibold text-neutral-700">You're all caught up</p>
-        <p className="text-xs text-neutral-400 mt-1">You've seen all new posts from the last 3 days.</p>
+        <p className="text-sm font-semibold text-slate-300">You're all caught up</p>
+        <p className="text-xs text-slate-500 mt-1">You've seen all new posts from the last 3 days.</p>
       </div>
     </div>
   );
@@ -441,23 +441,23 @@ function FeedPostCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="ig-card ig-card-spaced"
+      className="fx-card ig-card ig-card-spaced"
     >
       {/* Seller header — IG-style: avatar + username + verified + Follow */}
       <div className="flex items-center gap-3 px-3 py-2.5">
         <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')}>
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 shrink-0">
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10 shrink-0">
             {post.sellerImage ? (
               <img src={post.sellerImage} alt="" className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-neutral-800">
+              <div className="w-full h-full flex items-center justify-center bg-white/10">
                 <span className="text-white text-xs font-bold">{post.sellerName.charAt(0)}</span>
               </div>
             )}
           </div>
         </Link>
         <div className="flex-1 min-w-0 flex items-center gap-1">
-          <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')} className="text-sm font-semibold text-black hover:opacity-70 transition-opacity truncate">
+          <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')} className="text-sm font-semibold text-white hover:opacity-70 transition-opacity truncate">
             {post.sellerName}
           </Link>
           {post.verified && (
@@ -465,8 +465,8 @@ function FeedPostCard({
           )}
           {post.createdAt && (
             <>
-              <span className="text-neutral-400 text-xs">•</span>
-              <span className="text-xs text-neutral-500">{timeAgo(post.createdAt)}</span>
+              <span className="text-slate-500 text-xs">•</span>
+              <span className="text-xs text-slate-400">{timeAgo(post.createdAt)}</span>
             </>
           )}
         </div>
@@ -515,17 +515,17 @@ function FeedPostCard({
       <div className="ig-action-bar">
         <button onClick={onLike} aria-label="Like">
           <motion.div whileTap={{ scale: 1.2 }}>
-            <Heart className={`w-7 h-7 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-black'}`} strokeWidth={1.5} />
+            <Heart className={`w-7 h-7 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-white'}`} strokeWidth={1.5} />
           </motion.div>
         </button>
         <button aria-label="Comment">
-          <MessageCircle className="w-7 h-7 text-black" strokeWidth={1.5} />
+          <MessageCircle className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button aria-label="Share">
-          <Send className="w-7 h-7 text-black" strokeWidth={1.5} />
+          <Send className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button onClick={onSave} className="ml-auto" aria-label="Save">
-          <Bookmark className={`w-7 h-7 transition-colors ${saved ? 'fill-black text-black' : 'text-black'}`} strokeWidth={1.5} />
+          <Bookmark className={`w-7 h-7 transition-colors ${saved ? 'fill-indigo-600 text-white' : 'text-white'}`} strokeWidth={1.5} />
         </button>
       </div>
 
@@ -561,20 +561,20 @@ function FeedPostCard({
       {post.product && (
         <Link
           href={`/product?id=${post.product.id}`}
-          className="block mx-3 mb-3 bg-neutral-50 border border-white/5 rounded-xl p-2.5 flex items-center gap-3 hover:bg-neutral-100 transition-colors"
+          className="block mx-3 mb-3 bg-white/5 border border-white/5 rounded-xl p-2.5 flex items-center gap-3 hover:bg-white/5 transition-colors"
         >
-          <div className="w-11 h-11 rounded-md overflow-hidden bg-neutral-100 shrink-0">
+          <div className="w-11 h-11 rounded-md overflow-hidden bg-white/5 shrink-0">
             {post.product.image_url && (
               <img src={post.product.image_url} alt="" className="w-full h-full object-cover" />
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-black truncate">{post.product.name}</div>
-            <div className="text-sm font-bold text-black">{formatPrice(post.product.price)}</div>
+            <div className="text-xs font-semibold text-white truncate">{post.product.name}</div>
+            <div className="text-sm font-bold text-white">{formatPrice(post.product.price)}</div>
           </div>
           <button
             onClick={onAddToCart}
-            className="bg-black text-white text-xs font-semibold px-3 py-2 rounded-md hover:bg-neutral-800 transition-colors shrink-0 active:scale-95"
+            className="bg-indigo-600 text-white text-xs font-semibold px-3 py-2 rounded-md hover:bg-white/10 transition-colors shrink-0 active:scale-95"
           >
             Add to cart
           </button>
@@ -630,7 +630,7 @@ function formatLiveDuration(startedAt: string): string {
  */
 function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
   return (
-    <section className="ig-card ig-card-spaced mt-3 overflow-hidden">
+    <section className="fx-card ig-card ig-card-spaced mt-3 overflow-hidden">
       {/* Dark gradient backdrop inside the card so the LIVE cards pop */}
       <div className="bg-gradient-to-b from-neutral-900 to-black py-4">
       {/* Section header */}
@@ -664,7 +664,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
             <Link
               key={session.id}
               href={`/live-watch?id=${session.id}`}
-              className="ig-bounce-in shrink-0 w-64 bg-white rounded-xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-0.5"
+              className="ig-bounce-in shrink-0 w-64 bg-white/10 rounded-xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-0.5"
               style={{ animationDelay: `${index * 80}ms` }}
             >
               {/* Top: avatar + LIVE badge + duration */}
@@ -672,7 +672,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
                 {/* Pulsing red ring around avatar */}
                 <div className="relative">
                   <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-40" />
-                  <div className="relative w-16 h-16 rounded-full border-2 border-red-500 overflow-hidden bg-neutral-700">
+                  <div className="relative w-16 h-16 rounded-full border-2 border-red-500 overflow-hidden bg-white/10">
                     {sellerImage ? (
                       <img src={sellerImage} alt={sellerName} className="w-full h-full object-cover" />
                     ) : (
@@ -684,7 +684,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
                 </div>
                 {/* LIVE badge */}
                 <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
-                  <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                  <span className="w-1.5 h-1.5 bg-white/10 rounded-full" />
                   LIVE
                 </div>
                 {/* Duration */}
@@ -696,14 +696,14 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
               </div>
               {/* Bottom: title + viewers + CTA */}
               <div className="p-3">
-                <div className="text-xs font-semibold text-black truncate mb-1">{sellerName}</div>
-                <div className="text-xs text-neutral-600 line-clamp-1 mb-2">{title}</div>
+                <div className="text-xs font-semibold text-white truncate mb-1">{sellerName}</div>
+                <div className="text-xs text-slate-400 line-clamp-1 mb-2">{title}</div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-[10px] text-neutral-500">
+                  <span className="flex items-center gap-1 text-[10px] text-slate-400">
                     <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                     {formatCount(viewers)} watching
                   </span>
-                  <span className="bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                  <span className="bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">
                     Watch Live
                   </span>
                 </div>
@@ -729,12 +729,12 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
  */
 function ShortsSection({ shorts }: { shorts: any[] }) {
   return (
-    <section className="ig-card ig-card-spaced overflow-hidden py-4">
+    <section className="fx-card ig-card ig-card-spaced overflow-hidden py-4">
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
-          <Play className="w-4 h-4 text-black fill-black" />
-          <h3 className="text-sm font-semibold text-black">Shorts</h3>
+          <Play className="w-4 h-4 text-white fill-indigo-600" />
+          <h3 className="text-sm font-semibold text-white">Shorts</h3>
         </div>
         <Link href="/shorts" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
           See all
@@ -755,11 +755,11 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
             <Link
               key={short.id}
               href="/shorts"
-              className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-neutral-900 hover:shadow-lg transition-all hover:-translate-y-0.5"
+              className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-white/5 hover:shadow-lg transition-all hover:-translate-y-0.5"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               {/* Vertical 9:16 video thumbnail */}
-              <div className="relative aspect-[9/16] bg-neutral-800">
+              <div className="relative aspect-[9/16] bg-white/10">
                 {short.videoUrl ? (
                   <video
                     src={short.videoUrl}
@@ -831,12 +831,12 @@ function SuggestedSellersCarousel({
     : 'More Sellers to Follow';
 
   return (
-    <section className="ig-card ig-card-spaced overflow-hidden py-4">
+    <section className="fx-card ig-card ig-card-spaced overflow-hidden py-4">
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
-          <Users className="w-4 h-4 text-neutral-700" />
-          <h3 className="text-sm font-semibold text-black">{headerLabel}</h3>
+          <Users className="w-4 h-4 text-slate-300" />
+          <h3 className="text-sm font-semibold text-white">{headerLabel}</h3>
         </div>
         <Link href="/sellers" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
           See All
@@ -856,16 +856,16 @@ function SuggestedSellersCarousel({
           return (
             <div
               key={sellerId}
-              className="ig-bounce-in shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-white"
+              className="ig-bounce-in shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-white/10"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               <Link href={sellerHref} className="block">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-neutral-200 mb-2 ig-story-ring" style={{ padding: 2 }}>
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 mb-2 ig-story-ring" style={{ padding: 2 }}>
                   <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
                     {image ? (
                       <img src={image} alt={name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white font-bold text-xl">
+                      <div className="w-full h-full flex items-center justify-center bg-white/10 text-white font-bold text-xl">
                         {name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -874,19 +874,19 @@ function SuggestedSellersCarousel({
               </Link>
               <Link
                 href={sellerHref}
-                className="text-xs font-semibold text-black truncate max-w-full hover:opacity-70 mb-0.5"
+                className="text-xs font-semibold text-white truncate max-w-full hover:opacity-70 mb-0.5"
               >
                 {name}
               </Link>
               {category && (
-                <p className="text-[10px] text-neutral-500 truncate max-w-full mb-2">{category}</p>
+                <p className="text-[10px] text-slate-400 truncate max-w-full mb-2">{category}</p>
               )}
               <button
                 onClick={(e) => onFollow(sellerId, e)}
                 className={`w-full text-xs font-semibold py-1.5 rounded-md transition-colors ${
                   isFollowing
-                    ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                    : 'bg-black text-white hover:bg-neutral-800'
+                    ? 'bg-white/5 text-slate-300 hover:bg-white/10'
+                    : 'bg-indigo-600 text-white hover:bg-white/10'
                 }`}
               >
                 {isFollowing ? 'Following' : 'Follow'}
@@ -898,13 +898,13 @@ function SuggestedSellersCarousel({
         {/* "See all sellers" card — links to /sellers page */}
         <Link
           href="/sellers"
-          className="shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors bg-white"
+          className="shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors bg-white/10"
         >
-          <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-2">
-            <ChevronRight className="w-6 h-6 text-neutral-700" />
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-2">
+            <ChevronRight className="w-6 h-6 text-slate-300" />
           </div>
-          <span className="text-xs font-semibold text-black">See all sellers</span>
-          <span className="text-[10px] text-neutral-500 mt-0.5">Discover more stores</span>
+          <span className="text-xs font-semibold text-white">See all sellers</span>
+          <span className="text-[10px] text-slate-400 mt-0.5">Discover more stores</span>
         </Link>
       </div>
     </section>

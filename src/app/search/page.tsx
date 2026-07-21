@@ -138,27 +138,27 @@ function SearchContent() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white/10 min-h-screen">
       {/* Header */}
       <div ref={searchBarRef} className="border-b border-white/10 sticky top-0 z-40 bg-white/95 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
-          <button onClick={() => router.back()} className="shrink-0 w-9 h-9 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors">
-            <ChevronLeft className="w-5 h-5 text-black" />
+          <button onClick={() => router.back()} className="shrink-0 w-9 h-9 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors">
+            <ChevronLeft className="w-5 h-5 text-white" />
           </button>
           <Link href="/" className="hidden sm:flex items-center gap-1.5 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
               <span className="text-white font-extrabold text-base" style={{ fontFamily: 'var(--font-geist-mono)' }}>C</span>
             </div>
-            <span className="text-lg font-extrabold text-black" style={{ fontFamily: 'var(--font-geist-mono)' }}>Cellex</span>
+            <span className="text-lg font-extrabold text-white" style={{ fontFamily: 'var(--font-geist-mono)' }}>Cellex</span>
           </Link>
-          <form onSubmit={handleSubmit} className="flex-1 flex items-center border-2 border-white/10 rounded-full px-4 py-2 focus-within:border-black transition-colors">
-            <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
+          <form onSubmit={handleSubmit} className="flex-1 flex items-center border-2 border-white/10 rounded-full px-4 py-2 focus-within:border-white/10 transition-colors">
+            <Search className="w-4 h-4 text-slate-500 mr-2 shrink-0" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search Cellex..."
-              className="flex-1 bg-transparent outline-none text-base text-black placeholder:text-neutral-400"
+              className="flex-1 bg-transparent outline-none text-base text-white placeholder:text-slate-500"
             />
           </form>
         </div>
@@ -176,8 +176,8 @@ function SearchContent() {
                 onClick={() => setView(tab.key as any)}
                 className={`flex items-center gap-1.5 py-2.5 px-3 text-sm font-medium border-b-2 transition-colors ${
                   view === tab.key
-                    ? 'border-black text-black font-bold'
-                    : 'border-transparent text-neutral-500 hover:text-black'
+                    ? 'border-white/10 text-white font-bold'
+                    : 'border-transparent text-slate-400 hover:text-white'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -195,7 +195,7 @@ function SearchContent() {
           <div className="space-y-6 animate-fade-in">
             {/* User query bubble */}
             <div className="flex justify-end animate-slide-up">
-              <div className="bg-black text-white rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%]">
+              <div className="bg-indigo-600 text-white rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%]">
                 <p className="text-sm">{query}</p>
               </div>
             </div>
@@ -203,14 +203,14 @@ function SearchContent() {
             {/* Thought process toggle */}
             <button
               onClick={() => setShowThoughtProcess(!showThoughtProcess)}
-              className="flex items-center gap-1 text-xs text-neutral-500 hover:text-black transition-colors animate-fade-in delay-100"
+              className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors animate-fade-in delay-100"
             >
               <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showThoughtProcess ? 'rotate-180' : ''}`} />
               Show thought process
             </button>
 
             {showThoughtProcess && (
-              <div className="text-xs text-neutral-400 bg-neutral-50 rounded-lg p-3 space-y-1 animate-slide-up">
+              <div className="text-xs text-slate-500 bg-white/5 rounded-lg p-3 space-y-1 animate-slide-up">
                 <p>1. Searched for "{query}" across {allProducts.length} products on Cellex</p>
                 <p>2. Found {aiProducts.length} top matches based on relevance</p>
                 <p>3. Generated answer using Llama-3.1-8B AI via NVIDIA NIM</p>
@@ -219,7 +219,7 @@ function SearchContent() {
 
             {/* AI response */}
             <div className="flex items-start gap-3 animate-slide-up delay-150">
-              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
@@ -240,24 +240,24 @@ function SearchContent() {
             {/* Product recommendations */}
             {aiProducts.length > 0 && !loading && (
               <div className="ml-11 animate-slide-up delay-200">
-                <div className="inline-block bg-neutral-100 text-black text-xs font-bold px-2.5 py-1 rounded-md mb-3">
+                <div className="inline-block bg-white/5 text-white text-xs font-bold px-2.5 py-1 rounded-md mb-3">
                   {query}
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {aiProducts.map((p, i) => (
                     <Link key={p.id} href={`/product?id=${p.id}`} className="block group animate-scale-in" style={{ animationDelay: `${i * 50}ms` }}>
                       <Card className="overflow-hidden border-white/10 hover-lift card-transition">
-                        <div className="aspect-square bg-neutral-50 img-zoom">
+                        <div className="aspect-square bg-white/5 img-zoom">
                           {p.image_url ? (
                             <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                            <div className="w-full h-full flex items-center justify-center text-slate-600">
                               <Store className="w-8 h-8" />
                             </div>
                           )}
                         </div>
                         <div className="p-2">
-                          <div className="text-xs font-medium text-black line-clamp-1">{p.name}</div>
+                          <div className="text-xs font-medium text-white line-clamp-1">{p.name}</div>
                           <div className="text-sm font-bold price">{formatPrice(p.price)}</div>
                         </div>
                       </Card>
@@ -271,12 +271,12 @@ function SearchContent() {
             {chatHistory.map((msg, i) => (
               <div key={i} className="space-y-3 animate-fade-in">
                 <div className="flex justify-end">
-                  <div className="bg-black text-white rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%]">
+                  <div className="bg-indigo-600 text-white rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%]">
                     <p className="text-sm">{msg.user}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <div className="text-sm text-neutral-800 leading-relaxed whitespace-pre-wrap">
@@ -288,7 +288,7 @@ function SearchContent() {
 
             {followUpLoading && (
               <div className="flex items-start gap-3 animate-fade-in">
-                <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <div className="loading-dots pt-2">
@@ -302,7 +302,7 @@ function SearchContent() {
         {/* PRODUCTS VIEW */}
         {view === 'products' && (
           <div className="animate-fade-in">
-            <div className="text-sm text-neutral-500 mb-4">
+            <div className="text-sm text-slate-400 mb-4">
               {loading ? 'Loading...' : `${allProducts.length} results for "${query}"`}
             </div>
             {loading ? (
@@ -331,7 +331,7 @@ function SearchContent() {
         {/* VIDEOS VIEW */}
         {view === 'videos' && (
           <div className="animate-fade-in">
-            <div className="text-sm text-neutral-500 mb-4">
+            <div className="text-sm text-slate-400 mb-4">
               {loading ? 'Loading...' : `${videos.length} videos for "${query}"`}
             </div>
             {loading ? (
@@ -342,8 +342,8 @@ function SearchContent() {
               </div>
             ) : videos.length === 0 ? (
               <div className="text-center py-16">
-                <VideoIcon className="w-10 h-10 mx-auto text-neutral-300 mb-2" />
-                <p className="text-sm text-neutral-500">No videos found</p>
+                <VideoIcon className="w-10 h-10 mx-auto text-slate-600 mb-2" />
+                <p className="text-sm text-slate-400">No videos found</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -360,19 +360,19 @@ function SearchContent() {
       {view === 'ai' && !loading && (
         <div className="fixed left-1/2 -translate-x-1/2 z-40" style={{ bottom: 'calc(env(safe-area-inset-bottom) + 88px)', width: 'calc(100% - 24px)', maxWidth: '446px' }}>
           <div className="glass-input flex items-center gap-2 rounded-full px-4 py-2.5">
-            <Paperclip className="w-4 h-4 text-neutral-400 shrink-0" />
+            <Paperclip className="w-4 h-4 text-slate-500 shrink-0" />
             <input
               type="text"
               value={followUpInput}
               onChange={(e) => setFollowUpInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendFollowUp()}
               placeholder="Ask a follow-up question..."
-              className="flex-1 bg-transparent outline-none text-sm text-black placeholder:text-neutral-400"
+              className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-slate-500"
             />
             <button
               onClick={sendFollowUp}
               disabled={!followUpInput.trim() || followUpLoading}
-              className="w-8 h-8 rounded-full bg-black flex items-center justify-center disabled:opacity-30 shrink-0 transition-all hover:scale-105"
+              className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center disabled:opacity-30 shrink-0 transition-all hover:scale-105"
             >
               <Send className="w-4 h-4 text-white" />
             </button>
@@ -387,28 +387,28 @@ function SearchContent() {
 function SearchResult({ product, index }: { product: Product; index: number }) {
   return (
     <Link href={`/product?id=${product.id}`} className="flex gap-3 group animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
-      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-neutral-50 shrink-0 img-zoom">
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-white/5 shrink-0 img-zoom">
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-neutral-300">
+          <div className="w-full h-full flex items-center justify-center text-slate-600">
             <Store className="w-8 h-8" />
           </div>
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-xs text-neutral-500 flex items-center gap-1 mb-0.5">
+        <div className="text-xs text-slate-400 flex items-center gap-1 mb-0.5">
           <Store className="w-3 h-3" />
           {product.category || 'Cellex'} · Verified Seller
         </div>
-        <h3 className="text-base font-medium text-black group-hover:underline leading-snug line-clamp-2">
+        <h3 className="text-base font-medium text-white group-hover:underline leading-snug line-clamp-2">
           {product.name}
         </h3>
         <div className="text-lg font-bold price mt-0.5">{formatPrice(product.price)}</div>
         {product.description && (
-          <p className="text-sm text-neutral-600 line-clamp-2 mt-0.5 leading-snug">{product.description}</p>
+          <p className="text-sm text-slate-400 line-clamp-2 mt-0.5 leading-snug">{product.description}</p>
         )}
-        <div className="flex items-center gap-3 mt-1 text-xs text-neutral-400">
+        <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
           {typeof product.units_sold === 'number' && product.units_sold > 0 && (
             <span>{product.units_sold} sold</span>
           )}
@@ -432,7 +432,7 @@ function VideoResult({ video, index }: { video: any; index: number }) {
   return (
     <Link href="/videos" className="block group animate-scale-in" style={{ animationDelay: `${index * 50}ms` }}>
       <Card className="overflow-hidden border-white/10 hover-lift card-transition">
-        <div className="aspect-[9/16] bg-neutral-900 relative">
+        <div className="aspect-[9/16] bg-white/5 relative">
           {video.video_url ? (
             <video src={video.video_url} muted className="w-full h-full object-cover" />
           ) : (
@@ -445,12 +445,12 @@ function VideoResult({ video, index }: { video: any; index: number }) {
           </div>
         </div>
         <div className="p-2">
-          <div className="text-xs font-medium text-black line-clamp-2 h-8 leading-tight">{video.caption || 'Video'}</div>
+          <div className="text-xs font-medium text-white line-clamp-2 h-8 leading-tight">{video.caption || 'Video'}</div>
           <div className="flex items-center gap-1 mt-1">
-            <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center text-white text-[8px] font-bold shrink-0">
+            <div className="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[8px] font-bold shrink-0">
               {sellerName.charAt(0)}
             </div>
-            <span className="text-[10px] text-neutral-500 truncate">@{sellerName}</span>
+            <span className="text-[10px] text-slate-400 truncate">@{sellerName}</span>
           </div>
           {product && (
             <div className="text-xs font-bold price mt-0.5">{formatPrice(product.price)}</div>
@@ -464,7 +464,7 @@ function VideoResult({ video, index }: { video: any; index: number }) {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[60vh] bg-white">
+      <div className="flex items-center justify-center min-h-[60vh] bg-white/10">
         <div className="loading-dots"><span></span><span></span><span></span></div>
       </div>
     }>

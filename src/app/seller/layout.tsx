@@ -36,7 +36,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-3 border-white/10 border-t-black rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-white/10 border-t-indigo-600 rounded-full animate-spin" />
       </div>
     );
   }
@@ -44,12 +44,12 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
   const SidebarContent = () => (
     <>
       <div className="flex items-center gap-2 px-4 py-5 mb-2">
-        <div className="w-9 h-9 rounded-xl bg-black flex items-center justify-center">
+        <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center">
           <Store className="w-5 h-5 text-white" />
         </div>
         <div>
           <div className="font-extrabold text-sm" style={{ fontFamily: 'var(--font-geist-mono)' }}>Cellex</div>
-          <div className="text-[10px] text-neutral-500">Seller Center</div>
+          <div className="text-[10px] text-slate-400">Seller Center</div>
         </div>
       </div>
 
@@ -64,8 +64,8 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-black text-white'
-                  : 'text-neutral-600 hover:bg-neutral-100'
+                  ? 'bg-indigo-600 text-white'
+                  : 'text-slate-400 hover:bg-white/5'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -76,12 +76,12 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
       </nav>
 
       <div className="p-2 border-t border-white/5">
-        <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-600 hover:bg-neutral-100">
+        <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5">
           <Store className="w-4 h-4" /> Back to store
         </Link>
         <button
           onClick={async () => { await logout(); router.push('/'); }}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[#ed4956] hover:bg-red-50 w-full"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 w-full"
         >
           <LogOut className="w-4 h-4" /> Logout
         </button>
@@ -90,16 +90,16 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
   );
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex">
+    <div className="min-h-screen bg-white/5 flex">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col w-60 bg-white border-r border-white/10 fixed inset-y-0 left-0 z-30">
+      <aside className="hidden md:flex md:flex-col w-60 bg-white/10 border-r border-white/10 fixed inset-y-0 left-0 z-30">
         <SidebarContent />
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-white/10 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white/10 border-b border-white/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
             <Store className="w-4 h-4 text-white" />
           </div>
           <span className="font-semibold text-sm">Seller Center</span>
@@ -112,7 +112,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
       {/* Mobile sidebar drawer */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-40 flex">
-          <div className="w-64 bg-white flex flex-col">
+          <div className="w-64 bg-white/10 flex flex-col">
             <button onClick={() => setMobileOpen(false)} className="absolute top-3 right-3" aria-label="Close menu">
               <X className="w-5 h-5" />
             </button>

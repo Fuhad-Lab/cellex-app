@@ -135,7 +135,7 @@ export default function SellerVideosPage() {
 
   if (loading) { return <PageSkeleton variant="seller-videos" />; }
 
-  const inputClass = "w-full bg-neutral-50 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white focus:border-neutral-400 outline-none";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   // Filter videos based on tab
   const filteredVideos = videos.filter((v) => {
@@ -150,23 +150,23 @@ export default function SellerVideosPage() {
     <div className="space-y-4 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold">Videos & Reels</h1>
-        <p className="text-sm text-neutral-500">Post product videos and short reels to engage buyers</p>
+        <p className="text-sm text-slate-400">Post product videos and short reels to engage buyers</p>
       </div>
 
       {/* Upload form */}
-      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white">
+      <div className="border border-white/10 rounded-md p-4 space-y-3 bg-white/10">
         <div className="flex items-center gap-2">
-          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${isReel ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}`}>
+          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${isReel ? 'bg-indigo-600 text-white' : 'bg-white/5 text-slate-400'}`}>
             <Clapperboard className="w-4 h-4 inline mr-1" />
             Reel {isReel && '✓'}
           </div>
-          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${!isReel ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}`}>
+          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${!isReel ? 'bg-indigo-600 text-white' : 'bg-white/5 text-slate-400'}`}>
             <Package className="w-4 h-4 inline mr-1" />
             Product Video {!isReel && '✓'}
           </div>
         </div>
 
-        <p className="text-[11px] text-neutral-500">
+        <p className="text-[11px] text-slate-400">
           {isReel
             ? 'Reels are short standalone videos that appear in the Shorts feed. Great for showcasing your brand, behind-the-scenes, or product highlights.'
             : 'Product videos are tied to a specific product and appear on the product detail page.'}
@@ -175,7 +175,7 @@ export default function SellerVideosPage() {
         {/* File upload */}
         {videoUrl ? (
           <div className="flex items-center gap-3">
-            <video src={videoUrl} className="w-20 h-20 rounded-md object-cover bg-black" muted />
+            <video src={videoUrl} className="w-20 h-20 rounded-md object-cover bg-indigo-600" muted />
             <button
               type="button"
               onClick={() => setVideoUrl('')}
@@ -189,18 +189,18 @@ export default function SellerVideosPage() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full border-2 border-dashed border-white/15 rounded-md p-4 flex items-center justify-center gap-2 hover:border-black hover:bg-neutral-50 transition-colors disabled:opacity-50"
+            className="w-full border-2 border-dashed border-white/15 rounded-md p-4 flex items-center justify-center gap-2 hover:border-white/10 hover:bg-white/5 transition-colors disabled:opacity-50"
           >
             {uploading ? (
               <>
-                <Loader2 className="w-5 h-5 text-neutral-400 animate-spin" />
-                <span className="text-xs text-neutral-500">Uploading...</span>
+                <Loader2 className="w-5 h-5 text-slate-500 animate-spin" />
+                <span className="text-xs text-slate-400">Uploading...</span>
               </>
             ) : (
               <>
-                <Upload className="w-5 h-5 text-neutral-600" />
-                <span className="text-xs text-neutral-700 font-medium">Upload from device</span>
-                <span className="text-[10px] text-neutral-400 ml-1">Max 10MB</span>
+                <Upload className="w-5 h-5 text-slate-400" />
+                <span className="text-xs text-slate-300 font-medium">Upload from device</span>
+                <span className="text-[10px] text-slate-500 ml-1">Max 10MB</span>
               </>
             )}
             <input
@@ -215,13 +215,13 @@ export default function SellerVideosPage() {
 
         {/* Caption */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Caption *</Label>
+          <Label className="text-xs font-semibold text-slate-300">Caption *</Label>
           <Textarea value={caption} onChange={(e) => setCaption(e.target.value)} rows={2} placeholder={isReel ? "Check out our latest collection! 🔥" : "This product is amazing because..."} className={inputClass} />
         </div>
 
         {/* Product link (optional) */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-neutral-700">Link to product (optional — leave empty for a Reel)</Label>
+          <Label className="text-xs font-semibold text-slate-300">Link to product (optional — leave empty for a Reel)</Label>
           <select
             value={productId}
             onChange={(e) => setProductId(e.target.value ? Number(e.target.value) : '')}
@@ -234,7 +234,7 @@ export default function SellerVideosPage() {
           </select>
         </div>
 
-        <button onClick={create} disabled={uploading || !videoUrl} className="w-full bg-black text-white font-semibold rounded-md py-3 hover:bg-neutral-800 disabled:opacity-50">
+        <button onClick={create} disabled={uploading || !videoUrl} className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50">
           <Upload className="w-4 h-4 inline mr-1" />
           {uploading ? 'Posting...' : isReel ? 'Post Reel' : 'Post Product Video'}
         </button>
@@ -254,8 +254,8 @@ export default function SellerVideosPage() {
               onClick={() => setTab(t.key as any)}
               className={`flex-1 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
                 tab === t.key
-                  ? 'border-black text-black'
-                  : 'border-transparent text-neutral-500 hover:text-black'
+                  ? 'border-white/10 text-white'
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               {t.label}
@@ -274,8 +274,8 @@ export default function SellerVideosPage() {
             {filteredVideos.map((v) => {
               const isProductVideo = v.product_id !== null && v.product_id !== undefined;
               return (
-                <div key={v.id} className="border border-white/10 rounded-md overflow-hidden bg-white">
-                  <div className="aspect-[9/16] bg-black relative">
+                <div key={v.id} className="border border-white/10 rounded-md overflow-hidden bg-white/10">
+                  <div className="aspect-[9/16] bg-indigo-600 relative">
                     {v.video_url ? (
                       <video src={v.video_url} className="w-full h-full object-cover" muted />
                     ) : (
@@ -285,13 +285,13 @@ export default function SellerVideosPage() {
                     )}
                     {/* Type badge */}
                     <div className="absolute top-1 left-1">
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isProductVideo ? 'bg-blue-500 text-white' : 'bg-black text-white'}`}>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isProductVideo ? 'bg-blue-500 text-white' : 'bg-indigo-600 text-white'}`}>
                         {isProductVideo ? 'PRODUCT' : 'REEL'}
                       </span>
                     </div>
                     <button
                       onClick={() => remove(v.id)}
-                      className="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-[#ed4956]"
+                      className="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-red-500/80"
                       aria-label="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -299,11 +299,11 @@ export default function SellerVideosPage() {
                   </div>
                   <div className="p-2">
                     <div className="text-xs font-medium line-clamp-2">{v.caption}</div>
-                    <div className="flex items-center gap-3 mt-1 text-[10px] text-neutral-500">
+                    <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-400">
                       <span className="flex items-center gap-0.5"><Eye className="w-3 h-3" /> {v.views_count || 0}</span>
                       <span className="flex items-center gap-0.5"><Heart className="w-3 h-3" /> {v.likes_count || 0}</span>
                     </div>
-                    <div className="text-[10px] text-neutral-400 mt-0.5">{timeAgo(v.created_at)}</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">{timeAgo(v.created_at)}</div>
                   </div>
                 </div>
               );
