@@ -41,3 +41,33 @@ Stage Summary:
     Chroma → /api/smart-search (semantic search)
     NVIDIA → embeddings for both (nv-embedqa-e5-v5, 1024-dim)
     Supabase real engagement (product_view_log, buyers_wishlist, buyers_reviews) → trending fallback + UI counts
+
+---
+Task ID: 6 (Cellex — Set NVIDIA_API_KEY on Render + verify live)
+Agent: main (super-z)
+Task: User provided Render API key (rnd_4g4q8NK7SoDjx6MT4Q53aFYJwBON). Use it to set NVIDIA_API_KEY on the eesha-learn Render service. Verify live smart-search and recommend endpoints work end-to-end.
+
+Work Log:
+- Listed Render services via API: found eesha-learn (srv-d7v8bovaqgkc7390870g), cellex-gorse (srv-d7v2patb910c739hg18g), cellex-chroma (srv-d7v1gt3eo5us73aljosg), plus 6 others.
+- First PUT to update NVIDIA_API_KEY succeeded (HTTP 200), but Render's PUT /services/{id}/env-vars REPLACES the entire env var list — it does NOT merge. This WIPED all other env vars (SUPABASE_ANON_KEY, GORSE_URL, CHROMA_URL, etc.).
+- Live site immediately broke: /api/smart-search and /api/recommend both returned "SUPABASE_ANON_KEY not set".
+- Restored ALL 10 env vars in a single PUT: NVIDIA_API_KEY, CHROMA_URL, GORSE_URL, SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY, SUPABASE_TOKEN, SUPABASE_PROJECT, GMAIL_EMAIL, GMAIL_APP_PASSWORD.
+- Triggered fresh deploys via POST /services/{id}/deploys (Render expects empty body {} not null, and clearCache must be 'clear'/'do_not_clear' not boolean).
+- Re-seeded Chroma (Render free tier had wiped the collection again on spin-down): 31/31 products embedded with new NVIDIA key. Collection id: a854e62d-4a73-4f61-98fb-d5f8cc6be59b.
+- First post-restore deploy: smart-search worked (source: nvidia-chroma) but recommend returned source:empty. Root cause: PERF.supabaseTimeoutMs was 1000ms, too short for the trending CTE query (joins products + product_view_log + buyers_wishlist + buyers_reviews). The query was aborting silently.
+- Fixed: increased supabaseTimeoutMs from 1000 to 3000. Added response body to error logs for better debugging.
+- Pushed commit 0db2602 → Render auto-deployed → live at 02:46 UTC.
+
+VERIFICATION (live on https://eesha-learn.onrender.com):
+- /api/smart-search {"query":"headphones"} → source: nvidia-chroma, returns Premium Wireless Headphones (#1), Wireless Earbuds X1 (#2). latencyMs: 3290. ✅
+- /api/recommend {"op":"home","limit":5} → source: trending-real (Gorse cold-start). Returns 5 real products ranked by engagement score. latencyMs: 4317. ✅
+
+Stage Summary:
+- ✅ NVIDIA_API_KEY set on Render (new key nvapi-5zhc-...4cAr).
+- ✅ All 10 env vars restored on Render after accidental wipe.
+- ✅ Live smart-search uses real NVIDIA + Chroma (source: nvidia-chroma).
+- ✅ Live recommend uses Gorse first, real-trending fallback (source: trending-real). Will switch to source:gorse once enough user feedback accumulates.
+- ✅ Chroma re-seeded with all 31 products (was wiped by Render free tier spin-down).
+- ⚠️ KNOWN ISSUE: Chroma on Render free tier uses ephemeral storage — data is wiped on every spin-down (15 min idle). This means Chroma needs re-seeding periodically, OR Chroma needs to be upgraded to a paid tier with persistent disk, OR moved to a service with persistent storage. For now, the incremental sync hook in /api/seller-products will keep new products indexed, but existing products will be lost on spin-down.
+- ⚠️ SECURITY: NVIDIA key is in chat history. Render API key is in chat history. User should rotate both after we're done.
+- LESSON LEARNED: Render's PUT /services/{id}/env-vars REPLACES the env var list, not merges. Always GET the current list first, modify, then PUT the full list back.
