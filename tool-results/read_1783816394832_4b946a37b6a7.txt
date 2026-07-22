@@ -1,0 +1,1268 @@
+     1→
+     2→
+     3→    <!-- tangram:530023 begin-->
+     4→<!DOCTYPE html>
+     5→<html class="rwd" dir="ltr" lang="en">
+     6→<head>
+     7→    <meta name="p:domain_verify" content="a963ddcfade0c77aae3e33cd28f57243"/>
+     8→    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+     9→    <meta name="viewport" content="viewport-fit=cover"/>
+    10→        <link rel="preload" href="https://s.alicdn.com/@img/imgextra/i2/O1CN01zLaE6z1Yd9BRTEXNi_!!6000000003081-0-tps-1920-400.jpg" as="image" />
+    11→    <link rel="preload" href="https://s.alicdn.com/@img/imgextra/i3/O1CN01SfcI3T1oyhopsHIXl_!!6000000005294-2-tps-2880-540.png" as="image" />
+    12→    <link rel="preload" href="https://s.alicdn.com/@g/bc/common-font/0.0.1/font/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7W0Q5nw.woff2" as="font" type="font/woff2" crossorigin />
+    13→    <meta name="google-translate-customization" content="9de59014edaf3b99-22e1cf3b5ca21786-g00bb439a5e9e5f8f-f"/>
+    14→    <meta name="data-spm" content="a2700"/>
+    15→    <title>Alibaba.com: Manufacturers, Suppliers, Exporters & Importers from the world's largest online B2B marketplace</title>
+    16→    <meta name="keywords" content="Manufacturers, Suppliers, Exporters, Importers, Products, Trade Leads, Supplier, Manufacturer, Exporter, Importer"/>
+    17→    <meta name="description" content="Find quality Manufacturers, Suppliers, Exporters, Importers, Buyers, Wholesalers, Products and Trade Leads from our award-winning International Trade Site. Import &amp; Export on alibaba.com"/>
+    18→                                <meta http-equiv='x-dns-prefetch-control' content='on'>
+    19→            <link rel='dns-prefetch' href='//s.alicdn.com'>
+    20→                <link rel='dns-prefetch' href='//i.alicdn.com'>
+    21→                <link rel='dns-prefetch' href='//b.alicdn.com'>
+    22→                <link rel='dns-prefetch' href='//is.alicdn.com'>
+    23→                <link rel='dns-prefetch' href='//u.alicdn.com'>
+    24→                <link rel='dns-prefetch' href='//g.alicdn.com'>
+    25→                <link rel='dns-prefetch' href='//assets.alicdn.com'>
+    26→                <link rel='dns-prefetch' href='//img.alicdn.com'>
+    27→                <link rel='dns-prefetch' href='//cmap.alibaba.com'>
+    28→                <link rel='dns-prefetch' href='//activity.alibaba.com'>
+    29→                <link rel='dns-prefetch' href='//gj.mmstat.com'>
+    30→                <link rel='dns-prefetch' href='//go.mmstat.com'>
+    31→                <link rel='dns-prefetch' href='//dmtracking2.alibaba.com'>
+    32→                <link rel='dns-prefetch' href='//profile.alibaba.com'>
+    33→                <link rel='dns-prefetch' href='//notification.alibaba.com'>
+    34→                <link rel='dns-prefetch' href='//aimode.alibaba.com' />
+    35→                <link rel='dns-prefetch' href='//www.accio.com'/>
+    36→                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    37→                <link rel="preconnect" href="https://at.alicdn.com" crossorigin>
+    38→                 <meta name="referrer" content="no-referrer-when-downgrade" />
+    39→                        <meta property="og:title" content="Find quality Manufacturers, Suppliers, Exporters, Importers, Buyers, Wholesalers, Products and Trade Leads from our award-winning International Trade Site. Import &amp; Export on alibaba.com"/>
+    40→                <meta property="og:type" content="site" />
+    41→                <meta property="og:url" content="https://www.alibaba.com" />
+    42→                <meta property="og:site_name" content="Alibaba"/>
+    43→                <meta property="fb:admins" content="100002227819697,124207444332529" />
+    44→                <meta property="fb:page_id" content="22437985072" />
+    45→                <meta property="fb:app_id" content="124207444332529" />
+    46→                                <meta name="yandex-verification" content="7d39e39e19d480d6" />
+    47→                <meta name="p:domain_verify" content="8bef39b3d7f3eb0f7fcf3835a6916d18"/>
+    48→                <meta name="wmail-verification" content="41b0918357ad910d" />
+    49→                <meta name="google-site-verification" content="BxUUDuMEUF1h8EKRruLQLdNLZlcFwNFhiClKsPDCoiU" />
+    50→
+    51→
+    52→            <link rel="canonical"  href="https://www.alibaba.com">
+    53→        <link rel="alternate" media="only screen and (max-width: 640px)" href= "https://m.alibaba.com" />
+    54→        <link rel="alternate" hreflang="fr" href="https://french.alibaba.com">
+    55→        <link rel="alternate" hreflang="es" href="https://spanish.alibaba.com">
+    56→        <link rel="alternate" hreflang="de" href="https://german.alibaba.com">
+    57→        <link rel="alternate" hreflang="it" href="https://italian.alibaba.com">
+    58→        <link rel="alternate" hreflang="pt" href="https://portuguese.alibaba.com">
+    59→        <link rel="alternate" hreflang="ru" href="https://russian.alibaba.com">
+    60→        <link rel="alternate" hreflang="ar" href="https://arabic.alibaba.com">
+    61→        <link rel="alternate" hreflang="ko" href="https://korean.alibaba.com">
+    62→        <link rel="alternate" hreflang="en" href="https://www.alibaba.com">
+    63→        <link rel="alternate" hreflang="ja" href="https://japanese.alibaba.com">
+    64→        <link rel="alternate" hreflang="tr" href="https://turkish.alibaba.com">
+    65→        <link rel="alternate" hreflang="th" href="https://thai.alibaba.com">
+    66→        <link rel="alternate" hreflang="vi" href="https://vietnamese.alibaba.com">
+    67→        <link rel="alternate" hreflang="nl" href="https://dutch.alibaba.com">
+    68→        <link rel="alternate" hreflang="he" href="https://hebrew.alibaba.com">
+    69→        <link rel="alternate" hreflang="id" href="https://indonesian.alibaba.com">
+    70→        <link rel="alternate" hreflang="hi" href="https://hindi.alibaba.com">
+    71→
+    72→   
+    73→
+    74→    <link rel="shortcut icon" href="//s.alicdn.com/favicon.ico" type="image/x-icon"/>
+    75→    <link href="https://s.alicdn.com/@g/code/npm/@alife/sc-common-style/1.0.3/index.css" rel="stylesheet" />
+    76→    <link href="https://s.alicdn.com/@g/sc/pc-home-2022-base/0.0.2/css/index.css" rel="stylesheet" />
+    77→
+    78→    <link rel="stylesheet" type="text/css" href="//s.alicdn.com/@g/sc/pc-home-2022/0.0.368/css/headersearchmanufacture.css" />
+    79→    <style>
+    80→        .factory-card .card-title .info .logo{background:none;}
+    81→        #xiaomi-robot-new {display:none !important;}
+    82→    </style>
+    83→
+    84→    <!--<base href="$aisnServerWithoutSchema" />-->
+    85→                <!--[if lte IE 6]></base><![endif]-->
+    86→
+    87→                                    <script type="application/ld+json">
+    88→            [
+    89→                    {
+    90→                        "@context": "https://schema.org",
+    91→                        "@type": "WebSite",
+    92→                        "url": "https://www.alibaba.com/",
+    93→                        "potentialAction": [{
+    94→                            "@type": "SearchAction",
+    95→                            "target": {
+    96→                                "@type": "EntryPoint",
+    97→                                "urlTemplate": "https://www.alibaba.com/showroom/{search_term_string}.html?src=googlesearchbox"
+    98→                            },
+    99→                            "query-input":"required name=search_term_string"
+   100→                        }]
+   101→                    }
+   102→            ]
+   103→                </script>
+   104→                <script>
+   105→            (function(window, document) {
+   106→                var SEMRC = window.SEM_REMARKETING_CONFIG || {};
+   107→                SEMRC.runtime = 'async';
+   108→                window.SEM_REMARKETING_CONFIG = SEMRC;
+   109→                var SEMRD = window.SEM_REMARKETING_DATA || {};
+   110→                SEMRD.pageType = 'home';
+   111→                SEMRD.siteName = 'home';
+   112→                window.SEM_REMARKETING_DATA = SEMRD;
+   113→                window.addEventListener('load', function() {
+   114→                    setTimeout(function() {
+   115→                        var script = document.createElement('script');
+   116→                        script.type = 'text/javascript';
+   117→                        script.src = '//i.alicdn.com/sc-affiliate/sem-remarketing/??sem-remarketing.98174a0b.js';
+   118→                        var s = document.getElementsByTagName('script')[0];
+   119→                        s.parentNode.insertBefore(script, s);
+   120→                    }, 200);
+   121→                });
+   122→            })(window, document);
+   123→        </script>
+   124→
+   125→    <script>
+   126→    window.__BB = {
+   127→      // 关闭本地存储功能
+   128→      disableStore: true,
+   129→      // 自动上报
+   130→      autoReportAPI: true,
+   131→      // 主动上报性能
+   132→      autoReportPerf: true,
+   133→      // 打点模式 (0: 自动打点，1: 不打点，-1: 轮询模式)
+   134→      mode: -1,
+   135→      // 应用标识
+   136→      token: "b7e62930f0ca481fb50158c740b114c6",
+   137→      // 关联的场景 id
+   138→      scene: "pc-home-all",
+   139→      group: "pc-factory"
+   140→    }
+   141→  </script>
+   142→</head>
+   143→
+   144→<body data-spm="factory_home"><script>
+   145→window.server_aplus=true;with(document)with(body)with(insertBefore(createElement("script"),firstChild))setAttribute("exparams","userid=&aplus&ug_tag=&eagleeye_traceid=210397d417838163077268044e0d45&ip=102%2e91%2e92%2e22&dmtrack_c={}&pageid=665b5c160b5fb7a11783816307&hn=haumea011095183161%2erg%2dde%2d3%2ede46&asid=AQAAAABz4FJqYjkIfgAAAACXdIISY7V/PQ==&at_bu=icbu",id="beacon-aplus",src="//s.alicdn.com/@g/alilog/??aplus_plugin_icbufront/index.js,mlog/aplus_v2.js")
+   146→</script>
+   147→
+   148→
+   149→<div class="home-container-new"  id="header_root"><!-- Silkworm Render: 0b5fb7a117838163077433509d0b58 --><style>
+   150→.header-and-searchbar {
+   151→  background-color: transparent;
+   152→  background-position: top;
+   153→  background-repeat: no-repeat;
+   154→  background-size: 1920px 400px;
+   155→  height: 408px;
+   156→  position: relative;
+   157→  -webkit-transition: background-image .3s ease;
+   158→  transition: background-image .3s ease
+   159→}
+   160→.header-and-searchbar.manufacturers {
+   161→  background-color: transparent;
+   162→}
+   163→.header-and-searchbar.global {
+   164→  background-color: transparent;
+   165→}
+   166→.header-and-searchbar .bg-img {
+   167→    height: 100%;
+   168→    left: 50%;
+   169→    max-width: 100%;
+   170→    -o-object-fit: cover;
+   171→    object-fit: cover;
+   172→    position: absolute;
+   173→    top: 0;
+   174→    width: 100%;
+   175→    transform: translateX(-50%);
+   176→}
+   177→.header-and-searchbar .header-wrapper {
+   178→  display: block;
+   179→  height: 120px;
+   180→  width: 100%
+   181→}
+   182→.header-and-searchbar .content-container {
+   183→  -webkit-box-pack: center;
+   184→  -ms-flex-pack: center;
+   185→  -webkit-box-align: start;
+   186→  -ms-flex-align: start;
+   187→  -webkit-align-items: flex-start;
+   188→  align-items: flex-start;
+   189→  display: -webkit-box;
+   190→  display: -webkit-flex;
+   191→  display: -ms-flexbox;
+   192→  display: flex;
+   193→  -webkit-justify-content: center;
+   194→  justify-content: center;
+   195→  position: relative;
+   196→  width: 100%
+   197→}
+   198→.header-and-searchbar .content-container .main-content {
+   199→  max-width: 960px;
+   200→  min-width: 844px;
+   201→  width: 100%
+   202→}
+   203→.home-container-new>div.header-and-searchbar {
+   204→  min-width: 1280px;
+   205→  padding: 0
+   206→}
+   207→
+   208→.ife-header-search-bar {
+   209→  position: relative;
+   210→  display: flex;
+   211→  flex-direction: column;
+   212→  justify-content: center;
+   213→
+   214→  * {
+   215→    box-sizing: border-box;
+   216→  }
+   217→
+   218→  a,
+   219→  a:hover,
+   220→  a:active,
+   221→  a:visited,
+   222→  a:focus {
+   223→    text-decoration: none;
+   224→  }
+   225→}
+   226→
+   227→
+   228→@media screen and (max-width: 1280px) {
+   229→  .header-and-searchbar .content-container .main-content {
+   230→      max-width:960px
+   231→  }
+   232→}    </style><div role="search" class="header-and-searchbar manufacturers" style="height:408px"><div class="background-animation"><div class="dynamic-shape shape-1"></div><div class="dynamic-shape shape-2"></div><div class="dynamic-shape shape-3"></div><div class="dynamic-shape shape-4"></div><div class="dynamic-shape shape-5"></div></div><div data-spm="home_header" class="home-dot-element header-wrapper"><div id="icbu-the-new-header-container" class="the-new-header-wrapper"><div id="the-new-header" data-ssr-version="4.84.0" data-tnh-auto-exp="tnh-expose" data-scenes="pc-home" style="z-index:900;position:relative;width:100%;font-size:14px;font-family:Inter,SF Pro Text,Roboto, Helvetica Neue, Helvetica, Tahoma, Arial, PingFang SC,Microsoft YaHei;line-height:18px;background-color:transparent;color:#222;border-bottom:0px;box-sizing:border-box"><div style="min-width:1200px;max-width:1580px;margin:0 auto;padding:0 40px;font-size:14px"><div style="display:flex;align-items:center;justify-content:space-between;height:72px"><div style="display:flex"><div style="z-index:9999;display:flex;flex-shrink:0;width:185px;height:22px;background:url(&#x27;https://s.alicdn.com/@img/imgextra/i1/O1CN01e5zQ2S1cAWz26ivMo_!!6000000003560-2-tps-920-110.png&#x27;) no-repeat 0 0;background-size:auto 22px;cursor:pointer"></div></div></div></div><div style="min-width:1200px;max-width:1580px;height:36px;margin:0 auto;overflow:hidden;font-size:14px"><div style="display:flex;justify-content:space-between;width:100%;height:40px;padding:0 40px;box-sizing:border-box"><div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;margin-top:-2px;padding-right:28px;cursor:pointer;padding-left:20px"><div style="position:relative;height:36px">All categories</div></div><div style="display:flex;align-items:center;margin-top:-2px;padding-right:28px;cursor:pointer;padding-left:0"><div style="position:relative;height:36px">Featured selections</div></div><div style="display:flex;align-items:center;margin-top:-2px;padding-right:0;cursor:pointer;padding-left:0"><div style="position:relative;height:36px">Order protections</div></div></div><div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;margin-top:-2px;padding-right:28px;cursor:pointer;padding-left:0"><div style="position:relative;height:36px">Buyer Central</div></div><div style="display:flex;align-items:center;margin-top:-2px;padding-right:28px;cursor:pointer;padding-left:0"><div style="position:relative;height:36px">Help Center</div></div><div style="display:flex;align-items:center;margin-top:-2px;padding-right:28px;cursor:pointer;padding-left:0"><div style="position:relative;height:36px">App &amp; extension</div></div><div style="display:flex;align-items:center;margin-top:-2px;padding-right:0;cursor:pointer;padding-left:0"><div style="position:relative;height:36px">Become a supplier</div></div></div></div></div></div></div></div><div class="content-container"><div class="main-content"><style>.new-header-search-tab {
+   233→    -webkit-box-align: center;
+   234→    -ms-flex-align: center;
+   235→    -webkit-box-pack: center;
+   236→    -ms-flex-pack: center;
+   237→    -webkit-align-items: center;
+   238→    align-items: center;
+   239→    display: -webkit-box;
+   240→    display: -webkit-flex;
+   241→    display: -ms-flexbox;
+   242→    display: flex;
+   243→    -webkit-justify-content: center;
+   244→    justify-content: center;
+   245→    margin-bottom: 23px
+   246→}
+   247→.new-header-search-tab .ai-mode-entry {
+   248→    -webkit-align-items: center;
+   249→    -ms-flex-align: center;
+   250→    align-items: center;
+   251→    cursor: pointer;
+   252→    display: -webkit-inline-box;
+   253→    display: -webkit-inline-flex;
+   254→    display: -ms-inline-flexbox;
+   255→    display: inline-flex;
+   256→    height: 38px;
+   257→    position: relative;
+   258→    text-decoration: none
+   259→}
+   260→.new-header-search-tab .ai-mode-entry .ai-mode-text {
+   261→    color: #fff;
+   262→    font-size: 28px;
+   263→    font-weight: 700;
+   264→    line-height: 38px;
+   265→    white-space: nowrap
+   266→}
+   267→.new-header-search-tab .ai-mode-entry.ai-background .ai-mode-text {
+   268→    color: #222
+   269→}
+   270→.new-header-search-tab .ai-mode-entry:hover .ai-mode-text {
+   271→    color: rgba(34, 34, 34, 0.8);
+   272→}
+   273→.new-header-search-tab .tab-divider {
+   274→    background-color: #767676;
+   275→    display: inline-block;
+   276→    height: 20px;
+   277→    margin: 0 36px;
+   278→    vertical-align: middle;
+   279→    width: 1px
+   280→}
+   281→[dir="rtl"] .new-header-search-tab .ai-mode-entry {
+   282→    margin-right: 0
+   283→}
+   284→[dir="rtl"] .new-header-search-tab .tab-divider {
+   285→    margin: 0 32px
+   286→}
+   287→.new-header-search-tab a.search-tab-item {
+   288→    color: #222;
+   289→}
+   290→.new-header-search-tab .search-tab-item {
+   291→    color: #222;
+   292→    cursor: pointer;
+   293→    display: inline-block;
+   294→    font-size: 28px;
+   295→    font-weight: 700;
+   296→    line-height: 34px;
+   297→    margin-inline-end: 40px;
+   298→    position: relative
+   299→}
+   300→.new-header-search-tab .search-tab-item .tab-text {
+   301→    position: relative;
+   302→    white-space: nowrap
+   303→}
+   304→.new-header-search-tab .search-tab-item.with-icon {
+   305→    display: -webkit-inline-flex;
+   306→    display: -ms-inline-flexbox;
+   307→    display: inline-flex;
+   308→    -webkit-align-items: flex-start;
+   309→    -ms-flex-align: start;
+   310→    align-items: flex-start;
+   311→    gap: 5px
+   312→}
+   313→.new-header-search-tab .search-tab-item .factory-tab-icon {
+   314→    height: 19px;
+   315→    padding-top: 2px;
+   316→    box-sizing: content-box
+   317→}
+   318→.new-header-search-tab .search-tab-item:last-child {
+   319→    margin-right: 0
+   320→}
+   321→.new-header-search-tab .search-tab-item.active {
+   322→    color: #fff;
+   323→    font-weight: 700
+   324→}
+   325→.new-header-search-tab .search-tab-item.active.ai-background {
+   326→    color: #222
+   327→}
+   328→.new-header-search-tab .search-tab-item.active .tab-text:after {
+   329→    background-color: #fff;
+   330→    border-radius: 3px;
+   331→    bottom: -4px;
+   332→    content: "";
+   333→    height: 4px;
+   334→    left: 50%;
+   335→    -webkit-transform: translateX(-50%);
+   336→    -ms-transform: translateX(-50%);
+   337→    transform: translateX(-50%);
+   338→    position: absolute;
+   339→    width: 60px
+   340→}
+   341→.new-header-search-tab .search-tab-item.active.ai-background .tab-text:after {
+   342→    background-color: #222
+   343→}
+   344→.new-header-search-tab.with-ai-mode .search-tab-item.active.ai-background {
+   345→    color: #fa6400
+   346→}
+   347→.new-header-search-tab.with-ai-mode .search-tab-item.active.ai-background .tab-text:after {
+   348→    background-color: #fa6400
+   349→}
+   350→.new-header-search-tab .search-tab-item:active {
+   351→    text-decoration: none
+   352→}
+   353→.new-header-search-tab .ai-mode-hover-tooltip {
+   354→    position: absolute;
+   355→    top: 100%;
+   356→    inset-inline-start: 0;
+   357→    margin-top: 12px;
+   358→    z-index: 100;
+   359→    visibility: hidden;
+   360→    opacity: 0
+   361→}
+   362→.new-header-search-tab .ai-mode-entry-wrapper:hover .ai-mode-hover-tooltip {
+   363→    visibility: visible;
+   364→    opacity: 1
+   365→}</style><nav class="new-header-search-tab ai-background with-ai-mode" aria-label="Search tabs"><div class="ai-mode-entry-wrapper"><a target="_self" class="home-dot-element ai-mode-entry ai-background" data-spm="ai" href="https://aimode.alibaba.com/"><span class="ai-mode-text">AI Mode</span><svg class="icbu-common-icon icbu-common-icon-ai-smart-assistant-text-fill   ai-mode-icon" viewBox="0 0 42 42" style="--icon-size:17px" data-testid="icon-ai-smart-assistant-text-fill"><g><path d="M40.4597 2.625C40.8946 2.625 41.2472 2.97758 41.2472 3.4125V12.6557C41.2472 13.0906 40.8946 13.4432 40.4597 13.4432H40.075C39.6401 13.4432 39.2875 13.0906 39.2875 12.6557V3.4125C39.2875 2.97757 39.6401 2.625 40.075 2.625H40.4597ZM33.9844 3.27148L35.2936 6.44984L35.4759 6.89241L35.4759 6.89248C36.3719 9.06762 37.2538 11.2084 38.0417 13.4433H37.1019C36.4345 13.4433 35.8396 13.0226 35.6171 12.3934L35.0171 10.6969H31.022L30.4234 12.3925C30.2011 13.0222 29.606 13.4433 28.9382 13.4433H28C28.8367 11.0667 29.7731 8.79245 30.7289 6.47434L32.0486 3.27148C32.2171 2.8635 32.5789 2.64803 32.9512 2.62509H33.0844C33.4567 2.64803 33.8176 2.8635 33.9844 3.27148ZM31.5316 9.25313H34.5065L33.0177 5.04324L31.5316 9.25313ZM4.10029 20.0849L4.11372 20.0792L4.11605 20.0782V20.0849L4.1184 20.0839L4.13225 20.0782L6.40199 19.1467L7.10567 18.8578C12.0174 16.8393 15.9216 12.9453 17.9468 8.03374L19.2005 4.99103C19.5397 4.16966 20.7036 4.16966 21.0395 4.99103L22.2833 8.01047C24.3052 12.922 28.2026 16.8194 33.1144 18.8412L36.1339 20.0849C36.9553 20.4241 36.9553 21.588 36.1339 21.9238L33.0911 23.1775C28.1827 25.2027 24.2852 29.1066 22.2666 34.0182L21.0395 37.0077C20.7003 37.8291 19.5364 37.8324 19.1972 37.0077L17.9501 33.9816C15.9282 29.0701 12.0274 25.1727 7.11565 23.1542L4.88928 22.2385L4.11605 21.9205C3.29994 21.5835 3.29468 20.4324 4.10029 20.0849Z"></path></g></svg></a><div class="ai-mode-hover-tooltip"><div class="ai-mode-hover-tooltip-arrow"></div><div class="ai-mode-hover-tooltip-content"><div class="ai-mode-hover-tooltip-title">Meet Your AI Sourcing Agent</div><div class="ai-mode-hover-tooltip-desc">Your all-in-one sourcing agent. Research smarter, design faster, source better, and communicate easier.</div></div></div></div><span class="tab-divider ai-background"></span><a target="_self" class="home-dot-element search-tab-item ai-background" data-spm="products" href="https://www.alibaba.com"><span class="tab-text">Products</span></a><div target="_self" data-spm="manufacturers" class="home-dot-element search-tab-item active ai-background"><span class="tab-text">Manufacturers</span></div><a target="_self" class="home-dot-element search-tab-item ai-background" data-spm="global" href="https://www.alibaba.com/global/index.html"><span class="tab-text">Worldwide</span></a></nav><div data-spm="searchbar" class="home-dot-element "><style>
+   366→        @font-face {
+   367→            font-family: searchbar-iconfont;
+   368→            src: url(//s.alicdn.com/@at/t/a/font_4151258_bhzkz3dr76.woff2?t=1689217331813) format("woff2"),url(//s.alicdn.com/@at/t/a/font_4151258_bhzkz3dr76.woff?t=1689217331813) format("woff"),url(//s.alicdn.com/@at/t/a/font_4151258_bhzkz3dr76.ttf?t=1689217331813) format("truetype")
+   369→        }
+   370→        .ife-header-search-bar .iconfont {
+   371→            -webkit-font-smoothing: antialiased;
+   372→            -webkit-text-stroke-width: .2px;
+   373→            -moz-osx-font-smoothing: grayscale;
+   374→            font-family: searchbar-iconfont!important;
+   375→            font-size: 16px;
+   376→            font-style: normal
+   377→        }
+   378→             </style><div class="search-bar-container" style="display:flex;gap:10px;height:114px;margin:0 auto 30px auto"><div class="search-bar-main" style="flex:1;background-color:#fff;border-radius:20px;height:100%;align-items:center;padding:0 8px 0 24px"><div style="margin-top:16px;font-size:16px;color:#767676;line-height:22px;background-color:transparent">What are you looking for?</div></div></div></div><div class="factory-mind-container"><div data-spm="factory-mind" class="home-dot-element "><div class="container flex-align-items-center"><div class="title  flex-align-items-center">Connect with 34K+ <img src='https://s.alicdn.com/@img/imgextra/i1/O1CN01EuTBeU1Sqzg5ijup0_!!6000000002299-2-tps-198-64.png'></img> manufacturers</div><div class="features flex-align-items-center"><div class="feature-item flex-align-items-center"><svg class="icbu-common-icon icbu-common-icon-success-check-correct" viewBox="0 0 42 42" style="--icon-size:18px" data-testid="icon-success-check-correct"><g><path d="M30.6007 16.6007L28.8993 14.8993L19.2501 24.5485L14.8507 20.1493L13.1493 21.8507L19.2501 27.9515L30.6007 16.6007Z"></path><path d="M37.625 21C37.625 30.1817 30.1817 37.625 21 37.625C11.8183 37.625 4.375 30.1817 4.375 21C4.375 11.8183 11.8183 4.375 21 4.375C30.1817 4.375 37.625 11.8183 37.625 21ZM35.2188 21C35.2188 13.1472 28.8528 6.78125 21 6.78125C13.1472 6.78125 6.78125 13.1472 6.78125 21C6.78125 28.8528 13.1472 35.2188 21 35.2188C28.8528 35.2188 35.2188 28.8528 35.2188 21Z"></path></g></svg><span class="home-fz-medium">5K+ industries covered</span></div><div class="feature-item flex-align-items-center"><svg class="icbu-common-icon icbu-common-icon-success-check-correct" viewBox="0 0 42 42" style="--icon-size:18px" data-testid="icon-success-check-correct"><g><path d="M30.6007 16.6007L28.8993 14.8993L19.2501 24.5485L14.8507 20.1493L13.1493 21.8507L19.2501 27.9515L30.6007 16.6007Z"></path><path d="M37.625 21C37.625 30.1817 30.1817 37.625 21 37.625C11.8183 37.625 4.375 30.1817 4.375 21C4.375 11.8183 11.8183 4.375 21 4.375C30.1817 4.375 37.625 11.8183 37.625 21ZM35.2188 21C35.2188 13.1472 28.8528 6.78125 21 6.78125C13.1472 6.78125 6.78125 13.1472 6.78125 21C6.78125 28.8528 13.1472 35.2188 21 35.2188C28.8528 35.2188 35.2188 28.8528 35.2188 21Z"></path></g></svg><span class="home-fz-medium">Factory-direct pricing</span></div><div class="feature-item flex-align-items-center"><svg class="icbu-common-icon icbu-common-icon-success-check-correct" viewBox="0 0 42 42" style="--icon-size:18px" data-testid="icon-success-check-correct"><g><path d="M30.6007 16.6007L28.8993 14.8993L19.2501 24.5485L14.8507 20.1493L13.1493 21.8507L19.2501 27.9515L30.6007 16.6007Z"></path><path d="M37.625 21C37.625 30.1817 30.1817 37.625 21 37.625C11.8183 37.625 4.375 30.1817 4.375 21C4.375 11.8183 11.8183 4.375 21 4.375C30.1817 4.375 37.625 11.8183 37.625 21ZM35.2188 21C35.2188 13.1472 28.8528 6.78125 21 6.78125C13.1472 6.78125 6.78125 13.1472 6.78125 21C6.78125 28.8528 13.1472 35.2188 21 35.2188C28.8528 35.2188 35.2188 28.8528 35.2188 21Z"></path></g></svg><span class="home-fz-medium">Sample &amp; customization available</span></div></div></div></div></div></div></div></div></div>
+   379→<script type="text/javascript">
+   380→window.__PageHeaderInitData =  {"fy25tabData":{"businessResearchBucket":"newpro","searchExpInfos":{"searchFactoryExpValue":"test","searchTestData":{"icbu.search.pc":{"fy26_business_research_pc_prosearch":"test","fy26_business_research_suppliers":"test","fy25_business_research":"newpro","isSatisfiedCookie":true,"fy26_pc_home_ai_color":"test","fy26_multi_search_pc":"test","fy26_multi_search_pc_2tab":"test1"}},"factoryRenameExpValue":"MISS_BUCKET","aiModeExpValue":"test","klfCardStyleExpValue":"exp","showFactoryMindExpValue":"base","pageCode":"icbu.search.pc"},"language":"en","showBITabString":"true","fy25_pc_homepage":"exp2"},"localData":{"bucket":"exp","topResourcePic":"","lang":"en_US"},"i18nTextData":{"mcms_rvc7si__":"Hot selling","mcms_thagw3__":"Updates from your suppliers","mcms_wglly72jp0z__":"Worldwide","verifiedFeatures":["5K+ industries covered","Factory-direct pricing","Sample & customization available"],"mcms_0yd1c2__":"Explore","mcms_6pamnimgckj__":"From design to sourcing, let Accio Work handle the heavy lifting. Boost your ROl today!","mcms_ob6pre__":"Manufacturers","mcms_bd1misibzf1__":"Connect with 34K+ {verified-icon} manufacturers","aimode_tooltip_des":"Your all-in-one sourcing agent. Research smarter, design faster, source better, and communicate easier.","mcms_7lvmnh5jlou__":"Free trial","accio_work_text":"Accio Work","insights_font_page":"Insights","mcms_m4n7kd__":"Popularity score:","mcms_xbsint__":"Best-reviewed score:","verifiedTitle":"Connect with 34K+ {verified-icon} manufacturers","mcms_wcqmifh6odx__":"Explore quality products from China's key industry hubs","plfb_hp_popup_content2":"Start with an average of around US$10,000","plfb_hp_popup_content3":"Apply in minutes and receive your credit line instantly after approval","cihai_Popup_exclusive_benefits":"Plus {num} more benefits","mcms_wrcxve__":"Top ranking","plfb_hp_popup_content1":"Free up funds for other business needs","mcms_67vmhaa1hse__":"AI Mode","mcms_isjdnh__":"Hot-selling score:","aimode_tooltip_tt":"Meet Your AI Sourcing Agent","plfb_hp_popup_cta":"Get instant approval","mcms_iidpbw__":"Welcome to Alibaba.com","mcms_9muk7t__":"Search","mcms_7k4a40__":"What are you looking for?","mcms_seabed980__":"View more","mcms_ckj0gb__":"Min. order: {moq}","cihai_Popup_benefits_exclusive":"Exclusive to you","mcms_7rcbgl__":"Products","plfb_hp_popup_subtitle3":"Fast and easy application","mcms_hscohh__":"Most popular","RFQ_description":"Post customized sourcing requirements to get quotes from multiple matching suppliers","plfb_hp_popup_subtitle2":"Up to US$1 million credit line","plfb_hp_popup_subtitle1":"Pay in 60/90 days after placing your order","cihai_Popup_enjoy_tools":"Enjoy tools and support to source smarter and save more","mcms_dmio21__":"Best reviewed","plfb_hp_popup_title1":"Get flexible payments with Pay Later for Business","mcms_9xhmisiaeyn__":"Discover manufacturers","insights_tips":"Validate business ideas with trends and market analysis from data-driven sources","mcms_posm5lv4te8__":"Accio provides tailored solutions for your sourcing needs","mcms_8b3hcd__":"Your browsing history","mcms_58pm4mhowfj__":"Leverage real-time data to pinpoint winning product ideas","mcms_y7shzq__":"Welcome to Alibaba.com, {user}","mcms_hk8tkk__":"Frequently searched:","cihai_Popup_explore_benefits":"Explore all benefits","mcms_0ozm7mst32m__":"Image Search"},"searchBucketData":{"searchFactoryExpValue":"test","searchTestData":{"icbu.search.pc":{"fy26_business_research_pc_prosearch":"test","fy26_business_research_suppliers":"test","fy25_business_research":"newpro","isSatisfiedCookie":true,"fy26_pc_home_ai_color":"test","fy26_multi_search_pc":"test","fy26_multi_search_pc_2tab":"test1"},"icbu.search.pc.homemanufacture":{"fy26_ai_suppliers_file_search":"test","isSatisfiedCookie":true}},"factoryRenameExpValue":"MISS_BUCKET","aiModeExpValue":"test","klfCardStyleExpValue":"exp","showFactoryMindExpValue":"exp","pageCode":"icbu.search.pc,icbu.search.pc.homemanufacture"},"topBannerData":{"resultCode":"50000"},"dataphantData":{"bucketId":"test","testKey":"default_7244008"}};
+   381→</script>
+   382→<script src="https://s.alicdn.com/@p/polyfill.min.js?features=default,es2017,es6,fetch" defer></script>
+   383→<script type="text/javascript" src="https://s.alicdn.com/@g/code/lib/??react/18.2.0/umd/react.production.min.js,react-dom/18.2.0/umd/react-dom.production.min.js" defer></script>
+   384→<script type="text/javascript" src="//s.alicdn.com/@g/sc/pc-home-2022/0.0.368/js/headersearchmanufacture.js" defer></script>
+   385→
+   386→<!-- tangram:530023 end-->
+   387→    <!-- tangram:7002 begin-->
+   388→<link rel="stylesheet" type="text/css" href="//s.alicdn.com/@g/sc/pc-home-2022/0.0.368/css/newmanufacturecontent.css" />
+   389→    <!-- tangram:6768 begin-->
+   390→<script>window.__search_query_clk_test=true;</script>
+   391→
+   392→<!-- tangram:6768 end-->
+   393→    <!-- tangram:1752 begin-->
+   394→<!-- hi~ -->
+   395→
+   396→
+   397→                    
+   398→
+   399→
+   400→<script>
+   401→window.SCHD_COMS = window.SCHD_COMS || {};
+   402→window.SCHD_COMS.__favoriteMI18nData = {
+   403→        "favText":"Add to Favorites",
+   404→        "favSupplierText":"Favorite supplier",
+   405→        "considering-tips":"{lt}Like this product?{/lt}Add it to your favorites to view later",
+   406→        "nicely-done-tips":"{lt}Nicely done!{/lt}Visit {link}My Favorites{/link} to manage your favorites.",
+   407→        "app-download-tips":"{lt}Nicely done!{/lt}Download the Alibaba.com app to get your favorite supplier’s updates on the go.",
+   408→        "titleOnAppStore":"Available on the App Store",
+   409→        "titleOnAndroid":"Available on Android",
+   410→        "maxFavCountTips":"Only 20 items can be added to Favorites. {signLabel} to add more.",
+   411→        "signIn":"Sign in"
+   412→};
+   413→(function(){
+   414→    var dataStr = JSON.stringify(window.SCHD_COMS.__favoriteMI18nData);
+   415→    var decHtml = function( str ){
+   416→      var dom = document.createElement('div');
+   417→      for(var i=0;i<3;i++){
+   418→        str = str.replace(/\&quot\;/gi,'\\\"');
+   419→        dom.innerHTML= str;
+   420→        str = dom.innerText;
+   421→      }
+   422→      return str;
+   423→    };
+   424→    dataStr = decHtml(dataStr);
+   425→    window.SCHD_COMS.__favoriteMI18nData = JSON.parse(dataStr);
+   426→})();
+   427→</script>
+   428→
+   429→
+   430→
+   431→
+   432→
+   433→<script>
+   434→    window.SCHD_COMS = window.SCHD_COMS || {};
+   435→    window.SCHD_COMS.modsConfig = window.SCHD_COMS.modsConfig || {};
+   436→    window.SCHD_COMS.assetsModsConfig = 'true' || 'false';
+   437→    window.assetsModList = ["assets-xman", "assets-xpopup", "assets-xembed"];
+   438→    window.assetsModNames = ["xman", "xpopup", "xembed"];
+   439→    
+   440→        if (window.assetsModList.indexOf('favorite') > -1) {
+   441→            window.SCHD_COMS.modsConfig['favorite'] = {
+   442→                modLink:'sc-global-components/20190708201628/entrances/favorite/favorite.css',
+   443→                        modSrc:'sc-global-components/20190708201628/entrances/favorite/favorite.js',
+   444→                        modStandaloneSrc:'sc-global-components/20190708201628/entrances/favorite/standalone/favorite.js'
+   445→            }
+   446→        }
+   447→    
+   448→        if (window.assetsModList.indexOf('biForm') > -1) {
+   449→            window.SCHD_COMS.modsConfig['biForm'] = {
+   450→                modLink:'sc-global-components/20170606153730/entrances/bi-form/bi-form.css',
+   451→                        modSrc:'sc-global-components/20170606153730/entrances/bi-form/bi-form.js',
+   452→                        modStandaloneSrc:'sc-global-components/20170606153730/entrances/bi-form/standalone/bi-form.js'
+   453→            }
+   454→        }
+   455→    
+   456→        if (window.assetsModList.indexOf('tradeAlert') > -1) {
+   457→            window.SCHD_COMS.modsConfig['tradeAlert'] = {
+   458→                modLink:'sc-global-components/20190221151643/entrances/trade-alert/trade-alert.css',
+   459→                        modSrc:'sc-global-components/20190221151643/entrances/trade-alert/trade-alert.js',
+   460→                        modStandaloneSrc:'sc-global-components/20190221151643/entrances/trade-alert/standalone/trade-alert.js'
+   461→            }
+   462→        }
+   463→    
+   464→        if (window.assetsModList.indexOf('tradeAlertTips') > -1) {
+   465→            window.SCHD_COMS.modsConfig['tradeAlertTips'] = {
+   466→                modLink:'sc-global-components/20190221151643/entrances/trade-alert/trade-alert-tips.css',
+   467→                        modSrc:'sc-global-components/20190221151643/entrances/trade-alert/trade-alert-tips.js',
+   468→                        modStandaloneSrc:'sc-global-components/20190221151643/entrances/trade-alert/standalone/trade-alert-tips.js'
+   469→            }
+   470→        }
+   471→    
+   472→        if (window.assetsModList.indexOf('BI') > -1) {
+   473→            window.SCHD_COMS.modsConfig['BI'] = {
+   474→                modLink:'sc-global-components/20171227202217/entrances/business-identity/business-identity.css',
+   475→                        modSrc:'sc-global-components/20171227202217/entrances/business-identity/business-identity.js',
+   476→                        modStandaloneSrc:'sc-global-components/20171227202217/entrances/business-identity/standalone/business-identity.js'
+   477→            }
+   478→        }
+   479→    
+   480→        if (window.assetsModList.indexOf('taAgreementUpgrade') > -1) {
+   481→            window.SCHD_COMS.modsConfig['taAgreementUpgrade'] = {
+   482→                modLink:'sc-global-components/20170608182119/entrances/ta-agreement-upgrade/ta-agreement-upgrade.css',
+   483→                        modSrc:'sc-global-components/20170608182119/entrances/ta-agreement-upgrade/ta-agreement-upgrade.js',
+   484→                        modStandaloneSrc:'sc-global-components/20170608182119/entrances/ta-agreement-upgrade/standalone/ta-agreement-upgrade.js'
+   485→            }
+   486→        }
+   487→    
+   488→        if (window.assetsModList.indexOf('xman') > -1) {
+   489→            window.SCHD_COMS.modsConfig['xman'] = {
+   490→                modLink:'1.0.11/sc-global-components/entrances/xman/xman.css',
+   491→                        modSrc:'1.0.11/sc-global-components/entrances/xman/xman.js',
+   492→                        modStandaloneSrc:'1.0.11/sc-global-components/entrances/xman/standalone/xman.js'
+   493→            }
+   494→        }
+   495→    
+   496→        if (window.assetsModList.indexOf('xpopup') > -1) {
+   497→            window.SCHD_COMS.modsConfig['xpopup'] = {
+   498→                modLink:'sc-global-components/20200928154656/entrances/xman/xpopup.css',
+   499→                        modSrc:'sc-global-components/20200928154656/entrances/xman/xpopup.js',
+   500→                        modStandaloneSrc:'sc-global-components/20200928154656/entrances/xman/standalone/xpopup.js'
+   501→            }
+   502→        }
+   503→    
+   504→        if (window.assetsModList.indexOf('xembed') > -1) {
+   505→            window.SCHD_COMS.modsConfig['xembed'] = {
+   506→                modLink:'sc-global-components/20200928154656/entrances/xman/xembed.css',
+   507→                        modSrc:'sc-global-components/20200928154656/entrances/xman/xembed.js',
+   508→                        modStandaloneSrc:'20200928154656/sc-global-components/entrances/xman/standalone/xembed.js'
+   509→            }
+   510→        }
+   511→    
+   512→        if (window.assetsModList.indexOf('thirdPartLogin') > -1) {
+   513→            window.SCHD_COMS.modsConfig['thirdPartLogin'] = {
+   514→                modLink:'sc-global-components/20170926164045/entrances/third-part-login/third-part-login.css',
+   515→                        modSrc:'sc-global-components/20170926164045/entrances/third-part-login/third-part-login.js',
+   516→                        modStandaloneSrc:'sc-global-components/20170926164045/entrances/third-part-login/standalone/third-part-login.js'
+   517→            }
+   518→        }
+   519→    
+   520→        if (window.assetsModList.indexOf('bigBrother') > -1) {
+   521→            window.SCHD_COMS.modsConfig['bigBrother'] = {
+   522→                modLink:'',
+   523→                        modSrc:'sc-global-components/20181119143409/entrances/big-brother/big-brother.js',
+   524→                        modStandaloneSrc:'sc-global-components/20181119143409/entrances/big-brother/standalone/big-brother.js'
+   525→            }
+   526→        }
+   527→    
+   528→        if (window.assetsModList.indexOf('preferenceEntry') > -1) {
+   529→            window.SCHD_COMS.modsConfig['preferenceEntry'] = {
+   530→                modLink:'sc-global-components/20170712165450/entrances/preference-entry/preference-entry.css',
+   531→                        modSrc:'sc-global-components/20170712165450/entrances/preference-entry/preference-entry.js',
+   532→                        modStandaloneSrc:'sc-global-components/20170712165450/entrances/preference-entry/standalone/preference-entry.js'
+   533→            }
+   534→        }
+   535→    
+   536→        if (window.assetsModList.indexOf('buyerSatisfaction') > -1) {
+   537→            window.SCHD_COMS.modsConfig['buyerSatisfaction'] = {
+   538→                modLink:'sc-global-components/20180516144631/entrances/buyer-satisfaction-survey/buyer-satisfaction-survey.css',
+   539→                        modSrc:'sc-global-components/20180516144631/entrances/buyer-satisfaction-survey/buyer-satisfaction-survey.js',
+   540→                        modStandaloneSrc:'sc-global-components/20180516144631/entrances/buyer-satisfaction-survey/standalone/buyer-satisfaction-survey.js'
+   541→            }
+   542→        }
+   543→    
+   544→        if (window.assetsModList.indexOf('appDownloadBanner') > -1) {
+   545→            window.SCHD_COMS.modsConfig['appDownloadBanner'] = {
+   546→                modLink:'sc-global-components/20170904100442/entrances/app-download-banner/app-download-banner.css',
+   547→                        modSrc:'sc-global-components/20170904100442/entrances/app-download-banner/app-download-banner.js',
+   548→                        modStandaloneSrc:'sc-global-components/20170904100442/entrances/app-download-banner/standalone/app-download-banner.js'
+   549→            }
+   550→        }
+   551→    
+   552→        if (window.assetsModList.indexOf('saleCouponEntry') > -1) {
+   553→            window.SCHD_COMS.modsConfig['saleCouponEntry'] = {
+   554→                modLink:'sc-global-components/20170920091621/entrances/sale-coupon-entry/sale-coupon-entry.css',
+   555→                        modSrc:'sc-global-components/20170920091621/entrances/sale-coupon-entry/sale-coupon-entry.js',
+   556→                        modStandaloneSrc:'sc-global-components/20170920091621/entrances/sale-coupon-entry/standalone/sale-coupon-entry.js'
+   557→            }
+   558→        }
+   559→    
+   560→        if (window.assetsModList.indexOf('premierLounge') > -1) {
+   561→            window.SCHD_COMS.modsConfig['premierLounge'] = {
+   562→                modLink:'sc-global-components/20180110163926/entrances/premier-lounge/premier-lounge.css',
+   563→                        modSrc:'sc-global-components/20180110163926/entrances/premier-lounge/premier-lounge.js',
+   564→                        modStandaloneSrc:'sc-global-components/20180110163926/entrances/premier-lounge/standalone/premier-lounge.js'
+   565→            }
+   566→        }
+   567→    
+   568→        if (window.assetsModList.indexOf('categorySelector') > -1) {
+   569→            window.SCHD_COMS.modsConfig['categorySelector'] = {
+   570→                modLink:'sc-global-components/20171120200753/entrances/category-selector/category-selector.css',
+   571→                        modSrc:'sc-global-components/20171120200753/entrances/category-selector/category-selector.js',
+   572→                        modStandaloneSrc:'sc-global-components/20171120200753/entrances/category-selector/standalone/category-selector.js'
+   573→            }
+   574→        }
+   575→    
+   576→        if (window.assetsModList.indexOf('searchbar') > -1) {
+   577→            window.SCHD_COMS.modsConfig['searchbar'] = {
+   578→                modLink:'sc-global-components/20180719155510/entrances/searchbar/searchbar.css',
+   579→                        modSrc:'sc-global-components/20180719155510/entrances/searchbar/searchbar.js',
+   580→                        modStandaloneSrc:'sc-global-components/20180719155510/entrances/searchbar/standalone/searchbar.js'
+   581→            }
+   582→        }
+   583→    
+   584→        if (window.assetsModList.indexOf('mamoABSwitch') > -1) {
+   585→            window.SCHD_COMS.modsConfig['mamoABSwitch'] = {
+   586→                modLink:'sc-global-components/20180201111734/entrances/mamo-ab-switch/mamo-ab-switch.css',
+   587→                        modSrc:'sc-global-components/20180201111734/entrances/mamo-ab-switch/mamo-ab-switch.js',
+   588→                        modStandaloneSrc:'sc-global-components/20180201111734/entrances/mamo-ab-switch/standalone/mamo-ab-switch.js'
+   589→            }
+   590→        }
+   591→    
+   592→        if (window.assetsModList.indexOf('imageUploader') > -1) {
+   593→            window.SCHD_COMS.modsConfig['imageUploader'] = {
+   594→                modLink:'sc-global-components/20200810143004/entrances/image-uploader/image-uploader.css',
+   595→                        modSrc:'sc-global-components/20200810143004/entrances/image-uploader/image-uploader.js',
+   596→                        modStandaloneSrc:'sc-global-components/20200810143004/entrances/image-uploader/standalone/image-uploader.js'
+   597→            }
+   598→        }
+   599→    
+   600→        if (window.assetsModList.indexOf('linkTabControl') > -1) {
+   601→            window.SCHD_COMS.modsConfig['linkTabControl'] = {
+   602→                modLink:'sc-global-components/20180719155510/entrances/link-tab-control/link-tab-control.css',
+   603→                        modSrc:'sc-global-components/20180719155510/entrances/link-tab-control/link-tab-control.js',
+   604→                        modStandaloneSrc:'sc-global-components/20180719155510/entrances/link-tab-control/standalone/link-tab-control.js'
+   605→            }
+   606→        }
+   607→    
+   608→        if (window.assetsModList.indexOf('assets-xman') > -1) {
+   609→            window.SCHD_COMS.modsConfig['assets-xman'] = {
+   610→                modLink:'1.0.11/sc-global-components/entrances/xman/xman.css',
+   611→                        modSrc:'1.0.11/sc-global-components/entrances/xman/xman.js',
+   612→                        modStandaloneSrc:'1.0.11/sc-global-components/entrances/xman/standalone/xman.js'
+   613→            }
+   614→        }
+   615→    
+   616→        if (window.assetsModList.indexOf('assets-xpopup') > -1) {
+   617→            window.SCHD_COMS.modsConfig['assets-xpopup'] = {
+   618→                modLink:'1.0.11/sc-global-components/entrances/xman/xpopup.css',
+   619→                        modSrc:'1.0.11/sc-global-components/entrances/xman/xpopup.js',
+   620→                        modStandaloneSrc:'1.0.11/sc-global-components/entrances/xman/standalone/xpopup.js'
+   621→            }
+   622→        }
+   623→    
+   624→        if (window.assetsModList.indexOf('assets-xembed') > -1) {
+   625→            window.SCHD_COMS.modsConfig['assets-xembed'] = {
+   626→                modLink:'1.0.11/sc-global-components/entrances/xman/xembed.css',
+   627→                        modSrc:'1.0.11/sc-global-components/entrances/xman/xembed.js',
+   628→                        modStandaloneSrc:'1.0.11/sc-global-components/entrances/xman/standalone/xembed.js'
+   629→            }
+   630→        }
+   631→    
+   632→</script>
+   633→
+   634→
+   635→
+   636→
+   637→
+   638→        <script>
+   639→                window.SCHD_COMS = window.SCHD_COMS || {};
+   640→                window.SCHD_COMS.aName = '';
+   641→                window.SCHD_COMS.modsConfig = window.SCHD_COMS.modsConfig || {};
+   642→                
+   643→
+   644→
+   645→
+   646→
+   647→
+   648→
+   649→
+   650→
+   651→
+   652→
+   653→
+   654→
+   655→
+   656→
+   657→
+   658→
+   659→
+   660→
+   661→
+   662→
+   663→
+   664→
+   665→
+   666→
+   667→
+   668→
+   669→
+   670→                                window.SCHD_COMS.modsConfig['favorite'] = {
+   671→                        modLink:'sc-global-components/20190708201628/entrances/favorite/favorite.css',
+   672→                        modSrc:'sc-global-components/20190708201628/entrances/favorite/favorite.js',
+   673→                        modStandaloneSrc:'sc-global-components/20190708201628/entrances/favorite/standalone/favorite.js'
+   674→                };
+   675→        
+   676→
+   677→
+   678→
+   679→
+   680→
+   681→
+   682→                                window.SCHD_COMS.modsConfig['xman'] = {
+   683→                        modLink:'1.0.11/sc-global-components/entrances/xman/xman.css',
+   684→                        modSrc:'1.0.11/sc-global-components/entrances/xman/xman.js',
+   685→                        modStandaloneSrc:'1.0.11/sc-global-components/entrances/xman/standalone/xman.js'
+   686→                };
+   687→        
+   688→
+   689→
+   690→
+   691→
+   692→
+   693→
+   694→
+   695→
+   696→
+   697→
+   698→
+   699→
+   700→
+   701→
+   702→
+   703→
+   704→
+   705→
+   706→
+   707→        </script>
+   708→                                                                                        <script src="//s.alicdn.com/@g/sc/global-components/??1.0.5/sc-global-components/entrances/loader.js,1.0.5/sc-global-components/entrances/xman/xman-lazy.js" crossorigin="anonymous" ></script>
+   709→        <style>
+   710→#signin-server-feedback {
+   711→    display: none !important;
+   712→}
+   713→@font-face {
+   714→    font-family: sc-hd-prefix2-icon;
+   715→    src: url(//s.alicdn.com/@g/sc/header-footer/0.1.10/sc-header-footer/$node_modules/@alife/alpha-icon/src/iconfont.woff)
+   716→}
+   717→.sc-hd-prefix-mask {
+   718→    z-index: 10001 !important;
+   719→}
+   720→.sc-hd-prefix2-dialog-normal {
+   721→    z-index: 10001 !important;
+   722→}
+   723→</style>
+   724→
+   725→
+   726→<!-- tangram:1752 end-->
+   727→
+   728→<div class="home-container-new"  id="root"><!-- Silkworm Render: 0b5fb7a117838163077723512d0b58 --><style>
+   729→  .welcome-user {
+   730→    background-color: #f8f8f8;
+   731→    border-bottom: none;
+   732→  }
+   733→  .welcome-user .welcome-layout {
+   734→      -webkit-box-pack: justify;
+   735→      -ms-flex-pack: justify;
+   736→      -webkit-box-align: center;
+   737→      -ms-flex-align: center;
+   738→      -webkit-align-items: center;
+   739→      align-items: center;
+   740→      display: -webkit-box;
+   741→      display: -webkit-flex;
+   742→      display: -ms-flexbox;
+   743→      display: flex;
+   744→      height: 100px;
+   745→      -webkit-justify-content: space-between;
+   746→      justify-content: space-between;
+   747→      margin: 0 auto;
+   748→      max-width: 1440px;
+   749→      width: 100%
+   750→  }
+   751→  .welcome-user .welcome-layout h3 {
+   752→      color: #222;
+   753→      font-size: 20px;
+   754→      line-height: 26px;
+   755→      margin: 0;
+   756→      padding: 0
+   757→  }
+   758→  .welcome-user .welcome-layout .welcome-navigate {
+   759→      -webkit-box-orient: horizontal;
+   760→      -webkit-box-direction: normal;
+   761→      display: -webkit-box;
+   762→      display: -webkit-flex;
+   763→      display: -ms-flexbox;
+   764→      display: flex;
+   765→      -webkit-flex-direction: row;
+   766→      -ms-flex-direction: row;
+   767→      flex-direction: row
+   768→  }
+   769→  .welcome-user .welcome-layout .welcome-navigate  .navigate-inner-box {
+   770→      position: relative;
+   771→      font-size: 0;
+   772→  }
+   773→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner-box .tip-content {
+   774→      display: none;
+   775→      position: absolute;
+   776→      top: 48px;
+   777→      width: 260px;
+   778→      height: auto;
+   779→      padding: 16px;
+   780→      background: rgba(0, 0, 0);
+   781→      border-radius: 8px;
+   782→  }
+   783→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner-box .tip-content .arrow {
+   784→      position: absolute;
+   785→      top: -7px;
+   786→      left: 24px;
+   787→      width: 16px;
+   788→      height: 16px;
+   789→      transform: rotate(45deg);
+   790→      background: rgba(0, 0, 0);
+   791→  }
+   792→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner-box .tip-content .introduce-msg {
+   793→      font-size: 13px;
+   794→      line-height: 16px;
+   795→      color: #fff;
+   796→  }
+   797→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner-box:hover .tip-content {
+   798→      display: block;
+   799→      z-index: 10;
+   800→  }
+   801→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner-box:nth-last-child(1) .navigate-inner {
+   802→      border: none;
+   803→  }
+   804→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner-box:nth-last-child(1) .navigate-inner .navigate-item {
+   805→      padding-right: 0;
+   806→  }
+   807→
+   808→  .welcome-user .welcome-layout .welcome-navigate .navigate-inner {
+   809→      display: inline-block;
+   810→      border-right: 1px solid #ddd
+   811→  }
+   812→  .welcome-user .welcome-layout .welcome-navigate .navigate-item {
+   813→      -webkit-box-orient: horizontal;
+   814→      -webkit-box-direction: normal;
+   815→      -webkit-box-align: center;
+   816→      -ms-flex-align: center;
+   817→      -webkit-align-items: center;
+   818→      align-items: center;
+   819→      border-right: 1px solid #ddd;
+   820→      color: #222;
+   821→      display: -webkit-box;
+   822→      display: -webkit-flex;
+   823→      display: -ms-flexbox;
+   824→      display: flex;
+   825→      -webkit-flex-direction: row;
+   826→      -ms-flex-direction: row;
+   827→      flex-direction: row;
+   828→      font-size: 16px;
+   829→      padding: 0 20px
+   830→  }
+   831→  .welcome-user .welcome-layout .welcome-navigate .navigate-item:last-child {
+   832→      border-right: 0
+   833→  }
+   834→  .welcome-user .welcome-layout .welcome-navigate .navigate-item img {
+   835→      height: 27px;
+   836→      margin-right: 15px
+   837→  }
+   838→
+   839→  .welcome-logistics-tip .welcome-logistics-tip-content {
+   840→      -webkit-box-orient: vertical;
+   841→      -webkit-box-direction: normal;
+   842→      color: #fff;
+   843→      cursor: pointer;
+   844→      display: -webkit-box;
+   845→      display: -webkit-flex;
+   846→      display: -ms-flexbox;
+   847→      display: flex;
+   848→      -webkit-flex-direction: column;
+   849→      -ms-flex-direction: column;
+   850→      flex-direction: column
+   851→  }
+   852→  .welcome-logistics-tip .welcome-logistics-tip-content .view-more {
+   853→      font-weight: 600;
+   854→      margin-top: 24px;
+   855→      text-align: right;
+   856→      text-decoration: underline;
+   857→      -webkit-transform: translateX(24px);
+   858→      -ms-transform: translateX(24px);
+   859→      transform: translateX(24px)
+   860→  }
+   861→  @media screen and (max-width: 1280px) {
+   862→      .welcome-user .welcome-layout {
+   863→          width:1200px
+   864→      }
+   865→  }</style><section class="welcome-user"><div class="welcome-layout"><h3 class="home-fw-semi-bold">Welcome to Alibaba.com</h3><div class="welcome-navigate"><div class="navigate-inner-box "><a class="home-dot-element navigate-inner" data-spm="NCChannelTheme-1930" href="https://rfq.alibaba.com/rfq/profession.htm?tracelog=PCkeylanding" target="_blank"><div class="navigate-item"><img class="bimg " src="//s.alicdn.com/@img/imgextra/i2/O1CN01kCVZMS1Mfe6lCzq15_!!6000000001462-2-tps-84-84.png" alt="Decorative image"/><span>Request for Quotation</span></div></a><div class="tip-content "><div class="arrow"></div><div class="introduce-msg">Post customized sourcing requirements to get quotes from multiple matching suppliers</div></div></div><div class="navigate-inner-box "><a class="home-dot-element navigate-inner" data-spm="NCChannelTheme-3096" href="https://sale.alibaba.com/p/d5a9xh4v5/index.html?wx_navbar_transparent=true&amp;path=/p/d5a9xh4v5/index.html" target="_blank"><div class="navigate-item"><img class="bimg " src="//s.alicdn.com/@img/imgextra/i3/O1CN01OtDttg1i36K2rQ4De_!!6000000004356-2-tps-84-84.png" alt="Decorative image"/><span>Online Trade Show</span></div></a></div><div class="navigate-inner-box "><a class="home-dot-element navigate-inner" data-spm="NCChannelTheme-3291" href="https://sale.alibaba.com/newlandseacorridor" target="_blank"><div class="navigate-item"><img class="bimg " src="//s.alicdn.com/@img/imgextra/i2/O1CN014jOND01H2eM1pBntG_!!6000000000700-2-tps-84-84.png" alt="Decorative image"/><span>Prime hub supplies</span></div></a><div class="tip-content "><div class="arrow"></div><div class="introduce-msg">Explore quality products from China&#x27;s key industry hubs</div></div></div></div></div></section></div>
+   866→<script type="text/javascript">
+   867→window.__PageInitData =  {"welcomeNavData":{"topResourcePic":"","popup":{"visitText":"Get quotes ","tipText":"Get logistics quotes customized to your needs","type":"logistics","isShow":false},"list":[{"trackInfo":"NCChannelTheme-1930","icon":"https://s.alicdn.com/@img/imgextra/i2/O1CN01kCVZMS1Mfe6lCzq15_!!6000000001462-2-tps-84-84.png","title":"Request for Quotation","url":"https://rfq.alibaba.com/rfq/profession.htm?tracelog=PCkeylanding"},{"trackInfo":"NCChannelTheme-3096","icon":"https://s.alicdn.com/@img/imgextra/i3/O1CN01OtDttg1i36K2rQ4De_!!6000000004356-2-tps-84-84.png","title":"Online Trade Show","url":"https://sale.alibaba.com/p/d5a9xh4v5/index.html?wx_navbar_transparent=true&path=/p/d5a9xh4v5/index.html"},{"trackInfo":"NCChannelTheme-3291","icon":"https://s.alicdn.com/@img/imgextra/i2/O1CN014jOND01H2eM1pBntG_!!6000000000700-2-tps-84-84.png","title":"Prime hub supplies","url":"https://sale.alibaba.com/newlandseacorridor"}],"user":""},"i18nTextData":{"mcms_rvc7si__":"Hot selling","mcms_thagw3__":"Updates from your suppliers","mcms_wglly72jp0z__":"Worldwide","verifiedFeatures":["5K+ industries covered","Factory-direct pricing","Sample & customization available"],"mcms_0yd1c2__":"Explore","mcms_6pamnimgckj__":"From design to sourcing, let Accio Work handle the heavy lifting. Boost your ROl today!","mcms_ob6pre__":"Manufacturers","mcms_bd1misibzf1__":"Connect with 34K+ {verified-icon} manufacturers","aimode_tooltip_des":"Your all-in-one sourcing agent. Research smarter, design faster, source better, and communicate easier.","mcms_7lvmnh5jlou__":"Free trial","accio_work_text":"Accio Work","insights_font_page":"Insights","mcms_m4n7kd__":"Popularity score:","mcms_xbsint__":"Best-reviewed score:","verifiedTitle":"Connect with 34K+ {verified-icon} manufacturers","mcms_wcqmifh6odx__":"Explore quality products from China's key industry hubs","plfb_hp_popup_content2":"Start with an average of around US$10,000","plfb_hp_popup_content3":"Apply in minutes and receive your credit line instantly after approval","cihai_Popup_exclusive_benefits":"Plus {num} more benefits","mcms_wrcxve__":"Top ranking","plfb_hp_popup_content1":"Free up funds for other business needs","mcms_67vmhaa1hse__":"AI Mode","mcms_isjdnh__":"Hot-selling score:","aimode_tooltip_tt":"Meet Your AI Sourcing Agent","plfb_hp_popup_cta":"Get instant approval","mcms_iidpbw__":"Welcome to Alibaba.com","mcms_9muk7t__":"Search","mcms_7k4a40__":"What are you looking for?","mcms_seabed980__":"View more","mcms_ckj0gb__":"Min. order: {moq}","cihai_Popup_benefits_exclusive":"Exclusive to you","mcms_7rcbgl__":"Products","plfb_hp_popup_subtitle3":"Fast and easy application","mcms_hscohh__":"Most popular","RFQ_description":"Post customized sourcing requirements to get quotes from multiple matching suppliers","plfb_hp_popup_subtitle2":"Up to US$1 million credit line","plfb_hp_popup_subtitle1":"Pay in 60/90 days after placing your order","cihai_Popup_enjoy_tools":"Enjoy tools and support to source smarter and save more","mcms_dmio21__":"Best reviewed","plfb_hp_popup_title1":"Get flexible payments with Pay Later for Business","mcms_9xhmisiaeyn__":"Discover manufacturers","insights_tips":"Validate business ideas with trends and market analysis from data-driven sources","mcms_posm5lv4te8__":"Accio provides tailored solutions for your sourcing needs","mcms_8b3hcd__":"Your browsing history","mcms_58pm4mhowfj__":"Leverage real-time data to pinpoint winning product ideas","mcms_y7shzq__":"Welcome to Alibaba.com, {user}","mcms_hk8tkk__":"Frequently searched:","cihai_Popup_explore_benefits":"Explore all benefits","mcms_0ozm7mst32m__":"Image Search"}};
+   868→</script>
+   869→
+   870→<script type="text/javascript">
+   871→    window.__factory_home_i18n_kv__= {};
+   872→        window.__factory_home_i18n_kv__['mcms_73j40h__']="Welcome\u0021"
+   873→        window.__factory_home_i18n_kv__['home_factory_more_title']="View\u0020more"
+   874→        window.__factory_home_i18n_kv__['mcms_siug0p__']="Oops,\u0020loading\u0020failed."
+   875→        window.__factory_home_i18n_kv__['mcms_urlhbs__']="Source\u0020factory\u002ddirect\u0020and"
+   876→        window.__factory_home_i18n_kv__['mcms_wwg7x9__']="get\u0020customized\u0020products"
+   877→        window.__factory_home_i18n_kv__['mcms_x597w6__']="Sign\u0020in"
+   878→        window.__factory_home_i18n_kv__['mcms_8u36xn__']="Join\u0020for\u0020free"
+   879→        window.__factory_home_i18n_kv__['mcms_cno8aj__']="Source\u0020by\u0020category"
+   880→        window.__factory_home_i18n_kv__['mcms_yxwh1o__']="Welcome\u0020back"
+   881→        window.__factory_home_i18n_kv__['mcms_spyx8p__']="Favorite\u0020products"
+   882→        window.__factory_home_i18n_kv__['mcms_6ayh6r__']="Favorite\u0020suppliers"
+   883→        window.__factory_home_i18n_kv__['mcms_8b3hcd__']="Your\u0020browsing\u0020history"
+   884→        window.__factory_home_i18n_kv__['mcms_g9u9e5__']="One\u0020request,\u0020multiple\u0020quotes"
+   885→        window.__factory_home_i18n_kv__['mcms_sjc7do__']="Request\u0020for\u0020Quotation"
+   886→        window.__factory_home_i18n_kv__['mcms_4dlnl3__']="Average\u0020response\u0020time"
+   887→        window.__factory_home_i18n_kv__['mcms_7o85sy__']="Active\u0020suppliers"
+   888→        window.__factory_home_i18n_kv__['mcms_hptrum__']="Industries"
+   889→        window.__factory_home_i18n_kv__['mcms_7saz9x__']="No\u0020more\u0020recommendations\u000a"
+   890→        window.__factory_home_i18n_kv__['mcms_4vkcgp__']="Searching\u0020for\u0020more\u0020suppliers"
+   891→        window.__factory_home_i18n_kv__['mcms_t3kjgf__']="Best\u0020sellers"
+   892→        window.__factory_home_i18n_kv__['mcms_2kvaw1__']="Manufacturers\u00a0with\u0020export\u0020revenue\u0020and\u0020staff\u0020above\u0020a\u0020certain\u0020size.\u00a0Ranked\u0020by\u0020number\u0020of\u00a0GMV\u003b\u0020updated\u00a0daily."
+   893→        window.__factory_home_i18n_kv__['mcms_xiwgoj__']="Quality\u0020control\u0020experience"
+   894→        window.__factory_home_i18n_kv__['mcms_vhyv1q__']="Manufacturers\u00a0with\u0020quality\u00a0control\u0020experience.\u00a0Ranked\u0020by\u0020number\u0020of\u00a0buyer\u00a0inquiries\u003b\u0020updated\u00a0daily."
+   895→        window.__factory_home_i18n_kv__['mcms_cvm9f6__']="High\u00a0R\u0026D\u00a0capability"
+   896→        window.__factory_home_i18n_kv__['mcms_n6jiug__']="Manufacturers\u00a0with\u00a0R\u0026D\u00a0experience.\u00a0Ranked\u0020by\u0020number\u0020of\u00a0buyer\u00a0inquiries\u003b\u0020updated\u00a0daily."
+   897→        window.__factory_home_i18n_kv__['mcms_iidpbw__']="Welcome\u0020to\u0020Alibaba.com"
+   898→        window.__factory_home_i18n_kv__['mcms_16r9em__']="Top\u002dranking\u0020manufacturers"
+   899→        window.__factory_home_i18n_kv__['mcms_vpxdv6__']="Leading\u0020suppliers"
+   900→        window.__factory_home_i18n_kv__['mcms_yfx72m__']="Leading\u0020manufacturing\u0020capacity\u0020suppliers\u0020as\u0020ranked\u0020by\u0020GMV\u0020over\u0020the\u0020last\u002090\u0020days.\u0020Updated\u0020daily."
+   901→        window.__factory_home_i18n_kv__['mcms_nvqk7d__']="LIVE"
+   902→        window.__factory_home_i18n_kv__['mcms_7od9pv__']="VR"
+   903→        window.__factory_home_i18n_kv__['mcms_xmucn1__']="Videos"
+   904→        window.__factory_home_i18n_kv__['mcms_e09e9d__']="Rating\u0020and\u0020reviews"
+   905→        window.__factory_home_i18n_kv__['mcms_vwb1y3__']="Factory\u0020capabilities"
+   906→        window.__factory_home_i18n_kv__['mcms_oi2y7l__']="Follow"
+   907→        window.__factory_home_i18n_kv__['mcms_h0cwki__']="Contact\u0020us"
+   908→        window.__factory_home_i18n_kv__['mcms_t3cdl0__']="Chat\u0020now"
+   909→        window.__factory_home_i18n_kv__['mcms_wfahsu__']="Alibaba.com\u003a\u0020Find\u0020Manufacturers"
+   910→        window.__factory_home_i18n_kv__['mcms_80fyka__']="Leave\u0020Feedback"
+   911→        window.__factory_home_i18n_kv__['mcms_cccav7__']="Follow\u0020this\u0020supplier"
+   912→        window.__factory_home_i18n_kv__['mcms_9i1pow__']="Unfollow\u0020this\u0020supplier"
+   913→        window.__factory_home_i18n_kv__['mcms_e6ic6x__']="Followed"
+   914→        window.__factory_home_i18n_kv__['mcms_fcbzan__']="All\u0020categories"
+   915→        window.__factory_home_i18n_kv__['mcms_u06il4__']="review"
+   916→        window.__factory_home_i18n_kv__['mcms_7g3jl2__']="reviews"
+   917→        window.__factory_home_i18n_kv__['mcms_hk8tkk__']="Frequently\u0020searched\u003a"
+   918→        window.__factory_home_i18n_kv__['mcms_ob6pre__']="Manufacturers"
+   919→        window.__factory_home_i18n_kv__['mcms_7rcbgl__']="Products"
+   920→        window.__factory_home_i18n_kv__['mcms_y7shzq__']="Welcome\u0020to\u0020Alibaba.com,\u0020\u007buser\u007d"
+   921→        window.__factory_home_i18n_kv__['mcms_whsw5z__']="Find\u0020suppliers\u0020by\u0020country\u0020or\u0020region"
+   922→        window.__factory_home_i18n_kv__['mcms_o2j8j6__']="Min.\u0020order"
+   923→        window.__factory_home_i18n_kv__['mcms_wglly72jp0z__']="Worldwide"
+   924→        window.__factory_home_i18n_kv__['mcms_7vvmbrll90n__']="Survey"
+   925→        window.__factory_home_i18n_kv__['mcms_f04mbrlluwc__']="Back\u0020to\u0020top"
+   926→        window.__factory_home_i18n_kv__['RFQ_description']="Post\u0020customized\u0020sourcing\u0020requirements\u0020to\u0020get\u0020quotes\u0020from\u0020multiple\u0020matching\u0020suppliers"
+   927→        window.__factory_home_i18n_kv__['mcms_58pm4mhowfj__']="Leverage\u0020real\u002dtime\u0020data\u0020to\u0020pinpoint\u0020winning\u0020product\u0020ideas"
+   928→        window.__factory_home_i18n_kv__['mcms_posm5lv4te8__']="Accio\u0020provides\u0020tailored\u0020solutions\u0020for\u0020your\u0020sourcing\u0020needs"
+   929→        window.__factory_home_i18n_kv__.surveyUrl = ""; 
+   930→    
+   931→</script>
+   932→<script>
+   933→        window.icbuOneTapLoginBizKey = 'google_one_tap_home';
+   934→</script>
+   935→<script type="text/javascript" src="//s.alicdn.com/@g/sc/pc-home-2022/0.0.368/js/newmanufacturecontent.js" defer></script>
+   936→    <!-- tangram:547897 begin-->
+   937→<meta name="wpk-bid" content="dllt2xiw-q3jjoy94" />
+   938→
+   939→<script>
+   940→  window.addEventListener("load",function(){
+   941→    !function(e,i){for(var t=e.getElementsByTagName("meta")||[],n=t.length,a="",r="",c=document.body,o=!0,s=8,d=2e3,w=0;w<n;w++){var f=t[w];switch(f.name){case"wpk-bid":a=f.content;break;case"wpk-rel":r=f.content;break;case"wpk-root-id":c=document.getElementById(f.content)||document.body;break;case"wpk-depth":s=Number(f.content);break;case"wpk-check-time":d=Number(f.content);break;case"wpk-disable":o=!1}}var l=!!window.__wpk,k=navigator.userAgent.indexOf("UCBS")>-1&&navigator.userAgent.indexOf("Android");if(o&&!window.__itrace&&!window.__iosInitItrace){var b=[],m="//s.alicdn.com/@g/woodpeckerx/itrace-next/??",u="",_={id:"blank",rootNode:c,maxDepth:s,startCheckingTime:d},p={id:"flow",enable:!1};k?(b=[p],u="".concat(m,"itrace.iife.js")):l?(b=[p,_],u="".concat(m,"itrace-blank.iife.js,itrace.iife.js")):(b=["flow","jserror","resource","interface",_],u="".concat(m,"itrace-jserror.iife.js,itrace-interface.iife.js,itrace-flow.iife.js,itrace-blank.iife.js,itrace-resource.iife.js,itrace.iife.js")),window.__iosInitItrace=!0,window.__itrace_conf={bid:a,cluster:"intl",plugins:b,rel:r};var g=e.createElement("script");g.async=!0,g.src=u,g.crossOrigin="anonymous",g.onload=function(){window.__itrace&&window.__itrace.setReady()},e.body.appendChild(g)}}(window.document);
+   942→  })
+   943→</script>
+   944→<script>window.assetsVersion = "0.0.368"</script>
+   945→<script src="https://s.alicdn.com/@g/sc/pc-home-2022/0.0.368/sw/register.js" defer async></script>
+   946→
+   947→<script>
+   948→window.addEventListener('DOMContentLoaded', () => {
+   949→  try {
+   950→        const vnBannerSrc =
+   951→      (window.__PageInitData.localData && window.__PageInitData.localData.topResourcePic) ||
+   952→      (window.__PageInitData.welcomeNavData&&window.__PageInitData.welcomeNavData.topResourcePic);
+   953→    if (vnBannerSrc) {
+   954→      const vnBanner = document.createElement('img');
+   955→      vnBanner.src = vnBannerSrc;
+   956→      vnBanner.style = 'width:100%;display:block;';
+   957→      document.body.insertBefore(vnBanner, document.getElementById('beacon-aplus'));
+   958→    }
+   959→  } catch (error) {
+   960→    /** ignore*/
+   961→  }
+   962→});
+   963→
+   964→</script>
+   965→
+   966→<!-- tangram:547897 end-->
+   967→<link rel="prefetch" href="https://s.alicdn.com/@g/wanhuatong/cdn-pc-3d-showRoom/2.0.93/js/index.js" crossorigin="" defer/>            
+   968→<link rel="prefetch" href="https://s.alicdn.com/@g/wanhuatong/cdn-pc-3d-showRoom/2.0.93/css/index.css" crossorigin="" defer/>
+   969→    <!-- tangram:6730 begin-->
+   970→<div id="ServerId" style="color:whitesmoke;text-align:center;background:whitesmoke">  </div>
+   971→
+   972→<script>
+   973→        window._ecoNet_ = window._ecoNet_ || {};
+   974→    window._ecoNet_.version = "1.0.0";
+   975→</script>
+   976→<script src="https://s.alicdn.com/@g/icbu-fe/cdn-ecoNet/1.0.0/index.js" defer></script>
+   977→
+   978→<div style="display:none">
+   979→    <!-- tangram:1636 begin-->
+   980→
+   981→
+   982→
+   983→                                
+   984→
+   985→
+   986→<script>
+   987→    // 买家收藏夹 html espace twice bug fixed
+   988→    if(window.location.pathname === '/favorite2/favorite_home.htm' && typeof MutationObserver === 'function') {
+   989→
+   990→        function observeTarget(rootSelector, modifySelector) {
+   991→            var $root = document.querySelector(rootSelector)
+   992→            var isFirst = true
+   993→            var observer = new MutationObserver(function(mutationsList) {
+   994→                function doReplace() {
+   995→                    var nList = document.querySelectorAll(modifySelector)
+   996→                    var nListArr = Array.prototype.slice.call(nList, null)
+   997→                    nListArr.forEach(function($nodeItem) {
+   998→                        $nodeItem.innerHTML = $nodeItem.innerText
+   999→                    })
+  1000→                }
+  1001→                
+  1002→                if(isFirst) {
+  1003→                    setTimeout(doReplace, 2000)
+  1004→                    isFirst = false
+  1005→                } else {
+  1006→                    doReplace()
+  1007→                }
+  1008→            })
+  1009→            
+  1010→            observer.observe($root, { attributes: true, childList: false, subtree: false })
+  1011→        }
+  1012→
+  1013→        window.addEventListener('DOMContentLoaded', function() {
+  1014→            var rootSelector = '.fav-list-box.product-list-box'
+  1015→            var modifySelector = '.suppliers-list-box .item-suppliers-name'
+  1016→            
+  1017→            observeTarget(rootSelector, modifySelector)
+  1018→        })
+  1019→
+  1020→    }
+  1021→</script>
+  1022→<!-- tangram:1636 end-->
+  1023→</div>
+  1024→
+  1025→<script>
+  1026→    (function(){
+  1027→        //i18n check dot2
+  1028→        var ckI18nSupport = function(){
+  1029→                try{
+  1030→                        if( typeof(goldlog) !== 'undefined' && typeof(goldlog.record) === 'function' ){
+  1031→                                var params = {
+  1032→                                        gmkey:'EXP',
+  1033→                                        gokey:''
+  1034→                                };
+  1035→                            var cid = '/sc.sc_header_footer.c_i18n',
+  1036→                                appName = '',
+  1037→                                ckComStr = 'Intellectual Property Protection',
+  1038→                                ckStr = 'Intellectual Property Protection',
+  1039→                                code = 'GET';
+  1040→                            if( ckStr === ''){
+  1041→                                var i18nErrFlag = '';
+  1042→                                if( ckComStr === ''){
+  1043→                                        i18nErrFlag = 'comFail';
+  1044→                                }else{
+  1045→                                        i18nErrFlag = 'comRun';
+  1046→                                }
+  1047→                                params.gokey = 'pos=' + appName + '&val=' +  i18nErrFlag + ':'+ window.location.host;
+  1048→                                goldlog.record(cid, params.gmkey, params.gokey, code);
+  1049→                            }
+  1050→                        }
+  1051→                }catch(e){}
+  1052→            };
+  1053→        /**
+  1054→                t        */
+  1055→        var useScript=function(){var d={},f=[],h=function(a){var e=[];d[a]=!0;f.forEach(function(c,d){c.jsSrc===a?"function"===typeof c.callback&&c.callback():e.push(c)});f=e};return function(a,e,c){var g=document,k=g.getElementsByTagName("body")[0]||g.getElementsByTagName("head")[0],b=g.createElement("script");""!==a&&(!0===d[a]?e():(f.push({jsSrc:a,callback:e}),1!==d[a]&&(d[a]=1,b.setAttribute("defer",!0),a.indexOf("alicdn.com")>=0&&b.setAttribute("crossorigin","anonymous"),!0===c&&b.setAttribute("async",!0),b.onload=b.onreadystatechange=function(){this.readyState&&"loaded"!=this.readyState&&"complete"!=this.readyState||(h(a),b.onload=b.onreadystatechange=null)},k.appendChild(b),b.src=a)))}}(),J=window.SCHD_COMS&&window.SCHD_COMS.J||window.SCHeader&&window.SCHeader.J;
+  1056→        var jsSrc = '//s.alicdn.com/@g/big-brother/sentry/3.x/index.js';
+  1057→        if(typeof(J) !== 'undefined'){
+  1058→                J(document).ready(function(){
+  1059→                        useScript(jsSrc);
+  1060→                        ckI18nSupport();
+  1061→                });
+  1062→        }else{
+  1063→                useScript(jsSrc);
+  1064→        }
+  1065→            window.$footerUseScript = useScript;
+  1066→    })();
+  1067→</script>
+  1068→
+  1069→
+  1070→        <!-- tangram:541299 begin-->
+  1071→<script>
+  1072→
+  1073→(function() {
+  1074→  window.__FLAHSER_BYPASS_PUSH_REGEX__ = /(www\.alibaba\.com\/showroom\/.*)|(^((?!((www|activity|sale)\.alibaba\.com)).)*$)/;  
+  1075→  window.__GLOBALJS_FLASHER__ = {};
+  1076→  window.__GLOBALJS_FLASHER__.assetsVersion = "9.9.99";
+  1077→  window.Flasher = {_enableRoute: function() {}}
+  1078→
+  1079→  window.__FLAHSER_CONFIG__ = {
+  1080→    manifestUrl: [
+  1081→      "https://s.alicdn.com/@xconfig/flasher_classic/manifest",
+  1082→      "https://s.alicdn.com/@xconfig/flasher_classic/manifest"
+  1083→    ],
+  1084→    enableSw: true,
+  1085→    origins: [
+  1086→      "https://sale.alibaba.com"
+  1087→    ]
+  1088→  };
+  1089→  if (location.origin === 'https://www.alibaba.com') {
+  1090→      window.__FLAHSER_CONFIG__.origins.push('https://www.alibaba.com');
+  1091→  }
+  1092→})()
+  1093→</script>
+  1094→<script>
+  1095→    window.__icbu_globaljs_config__ = window.__icbu_globaljs_config__ || {
+  1096→        assets: {},
+  1097→    };
+  1098→    window.__icbu_globaljs_config__.assets.gdpr = {
+  1099→        asset: '//s.alicdn.com/@g/msite/gdpr-cookie-notice/1.0.7/index.js',
+  1100→    };
+  1101→    window.__icbu_globaljs_config__['l-d-percent'] = 100;
+  1102→</script>
+  1103→
+  1104→
+  1105→<script src="//s.alicdn.com/@g/icbu-group/??icbu-globaljs-config/0.0.64/main.js,icbu-globaljs/0.1.4/global.min.js" defer="defer" crossorigin="anonymous" ></script>
+  1106→
+  1107→<!-- tangram:541299 end-->
+  1108→        <!-- tangram:6544 begin-->
+  1109→
+  1110→<!-- tangram:6544 end-->
+  1111→
+  1112→<script type="text/javascript">
+  1113→window.onlineRobotConfig = window.onlineRobotConfig || {};
+  1114→window.onlineRobotConfig.appName = window.onlineRobotConfig.appName || '';
+  1115→window.loadConfigFromCDN = true; // 表示不再从 4848 引入小蜜配置，而是从 CDN 加载，1.0.23 版本 services-module feature
+  1116→window.onlineRobotConfig.online_robot_SpmAB = ["a2700.8293689","a2700.8293689-de_DE","a2700.8293689-pt_PT","a2700.8293689-es_ES","a2700.8293689-fr_FR","a2700.8293689-it_IT","a2700.8293689-hi_IN","a2700.8293689-ru_RU","a2700.8293689-ko_KR","a2700.8293689-ja_JP","a2700.8293689-th_TH","a2700.8293689-tr_TR","a2700.8293689-vi_VN","a2700.8293689-nl_NL","a2700.8293689-nl_NL","a2700.8293689-in_ID","a2700.galleryofferlist","a2700.product_home_l3","a2700.factory_home","a2700.product_home_l0","a2700.rfq_pc_mainform","a2700.rfq-exhibition-pc"];
+  1117→try {
+  1118→    addEventListener('load',function() {
+  1119→      var PageSpm = (function() {
+  1120→        if (window && window.goldlog && window.goldlog.spm_ab) {
+  1121→          return window.goldlog.spm_ab.join('.');
+  1122→        } else if (window && window.g_SPM && window.g_SPM.getParam()) {
+  1123→          var spm = window.g_SPM.getParam(document.body);
+  1124→          if (spm) {
+  1125→            return spm.a + '.' + spm.b;
+  1126→          }
+  1127→        } else {
+  1128→          var dataSpmMeta = document.getElementsByName('data-spm');
+  1129→          if (!dataSpmMeta) return;
+  1130→          var body = document.body || document.getElementsByTagName('body')[0];
+  1131→          var spmA = dataSpmMeta[0] && dataSpmMeta[0].content;
+  1132→          var spmB = body && body.dataset && body.dataset.spm;
+  1133→          if (spmB && spmB) return spmA + '.' + spmB;
+  1134→        };
+  1135→      })();
+  1136→      var isincluded = window.onlineRobotConfig.online_robot_SpmAB.includes(PageSpm) || PageSpm.substring(0,5) === "a27aq";
+  1137→      var isLogin = document && document.cookie && document.cookie.indexOf('xman_us_t') !== -1 && document.cookie.indexOf('sign=y') !== -1;
+  1138→      if (isincluded && isLogin) {
+  1139→        window.onlineRobotConfig.appName = window.onlineRobotConfig.appName || '';
+  1140→        window.onlineRobotConfig.onlyForAlimeRobot = true;
+  1141→        (function(url) {
+  1142→            var head = document.getElementsByTagName('head')[0];
+  1143→            var link = document.createElement('link');
+  1144→            link.type='text/css';
+  1145→            link.rel = 'stylesheet';
+  1146→            link.href = url;
+  1147→            head.appendChild(link);
+  1148→        })("//s.alicdn.com/@g/sc/services-module/1.0.23/sc-services-module/index.css");
+  1149→        (function(str) {
+  1150→          if (str) {
+  1151→            var script = document.createElement('script');
+  1152→            script.type = 'text/javascript';
+  1153→            script.async = true;
+  1154→            script.defer = true;
+  1155→            script.src = str;
+  1156→            document.body.appendChild(script);
+  1157→          }
+  1158→        }
+  1159→        )("//s.alicdn.com/@g/sc/services-module/1.0.23/sc-services-module/index.js")
+  1160→      }
+  1161→    }
+  1162→  )
+  1163→} catch(e) {console.log(e)}
+  1164→</script>
+  1165→<script>
+  1166→  try {
+  1167→    //  NOTE: 隐藏功能，展现当前用户性能 id : Agadoid 
+  1168→    var $AgadoIdEl = document.createElement('div');
+  1169→    var $footer = document.querySelector("#ui-footer");
+  1170→    var $trigger = document.querySelector("#ui-footer > div.ui-footer-seo > p.ui-footer-seo-policy");
+  1171→    $AgadoIdEl.innerText = 'Double click to report performance issue.';
+  1172→    $AgadoIdEl.style.cssText = `
+  1173→      color: rgb(140 139 139);
+  1174→      bottom:0;
+  1175→      left: 50%;
+  1176→      text-align: center;
+  1177→    `
+  1178→    $trigger.ondblclick =function() {
+  1179→      $footer.appendChild($AgadoIdEl);
+  1180→    };
+  1181→
+  1182→    $AgadoIdEl.ondblclick =function (){
+  1183→      alert(window.__BB_PARAMS__.performance.agado_id);
+  1184→      $footer.removeChild($AgadoIdEl);
+  1185→    }
+  1186→  } catch(e) {
+  1187→    console.error(e)
+  1188→  }
+  1189→</script>
+  1190→
+  1191→<!-- tangram:6730 end-->
+  1192→    <!-- tangram:530920 begin-->
+  1193→<script>
+  1194→        window.icbuOneTapLoginReturnUrl = window.location.href;
+  1195→</script>
+  1196→<script defer type="text/javascript">
+  1197→try {
+  1198→  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  1199→  var targetBizKeys = ['msite_one_tap_pla', 'msite_one_tap_seo'];
+  1200→  var isNotShow = targetBizKeys.includes(window.icbuOneTapLoginBizKey);
+  1201→
+  1202→  // 如果是 msite_one_tap_pla 并且是 iOS 设备，则不继续执行
+  1203→  if (!(isNotShow && isIOS)) {
+  1204→    fetch(
+  1205→      'https://login.alibaba.com/getEnvironment.do?experimentKey=' +
+  1206→        window.icbuOneTapLoginBizKey,
+  1207→      {
+  1208→        method: 'GET',
+  1209→        credentials: 'include',
+  1210→        headers: {
+  1211→          Accept: 'application/json',
+  1212→        },
+  1213→      },
+  1214→    )
+  1215→      .then((response) => response?.json())
+  1216→      .then(function (result) {
+  1217→        if (
+  1218→          result &&
+  1219→          result.data &&
+  1220→          result.data.bucket &&
+  1221→          result.data.bucket === 'google_one_tap'
+  1222→        ) {
+  1223→          var icbu_script = document.createElement('script');
+  1224→          icbu_script.type = 'text/javascript';
+  1225→          icbu_script.onload = function () {
+  1226→            if (window.icbu_oneTapLogin && window.icbuOneTapLoginBizKey) {
+  1227→              window.icbu_oneTapLogin_Config = {
+  1228→                bxLocation: result.data.bxLocation || 'cn',
+  1229→              };
+  1230→              window.icbu_oneTapLogin.open({
+  1231→                bizKey: window.icbuOneTapLoginBizKey,
+  1232→                loginRedirectUrl: window.loginRedirectUrl,
+  1233→                icbuOneTapLoginReturnUrl: window.icbuOneTapLoginReturnUrl,
+  1234→                delay:
+  1235→                  window.icbuOneTapLoginBizKey === 'msite_one_tap_pla'
+  1236→                    ? 6000
+  1237→                    : 0,
+  1238→              });
+  1239→            }
+  1240→          };
+  1241→          icbu_script.src =
+  1242→            'https://s.alicdn.com/@g/code/npm/@ali/icbu-member-one-tap-login/0.0.15/index.umd.es5.production.js';
+  1243→
+  1244→          // 创建 link 标签来加载 CSS
+  1245→          var icbu_style = document.createElement('link');
+  1246→          icbu_style.rel = 'stylesheet';
+  1247→          icbu_style.href =
+  1248→            'https://s.alicdn.com/@g/code/npm/@ali/icbu-member-one-tap-login/0.0.15/index.umd.es5.production.css';
+  1249→
+  1250→          // 将 script 和 link 标签添加到 head
+  1251→          var head = document.getElementsByTagName('head')[0];
+  1252→          head.appendChild(icbu_style);
+  1253→          head.appendChild(icbu_script);
+  1254→        }
+  1255→      });
+  1256→  }
+  1257→} catch (e) {
+  1258→  console.error('Error in one-tap login script:', e);
+  1259→}
+  1260→</script>
+  1261→<!-- tangram:530920 end-->
+  1262→
+  1263→
+  1264→</body>
+  1265→
+  1266→</html>
+  1267→<!-- tangram:7002 end-->
+  1268→

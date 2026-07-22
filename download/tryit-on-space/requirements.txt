@@ -1,0 +1,16 @@
+torch
+torchvision
+diffusers>=0.31.0
+transformers>=4.43.0
+accelerate
+peft
+sentencepiece
+protobuf
+insightface==0.7.3
+onnxruntime-gpu
+gradio>=4.0.0
+spaces
+numpy<2.0.0
+safetensors
+huggingface_hub
+git+https://github.com/ToTheBeginning/PuLID.git

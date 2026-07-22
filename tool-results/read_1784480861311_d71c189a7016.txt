@@ -1,0 +1,910 @@
+     1→'use client';
+     2→
+     3→import { useEffect, useState, useRef } from 'react';
+     4→import { useRouter } from 'next/navigation';
+     5→import { api, formatPrice, type Product } from '@/lib/api';
+     6→import { motion } from 'framer-motion';
+     7→import { Search, Heart, MessageCircle, Send, Bookmark,
+     8→  Store, ChevronRight, Play,
+     9→  CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Users } from 'lucide-react';
+    10→import Link from 'next/link';
+    11→import { useAuth } from '@/components/auth-provider';
+    12→import { useToast } from '@/hooks/use-toast';
+    13→import { useOptimisticUI } from '@/components/optimistic-ui';
+    14→import { PageSkeleton } from '@/components/page-skeleton';
+    15→
+    16→interface FeedPost {
+    17→  type: 'video' | 'product';
+    18→  id: string;
+    19→  sellerId?: string;
+    20→  sellerSlug?: string;
+    21→  sellerName: string;
+    22→  sellerImage?: string;
+    23→  mediaUrl: string;
+    24→  caption: string;
+    25→  likes: number;
+    26→  views?: number;
+    27→  comments: number;
+    28→  product?: Product;
+    29→  soldCount?: number;
+    30→  createdAt?: string;
+    31→  isLive?: boolean;
+    32→  verified?: boolean;
+    33→}
+    34→
+    35→export default function HomePage() {
+    36→  const router = useRouter();
+    37→  const { user, isSeller, unreadMessages } = useAuth();
+    38→  const { toast } = useToast();
+    39→  const { burst } = useOptimisticUI();
+    40→
+    41→  const [feed, setFeed] = useState<FeedPost[]>([]);
+    42→  const [stories, setStories] = useState<any[]>([]);
+    43→  const [sellers, setSellers] = useState<any[]>([]);
+    44→  const [liveSessions, setLiveSessions] = useState<any[]>([]);
+    45→  const [shorts, setShorts] = useState<any[]>([]);
+    46→  const [loading, setLoading] = useState(true);
+    47→  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+    48→  const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
+    49→  const [following, setFollowing] = useState<Set<string>>(new Set());
+    50→
+    51→  const searchBarRef = useRef<HTMLDivElement>(null);
+    52→
+    53→  // IntersectionObserver for hiding GlobalSpotlight FAB when top search is visible
+    54→  useEffect(() => {
+    55→    const el = searchBarRef.current;
+    56→    if (!el) return;
+    57→    const observer = new IntersectionObserver(
+    58→      ([entry]) => {
+    59→        window.dispatchEvent(
+    60→          new CustomEvent('searchbar-visibility', {
+    61→            detail: { visible: entry.isIntersecting },
+    62→          })
+    63→        );
+    64→      },
+    65→      { threshold: 0 }
+    66→    );
+    67→    observer.observe(el);
+    68→    return () => observer.disconnect();
+    69→  }, []);
+    70→
+    71→  // Note: unreadMessages is fetched by AuthProvider (shared across all pages
+    72→  // via useAuth context) and polled every 30 seconds. No duplicate fetch here.
+    73→
+    74→  useEffect(() => {
+    75→    (async () => {
+    76→      try {
+    77→        const [vidResp, homeResp, storiesResp, liveResp, sellersResp] = await Promise.all([
+    78→          api.videos.feed(20),
+    79→          api.products.home(),
+    80→          api.stories.activeBar().catch(() => ({ success: false })),
+    81→          api.live.list('live').catch(() => ({ success: false })),
+    82→          api.social.discover(60).catch(() => ({ success: false })),
+    83→        ]);
+    84→
+    85→        const sellerMap = new Map<string, { name: string; image?: string; slug?: string }>();
+    86→        if (sellersResp.success) {
+    87→          const sellersList = sellersResp.sellers || [];
+    88→          setSellers(sellersList);
+    89→          sellersList.forEach((s: any) => {
+    90→            sellerMap.set(s.id, { name: s.business_name || s.farm_name || 'Seller', image: s.profile_image, slug: s.slug });
+    91→          });
+    92→        }
+    93→
+    94→        const posts: FeedPost[] = [];
+    95→
+    96→        if (vidResp.success) {
+    97→          (vidResp.videos || []).forEach((v: any) => {
+    98→            const seller = v.seller || {};
+    99→            // If the video seller doesn't have a slug, look it up via sellerMap
+   100→            const sellerInfo = seller.id ? sellerMap.get(seller.id) : null;
+   101→            posts.push({
+   102→              type: 'video',
+   103→              id: `vid-${v.id}`,
+   104→              sellerId: seller.id,
+   105→              sellerSlug: seller.slug || sellerInfo?.slug,
+   106→              sellerName: seller.business_name || 'Seller',
+   107→              sellerImage: seller.profile_image,
+   108→              mediaUrl: v.video_url || '',
+   109→              caption: v.caption || '',
+   110→              likes: v.likes_count || 0,
+   111→              views: v.views_count || 0,
+   112→              comments: Math.floor((v.views_count || 0) / 20),
+   113→              product: v.product,
+   114→              soldCount: v.product?.units_sold,
+   115→              createdAt: v.created_at,
+   116→              verified: true,
+   117→            });
+   118→          });
+   119→        }
+   120→
+   121→        if (homeResp.success) {
+   122→          const allProducts = [
+   123→            ...(homeResp.flashDeals || []),
+   124→            ...(homeResp.trending || []),
+   125→            ...(homeResp.newArrivals || []),
+   126→          ].filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i);
+   127→
+   128→          allProducts.forEach((p: Product) => {
+   129→            const sellerInfo = p.seller_id ? sellerMap.get(p.seller_id) : null;
+   130→            posts.push({
+   131→              type: 'product',
+   132→              id: `prod-${p.id}`,
+   133→              sellerId: p.seller_id,
+   134→              sellerSlug: sellerInfo?.slug,
+   135→              sellerName: sellerInfo?.name || 'Cellex Seller',
+   136→              sellerImage: sellerInfo?.image,
+   137→              mediaUrl: p.image_url || '',
+   138→              caption: p.name,
+   139→              likes: Math.floor((p.units_sold || 0) * 0.3),
+   140→              comments: Math.floor((p.units_sold || 0) * 0.1),
+   141→              product: p,
+   142→              soldCount: p.units_sold,
+   143→              verified: true,
+   144→            });
+   145→          });
+   146→        }
+   147→
+   148→        // Interleave videos and products
+   149→        const videoPosts = posts.filter(p => p.type === 'video');
+   150→        const productPosts = posts.filter(p => p.type === 'product');
+   151→        const interleaved: FeedPost[] = [];
+   152→        const maxLen = Math.max(videoPosts.length, productPosts.length);
+   153→        for (let i = 0; i < maxLen; i++) {
+   154→          if (i < videoPosts.length) interleaved.push(videoPosts[i]);
+   155→          if (i < productPosts.length) interleaved.push(productPosts[i]);
+   156→        }
+   157→        setFeed(interleaved);
+   158→
+   159→        if (storiesResp.success) setStories(storiesResp.stories || []);
+   160→        if (liveResp.success) setLiveSessions(liveResp.sessions || []);
+   161→
+   162→        // Store video posts as Shorts (for the Shorts section).
+   163→        // These are the same videos that appear in the feed, but presented
+   164→        // as vertical 9:16 cards in a horizontal scroll (YouTube Shorts style).
+   165→        if (vidResp.success) {
+   166→          const videoShorts = (vidResp.videos || []).slice(0, 10).map((v: any) => ({
+   167→            id: v.id,
+   168→            videoUrl: v.video_url || '',
+   169→            caption: v.caption || '',
+   170→            views: v.views_count || 0,
+   171→            likes: v.likes_count || 0,
+   172→            seller: v.seller || {},
+   173→            product: v.product,
+   174→            createdAt: v.created_at,
+   175→          }));
+   176→          setShorts(videoShorts);
+   177→        }
+   178→      } catch (e) {
+   179→        console.error('Feed load error:', e);
+   180→      } finally {
+   181→        setLoading(false);
+   182→      }
+   183→    })();
+   184→  }, []);
+   185→
+   186→  const toggleLike = (postId: string, e: React.MouseEvent) => {
+   187→    e.preventDefault();
+   188→    e.stopPropagation();
+   189→    const newLiked = new Set(likedPosts);
+   190→    if (newLiked.has(postId)) {
+   191→      newLiked.delete(postId);
+   192→    } else {
+   193→      newLiked.add(postId);
+   194→      burst(e.clientX, e.clientY, 'heart');
+   195→    }
+   196→    setLikedPosts(newLiked);
+   197→  };
+   198→
+   199→  const toggleSave = (postId: string, e: React.MouseEvent) => {
+   200→    e.preventDefault();
+   201→    e.stopPropagation();
+   202→    const newSaved = new Set(savedPosts);
+   203→    if (newSaved.has(postId)) {
+   204→      newSaved.delete(postId);
+   205→    } else {
+   206→      newSaved.add(postId);
+   207→      toast({ title: 'Saved!' });
+   208→    }
+   209→    setSavedPosts(newSaved);
+   210→  };
+   211→
+   212→  const toggleFollow = (sellerId: string, e: React.MouseEvent) => {
+   213→    e.preventDefault();
+   214→    e.stopPropagation();
+   215→    if (!user) { router.push('/login'); return; }
+   216→    const newFollowing = new Set(following);
+   217→    if (newFollowing.has(sellerId)) {
+   218→      newFollowing.delete(sellerId);
+   219→      api.social.unfollow(sellerId);
+   220→    } else {
+   221→      newFollowing.add(sellerId);
+   222→      api.social.follow(sellerId);
+   223→    }
+   224→    setFollowing(newFollowing);
+   225→  };
+   226→
+   227→  const addToCart = (product: Product, e: React.MouseEvent) => {
+   228→    e.preventDefault();
+   229→    e.stopPropagation();
+   230→    if (!user) { router.push('/login'); return; }
+   231→    api.cart.add(product.id, 1);
+   232→    burst(e.clientX, e.clientY, 'check');
+   233→    toast({ title: 'Added to cart!', description: product.name });
+   234→  };
+   235→
+   236→  if (loading) {
+   237→    return <PageSkeleton variant="home" />;
+   238→  }
+   239→
+   240→  return (
+   241→    <div className="ig-container bg-white min-h-screen ig-topbar-offset">
+   242→      {/* Top bar — IG-style: logo left, search center, icons right */}
+   243→      <div
+   244→        ref={searchBarRef}
+   245→        className="ig-topbar"
+   246→      >
+   247→        {/* Logo */}
+   248→        <Link href="/" className="shrink-0">
+   249→          <span className="ig-logo">Cellex</span>
+   250→        </Link>
+   251→
+   252→        {/* Search — desktop only (pill button).
+   253→            Mobile users access Smart Search via the Explore/Categories page
+   254→            search bar, or via Cmd+K on physical keyboards. */}
+   255→        <button
+   256→          onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
+   257→          className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-neutral-200 transition-colors"
+   258→          style={{ background: '#efefef', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
+   259→          aria-label="Search"
+   260→        >
+   261→          <Search className="w-4 h-4 text-neutral-500 mr-2" />
+   262→          <span className="text-sm text-neutral-500 text-left flex-1">Search</span>
+   263→        </button>
+   264→
+   265→        {/* Spacer on mobile (search hidden) */}
+   266→        <div className="flex-1 sm:hidden" />
+   267→
+   268→        {/* RIGHT SIDE — role-dependent.
+   269→            Badges are FUNCTIONAL: only show when there's actual unread data. */}
+   270→        {isSeller ? (
+   271→          <div className="shrink-0 flex items-center gap-1">
+   272→            <Link href="/messenger" className="ig-icon-btn relative" aria-label="Messages">
+   273→              <Send className="w-6 h-6" />
+   274→              {user && unreadMessages > 0 && (
+   275→                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+   276→                  <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+   277→                </span>
+   278→              )}
+   279→            </Link>
+   280→            <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
+   281→              <Bell className="w-6 h-6" />
+   282→            </Link>
+   283→            <Link href="/seller-dashboard" className="ig-icon-btn" aria-label="My Store">
+   284→              <User className="w-6 h-6" />
+   285→            </Link>
+   286→          </div>
+   287→        ) : (
+   288→          /* Buyer: Notifications + Account icons in header.
+   289→             Account links to /profile (personal profile).
+   290→             Mobile nav no longer has Account — it has Shorts instead. */
+   291→          <div className="shrink-0 flex items-center gap-1">
+   292→            <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
+   293→              <Bell className="w-6 h-6" />
+   294→            </Link>
+   295→            <Link href="/profile" className="ig-icon-btn relative" aria-label="Account">
+   296→              <User className="w-6 h-6" />
+   297→              {user && (
+   298→                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+   299→              )}
+   300→            </Link>
+   301→          </div>
+   302→        )}
+   303→      </div>
+   304→
+   305→      {/* Stories section — IG-style horizontal scroll with gradient rings */}
+   306→      {stories.length > 0 && (
+   307→        <div className="ig-hero-bg border-b border-neutral-100">
+   308→          <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
+   309→            {stories.slice(0, 12).map((s: any, i: number) => {
+   310→              const storyHref = s.slug ? `/${s.slug}` : `/seller-profile?id=${s.seller_id || ''}`;
+   311→              return (
+   312→                <Link key={i} href={storyHref} className="shrink-0 flex flex-col items-center gap-1">
+   313→                  <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
+   314→                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-neutral-100">
+   315→                      {s.profile_image ? (
+   316→                        <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
+   317→                      ) : (
+   318→                        <div className="w-full h-full flex items-center justify-center">
+   319→                          <Store className="w-5 h-5 text-neutral-300" />
+   320→                        </div>
+   321→                      )}
+   322→                    </div>
+   323→                  </div>
+   324→                  <span className="text-[10px] text-neutral-700 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
+   325→                </Link>
+   326→              );
+   327→            })}
+   328→          </div>
+   329→        </div>
+   330→      )}
+   331→
+   332→      {/* Live Auctions section — eBay-style horizontal scroll of live seller cards.
+   333→          Replaces the old small "LIVE NOW" pill. Each card shows the seller,
+   334→          their live title, viewer count, and a Watch Live CTA. */}
+   335→      {liveSessions.length > 0 && (
+   336→        <LiveAuctionsSection sessions={liveSessions} />
+   337→      )}
+   338→
+   339→      {/* Shorts section — YouTube Shorts / IG Reels style horizontal scroll.
+   340→          Vertical 9:16 video thumbnails with caption + views. Appears above
+   341→          the feed so users can discover video content quickly. */}
+   342→      {shorts.length > 0 && (
+   343→        <ShortsSection shorts={shorts} />
+   344→      )}
+   345→
+   346→      {/* Feed — IG-style.
+   347→          Every 3 feed posts, insert a horizontal "Suggested Sellers" carousel.
+   348→          The carousel shows 3 seller cards followed by a "See all" card that
+   349→          links to /sellers. Sellers are rotated so each carousel shows a
+   350→          different batch. */}
+   351→      <div>
+   352→        {feed.map((post, index) => {
+   353→          // Insert a seller carousel AFTER every 3rd post (index 2, 5, 8, ...)
+   354→          const showSellers = sellers.length > 0 && (index + 1) % 3 === 0;
+   355→          // Rotate the seller batch: carousel 0 shows sellers[0..2], carousel 1 shows sellers[3..5], etc.
+   356→          const carouselIndex = Math.floor((index + 1) / 3) - 1;
+   357→          const sellerBatch = sellers.slice(carouselIndex * 3, carouselIndex * 3 + 3);
+   358→
+   359→          return (
+   360→            <div key={post.id}>
+   361→              <FeedPostCard
+   362→                post={post}
+   363→                index={index}
+   364→                liked={likedPosts.has(post.id)}
+   365→                saved={savedPosts.has(post.id)}
+   366→                isFollowing={post.sellerId ? following.has(post.sellerId) : false}
+   367→                onLike={(e) => toggleLike(post.id, e)}
+   368→                onSave={(e) => toggleSave(post.id, e)}
+   369→                onFollow={(e) => post.sellerId && toggleFollow(post.sellerId, e)}
+   370→                onAddToCart={(e) => post.product && addToCart(post.product, e)}
+   371→              />
+   372→              {showSellers && sellerBatch.length > 0 && (
+   373→                <SuggestedSellersCarousel
+   374→                  sellers={sellerBatch}
+   375→                  carouselIndex={carouselIndex}
+   376→                  following={following}
+   377→                  onFollow={(sellerId, e) => toggleFollow(sellerId, e)}
+   378→                />
+   379→              )}
+   380→            </div>
+   381→          );
+   382→        })}
+   383→      </div>
+   384→
+   385→      {/* End of feed — IG-style */}
+   386→      <div className="text-center py-12 px-4">
+   387→        <div className="w-14 h-14 rounded-full border-2 border-neutral-300 flex items-center justify-center mx-auto mb-3">
+   388→          <Sparkles className="w-6 h-6 text-neutral-400" />
+   389→        </div>
+   390→        <p className="text-sm font-semibold text-neutral-700">You're all caught up</p>
+   391→        <p className="text-xs text-neutral-400 mt-1">You've seen all new posts from the last 3 days.</p>
+   392→      </div>
+   393→    </div>
+   394→  );
+   395→}
+   396→
+   397→function FeedPostCard({
+   398→  post, index, liked, saved, isFollowing, onLike, onSave, onFollow, onAddToCart
+   399→}: {
+   400→  post: FeedPost;
+   401→  index: number;
+   402→  liked: boolean;
+   403→  saved: boolean;
+   404→  isFollowing: boolean;
+   405→  onLike: (e: React.MouseEvent) => void;
+   406→  onSave: (e: React.MouseEvent) => void;
+   407→  onFollow: (e: React.MouseEvent) => void;
+   408→  onAddToCart: (e: React.MouseEvent) => void;
+   409→}) {
+   410→  const videoRef = useRef<HTMLVideoElement>(null);
+   411→  const [inView, setInView] = useState(false);
+   412→
+   413→  useEffect(() => {
+   414→    const observer = new IntersectionObserver(
+   415→      ([entry]) => setInView(entry.isIntersecting),
+   416→      { threshold: 0.5 }
+   417→    );
+   418→    if (videoRef.current) observer.observe(videoRef.current);
+   419→    return () => observer.disconnect();
+   420→  }, []);
+   421→
+   422→  useEffect(() => {
+   423→    if (videoRef.current) {
+   424→      if (inView) videoRef.current.play().catch(() => {});
+   425→      else videoRef.current.pause();
+   426→    }
+   427→  }, [inView]);
+   428→
+   429→  const isVideo = post.type === 'video';
+   430→  const likeCount = post.likes + (liked ? 1 : 0);
+   431→  const fomoText = post.soldCount && post.soldCount > 5
+   432→    ? `${post.soldCount > 1000 ? `${(post.soldCount / 1000).toFixed(1)}k` : post.soldCount} bought this`
+   433→    : post.views && post.views > 50
+   434→    ? `${formatCount(post.views)} viewing now`
+   435→    : post.soldCount && post.soldCount > 0
+   436→    ? `${post.soldCount} bought this`
+   437→    : null;
+   438→
+   439→  return (
+   440→    <motion.article
+   441→      initial={{ opacity: 0 }}
+   442→      animate={{ opacity: 1 }}
+   443→      transition={{ duration: 0.2 }}
+   444→      className="ig-feed-card"
+   445→    >
+   446→      {/* Seller header — IG-style: avatar + username + verified + Follow */}
+   447→      <div className="flex items-center gap-3 px-3 py-2.5">
+   448→        <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')}>
+   449→          <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 shrink-0">
+   450→            {post.sellerImage ? (
+   451→              <img src={post.sellerImage} alt="" className="w-full h-full object-cover" />
+   452→            ) : (
+   453→              <div className="w-full h-full flex items-center justify-center bg-neutral-800">
+   454→                <span className="text-white text-xs font-bold">{post.sellerName.charAt(0)}</span>
+   455→              </div>
+   456→            )}
+   457→          </div>
+   458→        </Link>
+   459→        <div className="flex-1 min-w-0 flex items-center gap-1">
+   460→          <Link href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')} className="text-sm font-semibold text-black hover:opacity-70 transition-opacity truncate">
+   461→            {post.sellerName}
+   462→          </Link>
+   463→          {post.verified && (
+   464→            <CheckCircle className="w-3 h-3 text-sky-500 fill-sky-500 stroke-white shrink-0" />
+   465→          )}
+   466→          {post.createdAt && (
+   467→            <>
+   468→              <span className="text-neutral-400 text-xs">•</span>
+   469→              <span className="text-xs text-neutral-500">{timeAgo(post.createdAt)}</span>
+   470→            </>
+   471→          )}
+   472→        </div>
+   473→        {post.sellerId && !isFollowing && (
+   474→          <button
+   475→            onClick={onFollow}
+   476→            className="text-xs font-semibold text-sky-500 hover:text-sky-700 transition-colors"
+   477→          >
+   478→            Follow
+   479→          </button>
+   480→        )}
+   481→      </div>
+   482→
+   483→      {/* Media — IG-style: square, full-bleed, with hover zoom on images */}
+   484→      <div className="ig-media ig-img-zoom">
+   485→        {isVideo ? (
+   486→          <Link href="/videos" className="block w-full h-full relative">
+   487→            <video
+   488→              ref={videoRef}
+   489→              src={post.mediaUrl}
+   490→              muted
+   491→              loop
+   492→              playsInline
+   493→              className="w-full h-full object-cover"
+   494→            />
+   495→            <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
+   496→              <Play className="w-3 h-3 text-white fill-white" />
+   497→              <span className="text-white text-[10px] font-semibold">Video</span>
+   498→            </div>
+   499→          </Link>
+   500→        ) : (
+   501→          <Link href={post.product ? `/product?id=${post.product.id}` : '#'} className="block w-full h-full">
+   502→            <img src={post.mediaUrl} alt={post.caption} className="w-full h-full object-cover" loading="lazy" />
+   503→          </Link>
+   504→        )}
+   505→
+   506→        {/* FOMO badge — top-left, subtle */}
+   507→        {fomoText && (
+   508→          <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+   509→            {fomoText}
+   510→          </div>
+   511→        )}
+   512→      </div>
+   513→
+   514→      {/* Action bar — IG-style: 24px icons, no labels, gap 16px */}
+   515→      <div className="ig-action-bar">
+   516→        <button onClick={onLike} aria-label="Like">
+   517→          <motion.div whileTap={{ scale: 1.2 }}>
+   518→            <Heart className={`w-7 h-7 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-black'}`} strokeWidth={1.5} />
+   519→          </motion.div>
+   520→        </button>
+   521→        <button aria-label="Comment">
+   522→          <MessageCircle className="w-7 h-7 text-black" strokeWidth={1.5} />
+   523→        </button>
+   524→        <button aria-label="Share">
+   525→          <Send className="w-7 h-7 text-black" strokeWidth={1.5} />
+   526→        </button>
+   527→        <button onClick={onSave} className="ml-auto" aria-label="Save">
+   528→          <Bookmark className={`w-7 h-7 transition-colors ${saved ? 'fill-black text-black' : 'text-black'}`} strokeWidth={1.5} />
+   529→        </button>
+   530→      </div>
+   531→
+   532→      {/* Likes count — IG-style bold */}
+   533→      <div className="ig-likes">
+   534→        {formatCount(likeCount)} likes
+   535→      </div>
+   536→
+   537→      {/* Caption — IG-style: bold username + text */}
+   538→      <div className="ig-caption">
+   539→        <span className="username">{post.sellerName}</span>
+   540→        {post.caption}
+   541→        {post.product?.category && (
+   542→          <span className="text-sky-500"> #{post.product.category.toLowerCase().replace(/\s+/g, '')}</span>
+   543→        )}
+   544→      </div>
+   545→
+   546→      {/* Comments link */}
+   547→      {post.comments > 0 && (
+   548→        <div className="ig-comments-link">
+   549→          View all {formatCount(post.comments)} comments
+   550→        </div>
+   551→      )}
+   552→
+   553→      {/* Timestamp */}
+   554→      {post.createdAt && (
+   555→        <div className="ig-timestamp">
+   556→          {timeAgo(post.createdAt)} AGO
+   557→        </div>
+   558→      )}
+   559→
+   560→      {/* Product CTA — IG-style shoppable tag at bottom */}
+   561→      {post.product && (
+   562→        <Link
+   563→          href={`/product?id=${post.product.id}`}
+   564→          className="block mx-3 mb-3 bg-white border border-neutral-200 rounded-lg p-2.5 flex items-center gap-3 hover:bg-neutral-50 transition-colors"
+   565→        >
+   566→          <div className="w-11 h-11 rounded-md overflow-hidden bg-neutral-100 shrink-0">
+   567→            {post.product.image_url && (
+   568→              <img src={post.product.image_url} alt="" className="w-full h-full object-cover" />
+   569→            )}
+   570→          </div>
+   571→          <div className="flex-1 min-w-0">
+   572→            <div className="text-xs font-semibold text-black truncate">{post.product.name}</div>
+   573→            <div className="text-sm font-bold text-black">{formatPrice(post.product.price)}</div>
+   574→          </div>
+   575→          <button
+   576→            onClick={onAddToCart}
+   577→            className="bg-black text-white text-xs font-semibold px-3 py-2 rounded-md hover:bg-neutral-800 transition-colors shrink-0 active:scale-95"
+   578→          >
+   579→            Add to cart
+   580→          </button>
+   581→        </Link>
+   582→      )}
+   583→    </motion.article>
+   584→  );
+   585→}
+   586→
+   587→function timeAgo(iso?: string): string {
+   588→  if (!iso) return '';
+   589→  const d = new Date(iso);
+   590→  const diff = (Date.now() - d.getTime()) / 1000;
+   591→  if (diff < 60) return 'JUST NOW';
+   592→  if (diff < 3600) return Math.floor(diff / 60) + 'M';
+   593→  if (diff < 86400) return Math.floor(diff / 3600) + 'H';
+   594→  if (diff < 604800) return Math.floor(diff / 86400) + 'D';
+   595→  return d.toLocaleDateString();
+   596→}
+   597→
+   598→function formatCount(n: number): string {
+   599→  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+   600→  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+   601→  return String(n);
+   602→}
+   603→
+   604→/**
+   605→ * Format the duration a live session has been running.
+   606→ * e.g. "5m", "1h 23m", "2h"
+   607→ */
+   608→function formatLiveDuration(startedAt: string): string {
+   609→  const start = new Date(startedAt).getTime();
+   610→  const diff = Date.now() - start;
+   611→  if (diff < 0) return '0m';
+   612→  const minutes = Math.floor(diff / 60000);
+   613→  const hours = Math.floor(minutes / 60);
+   614→  if (hours > 0) return `${hours}h ${minutes % 60}m`;
+   615→  return `${minutes}m`;
+   616→}
+   617→
+   618→/**
+   619→ * LiveAuctionsSection — eBay-style horizontal scroll of live seller cards.
+   620→ *
+   621→ * Each card shows:
+   622→ * - Seller avatar with pulsing red LIVE ring
+   623→ * - Seller name
+   624→ * - Live session title (e.g. "Friday tech deals")
+   625→ * - Viewer count with eye icon
+   626→ * - "Watch Live" CTA button
+   627→ *
+   628→ * The section has a dark gradient background to make the LIVE cards pop,
+   629→ * similar to eBay's live auction section.
+   630→ */
+   631→function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
+   632→  return (
+   633→    <section className="border-b border-neutral-100 bg-gradient-to-b from-neutral-900 to-black py-4">
+   634→      {/* Section header */}
+   635→      <div className="flex items-center justify-between px-3 mb-3">
+   636→        <div className="flex items-center gap-2">
+   637→          <span className="flex items-center gap-1.5">
+   638→            <span className="w-2 h-2 bg-red-500 rounded-full ig-float" />
+   639→            <span className="text-xs font-bold text-white tracking-wide">LIVE NOW</span>
+   640→          </span>
+   641→          <span className="text-xs text-white/50">·</span>
+   642→          <span className="text-xs text-white/70">{sessions.length} seller{sessions.length === 1 ? '' : 's'} streaming</span>
+   643→        </div>
+   644→        <Link href="/live" className="text-xs font-semibold text-sky-400 hover:text-sky-300">
+   645→          See all
+   646→        </Link>
+   647→      </div>
+   648→
+   649→      {/* Horizontal scroll of live cards */}
+   650→      <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
+   651→        {sessions.map((session, index) => {
+   652→          const seller = session.seller || {};
+   653→          const sellerName = seller.business_name || 'Seller';
+   654→          const sellerImage = seller.profile_image;
+   655→          const title = session.title || `${sellerName} is live`;
+   656→          const viewers = session.viewer_count || 0;
+   657→          const liveDuration = session.started_at
+   658→            ? formatLiveDuration(session.started_at)
+   659→            : null;
+   660→
+   661→          return (
+   662→            <Link
+   663→              key={session.id}
+   664→              href={`/live-watch?id=${session.id}`}
+   665→              className="ig-bounce-in shrink-0 w-64 bg-white rounded-xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-0.5"
+   666→              style={{ animationDelay: `${index * 80}ms` }}
+   667→            >
+   668→              {/* Top: avatar + LIVE badge + duration */}
+   669→              <div className="relative h-32 bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
+   670→                {/* Pulsing red ring around avatar */}
+   671→                <div className="relative">
+   672→                  <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-40" />
+   673→                  <div className="relative w-16 h-16 rounded-full border-2 border-red-500 overflow-hidden bg-neutral-700">
+   674→                    {sellerImage ? (
+   675→                      <img src={sellerImage} alt={sellerName} className="w-full h-full object-cover" />
+   676→                    ) : (
+   677→                      <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
+   678→                        {sellerName.charAt(0).toUpperCase()}
+   679→                      </div>
+   680→                    )}
+   681→                  </div>
+   682→                </div>
+   683→                {/* LIVE badge */}
+   684→                <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
+   685→                  <span className="w-1.5 h-1.5 bg-white rounded-full" />
+   686→                  LIVE
+   687→                </div>
+   688→                {/* Duration */}
+   689→                {liveDuration && (
+   690→                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+   691→                    {liveDuration}
+   692→                  </div>
+   693→                )}
+   694→              </div>
+   695→              {/* Bottom: title + viewers + CTA */}
+   696→              <div className="p-3">
+   697→                <div className="text-xs font-semibold text-black truncate mb-1">{sellerName}</div>
+   698→                <div className="text-xs text-neutral-600 line-clamp-1 mb-2">{title}</div>
+   699→                <div className="flex items-center justify-between">
+   700→                  <span className="flex items-center gap-1 text-[10px] text-neutral-500">
+   701→                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+   702→                    {formatCount(viewers)} watching
+   703→                  </span>
+   704→                  <span className="bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full">
+   705→                    Watch Live
+   706→                  </span>
+   707→                </div>
+   708→              </div>
+   709→            </Link>
+   710→          );
+   711→        })}
+   712→      </div>
+   713→    </section>
+   714→  );
+   715→}
+   716→
+   717→/**
+   718→ * ShortsSection — YouTube Shorts / IG Reels style horizontal scroll.
+   719→ *
+   720→ * Each card is a vertical 9:16 video thumbnail with:
+   721→ * - Caption overlay at bottom
+   722→ * - View count + play icon
+   723→ * - Seller name
+   724→ *
+   725→ * Tapping a short navigates to /videos (the full-screen video viewer).
+   726→ */
+   727→function ShortsSection({ shorts }: { shorts: any[] }) {
+   728→  return (
+   729→    <section className="border-b border-neutral-100 py-4">
+   730→      {/* Section header */}
+   731→      <div className="flex items-center justify-between px-3 mb-3">
+   732→        <div className="flex items-center gap-1.5">
+   733→          <Play className="w-4 h-4 text-black fill-black" />
+   734→          <h3 className="text-sm font-semibold text-black">Shorts</h3>
+   735→        </div>
+   736→        <Link href="/shorts" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+   737→          See all
+   738→        </Link>
+   739→      </div>
+   740→
+   741→      {/* Horizontal scroll of vertical video cards */}
+   742→      <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
+   743→        {shorts.map((short, index) => {
+   744→          const seller = short.seller || {};
+   745→          const sellerName = seller.business_name || 'Seller';
+   746→          const caption = short.caption || '';
+   747→          const views = short.views || 0;
+   748→          const likes = short.likes || 0;
+   749→          const productImage = short.product?.image_url;
+   750→
+   751→          return (
+   752→            <Link
+   753→              key={short.id}
+   754→              href="/shorts"
+   755→              className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-neutral-900 hover:shadow-lg transition-all hover:-translate-y-0.5"
+   756→              style={{ animationDelay: `${index * 60}ms` }}
+   757→            >
+   758→              {/* Vertical 9:16 video thumbnail */}
+   759→              <div className="relative aspect-[9/16] bg-neutral-800">
+   760→                {short.videoUrl ? (
+   761→                  <video
+   762→                    src={short.videoUrl}
+   763→                    muted
+   764→                    loop
+   765→                    playsInline
+   766→                    preload="metadata"
+   767→                    className="w-full h-full object-cover"
+   768→                    onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+   769→                    onMouseLeave={(e) => e.currentTarget.pause()}
+   770→                  />
+   771→                ) : productImage ? (
+   772→                  <img src={productImage} alt={caption} className="w-full h-full object-cover" loading="lazy" />
+   773→                ) : null}
+   774→                {/* Gradient overlay for caption readability */}
+   775→                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+   776→                {/* Play count top-right */}
+   777→                <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+   778→                  <Play className="w-2 h-2 fill-white" />
+   779→                  {formatCount(views)}
+   780→                </div>
+   781→                {/* Caption + seller at bottom */}
+   782→                <div className="absolute bottom-0 left-0 right-0 p-2">
+   783→                  <div className="text-[10px] font-semibold text-white truncate mb-0.5">{sellerName}</div>
+   784→                  {caption && (
+   785→                    <div className="text-[10px] text-white/80 line-clamp-2 leading-tight">{caption}</div>
+   786→                  )}
+   787→                  {/* Likes */}
+   788→                  <div className="flex items-center gap-1 mt-1">
+   789→                    <Heart className="w-2.5 h-2.5 fill-red-500 text-red-500" />
+   790→                    <span className="text-[9px] text-white/70">{formatCount(likes)}</span>
+   791→                  </div>
+   792→                </div>
+   793→              </div>
+   794→            </Link>
+   795→          );
+   796→        })}
+   797→      </div>
+   798→    </section>
+   799→  );
+   800→}
+   801→
+   802→/**
+   803→ * SuggestedSellersCarousel — horizontal scroll of seller cards, inserted
+   804→ * between feed posts every 3 items. Shows 3 sellers + a "See all" card
+   805→ * that links to /sellers.
+   806→ *
+   807→ * Layout matches Instagram's "Suggested for you" pattern:
+   808→ * - Section header: "Suggested Sellers" + "See All" link
+   809→ * - Horizontal scroll of square-ish seller cards (avatar + name + Follow btn)
+   810→ * - Final card: "See all sellers" with chevron
+   811→ */
+   812→function SuggestedSellersCarousel({
+   813→  sellers,
+   814→  carouselIndex,
+   815→  following,
+   816→  onFollow,
+   817→}: {
+   818→  sellers: any[];
+   819→  carouselIndex: number;
+   820→  following: Set<string>;
+   821→  onFollow: (sellerId: string, e: React.MouseEvent) => void;
+   822→}) {
+   823→  // Vary the header label slightly so repeat carousels feel fresh
+   824→  const headerLabel = carouselIndex === 0
+   825→    ? 'Suggested Sellers'
+   826→    : carouselIndex === 1
+   827→    ? 'Discover More Sellers'
+   828→    : 'More Sellers to Follow';
+   829→
+   830→  return (
+   831→    <section className="border-y border-neutral-100 bg-white py-4">
+   832→      {/* Section header */}
+   833→      <div className="flex items-center justify-between px-3 mb-3">
+   834→        <div className="flex items-center gap-1.5">
+   835→          <Users className="w-4 h-4 text-neutral-700" />
+   836→          <h3 className="text-sm font-semibold text-black">{headerLabel}</h3>
+   837→        </div>
+   838→        <Link href="/sellers" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+   839→          See All
+   840→        </Link>
+   841→      </div>
+   842→
+   843→      {/* Horizontal scroll of seller cards */}
+   844→      <div className="flex gap-3 px-3 overflow-x-auto no-scrollbar">
+   845→        {sellers.map((seller, index) => {
+   846→          const sellerId = seller.id;
+   847→          const name = seller.business_name || seller.farm_name || 'Seller';
+   848→          const image = seller.profile_image;
+   849→          const category = seller.business_category;
+   850→          const isFollowing = following.has(sellerId);
+   851→          const sellerHref = seller.slug ? `/${seller.slug}` : `/seller-profile?id=${sellerId}`;
+   852→
+   853→          return (
+   854→            <div
+   855→              key={sellerId}
+   856→              className="ig-bounce-in shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all"
+   857→              style={{ animationDelay: `${index * 60}ms` }}
+   858→            >
+   859→              <Link href={sellerHref} className="block">
+   860→                <div className="w-16 h-16 rounded-full overflow-hidden bg-neutral-200 mb-2 ig-story-ring" style={{ padding: 2 }}>
+   861→                  <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
+   862→                    {image ? (
+   863→                      <img src={image} alt={name} className="w-full h-full object-cover" />
+   864→                    ) : (
+   865→                      <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white font-bold text-xl">
+   866→                        {name.charAt(0).toUpperCase()}
+   867→                      </div>
+   868→                    )}
+   869→                  </div>
+   870→                </div>
+   871→              </Link>
+   872→              <Link
+   873→                href={sellerHref}
+   874→                className="text-xs font-semibold text-black truncate max-w-full hover:opacity-70 mb-0.5"
+   875→              >
+   876→                {name}
+   877→              </Link>
+   878→              {category && (
+   879→                <p className="text-[10px] text-neutral-500 truncate max-w-full mb-2">{category}</p>
+   880→              )}
+   881→              <button
+   882→                onClick={(e) => onFollow(sellerId, e)}
+   883→                className={`w-full text-xs font-semibold py-1.5 rounded-md transition-colors ${
+   884→                  isFollowing
+   885→                    ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+   886→                    : 'bg-black text-white hover:bg-neutral-800'
+   887→                }`}
+   888→              >
+   889→                {isFollowing ? 'Following' : 'Follow'}
+   890→              </button>
+   891→            </div>
+   892→          );
+   893→        })}
+   894→
+   895→        {/* "See all sellers" card — links to /sellers page */}
+   896→        <Link
+   897→          href="/sellers"
+   898→          className="shrink-0 w-36 border border-neutral-200 rounded-lg p-3 flex flex-col items-center justify-center text-center hover:bg-neutral-50 transition-colors"
+   899→        >
+   900→          <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-2">
+   901→            <ChevronRight className="w-6 h-6 text-neutral-700" />
+   902→          </div>
+   903→          <span className="text-xs font-semibold text-black">See all sellers</span>
+   904→          <span className="text-[10px] text-neutral-500 mt-0.5">Discover more stores</span>
+   905→        </Link>
+   906→      </div>
+   907→    </section>
+   908→  );
+   909→}
+   910→

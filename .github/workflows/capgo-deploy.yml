@@ -1,0 +1,81 @@
+name: Build APK & Deploy to Capgo
+
+# Trigger on every push to any branch.
+# Skip if the push only touches docs or the workflow itself.
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/workflows/**'
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+# Cancel any in-flight run for the same ref when a new push lands.
+concurrency:
+  group: capgo-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java 17 (for Android build)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build static export + Android APK
+        run: bash scripts/build-apk.sh
+        env:
+          # Required for Next.js build (Supabase proxy target)
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cellex-${{ github.sha }}-apk
+          path: |
+            android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload bundle to Capgo (production channel)
+        env:
+          CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
+        run: npx @capgo/cli bundle upload --channel production
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Capgo Deploy Summary" >> $GITHUB_STEP_SUMMARY
+          echo "* Branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "* Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "* Channel: \`production\`" >> $GITHUB_STEP_SUMMARY
+          echo "* Triggered by: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY

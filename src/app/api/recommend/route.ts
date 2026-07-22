@@ -5,6 +5,7 @@ import {
   sendGorseFeedback,
   GORSE_URL,
   fetchRealProductRankingFromSupabase,
+  fetchRealVideoRankingFromSupabase,
   upsertProductToChroma,
   deleteProductFromChroma,
 } from '@/lib/ai';
@@ -97,25 +98,38 @@ function isGorseConfigured(): boolean {
 }
 
 /**
- * Homepage Feed — Gorse recommendations, with real-trending fallback.
+ * Homepage Feed — PURELY Gorse-driven unified feed of videos + products.
  *
- *   1. Gorse (if configured) → collaborative filtering
- *   2. Real trending (Supabase engagement score) → cold-start fallback
+ * The feed is a single ranked list. Gorse decides the order. No hardcoded
+ * interleave logic, no fixed video/product ratio. The frontend just renders
+ * whatever Gorse returns, in that exact order.
+ *
+ * Item ID scheme (so Gorse sees videos and products as distinct items):
+ *   "video:<id>"   e.g. "video:25"
+ *   "product:<id>" e.g. "product:22"
+ *
+ * Strategy:
+ *   1. Gorse (if configured) → collaborative filtering across both videos + products
+ *   2. Real trending (Supabase engagement score) → cold-start fallback.
+ *      Combines trending products + recent videos, ranked by real engagement.
+ *
+ * Response shape:
+ *   { success, source, posts: [{ type: 'video'|'product', ...videoOrProductFields }] }
  */
 async function handleHome(userId: string, limit: number) {
   const startTime = Date.now();
   const sources: string[] = [];
 
-  // 1. Gorse
+  // 1. Gorse — returns ranked item IDs like ["video:5","product:22","video:12",...]
   if (isGorseConfigured()) {
     const gorseIds = await getGorseRecommendations(userId, { limit });
     if (gorseIds.length > 0) {
-      const hydrated = await hydrateProducts(gorseIds);
-      if (hydrated.length > 0) {
+      const posts = await hydrateUnifiedPosts(gorseIds);
+      if (posts.length > 0) {
         return NextResponse.json({
           success: true,
           source: 'gorse',
-          products: hydrated,
+          posts,
           latencyMs: Date.now() - startTime,
         });
       }
@@ -125,22 +139,14 @@ async function handleHome(userId: string, limit: number) {
     sources.push('gorse:not-configured');
   }
 
-  // 2. Real trending — Supabase engagement score
-  //    (units_sold*4 + views*0.5 + wishlist*3 + reviews*2 + recency bonus)
-  //    Used for cold-start: new users, new items, or Gorse temporarily empty.
-  const ranked = await fetchRealProductRankingFromSupabase(limit);
-  if (ranked.length > 0) {
-    const hydrated = await hydrateProducts(ranked.map((r) => r.id));
-    const scoreMap = new Map(ranked.map((r) => [r.id, r]));
-    const enriched = hydrated.map((p: any) => ({
-      ...p,
-      _engagement_score: scoreMap.get(String(p.id))?.score || 0,
-      _views_count: scoreMap.get(String(p.id))?.views_count || 0,
-    }));
+  // 2. Cold-start fallback — real trending across both videos AND products.
+  //    Rank them together by engagement score, return as a unified list.
+  const trendingPosts = await fetchRealTrendingUnified(limit);
+  if (trendingPosts.length > 0) {
     return NextResponse.json({
       success: true,
       source: 'trending-real',
-      products: enriched,
+      posts: trendingPosts,
       latencyMs: Date.now() - startTime,
       debug: { sourcesTried: sources },
     });
@@ -150,10 +156,136 @@ async function handleHome(userId: string, limit: number) {
   return NextResponse.json({
     success: true,
     source: 'empty',
-    products: [],
+    posts: [],
     latencyMs: Date.now() - startTime,
     debug: { sourcesTried: sources },
   });
+}
+
+/**
+ * Hydrate a list of prefixed item IDs ("video:5", "product:22") into a unified
+ * posts array. Preserves the order Gorse returned (most relevant first).
+ * Skips any IDs that don't parse or can't be hydrated.
+ */
+async function hydrateUnifiedPosts(itemIds: string[]): Promise<any[]> {
+  if (!itemIds.length) return [];
+
+  // Parse prefixes, group by type
+  const videoIds: string[] = [];
+  const productIds: string[] = [];
+  const idOrder: Array<{ type: 'video' | 'product'; id: string }> = [];
+
+  for (const raw of itemIds) {
+    const s = String(raw);
+    if (s.startsWith('video:')) {
+      const id = s.slice(6);
+      videoIds.push(id);
+      idOrder.push({ type: 'video', id });
+    } else if (s.startsWith('product:')) {
+      const id = s.slice(8);
+      productIds.push(id);
+      idOrder.push({ type: 'product', id });
+    } else if (/^\d+$/.test(s)) {
+      // Legacy: bare numeric IDs — assume product (backward compat with
+      // existing Gorse feedback that wasn't prefixed)
+      productIds.push(s);
+      idOrder.push({ type: 'product', id: s });
+    }
+    // Unknown prefix — skip
+  }
+
+  // Hydrate videos and products in parallel
+  const [videos, products] = await Promise.all([
+    videoIds.length ? hydrateVideos(videoIds) : Promise.resolve([]),
+    productIds.length ? hydrateProducts(productIds) : Promise.resolve([]),
+  ]);
+
+  // Build lookup maps
+  const videoMap = new Map(videos.map((v: any) => [String(v.id), v]));
+  const productMap = new Map(products.map((p: any) => [String(p.id), p]));
+
+  // Build unified posts array in Gorse's order
+  const posts: any[] = [];
+  for (const { type, id } of idOrder) {
+    if (type === 'video') {
+      const v = videoMap.get(id);
+      if (v) posts.push({ type: 'video', ...v });
+    } else {
+      const p = productMap.get(id);
+      if (p) posts.push({ type: 'product', ...p });
+    }
+  }
+  return posts;
+}
+
+/**
+ * Cold-start fallback: fetch trending products + recent videos from Supabase,
+ * rank them together by real engagement score, return as a unified posts array.
+ *
+ * Engagement score (same formula for both types, normalized):
+ *   products: units_sold*4 + views*0.5 + wishlist*3 + reviews*2 + recency
+ *   videos:   views_count*0.5 + likes_count*1 + comments_count*2 + recency
+ */
+async function fetchRealTrendingUnified(limit: number): Promise<any[]> {
+  // Fetch trending products and recent videos in parallel
+  const [productRows, videoRows] = await Promise.all([
+    fetchRealProductRankingFromSupabase(limit),
+    fetchRealVideoRankingFromSupabase(limit),
+  ]);
+
+  // Build unified ranked list
+  type Item = { type: 'video' | 'product'; id: string; score: number; data: any };
+  const items: Item[] = [];
+
+  for (const r of productRows) {
+    items.push({ type: 'product', id: r.id, score: r.score, data: r });
+  }
+  for (const r of videoRows) {
+    items.push({ type: 'video', id: r.id, score: r.score, data: r });
+  }
+
+  // Sort by score descending
+  items.sort((a, b) => b.score - a.score);
+
+  // Take top `limit`
+  const top = items.slice(0, limit);
+
+  // Hydrate
+  const productIds = top.filter((t) => t.type === 'product').map((t) => t.id);
+  const videoIds = top.filter((t) => t.type === 'video').map((t) => t.id);
+  const [products, videos] = await Promise.all([
+    productIds.length ? hydrateProducts(productIds) : Promise.resolve([]),
+    videoIds.length ? hydrateVideos(videoIds) : Promise.resolve([]),
+  ]);
+
+  const productMap = new Map(products.map((p: any) => [String(p.id), p]));
+  const videoMap = new Map(videos.map((v: any) => [String(v.id), v]));
+
+  // Build posts in ranked order
+  const posts: any[] = [];
+  for (const t of top) {
+    if (t.type === 'product') {
+      const p = productMap.get(t.id);
+      if (p) {
+        posts.push({
+          type: 'product',
+          ...p,
+          _engagement_score: t.score,
+          _views_count: t.data.views_count || 0,
+        });
+      }
+    } else {
+      const v = videoMap.get(t.id);
+      if (v) {
+        posts.push({
+          type: 'video',
+          ...v,
+          _engagement_score: t.score,
+        });
+      }
+    }
+  }
+  return posts;
 }
 
 /**

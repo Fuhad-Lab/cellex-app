@@ -621,3 +621,75 @@ export async function fetchRealProductRankingFromSupabase(limit: number): Promis
     return [];
   }
 }
+
+/**
+ * Fetch trending videos from Supabase ranked by real engagement.
+ * Used by the unified feed (cold-start fallback) alongside trending products.
+ *
+ * Engagement score for videos:
+ *   views_count * 0.5 + likes_count * 1 + comments_count * 2 + recency bonus
+ */
+export async function fetchRealVideoRankingFromSupabase(limit: number): Promise<Array<{
+  id: string;
+  score: number;
+  views_count: number;
+  likes_count: number;
+  created_at: string;
+}>> {
+  const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || process.env.SUPABASE_SERVICE_KEY || '';
+  const PROJECT = process.env.SUPABASE_PROJECT || 'tcwdbokruvlizkxcpkzj';
+  if (!SUPABASE_TOKEN) return [];
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PERF.supabaseTimeoutMs);
+
+  try {
+    const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_TOKEN}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'cellex-recommend',
+      },
+      body: JSON.stringify({
+        query: `
+          SELECT id,
+                 COALESCE(views_count, 0) AS views_count,
+                 COALESCE(likes_count, 0) AS likes_count,
+                 COALESCE(comments_count, 0) AS comments_count,
+                 created_at,
+                 (COALESCE(views_count, 0) * 0.5
+                  + COALESCE(likes_count, 0) * 1
+                  + COALESCE(comments_count, 0) * 2
+                  + CASE WHEN created_at > NOW() - INTERVAL '7 days'  THEN 50
+                         WHEN created_at > NOW() - INTERVAL '30 days' THEN 20
+                         ELSE 0 END) AS score
+          FROM product_videos
+          WHERE status IS NULL OR status = 'active' OR status = 'ready'
+          ORDER BY score DESC
+          LIMIT ${Math.min(limit * 2, 100)};
+        `.trim(),
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error('[AI] Supabase video ranking query error:', resp.status, errText.slice(0, 200));
+      return [];
+    }
+    const data = await resp.json();
+    if (!Array.isArray(data)) return [];
+    return data.map((r: any) => ({
+      id: String(r.id),
+      score: Number(r.score) || 0,
+      views_count: Number(r.views_count) || 0,
+      likes_count: Number(r.likes_count) || 0,
+      created_at: r.created_at,
+    }));
+  } catch (err) {
+    clearTimeout(timeout);
+    console.error('[AI] Supabase video ranking query failed:', err);
+    return [];
+  }
+}

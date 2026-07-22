@@ -1,0 +1,35 @@
+# Share this file path with new conversations to restore context:
+# /home/z/my-project/download/eeshamart-ai/.agent-ctx/project-context.md
+
+# === EESHAMART PROJECT CONTEXT (portable copy) ===
+
+## Repositories & Links
+| Platform | URL |
+|----------|-----|
+| GitHub | https://github.com/eesha000009-dev/Eesha-shop-Buying-and-Selling |
+| Hugging Face | https://huggingface.co/spaces/fuhaddesmond/eeshamart-ai |
+| Telegram Bot | https://t.me/eeshamart_bot |
+| Supabase | https://tcwdbokruvlizkxcpkzj.supabase.co |
+
+## API Keys
+GitHub PAT:        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
+Hugging Face:      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
+Telegram:          8142562507:AAG-_UExIh18e6mz-0URKmv67-CQOk_cuA4
+Supabase Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjd2Rib2tydXZsaXpreGNwa3pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMDkyNjQsImV4cCI6MjA3NTY4NTI2NH0.p871FXUakrWQ7PhhZr8Ly2BxLOhwQjRJiDGd59wAhyg
+
+## Project Structure
+Eesha-shop-Buying-and-Selling/
+  telegram-bot/app.py          <- Telegram bot
+  eeshamart-ai-backend/app.py  <- AI backend (Qwen + BLIP)
+  src/app/page.tsx             <- Website main page
+  prisma/schema.prisma         <- Database schema
+
+## AI System
+- Backend: Qwen2.5-3B-Instruct for chat + BLIP for images
+- Hosted: Hugging Face Spaces
+- Endpoint: /api/chat (receives message + context, returns response + products)
+
+## Status
+[x] Hugging Face: Deployed
+[x] GitHub: Updated
+[x] Telegram Bot: Working

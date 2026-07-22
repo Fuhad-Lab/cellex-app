@@ -1,0 +1,1045 @@
+     1→@import "tailwindcss";
+     2→@import "tw-animate-css";
+     3→
+     4→@custom-variant dark (&:is(.dark *));
+     5→
+     6→@theme inline {
+     7→  --color-background: var(--background);
+     8→  --color-foreground: var(--foreground);
+     9→  --font-sans: var(--font-geist-sans);
+    10→  --font-mono: var(--font-geist-mono);
+    11→  --color-sidebar-ring: var(--sidebar-ring);
+    12→  --color-sidebar-border: var(--sidebar-border);
+    13→  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    14→  --color-sidebar-accent: var(--sidebar-accent);
+    15→  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    16→  --color-sidebar-primary: var(--sidebar-primary);
+    17→  --color-sidebar-foreground: var(--sidebar-foreground);
+    18→  --color-sidebar: var(--sidebar);
+    19→  --color-chart-5: var(--chart-5);
+    20→  --color-chart-4: var(--chart-4);
+    21→  --color-chart-3: var(--chart-3);
+    22→  --color-chart-2: var(--chart-2);
+    23→  --color-chart-1: var(--chart-1);
+    24→  --color-ring: var(--ring);
+    25→  --color-input: var(--input);
+    26→  --color-border: var(--border);
+    27→  --color-destructive: var(--destructive);
+    28→  --color-accent-foreground: var(--accent-foreground);
+    29→  --color-accent: var(--accent);
+    30→  --color-muted-foreground: var(--muted-foreground);
+    31→  --color-muted: var(--muted);
+    32→  --color-secondary-foreground: var(--secondary-foreground);
+    33→  --color-secondary: var(--secondary);
+    34→  --color-primary-foreground: var(--primary-foreground);
+    35→  --color-primary: var(--primary);
+    36→  --color-popover-foreground: var(--popover-foreground);
+    37→  --color-popover: var(--popover);
+    38→  --color-card-foreground: var(--card-foreground);
+    39→  --color-card: var(--card);
+    40→  --radius-sm: calc(var(--radius) - 4px);
+    41→  --radius-md: calc(var(--radius) - 2px);
+    42→  --radius-lg: var(--radius);
+    43→  --radius-xl: calc(var(--radius) + 4px);
+    44→}
+    45→
+    46→/* ============================================================
+    47→   Cellex Design System — Instagram-inspired
+    48→   Social commerce: IG's clean white UI + commerce CTAs.
+    49→   - System font stack (matches IG exactly)
+    50→   - Pure white bg / pure black text
+    51→   - #f5f5f5 hover, #dbdbdb borders, #8e8e8e secondary text
+    52→   - Square media in feed (1:1, full-bleed within card)
+    53→   - Compact action bar (24px icons, no labels)
+    54→   ============================================================ */
+    55→
+    56→:root {
+    57→  --background: #ffffff;
+    58→  --foreground: #000000;
+    59→  --card: #ffffff;
+    60→  --card-foreground: #000000;
+    61→  --popover: #ffffff;
+    62→  --popover-foreground: #000000;
+    63→  --primary: #000000;
+    64→  --primary-hover: #262626;
+    65→  --primary-foreground: #ffffff;
+    66→  --secondary: #f5f5f5;
+    67→  --secondary-foreground: #000000;
+    68→  --muted: #f5f5f5;
+    69→  --muted-foreground: #8e8e8e;
+    70→  --accent: #efefef;
+    71→  --accent-foreground: #000000;
+    72→  --destructive: #ed4956; /* IG red */
+    73→  --destructive-foreground: #ffffff;
+    74→  --border: #dbdbdb;
+    75→  --input: #dbdbdb;
+    76→  --ring: #000000;
+    77→  --chart-1: #000000;
+    78→  --chart-2: #333333;
+    79→  --chart-3: #666666;
+    80→  --chart-4: #999999;
+    81→  --chart-5: #cccccc;
+    82→  --radius: 0.5rem;
+    83→  --sidebar: #000000;
+    84→  --sidebar-foreground: #e2e8f0;
+    85→  --sidebar-primary: #ffffff;
+    86→  --sidebar-primary-foreground: #000000;
+    87→  --sidebar-accent: #1a1a1a;
+    88→  --sidebar-accent-foreground: #e2e8f0;
+    89→  --sidebar-border: #1a1a1a;
+    90→  --sidebar-ring: #ffffff;
+    91→
+    92→  /* IG-style font stack */
+    93→  --font-ig: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    94→}
+    95→
+    96→.dark {
+    97→  --background: #0f172a;
+    98→  --foreground: #e2e8f0;
+    99→  --card: #1e293b;
+   100→  --card-foreground: #e2e8f0;
+   101→  --popover: #1e293b;
+   102→  --popover-foreground: #e2e8f0;
+   103→  --primary: #ffffff;
+   104→  --primary-foreground: #000000;
+   105→  --secondary: #334155;
+   106→  --secondary-foreground: #e2e8f0;
+   107→  --muted: #334155;
+   108→  --muted-foreground: #94a3b8;
+   109→  --accent: #1e293b;
+   110→  --accent-foreground: #ffffff;
+   111→  --destructive: #ef4444;
+   112→  --destructive-foreground: #ffffff;
+   113→  --border: #334155;
+   114→  --input: #334155;
+   115→  --ring: #ffffff;
+   116→}
+   117→
+   118→* {
+   119→  border-color: var(--border);
+   120→}
+   121→
+   122→html {
+   123→  font-size: 16px;
+   124→  scroll-behavior: smooth;
+   125→}
+   126→
+   127→body {
+   128→  background-color: var(--background);
+   129→  color: var(--foreground);
+   130→  font-size: 16px;
+   131→  line-height: 1.5;
+   132→  font-family: var(--font-ig);
+   133→  font-feature-settings: "rlig" 1, "calt" 1;
+   134→}
+   135→
+   136→h1 { font-size: 1.5rem; line-height: 1.3; }
+   137→h2 { font-size: 1.25rem; line-height: 1.35; }
+   138→h3 { font-size: 1.125rem; line-height: 1.4; }
+   139→
+   140→/* Brand — solid black, no gradient */
+   141→.brand-gradient {
+   142→  background: #000000;
+   143→}
+   144→
+   145→.brand-text {
+   146→  color: #000000;
+   147→}
+   148→
+   149→/* Price — black, bold */
+   150→.price {
+   151→  color: #000000;
+   152→  font-weight: 700;
+   153→}
+   154→
+   155→/* Glow — subtle dark shadow */
+   156→.glow {
+   157→  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+   158→}
+   159→
+   160→.glow-hover:hover {
+   161→  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+   162→}
+   163→
+   164→/* Hide scrollbar */
+   165→.no-scrollbar::-webkit-scrollbar { display: none; }
+   166→.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+   167→
+   168→/* Sale badge — black */
+   169→.sale-badge {
+   170→  background: #000000;
+   171→  color: #ffffff;
+   172→  font-weight: 700;
+   173→  border-radius: 4px;
+   174→  padding: 2px 6px;
+   175→  font-size: 12px;
+   176→  line-height: 1.2;
+   177→}
+   178→
+   179→/* Bestseller badge — gold */
+   180→.bestseller-badge {
+   181→  background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);
+   182→  color: #fff;
+   183→  font-weight: 700;
+   184→  border-radius: 4px;
+   185→  padding: 2px 6px;
+   186→  font-size: 12px;
+   187→}
+   188→
+   189→/* Buy Now button — solid black */
+   190→.btn-buy-now {
+   191→  background: #000000;
+   192→  color: #ffffff;
+   193→  font-weight: 700;
+   194→  font-size: 16px;
+   195→  border-radius: 999px;
+   196→  padding: 12px 24px;
+   197→  border: none;
+   198→  cursor: pointer;
+   199→  transition: all 0.2s ease;
+   200→  min-height: 44px;
+   201→}
+   202→.btn-buy-now:hover { background: #1a1a1a; transform: translateY(-1px); }
+   203→.btn-buy-now:active { transform: translateY(0); }
+   204→
+   205→/* Urgency — black */
+   206→.urgency {
+   207→  color: #000000;
+   208→  font-weight: 700;
+   209→}
+   210→
+   211→/* Input fields — 16px to prevent iOS zoom */
+   212→input, textarea, select {
+   213→  font-size: 16px;
+   214→}
+   215→
+   216→button {
+   217→  font-size: 16px;
+   218→}
+   219→
+   220→/* ============================================================
+   221→   ANIMATIONS
+   222→   ============================================================ */
+   223→
+   224→/* Fade in */
+   225→@keyframes fadeIn {
+   226→  from { opacity: 0; }
+   227→  to { opacity: 1; }
+   228→}
+   229→
+   230→/* Slide up */
+   231→@keyframes slideUp {
+   232→  from { opacity: 0; transform: translateY(20px); }
+   233→  to { opacity: 1; transform: translateY(0); }
+   234→}
+   235→
+   236→/* Slide in from left */
+   237→@keyframes slideInLeft {
+   238→  from { opacity: 0; transform: translateX(-20px); }
+   239→  to { opacity: 1; transform: translateX(0); }
+   240→}
+   241→
+   242→/* Scale in */
+   243→@keyframes scaleIn {
+   244→  from { opacity: 0; transform: scale(0.95); }
+   245→  to { opacity: 1; transform: scale(1); }
+   246→}
+   247→
+   248→/* Shimmer (for skeletons) */
+   249→@keyframes shimmer {
+   250→  0% { background-position: -200% 0; }
+   251→  100% { background-position: 200% 0; }
+   252→}
+   253→
+   254→/* Page transition */
+   255→@keyframes pageEnter {
+   256→  from { opacity: 0; transform: translateY(8px); }
+   257→  to { opacity: 1; transform: translateY(0); }
+   258→}
+   259→
+   260→/* Utility classes */
+   261→.animate-fade-in {
+   262→  animation: fadeIn 0.4s ease-out forwards;
+   263→}
+   264→
+   265→.animate-slide-up {
+   266→  animation: slideUp 0.4s ease-out forwards;
+   267→}
+   268→
+   269→.animate-slide-in-left {
+   270→  animation: slideInLeft 0.3s ease-out forwards;
+   271→}
+   272→
+   273→.animate-scale-in {
+   274→  animation: scaleIn 0.3s ease-out forwards;
+   275→}
+   276→
+   277→.animate-page-enter {
+   278→  animation: pageEnter 0.3s ease-out forwards;
+   279→}
+   280→
+   281→/* Staggered delays */
+   282→.delay-0 { animation-delay: 0ms; }
+   283→.delay-50 { animation-delay: 50ms; }
+   284→.delay-100 { animation-delay: 100ms; }
+   285→.delay-150 { animation-delay: 150ms; }
+   286→.delay-200 { animation-delay: 200ms; }
+   287→.delay-300 { animation-delay: 300ms; }
+   288→.delay-400 { animation-delay: 400ms; }
+   289→.delay-500 { animation-delay: 500ms; }
+   290→
+   291→/* Skeleton shimmer */
+   292→.skeleton {
+   293→  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+   294→  background-size: 200% 100%;
+   295→  animation: shimmer 1.5s infinite;
+   296→}
+   297→
+   298→/* Shimmer utility — used by loading.tsx skeleton */
+   299→.shimmer {
+   300→  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+   301→  background-size: 200% 100%;
+   302→  animation: shimmer 1.5s infinite;
+   303→}
+   304→
+   305→/* Hover lift effect */
+   306→.hover-lift {
+   307→  transition: all 0.2s ease;
+   308→}
+   309→.hover-lift:hover {
+   310→  transform: translateY(-2px);
+   311→  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+   312→}
+   313→
+   314→/* Smooth card transitions */
+   315→.card-transition {
+   316→  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+   317→}
+   318→
+   319→/* Button transitions */
+   320→button, a {
+   321→  transition: all 0.15s ease;
+   322→}
+   323→
+   324→/* Image zoom on hover */
+   325→.img-zoom {
+   326→  overflow: hidden;
+   327→}
+   328→.img-zoom img {
+   329→  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   330→}
+   331→.img-zoom:hover img {
+   332→  transform: scale(1.08);
+   333→}
+   334→
+   335→/* Page transition overlay */
+   336→.page-transition {
+   337→  position: fixed;
+   338→  top: 0;
+   339→  left: 0;
+   340→  right: 0;
+   341→  bottom: 0;
+   342→  background: #ffffff;
+   343→  z-index: 9999;
+   344→  display: flex;
+   345→  align-items: center;
+   346→  justify-content: center;
+   347→  pointer-events: none;
+   348→  animation: fadeIn 0.2s ease-out;
+   349→}
+   350→
+   351→.page-transition-exit {
+   352→  animation: fadeIn 0.2s ease-out reverse;
+   353→}
+   354→
+   355→/* Loading dots */
+   356→.loading-dots span {
+   357→  display: inline-block;
+   358→  width: 8px;
+   359→  height: 8px;
+   360→  border-radius: 50%;
+   361→  background: #000000;
+   362→  margin: 0 3px;
+   363→  animation: loadingDots 1.4s infinite ease-in-out;
+   364→}
+   365→.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+   366→.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+   367→
+   368→@keyframes loadingDots {
+   369→  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+   370→  40% { transform: scale(1); opacity: 1; }
+   371→}
+   372→
+   373→/* Smooth pulse for live badges */
+   374→@keyframes smoothPulse {
+   375→  0%, 100% { opacity: 1; }
+   376→  50% { opacity: 0.5; }
+   377→}
+   378→.smooth-pulse {
+   379→  animation: smoothPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+   380→}
+   381→
+   382→/* ============================================================
+   383→   MOBILE WEBVIEW SIZING FIXES (Capacitor)
+   384→   Fixes the "page appears zoomed in on first paint" bug by:
+   385→   1. Pinning html/body width to 100vw (no horizontal overflow)
+   386→   2. Disabling iOS text auto-inflation
+   387→   3. Disabling tap-highlight + long-press callout (native feel)
+   388→   4. Respecting the notch / dynamic island via env(safe-area-inset-*)
+   389→   ============================================================ */
+   390→html, body {
+   391→  width: 100%;
+   392→  max-width: 100vw;
+   393→  overflow-x: hidden;
+   394→  -webkit-text-size-adjust: 100%;
+   395→  text-size-adjust: 100%;
+   396→  -webkit-tap-highlight-color: transparent;
+   397→  -webkit-touch-callout: none;
+   398→}
+   399→
+   400→/* Safe-area insets: applied on the body so every page gets them automatically.
+   401→   NOTE: padding-top is NOT applied here because the fixed .ig-topbar handles
+   402→   the top inset itself (positioned at top: env(safe-area-inset-top)). If we
+   403→   added body padding-top too, we'd get double spacing on pages with a topbar. */
+   404→body {
+   405→  padding-bottom: env(safe-area-inset-bottom);
+   406→  padding-left: env(safe-area-inset-left);
+   407→  padding-right: env(safe-area-inset-right);
+   408→}
+   409→
+   410→/* The bottom mobile-nav should sit ABOVE the home-indicator bar on iPhone X+. */
+   411→nav.fixed.bottom-0 {
+   412→  padding-bottom: env(safe-area-inset-bottom);
+   413→}
+   414→
+   415→/* While the page is being dragged via swipe-back, add a subtle drop-shadow
+   416→   to sell the "card sliding over the previous page" effect (iOS-like). */
+   417→.page-shell.is-dragging {
+   418→  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
+   419→}
+   420→
+   421→/* ============================================================
+   422→   NAVIGATION (standard Next.js — no iOS stack)
+   423→   ============================================================ */
+   424→html, body {
+   425→  overscroll-behavior-x: none;
+   426→  -webkit-font-smoothing: antialiased;
+   427→}
+   428→
+   429→/* ============================================================
+   430→   INSTAGRAM-STYLE UTILITIES (applied across the app)
+   431→   ============================================================ */
+   432→
+   433→/* IG-style container — centers content, max 470px on mobile (matches IG feed width) */
+   434→.ig-container {
+   435→  max-width: 470px;
+   436→  margin: 0 auto;
+   437→  width: 100%;
+   438→}
+   439→
+   440→/* IG-style top bar — FIXED at top, white, 1px bottom border, compact height.
+   441→   Uses position: fixed so it stays pinned during scroll (matches IG mobile web).
+   442→   Positioned at top: env(safe-area-inset-top) so it sits BELOW the iPhone notch.
+   443→
+   444→   Pages that use .ig-topbar have pt-[54px] added to their root div by the
+   445→   add_topbar_offset.py script. The offset is augmented with safe-area-inset-top
+   446→   via the .ig-topbar-offset class (use that instead of pt-[54px] for pages
+   447→   that need to account for the notch). */
+   448→.ig-topbar {
+   449→  position: fixed;
+   450→  top: env(safe-area-inset-top);
+   451→  left: 0;
+   452→  right: 0;
+   453→  z-index: 50;
+   454→  background: rgba(255, 255, 255, 0.70) !important;
+   455→  backdrop-filter: blur(25px) saturate(120%) !important;
+   456→  -webkit-backdrop-filter: blur(25px) saturate(120%) !important;
+   457→  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+   458→  height: 54px;
+   459→  display: flex;
+   460→  align-items: center;
+   461→  padding: 0 12px;
+   462→  max-width: 470px;
+   463→  margin: 0 auto;
+   464→}
+   465→
+   466→/* On desktop (>=768px), allow the top bar to span wider but still centered */
+   467→@media (min-width: 768px) {
+   468→  .ig-topbar {
+   469→    max-width: 935px;
+   470→  }
+   471→}
+   472→
+   473→/* Helper class — adds top padding equal to the fixed topbar height + notch.
+   474→   Applied automatically to page root divs by add_topbar_offset.py. */
+   475→.ig-topbar-offset {
+   476→  padding-top: calc(54px + env(safe-area-inset-top));
+   477→}
+   478→
+   479→/* IG logo — bold serif-style wordmark */
+   480→.ig-logo {
+   481→  font-family: var(--font-ig);
+   482→  font-weight: 800;
+   483→  font-size: 22px;
+   484→  letter-spacing: -0.5px;
+   485→  color: #000000;
+   486→}
+   487→
+   488→/* IG-style stories ring — gradient border around avatar */
+   489→.ig-story-ring {
+   490→  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+   491→  padding: 2px;
+   492→  border-radius: 50%;
+   493→}
+   494→
+   495→/* IG-style avatar — circular, object-cover */
+   496→.ig-avatar-sm { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+   497→.ig-avatar-md { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+   498→.ig-avatar-lg { width: 77px; height: 77px; border-radius: 50%; object-fit: cover; }
+   499→
+   500→/* IG-style action bar — 24px icons, no labels, tight spacing */
+   501→.ig-action-bar {
+   502→  display: flex;
+   503→  align-items: center;
+   504→  gap: 16px;
+   505→  padding: 8px 12px;
+   506→}
+   507→.ig-action-bar button {
+   508→  background: transparent;
+   509→  border: none;
+   510→  padding: 4px;
+   511→  cursor: pointer;
+   512→  color: #000000;
+   513→}
+   514→.ig-action-bar button:hover {
+   515→  color: #262626;
+   516→}
+   517→
+   518→/* IG-style icon button — used in top bar */
+   519→.ig-icon-btn {
+   520→  width: 44px;
+   521→  height: 44px;
+   522→  display: flex;
+   523→  align-items: center;
+   524→  justify-content: center;
+   525→  background: transparent;
+   526→  border: none;
+   527→  cursor: pointer;
+   528→  color: #000000;
+   529→  border-radius: 50%;
+   530→  transition: background 0.15s ease;
+   531→}
+   532→.ig-icon-btn:hover {
+   533→  background: #f5f5f5;
+   534→}
+   535→
+   536→/* IG-style feed card — no card shadow, just bottom divider */
+   537→.ig-feed-card {
+   538→  background: #ffffff;
+   539→  border-bottom: 1px solid #efefef;
+   540→}
+   541→
+   542→/* IG-style media — square, full-bleed */
+   543→.ig-media {
+   544→  width: 100%;
+   545→  aspect-ratio: 1 / 1;
+   546→  background: #fafafa;
+   547→  position: relative;
+   548→  overflow: hidden;
+   549→}
+   550→.ig-media img,
+   551→.ig-media video {
+   552→  width: 100%;
+   553→  height: 100%;
+   554→  object-fit: cover;
+   555→}
+   556→
+   557→/* IG-style likes count — bold, no label */
+   558→.ig-likes {
+   559→  font-weight: 600;
+   560→  font-size: 14px;
+   561→  color: #000000;
+   562→  padding: 0 12px 4px;
+   563→}
+   564→
+   565→/* IG-style caption — bold username + text */
+   566→.ig-caption {
+   567→  font-size: 14px;
+   568→  color: #000000;
+   569→  padding: 0 12px 8px;
+   570→  line-height: 1.4;
+   571→}
+   572→.ig-caption .username {
+   573→  font-weight: 600;
+   574→  margin-right: 6px;
+   575→}
+   576→
+   577→/* IG-style timestamp — uppercase, small, gray */
+   578→.ig-timestamp {
+   579→  font-size: 10px;
+   580→  color: #8e8e8e;
+   581→  text-transform: uppercase;
+   582→  letter-spacing: 0.4px;
+   583→  padding: 0 12px 12px;
+   584→}
+   585→
+   586→/* IG-style "View all comments" link */
+   587→.ig-comments-link {
+   588→  font-size: 14px;
+   589→  color: #8e8e8e;
+   590→  padding: 0 12px 4px;
+   591→  display: inline-block;
+   592→  cursor: pointer;
+   593→}
+   594→.ig-comments-link:hover {
+   595→  color: #262626;
+   596→}
+   597→
+   598→/* Bottom nav — now a floating glass island (WhatsApp Liquid Glass style).
+   599→   The actual styling is in the .glass-nav class. This is kept for backward
+   600→   compatibility but the mobile-nav component now uses .glass-nav directly. */
+   601→.ig-bottom-nav {
+   602→  position: fixed;
+   603→  bottom: 0;
+   604→  left: 0;
+   605→  right: 0;
+   606→  z-index: 60;
+   607→  height: 0px;
+   608→  pointer-events: none;
+   609→}
+   610→
+   611→/* IG-style profile header — 77px avatar + stats row */
+   612→.ig-profile-header {
+   613→  display: flex;
+   614→  align-items: center;
+   615→  gap: 24px;
+   616→  padding: 16px;
+   617→}
+   618→.ig-profile-stats {
+   619→  display: flex;
+   620→  gap: 20px;
+   621→  flex: 1;
+   622→}
+   623→.ig-profile-stat {
+   624→  display: flex;
+   625→  flex-direction: column;
+   626→  align-items: center;
+   627→  gap: 2px;
+   628→}
+   629→.ig-profile-stat .num {
+   630→  font-weight: 600;
+   631→  font-size: 16px;
+   632→  color: #000000;
+   633→}
+   634→.ig-profile-stat .label {
+   635→  font-size: 12px;
+   636→  color: #8e8e8e;
+   637→}
+   638→
+   639→/* IG-style post grid — 3 columns, no gaps */
+   640→.ig-post-grid {
+   641→  display: grid;
+   642→  grid-template-columns: repeat(3, 1fr);
+   643→  gap: 1px;
+   644→  background: #dbdbdb;
+   645→  border-top: 1px solid #dbdbdb;
+   646→}
+   647→.ig-post-grid > * {
+   648→  aspect-ratio: 1 / 1;
+   649→  background: #fafafa;
+   650→  overflow: hidden;
+   651→}
+   652→.ig-post-grid img {
+   653→  width: 100%;
+   654→  height: 100%;
+   655→  object-fit: cover;
+   656→}
+   657→
+   658→/* IG-style tab bar under profile header */
+   659→.ig-tab-bar {
+   660→  display: flex;
+   661→  border-top: 1px solid #dbdbdb;
+   662→  height: 44px;
+   663→}
+   664→.ig-tab {
+   665→  flex: 1;
+   666→  display: flex;
+   667→  align-items: center;
+   668→  justify-content: center;
+   669→  background: transparent;
+   670→  border: none;
+   671→  cursor: pointer;
+   672→  color: #8e8e8e;
+   673→  border-top: 1px solid transparent;
+   674→  margin-top: -1px;
+   675→}
+   676→.ig-tab.active {
+   677→  color: #000000;
+   678→  border-top-color: #000000;
+   679→}
+   680→
+   681→/* IG-style button — outlined (Edit Profile style) */
+   682→.ig-btn-outline {
+   683→  background: #ffffff;
+   684→  border: 1px solid #dbdbdb;
+   685→  color: #262626;
+   686→  font-weight: 600;
+   687→  font-size: 14px;
+   688→  padding: 6px 16px;
+   689→  border-radius: 6px;
+   690→  cursor: pointer;
+   691→  transition: background 0.15s ease;
+   692→}
+   693→.ig-btn-outline:hover {
+   694→  background: #f5f5f5;
+   695→}
+   696→
+   697→/* IG-style primary button — solid black */
+   698→.ig-btn-primary {
+   699→  background: #0095f6; /* IG blue, used for Follow CTA */
+   700→  border: none;
+   701→  color: #ffffff;
+   702→  font-weight: 600;
+   703→  font-size: 14px;
+   704→  padding: 6px 24px;
+   705→  border-radius: 6px;
+   706→  cursor: pointer;
+   707→  transition: background 0.15s ease;
+   708→}
+   709→.ig-btn-primary:hover {
+   710→  background: #1877f2;
+   711→}
+   712→.ig-btn-primary.following {
+   713→  background: #efefef;
+   714→  color: #262626;
+   715→}
+   716→.ig-btn-primary.following:hover {
+   717→  background: #dbdbdb;
+   718→}
+   719→
+   720→/* IG-style search input — gray pill, no border */
+   721→.ig-search-input {
+   722→  background: #efefef;
+   723→  border: none;
+   724→  border-radius: 8px;
+   725→  padding: 8px 16px;
+   726→  font-size: 14px;
+   727→  color: #262626;
+   728→  width: 100%;
+   729→}
+   730→.ig-search-input:focus {
+   731→  background: #e3e3e3;
+   732→  outline: none;
+   733→}
+   734→.ig-search-input::placeholder {
+   735→  color: #8e8e8e;
+   736→}
+   737→
+   738→/* Hide elements at IG breakpoints (desktop sidebar shows at >=768px) */
+   739→@media (min-width: 768px) {
+   740→  .ig-bottom-nav, .glass-nav { display: none !important; }
+   741→}
+   742→
+   743→/* ============================================================
+   744→   VISUAL LIVENESS — animations + effects
+   745→   These add motion and visual interest without being distracting.
+   746→   ============================================================ */
+   747→
+   748→/* Scroll-triggered fade-in + slide-up.
+   749→   Apply .reveal to any element; it starts invisible and animates in
+   750→   when the .reveal-visible class is added (via IntersectionObserver). */
+   751→.reveal {
+   752→  opacity: 0;
+   753→  transform: translateY(16px);
+   754→  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+   755→  will-change: opacity, transform;
+   756→}
+   757→.reveal.reveal-visible {
+   758→  opacity: 1;
+   759→  transform: translateY(0);
+   760→}
+   761→
+   762→/* IG gradient text — for the Cellex wordmark on special occasions */
+   763→.ig-gradient-text {
+   764→  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+   765→  -webkit-background-clip: text;
+   766→  background-clip: text;
+   767→  -webkit-text-fill-color: transparent;
+   768→  color: transparent;
+   769→}
+   770→
+   771→/* IG gradient button — for primary CTAs that need extra pop */
+   772→.ig-gradient-btn {
+   773→  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+   774→  color: #ffffff;
+   775→  font-weight: 600;
+   776→  border: none;
+   777→  border-radius: 8px;
+   778→  padding: 8px 20px;
+   779→  cursor: pointer;
+   780→  transition: transform 0.15s ease, box-shadow 0.15s ease;
+   781→  background-size: 150% 150%;
+   782→  background-position: 0% 50%;
+   783→}
+   784→.ig-gradient-btn:hover {
+   785→  background-position: 100% 50%;
+   786→  box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);
+   787→}
+   788→.ig-gradient-btn:active {
+   789→  transform: scale(0.97);
+   790→}
+   791→
+   792→/* Image hover zoom — subtle scale-up on product images */
+   793→.ig-img-zoom {
+   794→  overflow: hidden;
+   795→}
+   796→.ig-img-zoom img {
+   797→  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   798→}
+   799→.ig-img-zoom:hover img {
+   800→  transform: scale(1.04);
+   801→}
+   802→
+   803→/* Tap feedback — scale down on active (mobile) */
+   804→.ig-tap {
+   805→  transition: transform 0.1s ease;
+   806→}
+   807→.ig-tap:active {
+   808→  transform: scale(0.95);
+   809→}
+   810→
+   811→/* Pulse glow — for the LIVE badge */
+   812→@keyframes pulseGlow {
+   813→  0%, 100% { box-shadow: 0 0 0 0 rgba(237, 73, 86, 0.7); }
+   814→  50% { box-shadow: 0 0 0 8px rgba(237, 73, 86, 0); }
+   815→}
+   816→.ig-pulse-glow {
+   817→  animation: pulseGlow 2s infinite;
+   818→}
+   819→
+   820→/* Shimmer — for the logo and loading states */
+   821→@keyframes shimmerMove {
+   822→  0% { background-position: -200% 0; }
+   823→  100% { background-position: 200% 0; }
+   824→}
+   825→.ig-shimmer {
+   826→  background: linear-gradient(90deg, #000 0%, #555 50%, #000 100%);
+   827→  background-size: 200% 100%;
+   828→  animation: shimmerMove 3s linear infinite;
+   829→  -webkit-background-clip: text;
+   830→  background-clip: text;
+   831→  -webkit-text-fill-color: transparent;
+   832→  color: transparent;
+   833→}
+   834→
+   835→/* Bounce-in — for the suggested sellers cards */
+   836→@keyframes bounceIn {
+   837→  0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+   838→  60% { opacity: 1; transform: scale(1.02) translateY(-2px); }
+   839→  100% { opacity: 1; transform: scale(1) translateY(0); }
+   840→}
+   841→.ig-bounce-in {
+   842→  animation: bounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+   843→}
+   844→
+   845→/* Heart burst — scale + fade for the like animation */
+   846→@keyframes heartBurst {
+   847→  0% { transform: scale(1); }
+   848→  30% { transform: scale(1.35); }
+   849→  60% { transform: scale(0.95); }
+   850→  100% { transform: scale(1); }
+   851→}
+   852→.ig-heart-burst {
+   853→  animation: heartBurst 0.4s ease-out;
+   854→}
+   855→
+   856→/* Subtle gradient background — applied to the homepage hero area */
+   857→.ig-hero-bg {
+   858→  background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+   859→}
+   860→
+   861→/* Floating animation — for the LIVE indicator dot */
+   862→@keyframes float {
+   863→  0%, 100% { transform: translateY(0); }
+   864→  50% { transform: translateY(-2px); }
+   865→}
+   866→.ig-float {
+   867→  animation: float 2s ease-in-out infinite;
+   868→}
+   869→
+   870→/* Skeleton with IG gradient shimmer */
+   871→.ig-skeleton {
+   872→  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+   873→  background-size: 200% 100%;
+   874→  animation: shimmerMove 1.5s infinite;
+   875→  border-radius: 4px;
+   876→}
+   877→
+   878→/* Slide-in from right — for the suggested sellers carousel */
+   879→@keyframes slideInRight {
+   880→  from { opacity: 0; transform: translateX(20px); }
+   881→  to { opacity: 1; transform: translateX(0); }
+   882→}
+   883→.ig-slide-in-right {
+   884→  animation: slideInRight 0.4s ease-out forwards;
+   885→}
+   886→
+   887→/* Gradient border — for featured seller cards */
+   888→.ig-gradient-border {
+   889→  position: relative;
+   890→  background: #ffffff;
+   891→  border-radius: 12px;
+   892→}
+   893→.ig-gradient-border::before {
+   894→  content: '';
+   895→  position: absolute;
+   896→  inset: -2px;
+   897→  border-radius: 14px;
+   898→  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+   899→  z-index: -1;
+   900→}
+   901→
+   902→/* ============================================================
+   903→   LIQUID GLASS — WhatsApp-style glassmorphism design system
+   904→   Applied across: bottom nav, topbar, cards, modals, overlays
+   905→   ============================================================ */
+   906→
+   907→/* ============================================================
+   908→   LIQUID GLASS — WhatsApp iOS glassmorphism (exact specs)
+   909→   Light: #FFFFFF 70% + #FFFFFF 45% border + 6% shadow, 24px blur
+   910→   Dark:  #121212 75% + #FFFFFF 12% border + 30% shadow, 16px blur
+   911→   Engine: backdrop-blur(25px) saturate(120%)
+   912→   ============================================================ */
+   913→
+   914→/* Base glass container */
+   915→.glass {
+   916→  background: rgba(255, 255, 255, 0.70);
+   917→  backdrop-filter: blur(25px) saturate(120%);
+   918→  -webkit-backdrop-filter: blur(25px) saturate(120%);
+   919→  border: 1px solid rgba(255, 255, 255, 0.45);
+   920→  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+   921→  transition: all 0.3s ease-in-out;
+   922→}
+   923→
+   924→.dark .glass {
+   925→  background: rgba(18, 18, 18, 0.75);
+   926→  border: 1px solid rgba(255, 255, 255, 0.12);
+   927→  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
+   928→}
+   929→
+   930→/* Glass topbar — transparent with blur */
+   931→.glass-topbar {
+   932→  background: rgba(255, 255, 255, 0.70) !important;
+   933→  backdrop-filter: blur(25px) saturate(120%) !important;
+   934→  -webkit-backdrop-filter: blur(25px) saturate(120%) !important;
+   935→  border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+   936→}
+   937→
+   938→.dark .glass-topbar {
+   939→  background: rgba(18, 18, 18, 0.75) !important;
+   940→  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+   941→}
+   942→
+   943→/* Glass bottom nav — floating island */
+   944→.glass-nav {
+   945→  background: rgba(255, 255, 255, 0.70);
+   946→  backdrop-filter: blur(25px) saturate(120%);
+   947→  -webkit-backdrop-filter: blur(25px) saturate(120%);
+   948→  border: 1px solid rgba(255, 255, 255, 0.45);
+   949→  border-radius: 32px;
+   950→  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+   951→  transition: all 0.3s ease-in-out;
+   952→}
+   953→
+   954→.dark .glass-nav {
+   955→  background: rgba(18, 18, 18, 0.75);
+   956→  border: 1px solid rgba(255, 255, 255, 0.12);
+   957→  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
+   958→}
+   959→
+   960→/* Active tab indicator */
+   961→.glass-active-pill {
+   962→  background: rgba(0, 0, 0, 0.08);
+   963→  border-radius: 16px;
+   964→  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+   965→}
+   966→
+   967→.dark .glass-active-pill {
+   968→  background: rgba(255, 255, 255, 0.12);
+   969→}
+   970→
+   971→/* Glass card */
+   972→.glass-card {
+   973→  background: rgba(255, 255, 255, 0.70);
+   974→  backdrop-filter: blur(25px) saturate(120%);
+   975→  -webkit-backdrop-filter: blur(25px) saturate(120%);
+   976→  border: 1px solid rgba(255, 255, 255, 0.45);
+   977→  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+   978→}
+   979→
+   980→.dark .glass-card {
+   981→  background: rgba(18, 18, 18, 0.75);
+   982→  border: 1px solid rgba(255, 255, 255, 0.12);
+   983→  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
+   984→}
+   985→
+   986→/* Glass modal/sheet */
+   987→.glass-modal {
+   988→  background: rgba(255, 255, 255, 0.70);
+   989→  backdrop-filter: blur(25px) saturate(120%);
+   990→  -webkit-backdrop-filter: blur(25px) saturate(120%);
+   991→  border: 1px solid rgba(255, 255, 255, 0.45);
+   992→  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+   993→}
+   994→
+   995→.dark .glass-modal {
+   996→  background: rgba(18, 18, 18, 0.75);
+   997→  border: 1px solid rgba(255, 255, 255, 0.12);
+   998→  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
+   999→}
+  1000→
+  1001→/* Glass input */
+  1002→.glass-input {
+  1003→  background: rgba(255, 255, 255, 0.70);
+  1004→  backdrop-filter: blur(25px) saturate(120%);
+  1005→  -webkit-backdrop-filter: blur(25px) saturate(120%);
+  1006→  border: 1px solid rgba(255, 255, 255, 0.45);
+  1007→}
+  1008→
+  1009→.dark .glass-input {
+  1010→  background: rgba(18, 18, 18, 0.75);
+  1011→  border: 1px solid rgba(255, 255, 255, 0.12);
+  1012→}
+  1013→
+  1014→/* Glass section — for content blocks, list sections */
+  1015→.glass-section {
+  1016→  background: rgba(255, 255, 255, 0.60);
+  1017→  backdrop-filter: blur(15px) saturate(120%);
+  1018→  -webkit-backdrop-filter: blur(15px) saturate(120%);
+  1019→  border: 1px solid rgba(255, 255, 255, 0.30);
+  1020→}
+  1021→
+  1022→.dark .glass-section {
+  1023→  background: rgba(18, 18, 18, 0.60);
+  1024→  border: 1px solid rgba(255, 255, 255, 0.08);
+  1025→}
+  1026→
+  1027→/* Spring animation for active tab transitions */
+  1028→@keyframes glassPillSpring {
+  1029→  0% { transform: scale(0.8); opacity: 0; }
+  1030→  60% { transform: scale(1.05); opacity: 1; }
+  1031→  100% { transform: scale(1); opacity: 1; }
+  1032→}
+  1033→.glass-pill-enter {
+  1034→  animation: glassPillSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  1035→}
+  1036→
+  1037→/* Subtle page background gradient for glass to look good */
+  1038→body {
+  1039→  background: linear-gradient(180deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%) !important;
+  1040→  min-height: 100vh;
+  1041→}
+  1042→
+  1043→.dark body {
+  1044→  background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 50%, #1a1a1a 100%) !important;
+  1045→}
