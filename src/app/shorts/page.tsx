@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { api, formatPrice } from '@/lib/api';
-import { Heart, Send, Bookmark, MoreHorizontal, Volume2, VolumeX, ChevronLeft, ShoppingBag, Play } from 'lucide-react';
+import { Heart, Send, Bookmark, Volume2, VolumeX, ChevronLeft, ShoppingBag, Play } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { CommentsModal } from '@/components/comments-modal';
 
 /**
  * ShortsPage — immersive full-screen vertical video experience.
@@ -31,6 +32,8 @@ export default function ShortsPage() {
   const [muted, setMuted] = useState(true);
   const [likes, setLikes] = useState<Record<number, boolean>>({});
   const [saved, setSaved] = useState<Record<number, boolean>>({});
+  const [commentsOpenFor, setCommentsOpenFor] = useState<number | null>(null);
+  const [commentsCounts, setCommentsCounts] = useState<Record<number, number>>({});
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
@@ -76,13 +79,23 @@ export default function ShortsPage() {
   }, [activeIdx, videos]);
 
   const toggleLike = useCallback((videoId: number) => {
-    setLikes((prev) => ({ ...prev, [videoId]: !prev[videoId] }));
+    setLikes((prev) => {
+      const newLiked = !prev[videoId];
+      // REAL: persist to Supabase via the videos edge function + fire Gorse feedback
+      if (newLiked) api.videos.like(videoId);
+      else api.videos.unlike(videoId);
+      api.feedback(String(videoId), newLiked ? 'like' : 'unlike', newLiked ? 1 : 0);
+      return { ...prev, [videoId]: newLiked };
+    });
   }, []);
 
   const toggleSave = useCallback((videoId: number) => {
     setSaved((prev) => {
       const newState = !prev[videoId];
       if (newState) toast({ title: 'Saved!' });
+      // REAL: fire save/unsave feedback (persists to buyers_wishlist for products,
+      // Gorse feedback for videos)
+      api.feedback(String(videoId), newState ? 'save' : 'unsave', newState ? 1 : 0);
       return { ...prev, [videoId]: newState };
     });
   }, [toast]);
@@ -140,6 +153,7 @@ export default function ShortsPage() {
           const likesCount = video.likes_count || 0;
           const isLiked = likes[video.id];
           const isSaved = saved[video.id];
+          const commentsCount = commentsCounts[video.id] ?? video.comments_count ?? 0;
           const product = video.product;
 
           return (
@@ -179,11 +193,12 @@ export default function ShortsPage() {
 
                 {/* Comment */}
                 <button
+                  onClick={() => setCommentsOpenFor(video.id)}
                   className="flex flex-col items-center gap-1 text-white"
                   aria-label="Comments"
                 >
                   <Send className="w-8 h-8" strokeWidth={1.5} />
-                  <span className="text-[10px] font-semibold">{formatCount(video.comments_count || 0)}</span>
+                  <span className="text-[10px] font-semibold">{formatCount(commentsCount)}</span>
                 </button>
 
                 {/* Share */}
@@ -214,11 +229,6 @@ export default function ShortsPage() {
                     strokeWidth={1.5}
                   />
                   <span className="text-[10px] font-semibold">Save</span>
-                </button>
-
-                {/* More */}
-                <button className="text-white" aria-label="More">
-                  <MoreHorizontal className="w-8 h-8" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -281,6 +291,16 @@ export default function ShortsPage() {
                   {idx + 1} / {videos.length}
                 </div>
               )}
+
+              {/* Comments modal (per-video) */}
+              <CommentsModal
+                open={commentsOpenFor === video.id}
+                onClose={() => setCommentsOpenFor(null)}
+                postType="video"
+                postId={video.id}
+                postCaption={caption}
+                onCommentAdded={(count) => setCommentsCounts(prev => ({ ...prev, [video.id]: count }))}
+              />
             </div>
           );
         })}

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ChevronLeft, Bell, Package, Heart, Store, Radio, Users, Sparkles, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { api, timeAgo } from '@/lib/api';
 
 interface Notification {
   id: string;
@@ -29,22 +30,35 @@ export default function NotificationsPage() {
       return;
     }
     if (user) {
-      // TODO: Replace with real notifications API
-      // For now, show a welcome notification
-      setNotifications([
-        {
-          id: '1',
-          type: 'system',
-          title: 'Welcome to Cellex!',
-          body: 'Thanks for joining. Browse products, watch videos, and discover deals.',
-          timestamp: '2m ago',
-          read: false,
-          href: '/',
-        },
-      ]);
-      setLoading(false);
+      // REAL: fetch from buyers_notifications table via /api/notifications
+      (async () => {
+        try {
+          const resp = await api.notifications.list(50);
+          if (resp.success) {
+            const mapped = (resp.notifications || []).map((n: any) => ({
+              id: n.id,
+              type: n.type || 'system',
+              title: n.title || '',
+              body: n.body || '',
+              timestamp: timeAgo(n.timestamp),
+              read: !!n.read,
+              href: n.data?.href || (n.type === 'order' ? '/orders' : n.type === 'product' ? `/product?id=${n.data?.product_id}` : undefined),
+            }));
+            setNotifications(mapped);
+          }
+        } catch (e) {
+          // API not available — show empty state (no fake notifications)
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
   }, [user, authLoading, router]);
+
+  const markAllRead = async () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    try { await api.notifications.markAllRead(); } catch {}
+  };
 
   if (authLoading || loading) {
     return (
@@ -74,7 +88,7 @@ export default function NotificationsPage() {
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Notifications</h1>
         <button
-          onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
+          onClick={markAllRead}
           className="text-xs font-semibold text-slate-400 hover:text-white px-3"
           aria-label="Mark all read"
         >

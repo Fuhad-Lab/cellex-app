@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { TryItOnModal } from '@/components/try-it-on';
+import { CommentsModal } from '@/components/comments-modal';
 import { API_BASE } from '@/lib/api';
 
 function ProductContent() {
@@ -39,6 +40,7 @@ function ProductContent() {
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewComment, setReviewComment] = useState('');
   const [saved, setSaved] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -226,7 +228,7 @@ function ProductContent() {
         <button onClick={addToWishlist} aria-label="Like">
           <Heart className={`w-7 h-7 ${saved ? 'fill-red-500 text-red-500' : 'text-white'}`} strokeWidth={1.5} />
         </button>
-        <button aria-label="Comment">
+        <button aria-label="Comment" onClick={() => setCommentsOpen(true)}>
           <MessageCircle className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button onClick={() => shareProduct('whatsapp')} aria-label="Share">
@@ -521,6 +523,15 @@ function ProductContent() {
           Buy now
         </button>
       </div>
+
+      {/* Comments modal */}
+      <CommentsModal
+        open={commentsOpen}
+        onClose={() => setCommentsOpen(false)}
+        postType="product"
+        postId={id}
+        postCaption={product?.name}
+      />
     </div>
   );
 }

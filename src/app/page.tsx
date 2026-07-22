@@ -12,6 +12,7 @@ import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { useOptimisticUI } from '@/components/optimistic-ui';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { CommentsModal } from '@/components/comments-modal';
 
 interface FeedPost {
   type: 'video' | 'product';
@@ -465,6 +466,9 @@ function FeedPostCard({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(post.comments || 0);
+  const { toast } = useToast();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -579,10 +583,23 @@ function FeedPostCard({
             <Heart className={`w-7 h-7 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-white'}`} strokeWidth={1.5} />
           </motion.div>
         </button>
-        <button aria-label="Comment">
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCommentsOpen(true); }} aria-label="Comment">
           <MessageCircle className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
-        <button aria-label="Share">
+        <button onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const url = post.product ? `${window.location.origin}/product?id=${post.product.id}` : window.location.href;
+          if (typeof navigator !== 'undefined' && navigator.share) {
+            navigator.share({ title: post.caption || 'Check this out on Cellex', url }).catch(() => {});
+          } else {
+            navigator.clipboard?.writeText(url);
+            toast({ title: 'Link copied!' });
+          }
+          // Fire share feedback to Gorse (non-blocking)
+          if (post.videoId) api.feedback(String(post.videoId), 'share', 0.5, { page: 'feed' });
+          else if (post.productId) api.feedback(String(post.productId), 'share', 0.5, { page: 'feed' });
+        }} aria-label="Share">
           <Send className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button onClick={onSave} className="ml-auto" aria-label="Save">
@@ -605,10 +622,14 @@ function FeedPostCard({
       </div>
 
       {/* Comments link */}
-      {post.comments > 0 && (
-        <div className="ig-comments-link">
-          View all {formatCount(post.comments)} comments
-        </div>
+      {commentCount > 0 && (
+        <button
+          onClick={() => setCommentsOpen(true)}
+          className="ig-comments-link text-left"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        >
+          View all {formatCount(commentCount)} comments
+        </button>
       )}
 
       {/* Timestamp */}
@@ -617,6 +638,16 @@ function FeedPostCard({
           {timeAgo(post.createdAt)} AGO
         </div>
       )}
+
+      {/* Comments modal */}
+      <CommentsModal
+        open={commentsOpen}
+        onClose={() => setCommentsOpen(false)}
+        postType={post.videoId ? 'video' : 'product'}
+        postId={post.videoId || post.productId || 0}
+        postCaption={post.caption}
+        onCommentAdded={(count) => setCommentCount(count)}
+      />
 
       {/* Product CTA — IG-style shoppable tag at bottom */}
       {post.product && (

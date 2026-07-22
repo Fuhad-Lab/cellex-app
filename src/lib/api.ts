@@ -278,6 +278,24 @@ export const api = {
   // ===== Feedback Sync (non-blocking) =====
   feedback: (itemId: string | number, type: string, score?: number, metadata?: any) =>
     apiCall('feedback', { itemId: String(itemId), type, score, metadata }),
+
+  // ===== Comments (real, persisted to DB + fires Gorse feedback) =====
+  comments: {
+    list: (postType: 'video' | 'product', postId: string | number, limit = 50) =>
+      apiCall('comments', { op: 'list', postType, postId, limit }),
+    create: (postType: 'video' | 'product', postId: string | number, commentText: string) =>
+      apiCall('comments', { op: 'create', postType, postId, commentText }),
+    delete: (commentId: number) =>
+      apiCall('comments', { op: 'delete', commentId }),
+  },
+
+  // ===== Notifications (real, from buyers_notifications table) =====
+  notifications: {
+    list: (limit = 50) => apiCall('notifications', { op: 'list', limit }),
+    markRead: (notificationId: string) => apiCall('notifications', { op: 'mark_read', notificationId }),
+    markAllRead: () => apiCall('notifications', { op: 'mark_all_read' }),
+    unreadCount: () => apiCall('notifications', { op: 'unread_count' }),
+  },
 };
 
 // ===== Utility functions =====
