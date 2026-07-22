@@ -39,7 +39,7 @@ export const PERF = {
   nvidiaTimeoutMs: 2000,     // NVIDIA API timeout
   chromaTimeoutMs: 1000,     // Chroma query timeout
   gorseTimeoutMs: 1000,      // Gorse recommendation timeout
-  supabaseTimeoutMs: 1000,   // Supabase hydration timeout
+  supabaseTimeoutMs: 3000,   // Supabase hydration timeout (was 1000 — too short for SQL API CTEs)
 } as const;
 
 /**
@@ -599,11 +599,15 @@ export async function fetchRealProductRankingFromSupabase(limit: number): Promis
     });
     clearTimeout(timeout);
     if (!resp.ok) {
-      console.error('[AI] Supabase ranking query error:', resp.status);
+      const errText = await resp.text().catch(() => '');
+      console.error('[AI] Supabase ranking query error:', resp.status, errText.slice(0, 200));
       return [];
     }
     const data = await resp.json();
-    if (!Array.isArray(data)) return [];
+    if (!Array.isArray(data)) {
+      console.error('[AI] Supabase ranking query: non-array response:', typeof data);
+      return [];
+    }
     return data.map((r: any) => ({
       id: String(r.id),
       score: Number(r.score) || 0,
