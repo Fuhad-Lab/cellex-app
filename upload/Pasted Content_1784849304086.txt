@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shoppable Social Commerce Home Feed</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+            },
+            accent: {
+              500: '#8b5cf6',
+              600: '#7c3aed',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'pulse-fast': 'pulse 1s infinite',
+            'bounce-short': 'bounce 0.5s ease-in-out 1',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- React, ReactDOM, and Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    /* Hide scrollbars for slick social feed feel */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .backdrop-blur-glass {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-rose-500 selection:text-white">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- MOCK FEED DATASET ---
+    const INITIAL_FEED = [
+      {
+        id: "post_1",
+        type: "group_buy",
+        creator: {
+          name: "Maya Lin",
+          handle: "@TechTrends_Maya",
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+          verified: true,
+          bio: "Tech creator reviewing future gear & modern workspace accessories.",
+          followers: "248K",
+          trustRating: "99.4%"
+        },
+        seller: {
+          name: "Aura Sound Co.",
+          trustBadge: "Official Flagship Store",
+          rating: 4.9,
+          reviewsCount: 3820,
+          returnDays: 30,
+          shipTime: "Ships in 24 hrs",
+          guarantee: "100% Buyer Protection & Authenticity Verified"
+        },
+        media: [
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80"
+        ],
+        title: "Aura Pro Wireless ANC Studio Headphones",
+        description: "Zero-latency active noise cancellation with spatial sound stage. Tested during 12-hour flights!",
+        price: 129.99,
+        originalPrice: 199.99,
+        discountPercentage: 35,
+        category: "Tech",
+        likes: 1420,
+        saves: 489,
+        commentsCount: 86,
+        socialProof: "124 people saved this in the last hour",
+        groupBuy: {
+          required: 4,
+          current: 3,
+          timeRemaining: "02h 15m",
+          unlockedPrice: 109.99
+        },
+        tags: ["Tech", "Audio", "NoiseCancelling"],
+        comments: [
+          { user: "@alex_k", text: "How is the bass response compared to Sony XM5?", time: "5m ago" },
+          { user: "@sam_dev", text: "Joined the group buy! Need 1 more person to unlock $109!", time: "12m ago" }
+        ]
+      },
+      {
+        id: "post_2",
+        type: "live_deal",
+        creator: {
+          name: "Elena Rostova",
+          handle: "@StyleByElena",
+          avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+          verified: true,
+          bio: "Vintage street fashion styling & capsule wardrobe curator.",
+          followers: "512K",
+          trustRating: "98.8%"
+        },
+        seller: {
+          name: "Atelier Vintage",
+          trustBadge: "Top Fashion Seller",
+          rating: 4.8,
+          reviewsCount: 1940,
+          returnDays: 14,
+          shipTime: "Free 2-day Express",
+          guarantee: "Hand-inspected Genuine Leather Guarantee"
+        },
+        media: [
+          "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=800&auto=format&fit=crop&q=80"
+        ],
+        title: "Over-Sized Distressed Vintage Biker Leather Jacket",
+        description: "Heavyweight genuine grain leather with custom brushed brass hardware. Perfect fall drop!",
+        price: 189.00,
+        originalPrice: 280.00,
+        discountPercentage: 32,
+        category: "Fashion",
+        likes: 3890,
+        saves: 1120,
+        commentsCount: 214,
+        socialProof: "89 people bought in the last 24h",
+        liveDeal: {
+          stockLeft: 12,
+          endsIn: "18m 42s",
+          claimedPercent: 88
+        },
+        tags: ["Fashion", "Vintage", "Streetwear"],
+        comments: [
+          { user: "@clara_m", text: "Is this true to size or oversized fit?", time: "2m ago" },
+          { user: "@StyleByElena", text: "@clara_m Oversized! I'm wearing a Medium in video.", time: "1m ago" }
+        ]
+      },
+      {
+        id: "post_3",
+        type: "standard",
+        creator: {
+          name: "Glow Beauty Lab",
+          handle: "@GlowLab_Beauty",
+          avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+          verified: true,
+          bio: "Clean, vegan dermatological skin barrier essentials.",
+          followers: "120K",
+          trustRating: "99.9%"
+        },
+        seller: {
+          name: "GlowLab Skincare",
+          trustBadge: "Dermatologist Approved",
+          rating: 5.0,
+          reviewsCount: 8400,
+          returnDays: 30,
+          shipTime: "Same Day Dispatch",
+          guarantee: "100% Hypoallergenic & Cruelty-Free Certified"
+        },
+        media: [
+          "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&auto=format&fit=crop&q=80"
+        ],
+        title: "Hydrating Botanical Glow Serum w/ Niacinamide & Hyaluronic",
+        description: "Restores skin barrier in 7 days. Non-greasy, fast-absorbing formula with triple hydration complex.",
+        price: 34.50,
+        originalPrice: 48.00,
+        discountPercentage: 28,
+        category: "Beauty",
+        likes: 2710,
+        saves: 950,
+        commentsCount: 142,
+        socialProof: "410 people added this to cart today",
+        tags: ["Beauty", "Skincare", "GlowRoutine"],
+        comments: [
+          { user: "@sarah_g", text: "Does this work well under foundation?", time: "15m ago" },
+          { user: "@GlowLab_Beauty", text: "@sarah_g Yes! It acts as a hydrating primer.", time: "10m ago" }
+        ]
+      },
+      {
+        id: "post_4",
+        type: "group_buy",
+        creator: {
+          name: "Chef Marcus",
+          handle: "@NookCoffee_Craft",
+          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+          verified: false,
+          bio: "Specialty coffee roaster and slow brew enthusiast.",
+          followers: "85K",
+          trustRating: "97.5%"
+        },
+        seller: {
+          name: "Craft Ceramics Studio",
+          trustBadge: "Artisan Maker",
+          rating: 4.9,
+          reviewsCount: 620,
+          returnDays: 14,
+          shipTime: "Ships in 2 days",
+          guarantee: "Breakage-free Transit Guarantee"
+        },
+        media: [
+          "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80"
+        ],
+        title: "Minimalist Matte Ceramic Pour-Over Dripper Set",
+        description: "Handcrafted stoneware pour-over kettle & dripper set. Maintains ideal 93°C brewing temperature.",
+        price: 42.00,
+        originalPrice: 65.00,
+        discountPercentage: 35,
+        category: "Home",
+        likes: 1840,
+        saves: 620,
+        commentsCount: 54,
+        socialProof: "65 group buys completed this week",
+        groupBuy: {
+          required: 3,
+          current: 2,
+          timeRemaining: "05h 40m",
+          unlockedPrice: 35.00
+        },
+        tags: ["Home", "Coffee", "Ceramics"],
+        comments: [
+          { user: "@barista_joe", text: "Stunning glaze finish on this!", time: "1h ago" }
+        ]
+      }
+    ];
+
+    // CATEGORIES LIST
+    const CATEGORIES = ["All", "Fashion", "Beauty", "Tech", "Home", "Fitness", "Deals"];
+
+    // --- MAIN APP COMPONENT ---
+    function App() {
+      const [feedItems, setFeedItems] = useState(INITIAL_FEED);
+      const [activeTab, setActiveTab] = useState("For You"); // 'For You', 'Following', 'Shops', 'Live'
+      const [activeCategory, setActiveCategory] = useState("All");
+      const [searchQuery, setSearchQuery] = useState("");
+      
+      // Dynamic Engagement States
+      const [likedPosts, setLikedPosts] = useState(new Set());
+      const [savedPosts, setSavedPosts] = useState(new Set());
+      
+      // Modals & Drawers
+      const [selectedProduct, setSelectedProduct] = useState(null); // Product Drawer
+      const [selectedCreator, setSelectedCreator] = useState(null); // Creator Profile Drawer
+      const [selectedTrustSeller, setSelectedTrustSeller] = useState(null); // Trust Badge Modal
+      const [checkoutItem, setCheckoutItem] = useState(null); // Quick Buy Checkout Drawer
+      const [commentPost, setCommentPost] = useState(null); // Comments Drawer
+      const [newComment, setNewComment] = useState("");
+      const [cart, setCart] = useState([]);
+      const [isCartOpen, setIsCartOpen] = useState(false);
+      const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+      // Toast Notifications System (No native alert!)
+      const [toastMessage, setToastMessage] = useState(null);
+
+      const showToast = (msg) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3500);
+      };
+
+      // --- HANDLERS ---
+      const toggleLike = (postId) => {
+        const next = new Set(likedPosts);
+        if (next.has(postId)) {
+          next.delete(postId);
+          showToast("Unliked post");
+        } else {
+          next.add(postId);
+          showToast("❤️ Saved to your liked items!");
+        }
+        setLikedPosts(next);
+      };
+
+      const toggleSave = (postId) => {
+        const next = new Set(savedPosts);
+        if (next.has(postId)) {
+          next.delete(postId);
+          showToast("Removed from saved collection");
+        } else {
+          next.add(postId);
+          showToast("📌 Saved to your Shopping Wishlist!");
+        }
+        setSavedPosts(next);
+      };
+
+      const handleShare = (post) => {
+        const shareText = `Check out this deal on ${post.title}: $${post.price}!`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareText);
+        }
+        showToast("🔗 Link copied to clipboard! Share on WhatsApp or Telegram.");
+      };
+
+      const addToCart = (product) => {
+        setCart((prev) => {
+          const exists = prev.find(item => item.id === product.id);
+          if (exists) {
+            return prev.map(item => item.id === product.id ? {...item, qty: item.qty + 1} : item);
+          }
+          return [...prev, {...product, qty: 1}];
+        });
+        showToast(`🛍️ ${product.title.slice(0, 24)}... added to bag!`);
+      };
+
+      const joinGroupBuy = (post) => {
+        showToast(`🎉 You joined the Group Buy for ${post.title}! Invite 1 friend to unlock $${post.groupBuy ? post.groupBuy.unlockedPrice : post.price}.`);
+        setCheckoutItem(post);
+      };
+
+      const handleAddComment = (e) => {
+        e.preventDefault();
+        if (!newComment.trim() || !commentPost) return;
+        const updatedFeed = feedItems.map(item => {
+          if (item.id === commentPost.id) {
+            return {
+              ...item,
+              commentsCount: item.commentsCount + 1,
+              comments: [{ user: "@you", text: newComment, time: "Just now" }, ...item.comments]
+            };
+          }
+          return item;
+        });
+        setFeedItems(updatedFeed);
+        setCommentPost(updatedFeed.find(item => item.id === commentPost.id));
+        setNewComment("");
+        showToast("💬 Comment posted!");
+      };
+
+      // Filtered Feed items based on activeTab, category, and search
+      const filteredFeed = feedItems.filter(item => {
+        // Tab Filter
+        if (activeTab === "Live" && item.type !== "live_deal") return false;
+        if (activeTab === "Shops" && !item.seller.trustBadge) return false;
+        // Category Filter
+        if (activeCategory !== "All" && item.category !== activeCategory && !(activeCategory === "Deals" && (item.type === "group_buy" || item.type === "live_deal"))) return false;
+        // Search Filter
+        if (searchQuery.trim() !== "") {
+          const q = searchQuery.toLowerCase();
+          return item.title.toLowerCase().includes(q) || item.creator.name.toLowerCase().includes(q) || item.category.toLowerCase().includes(q);
+        }
+        return true;
+      });
+
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 pb-20 md:pb-8 flex flex-col items-center">
+
+          {}
+          {toastMessage && (
+            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-rose-600 text-white font-medium text-sm px-5 py-3 rounded-full shadow-2xl border border-rose-400 flex items-center gap-2 animate-bounce-short">
+              <i className="fa-solid fa-sparkles text-amber-300"></i>
+              <span>{toastMessage}</span>
+            </div>
+          )}
+
+          {/* LAYER 1: TOP NAVIGATION BAR */}
+          {}
+          <header className="sticky top-0 z-40 w-full max-w-2xl bg-slate-950/90 backdrop-blur-glass border-b border-slate-800/80 px-4 py-2.5">
+            <div className="flex items-center justify-between gap-3">
+              {/* Brand Logo */}
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setActiveTab("For You"); setActiveCategory("All"); setSearchQuery(""); }}>
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-purple-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-rose-500/20">
+                  S
+                </div>
+                <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-rose-400 bg-clip-text text-transparent hidden sm:inline">
+                  StreamShop
+                </span>
+              </div>
+
+              {/* Search Bar */}
+              <div className="flex-1 max-w-sm relative">
+                <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input
+                  type="text"
+                  placeholder="Search drops, creators, styles..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 text-slate-100 placeholder-slate-400 text-xs rounded-full pl-9 pr-4 py-2 focus:outline-none focus:border-rose-500 transition"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                )}
+              </div>
+
+              {/* Right Action Icons */}
+              <div className="flex items-center gap-1.5 sm:gap-3">
+                <button 
+                  onClick={() => setIsNotifOpen(true)}
+                  className="relative p-2 text-slate-300 hover:text-white rounded-full hover:bg-slate-900 transition"
+                  title="Notifications"
+                >
+                  <i className="fa-regular fa-bell text-lg"></i>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                </button>
+
+                <button 
+                  onClick={() => showToast("✉️ Messages drawer: 2 unread seller responses!")}
+                  className="p-2 text-slate-300 hover:text-white rounded-full hover:bg-slate-900 transition hidden sm:inline-flex"
+                  title="Messages"
+                >
+                  <i className="fa-regular fa-comment-dots text-lg"></i>
+                </button>
+
+                {/* Cart Icon */}
+                <button 
+                  onClick={() => setIsCartOpen(true)}
+                  className="relative p-2 text-slate-300 hover:text-white rounded-full hover:bg-slate-900 transition"
+                  title="Cart Bag"
+                >
+                  <i className="fa-solid fa-bag-shopping text-lg text-rose-400"></i>
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-rose-600 text-white font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center border border-slate-950">
+                      {cart.reduce((a, b) => a + b.qty, 0)}
+                    </span>
+                  )}
+                </button>
+
+                {/* User Avatar */}
+                <img
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
+                  alt="Profile"
+                  onClick={() => showToast("👤 Logged in as @AlexShopper")}
+                  className="w-8 h-8 rounded-full border border-rose-500/50 cursor-pointer object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Social Switcher Tabs: For You / Following / Shops / Live */}
+            <div className="flex items-center justify-around border-t border-slate-800/60 mt-2.5 pt-2 text-xs font-semibold">
+              {["For You", "Following", "Shops", "Live"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`pb-1 px-3 relative transition-colors ${
+                    activeTab === tab
+                      ? "text-rose-400 font-bold"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {tab === "Live" && <i className="fa-solid fa-circle text-[8px] text-rose-500 mr-1 animate-pulse"></i>}
+                  {tab}
+                  {activeTab === tab && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500 rounded-full"></div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </header>
+
+          {/* MAIN WRAPPER CONTAINER */}
+          <main className="w-full max-w-2xl px-2 sm:px-4 py-3 flex flex-col gap-4">
+
+            {/* LAYER 4: SECONDARY DISCOVERY MODULE (ABOVE THE FOLD DENSITY) */}
+            {}
+            <section className="flex flex-col gap-3">
+              {/* Category Chips Horizontal Scroll */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                      activeCategory === cat
+                        ? "bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-2 ring-rose-400/50"
+                        : "bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+                    }`}
+                  >
+                    {cat === "Deals" && <i className="fa-solid fa-bolt text-amber-400 mr-1.5"></i>}
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Featured Live Deals / Trending Drops Ticker Banner */}
+              <div className="bg-gradient-to-r from-rose-950/80 via-purple-950/80 to-slate-900 border border-rose-500/30 rounded-2xl p-3 flex items-center justify-between gap-3 shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/40 flex items-center justify-center shrink-0">
+                    <i className="fa-solid fa-fire text-rose-400 text-lg animate-bounce"></i>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-extrabold tracking-wider uppercase px-2 py-0.5 rounded bg-rose-500 text-white">
+                        LIVE FLASH DEAL
+                      </span>
+                      <span className="text-xs text-rose-300 font-mono">Ends in 14m 20s</span>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-100 mt-0.5">
+                      Group Buys active: Unlock up to 40% OFF with 1 invite!
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setActiveCategory("Deals")}
+                  className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-2 rounded-xl shrink-0 transition"
+                >
+                  Explore <i className="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                </button>
+              </div>
+            </section>
+
+            {/* LAYER 2: PERSONALIZED FEED (SHOPPABLE SOCIAL CARDS) */}
+            {}
+            <section className="flex flex-col gap-6 mt-1">
+              {filteredFeed.length === 0 ? (
+                <div className="text-center py-16 bg-slate-900/50 rounded-3xl border border-slate-800">
+                  <i className="fa-solid fa-filter-circle-xmark text-4xl text-slate-600 mb-3"></i>
+                  <p className="text-slate-300 font-semibold text-sm">No shoppable posts found for this filter</p>
+                  <button 
+                    onClick={() => { setActiveTab("For You"); setActiveCategory("All"); setSearchQuery(""); }}
+                    className="mt-3 text-xs text-rose-400 font-bold hover:underline"
+                  >
+                    Reset all filters
+                  </button>
+                </div>
+              ) : (
+                filteredFeed.map((post) => {
+                  const isLiked = likedPosts.has(post.id);
+                  const isSaved = savedPosts.has(post.id);
+
+                  return (
+                    <article 
+                      key={post.id} 
+                      className="bg-slate-900/80 border border-slate-800/90 rounded-3xl overflow-hidden shadow-2xl flex flex-col transition hover:border-slate-700"
+                    >
+                      {/* CARD HEADER: Creator & Seller Trust Badge */}
+                      <div className="p-3.5 flex items-center justify-between gap-2 border-b border-slate-800/60 bg-slate-900/40">
+                        {/* Creator Info */}
+                        <div 
+                          className="flex items-center gap-2.5 cursor-pointer group"
+                          onClick={() => setSelectedCreator(post.creator)}
+                        >
+                          <div className="relative">
+                            <img
+                              src={post.creator.avatar}
+                              alt={post.creator.name}
+                              className="w-10 h-10 rounded-full object-cover ring-2 ring-rose-500/40 group-hover:ring-rose-500 transition"
+                            />
+                            {post.creator.verified && (
+                              <i className="fa-solid fa-circle-check text-rose-500 text-xs absolute -bottom-0.5 -right-0.5 bg-slate-950 rounded-full"></i>
+                            )}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-xs text-slate-100 group-hover:text-rose-400 transition">
+                                {post.creator.name}
+                              </span>
+                              <span className="text-[11px] text-slate-400">{post.creator.handle}</span>
+                            </div>
+                            {/* Seller Trust Badge Button */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedTrustSeller({ ...post.seller, creator: post.creator });
+                              }}
+                              className="inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:text-emerald-300 font-medium bg-emerald-950/60 border border-emerald-800/50 px-2 py-0.5 rounded-full mt-0.5"
+                            >
+                              <i className="fa-solid fa-shield-halved text-[9px]"></i>
+                              <span>{post.seller.trustBadge}</span>
+                              <i className="fa-solid fa-circle-info text-[9px] ml-0.5"></i>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Follow Button */}
+                        <button 
+                          onClick={() => showToast(`Followed ${post.creator.handle}!`)}
+                          className="text-xs font-semibold text-rose-400 border border-rose-500/40 hover:bg-rose-600 hover:text-white px-3 py-1 rounded-full transition"
+                        >
+                          Follow
+                        </button>
+                      </div>
+
+                      {/* CARD MEDIA (IMAGE CAROUSEL / VIDEO SIMULATION) */}
+                      <div className="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden group">
+                        <img
+                          src={post.media[0]}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        />
+
+                        {/* Type Indicator Tag */}
+                        {post.type === "group_buy" && (
+                          <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                            <i className="fa-solid fa-users text-[10px]"></i> GROUP BUY
+                          </div>
+                        )}
+                        {post.type === "live_deal" && (
+                          <div className="absolute top-3 left-3 bg-gradient-to-r from-rose-600 to-amber-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse">
+                            <i className="fa-solid fa-bolt text-[10px]"></i> FLASH DEAL
+                          </div>
+                        )}
+
+                        {/* Social Proof Overlay Floating Badge */}
+                        <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md text-slate-200 text-[11px] font-medium px-3 py-1 rounded-full border border-slate-700/60 flex items-center gap-1.5">
+                          <i className="fa-solid fa-fire text-amber-400"></i>
+                          <span>{post.socialProof}</span>
+                        </div>
+
+                        {/* Quick View Button on Image */}
+                        <button
+                          onClick={() => setSelectedProduct(post)}
+                          className="absolute bottom-3 right-3 bg-slate-900/90 hover:bg-slate-800 text-white font-semibold text-xs px-3 py-1.5 rounded-full border border-slate-700 shadow-xl flex items-center gap-1.5 transition"
+                        >
+                          <i className="fa-regular fa-eye"></i> Quick View
+                        </button>
+                      </div>
+
+                      {/* DYNAMIC OFFER BANNERS (GROUP BUY / LIVE DEAL) */}
+                      {post.groupBuy && (
+                        <div className="bg-gradient-to-r from-purple-950/90 via-slate-900 to-purple-950/90 border-y border-purple-500/30 px-4 py-2.5 flex items-center justify-between">
+                          <div className="flex flex-col">
+                            <span className="text-[11px] font-bold text-purple-300">
+                              Group Buy: {post.groupBuy.current}/{post.groupBuy.required} joined
+                            </span>
+                            <span className="text-[10px] text-slate-400">
+                              Unlock ${post.groupBuy.unlockedPrice} price • Ends in {post.groupBuy.timeRemaining}
+                            </span>
+                          </div>
+                          <button 
+                            onClick={() => joinGroupBuy(post)}
+                            className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition shadow-md shadow-purple-600/30"
+                          >
+                            Join Group Deal
+                          </button>
+                        </div>
+                      )}
+
+                      {post.liveDeal && (
+                        <div className="bg-gradient-to-r from-rose-950/90 via-slate-900 to-rose-950/90 border-y border-rose-500/30 px-4 py-2.5 flex items-center justify-between">
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-rose-300">
+                                Only {post.liveDeal.stockLeft} left in stock!
+                              </span>
+                              <span className="text-[10px] text-rose-400 font-mono">
+                                {post.liveDeal.endsIn}
+                              </span>
+                            </div>
+                            {/* Stock progress bar */}
+                            <div className="w-36 h-1.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-amber-400 to-rose-500" style={{ width: `${post.liveDeal.claimedPercent}%` }}></div>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => setCheckoutItem(post)}
+                            className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition shadow-md shadow-rose-600/30"
+                          >
+                            Claim Deal
+                          </button>
+                        </div>
+                      )}
+
+                      {/* CARD CONTENT & COMMERCE INFO */}
+                      <div className="p-4 flex flex-col gap-2">
+                        {/* Title & Category Tag */}
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 
+                            onClick={() => setSelectedProduct(post)}
+                            className="font-bold text-sm text-slate-100 hover:text-rose-400 transition cursor-pointer line-clamp-1"
+                          >
+                            {post.title}
+                          </h3>
+                        </div>
+
+                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                          {post.description}
+                        </p>
+
+                        {/* Price & Discount Bar */}
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-lg font-extrabold text-white">
+                              ${post.price.toFixed(2)}
+                            </span>
+                            <span className="text-xs text-slate-500 line-through">
+                              ${post.originalPrice.toFixed(2)}
+                            </span>
+                            <span className="text-[10px] font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded">
+                              -{post.discountPercentage}%
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1 text-[11px] text-amber-400 font-medium">
+                            <i className="fa-solid fa-star text-[10px]"></i>
+                            <span>{post.seller.rating}</span>
+                            <span className="text-slate-500">({post.seller.reviewsCount})</span>
+                          </div>
+                        </div>
+
+                        {/* ACTION BUTTONS: VIEW ITEM & BUY NOW */}
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          <button
+                            onClick={() => setSelectedProduct(post)}
+                            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs py-2.5 rounded-2xl border border-slate-700 transition flex items-center justify-center gap-1.5"
+                          >
+                            <i className="fa-regular fa-file-lines text-slate-400"></i> View Item
+                          </button>
+                          
+                          <button
+                            onClick={() => setCheckoutItem(post)}
+                            className="w-full bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-extrabold text-xs py-2.5 rounded-2xl shadow-lg shadow-rose-600/30 transition flex items-center justify-center gap-1.5"
+                          >
+                            <i className="fa-solid fa-bolt text-amber-300"></i> Buy Now
+                          </button>
+                        </div>
+
+                        {/* SOCIAL ENGAGEMENT ACTION ROW (Like, Comment, Save, Share) */}
+                        <div className="flex items-center justify-between border-t border-slate-800/80 pt-3 mt-1 text-slate-400 text-xs">
+                          {/* Like */}
+                          <button
+                            onClick={() => toggleLike(post.id)}
+                            className={`flex items-center gap-1.5 hover:text-rose-400 transition ${isLiked ? "text-rose-500 font-bold" : ""}`}
+                          >
+                            <i className={`${isLiked ? "fa-solid" : "fa-regular"} fa-heart text-base`}></i>
+                            <span>{post.likes + (isLiked ? 1 : 0)}</span>
+                          </button>
+
+                          {/* Comment */}
+                          <button
+                            onClick={() => setCommentPost(post)}
+                            className="flex items-center gap-1.5 hover:text-slate-200 transition"
+                          >
+                            <i className="fa-regular fa-comment text-base"></i>
+                            <span>{post.commentsCount}</span>
+                          </button>
+
+                          {/* Save */}
+                          <button
+                            onClick={() => toggleSave(post.id)}
+                            className={`flex items-center gap-1.5 hover:text-amber-400 transition ${isSaved ? "text-amber-400 font-bold" : ""}`}
+                          >
+                            <i className={`${isSaved ? "fa-solid" : "fa-regular"} fa-bookmark text-base`}></i>
+                            <span>{post.saves + (isSaved ? 1 : 0)}</span>
+                          </button>
+
+                          {/* Share */}
+                          <button
+                            onClick={() => handleShare(post)}
+                            className="flex items-center gap-1.5 hover:text-rose-400 transition"
+                          >
+                            <i className="fa-solid fa-share-nodes text-base"></i>
+                            <span className="hidden sm:inline">Share</span>
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
+            </section>
+          </main>
+
+          {/* LAYER 3: STICKY BOTTOM ACTIONS (MOBILE/SOCIAL CONVENIENCE NAV) */}
+          {}
+          <nav className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-glass border-t border-slate-800 px-6 py-2">
+            <div className="max-w-md mx-auto flex items-center justify-between text-xs font-medium">
+              <button 
+                onClick={() => { setActiveTab("For You"); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+                className="flex flex-col items-center gap-1 text-rose-500 font-bold"
+              >
+                <i className="fa-solid fa-house-chimney text-lg"></i>
+                <span>Feed</span>
+              </button>
+
+              <button 
+                onClick={() => setActiveCategory("Deals")}
+                className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition"
+              >
+                <i className="fa-solid fa-compass text-lg"></i>
+                <span>Explore</span>
+              </button>
+
+              <button 
+                onClick={() => setActiveTab("Live")}
+                className="flex flex-col items-center gap-1 text-slate-400 hover:text-rose-400 transition relative"
+              >
+                <i className="fa-solid fa-tower-broadcast text-lg"></i>
+                <span>Live</span>
+                <span className="absolute top-0 right-2 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+              </button>
+
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition relative"
+              >
+                <i className="fa-solid fa-bag-shopping text-lg"></i>
+                <span>Bag</span>
+                {cart.length > 0 && (
+                  <span className="absolute -top-1 right-2 bg-rose-600 text-white font-bold text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                    {cart.length}
+                  </span>
+                )}
+              </button>
+
+              <button 
+                onClick={() => showToast("👤 Profile & Orders: 1 active order in transit!")}
+                className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition"
+              >
+                <i className="fa-regular fa-user text-lg"></i>
+                <span>Me</span>
+              </button>
+            </div>
+          </nav>
+
+          {/* ========================================================= */}
+          {/* LAYER 5: TRUST, PURCHASE CONTROLS, AND MODALS */}
+          {/* ========================================================= */}
+
+          {}
+
+          {/* 1. PRODUCT DETAIL SLIDE-OVER DRAWER */}
+          {selectedProduct && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-lg bg-slate-900 h-full overflow-y-auto p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+                <div>
+                  {/* Close button */}
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                    <span className="font-extrabold text-sm text-slate-300 uppercase tracking-wider">Product Details</span>
+                    <button 
+                      onClick={() => setSelectedProduct(null)}
+                      className="p-2 text-slate-400 hover:text-white rounded-full bg-slate-800"
+                    >
+                      <i className="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                  </div>
+
+                  {/* Main Product Image */}
+                  <img
+                    src={selectedProduct.media[0]}
+                    alt={selectedProduct.title}
+                    className="w-full h-64 object-cover rounded-2xl mb-4 border border-slate-800"
+                  />
+
+                  {/* Title & Price */}
+                  <h2 className="text-lg font-bold text-slate-100">{selectedProduct.title}</h2>
+                  
+                  <div className="flex items-center gap-3 my-3">
+                    <span className="text-2xl font-black text-rose-400">${selectedProduct.price.toFixed(2)}</span>
+                    <span className="text-sm text-slate-500 line-through">${selectedProduct.originalPrice.toFixed(2)}</span>
+                    <span className="text-xs bg-rose-500/20 text-rose-400 font-bold px-2 py-0.5 rounded">
+                      Save {selectedProduct.discountPercentage}%
+                    </span>
+                  </div>
+
+                  {/* Trust Specs */}
+                  <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80 my-4 space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="flex items-center gap-1.5"><i className="fa-solid fa-truck text-rose-400"></i> Shipping:</span>
+                      <span className="font-semibold">{selectedProduct.seller.shipTime}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="flex items-center gap-1.5"><i className="fa-solid fa-rotate-left text-rose-400"></i> Returns:</span>
+                      <span className="font-semibold">{selectedProduct.seller.returnDays} Days Easy Return</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="flex items-center gap-1.5"><i className="fa-solid fa-shield-check text-rose-400"></i> Guarantee:</span>
+                      <span className="font-semibold text-emerald-400">{selectedProduct.seller.trustBadge}</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="text-xs text-slate-300 space-y-2 leading-relaxed">
+                    <p className="font-semibold text-slate-200">About this item:</p>
+                    <p>{selectedProduct.description}</p>
+                  </div>
+                </div>
+
+                {/* Bottom CTA Drawer */}
+                <div className="pt-4 border-t border-slate-800 flex gap-2">
+                  <button
+                    onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs py-3 rounded-2xl border border-slate-700 transition"
+                  >
+                    Add to Bag
+                  </button>
+                  <button
+                    onClick={() => { const p = selectedProduct; setSelectedProduct(null); setCheckoutItem(p); }}
+                    className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs py-3 rounded-2xl shadow-lg shadow-rose-600/30 transition"
+                  >
+                    Buy Now ⚡
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 2. INSTANT CHECKOUT SLIDE-OVER */}
+          {checkoutItem && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+                <div>
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                    <span className="font-extrabold text-sm text-slate-100 flex items-center gap-2">
+                      <i className="fa-solid fa-lock text-rose-500"></i> 1-Tap Express Checkout
+                    </span>
+                    <button 
+                      onClick={() => setCheckoutItem(null)}
+                      className="p-2 text-slate-400 hover:text-white rounded-full bg-slate-800"
+                    >
+                      <i className="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                  </div>
+
+                  {/* Order Summary Item */}
+                  <div className="flex gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 mb-4">
+                    <img src={checkoutItem.media[0]} alt="" className="w-16 h-16 rounded-xl object-cover" />
+                    <div>
+                      <h4 className="font-bold text-xs text-slate-200 line-clamp-1">{checkoutItem.title}</h4>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Sold by: {checkoutItem.seller.name}</p>
+                      <p className="text-sm font-black text-rose-400 mt-1">${checkoutItem.price.toFixed(2)}</p>
+                    </div>
+                  </div>
+
+                  {/* Delivery Address */}
+                  <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 mb-4 text-xs">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-semibold text-slate-300">Shipping Address</span>
+                      <button className="text-rose-400 font-bold hover:underline">Change</button>
+                    </div>
+                    <p className="text-slate-200 font-medium">Alex Johnson • +1 (555) 019-2834</p>
+                    <p className="text-slate-400 text-[11px] mt-0.5">742 Evergreen Terrace, Springfield, OR 97477</p>
+                  </div>
+
+                  {/* Payment Options */}
+                  <div className="space-y-2 mb-4">
+                    <span className="text-xs font-semibold text-slate-300">Payment Method</span>
+                    <div className="p-3 bg-slate-950 border border-rose-500/50 rounded-xl flex items-center justify-between text-xs cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <i className="fa-brands fa-apple-pay text-2xl text-white"></i>
+                        <span className="font-semibold text-slate-200">Apple Pay</span>
+                      </div>
+                      <i className="fa-solid fa-circle-check text-rose-500"></i>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Final Confirmation Button */}
+                <div className="pt-4 border-t border-slate-800">
+                  <div className="flex items-center justify-between mb-3 text-xs">
+                    <span className="text-slate-400">Total Payable:</span>
+                    <span className="text-lg font-black text-white">${checkoutItem.price.toFixed(2)}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      showToast("🎉 Order Confirmed! Tracking sent to your email.");
+                      setCheckoutItem(null);
+                    }}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-sm py-3.5 rounded-2xl shadow-xl transition flex items-center justify-center gap-2"
+                  >
+                    <i className="fa-solid fa-shield-check"></i> Complete Purchase
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3. SELLER TRUST INSPECTOR MODAL */}
+          {selectedTrustSeller && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-5 shadow-2xl relative">
+                <button 
+                  onClick={() => setSelectedTrustSeller(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                >
+                  <i className="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl">
+                    <i className="fa-solid fa-shield-halved"></i>
+                  </div>
+                  <h3 className="font-bold text-base text-slate-100">{selectedTrustSeller.name}</h3>
+                  <span className="text-xs text-emerald-400 font-semibold bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 rounded-full">
+                    {selectedTrustSeller.trustBadge}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 my-4">
+                  <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-center">
+                    <span className="text-lg font-black text-slate-100">{selectedTrustSeller.rating} ★</span>
+                    <p className="text-[10px] text-slate-400">Seller Score ({selectedTrustSeller.reviewsCount} reviews)</p>
+                  </div>
+                  <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-center">
+                    <span className="text-lg font-black text-slate-100">{selectedTrustSeller.returnDays} Days</span>
+                    <p className="text-[10px] text-slate-400">Buyer Money-back Guarantee</p>
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-2xl border border-slate-800/60 mb-4">
+                  <i className="fa-solid fa-check text-emerald-400 mr-1.5"></i>
+                  {selectedTrustSeller.guarantee}
+                </p>
+
+                <button
+                  onClick={() => setSelectedTrustSeller(null)}
+                  className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-2.5 rounded-xl border border-slate-700 transition"
+                >
+                  Close Inspection
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 4. CREATOR PROFILE DRAWER */}
+          {selectedCreator && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 overflow-y-auto shadow-2xl">
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+                  <span className="font-bold text-xs text-slate-400 uppercase">Creator Showcase</span>
+                  <button 
+                    onClick={() => setSelectedCreator(null)}
+                    className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+
+                <div className="flex flex-col items-center text-center gap-2">
+                  <img src={selectedCreator.avatar} alt="" className="w-20 h-20 rounded-full object-cover ring-4 ring-rose-500/30" />
+                  <h3 className="font-extrabold text-base text-slate-100">{selectedCreator.name}</h3>
+                  <span className="text-xs text-slate-400">{selectedCreator.handle}</span>
+                  <p className="text-xs text-slate-300 max-w-xs my-1">{selectedCreator.bio}</p>
+                  
+                  <div className="flex items-center gap-6 my-2 text-xs">
+                    <div>
+                      <span className="font-bold text-slate-100">{selectedCreator.followers}</span>
+                      <p className="text-[10px] text-slate-500">Followers</p>
+                    </div>
+                    <div>
+                      <span className="font-bold text-emerald-400">{selectedCreator.trustRating}</span>
+                      <p className="text-[10px] text-slate-500">Positive Rating</p>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => showToast(`Followed ${selectedCreator.handle}!`)}
+                    className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-6 py-2 rounded-full transition shadow-lg shadow-rose-600/30"
+                  >
+                    + Follow Creator
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 5. COMMENTS DRAWER */}
+          {commentPost && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+                <div>
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                    <span className="font-bold text-xs text-slate-200">Comments ({commentPost.commentsCount})</span>
+                    <button 
+                      onClick={() => setCommentPost(null)}
+                      className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+
+                  {/* Comments list */}
+                  <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                    {commentPost.comments.map((c, i) => (
+                      <div key={i} className="bg-slate-950 p-3 rounded-2xl border border-slate-800/80 text-xs">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-rose-400">{c.user}</span>
+                          <span className="text-[10px] text-slate-500">{c.time}</span>
+                        </div>
+                        <p className="text-slate-300">{c.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Add comment input */}
+                <form onSubmit={handleAddComment} className="pt-3 border-t border-slate-800 flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-rose-500"
+                  />
+                  <button type="submit" className="bg-rose-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl">
+                    Post
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* 6. CART BAG SLIDE-OVER */}
+          {isCartOpen && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+                <div>
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                    <span className="font-extrabold text-sm text-slate-100 flex items-center gap-2">
+                      <i className="fa-solid fa-bag-shopping text-rose-500"></i> Shopping Bag ({cart.length})
+                    </span>
+                    <button 
+                      onClick={() => setIsCartOpen(false)}
+                      className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+
+                  {cart.length === 0 ? (
+                    <p className="text-xs text-slate-400 text-center py-10">Your bag is currently empty.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {cart.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                          <div className="flex items-center gap-3">
+                            <img src={item.media[0]} className="w-12 h-12 rounded-xl object-cover" />
+                            <div>
+                              <h5 className="font-bold text-xs text-slate-200 line-clamp-1">{item.title}</h5>
+                              <p className="text-xs text-rose-400 font-bold">${item.price.toFixed(2)} x {item.qty}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {cart.length > 0 && (
+                  <button 
+                    onClick={() => { setIsCartOpen(false); setCheckoutItem(cart[0]); }}
+                    className="w-full bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-xl transition"
+                  >
+                    Proceed to Checkout (${cart.reduce((a, b) => a + (b.price * b.qty), 0).toFixed(2)})
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 7. NOTIFICATIONS SLIDE-OVER */}
+          {isNotifOpen && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+                <div>
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                    <span className="font-bold text-xs text-slate-200">Activity & Alerts</span>
+                    <button 
+                      onClick={() => setIsNotifOpen(false)}
+                      className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-600/20 text-purple-400 flex items-center justify-center">
+                        <i className="fa-solid fa-users"></i>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-200">Group Buy Price Unlocked!</p>
+                        <p className="text-[10px] text-slate-400">@sam_dev joined your group buy for Aura Headphones.</p>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-rose-600/20 text-rose-400 flex items-center justify-center">
+                        <i className="fa-solid fa-tag"></i>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-200">Price Drop Alert</p>
+                        <p className="text-[10px] text-slate-400">Vintage Leather Jacket is now 32% OFF for the next hour!</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

@@ -182,3 +182,47 @@ Stage Summary:
 - ⚠️ Currently all trending posts are videos (products have 0 engagement). As users view/save/review products, they'll appear in the feed. To kickstart product visibility, could seed some initial product_view_log entries.
 - ⚠️ Chroma service on Render (cellex-chroma, srv-d7v1gt3eo5us73aljosg) is no longer needed. User can delete it from Render dashboard to save resources.
 - ⚠️ UptimeRobot should now only ping 2 URLs (eesha-learn + Gorse). Chroma URL can be removed from UptimeRobot.
+
+---
+Task ID: 9 (Cellex — Rebrand homepage to Gemini-style shoppable social commerce)
+Agent: main (super-z)
+Task: User shared a Gemini-built HTML page (share.gemini.google/JawYjHvHnsvG) and wants the homepage rebranded to that design. Must keep: liquid glass glassmorphism, mobile nav bar + contents, card spacing. Also fix: share icon on feed (was using messenger/paper-plane), wrong nav icons on category + shorts pages.
+
+Work Log:
+- Read the Gemini HTML file (1225 lines) — it's a React single-file app with a shoppable social commerce layout:
+    * Top header: logo + search + bell/messages/cart/avatar icons
+    * Social tabs: For You / Following / Shops / Live (rose underline on active)
+    * Category chips: horizontal scroll, rose gradient when active
+    * Flash deal banner: rose/purple gradient with fire icon + countdown
+    * Feed cards: creator header (avatar+ring, name, handle, verified, trust badge, Follow btn), 4:3 media (overlay badges: GROUP BUY purple / FLASH DEAL rose pulse, social proof bottom-left, Quick View btn bottom-right), group buy/live deal banners, title+description+price+discount+rating, View Item + Buy Now buttons, social row (Like/Comment/Save/Share with labels)
+    * Bottom nav: Feed / Explore / Live / Bag / Me
+    * 7 modals/drawers: product detail, checkout, trust inspector, creator profile, comments, cart, notifications
+
+- ADAPTED the Gemini design to Cellex (keeping glass aesthetic + existing nav + card spacing):
+    * Added social switcher tabs (For You / Following / Shops / Live) below the top bar — rose active underline, pulse dot on Live
+    * Added category chips horizontal scroll (All / Deals / Electronics / Fashion / Food / Beauty / Home / Sports / Books) — active chip uses rose→purple gradient
+    * Added flash deal banner (rose/purple gradient, fire icon, 'Explore' CTA)
+    * REDESIGNED FeedPostCard:
+        - Header: creator avatar (rose ring) + name + timestamp + verified badge + emerald 'Verified Seller' trust pill + Follow button (rose outline)
+        - Media: 4:3 aspect ratio (was square), hover zoom, GROUP BUY/FLASH DEAL overlay badges, social proof (fire icon) bottom-left, Quick View button bottom-right
+        - Content: bold title (clickable), 2-line description, price + units_sold badge, 'Trending' star
+        - Two action buttons: 'View Item' (glass) + 'Buy Now ⚡' (rose gradient)
+        - Social row with labels: Like count + Comment count + Save + Share (was icon-only, now has text labels)
+    * KEPT: fx-card glass styling, ig-card-spaced spacing, existing MobileNav (floating island), all existing functionality (comments modal, Gorse feedback, share, etc.)
+
+- Fixed share icon: Send → Share2 (was using paper-plane/messenger icon)
+- Fixed shorts page: comment icon Send → MessageCircle, share icon Send → Share2
+- Fixed product page: share icon Send → Share2 (both header + action bar)
+- Fixed mobile nav: Shorts icon Grid3x3 → Play (YouTube Shorts style), Category icon Search → Grid3x3 (standard categories icon)
+
+- Pushed commit 95d8e04 to GitHub. Render auto-deployed, live at 23:35 UTC.
+- Homepage returns HTTP 200 in 0.54s.
+
+Stage Summary:
+- ✅ Homepage rebranded to Gemini-style shoppable social commerce layout
+- ✅ Liquid glass glassmorphism maintained (fx-card, backdrop-blur, semi-transparent bg)
+- ✅ Mobile nav bar and contents maintained (floating island, 5 items)
+- ✅ Card spacing maintained (ig-card-spaced class)
+- ✅ Share icon fixed (Share2, not paper-plane)
+- ✅ Mobile nav icons fixed (Shorts=Play, Category=Grid3x3)
+- ✅ Live on https://eesha-learn.onrender.com

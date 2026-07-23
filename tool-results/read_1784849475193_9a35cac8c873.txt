@@ -1,0 +1,1225 @@
+     1→<!DOCTYPE html>
+     2→<html lang="en">
+     3→<head>
+     4→  <meta charset="UTF-8" />
+     5→  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     6→  <title>Shoppable Social Commerce Home Feed</title>
+     7→  
+     8→  <!-- Tailwind CSS -->
+     9→  <script src="https://cdn.tailwindcss.com"></script>
+    10→  <script>
+    11→    tailwind.config = {
+    12→      darkMode: 'class',
+    13→      theme: {
+    14→        extend: {
+    15→          colors: {
+    16→            brand: {
+    17→              50: '#fff1f2',
+    18→              100: '#ffe4e6',
+    19→              500: '#f43f5e',
+    20→              600: '#e11d48',
+    21→              700: '#be123c',
+    22→            },
+    23→            accent: {
+    24→              500: '#8b5cf6',
+    25→              600: '#7c3aed',
+    26→            }
+    27→          },
+    28→          fontFamily: {
+    29→            sans: ['Inter', 'sans-serif'],
+    30→          },
+    31→          animation: {
+    32→            'pulse-fast': 'pulse 1s infinite',
+    33→            'bounce-short': 'bounce 0.5s ease-in-out 1',
+    34→          }
+    35→        }
+    36→      }
+    37→    }
+    38→  </script>
+    39→
+    40→  <!-- Google Fonts: Inter -->
+    41→  <link rel="preconnect" href="https://fonts.googleapis.com">
+    42→  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    43→  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    44→
+    45→  <!-- FontAwesome Icons -->
+    46→  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    47→
+    48→  <!-- React, ReactDOM, and Babel -->
+    49→  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    50→  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    51→  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    52→
+    53→  <style>
+    54→    body {
+    55→      font-family: 'Inter', sans-serif;
+    56→      background-color: #0f172a;
+    57→      color: #f8fafc;
+    58→      overflow-x: hidden;
+    59→    }
+    60→    /* Hide scrollbars for slick social feed feel */
+    61→    .no-scrollbar::-webkit-scrollbar {
+    62→      display: none;
+    63→    }
+    64→    .no-scrollbar {
+    65→      -ms-overflow-style: none;
+    66→      scrollbar-width: none;
+    67→    }
+    68→    .backdrop-blur-glass {
+    69→      backdrop-filter: blur(16px);
+    70→      -webkit-backdrop-filter: blur(16px);
+    71→    }
+    72→  </style>
+    73→</head>
+    74→<body class="bg-slate-950 text-slate-100 antialiased selection:bg-rose-500 selection:text-white">
+    75→
+    76→  <div id="root"></div>
+    77→
+    78→  <script type="text/babel">
+    79→    const { useState, useEffect, useRef } = React;
+    80→
+    81→    // --- MOCK FEED DATASET ---
+    82→    const INITIAL_FEED = [
+    83→      {
+    84→        id: "post_1",
+    85→        type: "group_buy",
+    86→        creator: {
+    87→          name: "Maya Lin",
+    88→          handle: "@TechTrends_Maya",
+    89→          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    90→          verified: true,
+    91→          bio: "Tech creator reviewing future gear & modern workspace accessories.",
+    92→          followers: "248K",
+    93→          trustRating: "99.4%"
+    94→        },
+    95→        seller: {
+    96→          name: "Aura Sound Co.",
+    97→          trustBadge: "Official Flagship Store",
+    98→          rating: 4.9,
+    99→          reviewsCount: 3820,
+   100→          returnDays: 30,
+   101→          shipTime: "Ships in 24 hrs",
+   102→          guarantee: "100% Buyer Protection & Authenticity Verified"
+   103→        },
+   104→        media: [
+   105→          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80",
+   106→          "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80"
+   107→        ],
+   108→        title: "Aura Pro Wireless ANC Studio Headphones",
+   109→        description: "Zero-latency active noise cancellation with spatial sound stage. Tested during 12-hour flights!",
+   110→        price: 129.99,
+   111→        originalPrice: 199.99,
+   112→        discountPercentage: 35,
+   113→        category: "Tech",
+   114→        likes: 1420,
+   115→        saves: 489,
+   116→        commentsCount: 86,
+   117→        socialProof: "124 people saved this in the last hour",
+   118→        groupBuy: {
+   119→          required: 4,
+   120→          current: 3,
+   121→          timeRemaining: "02h 15m",
+   122→          unlockedPrice: 109.99
+   123→        },
+   124→        tags: ["Tech", "Audio", "NoiseCancelling"],
+   125→        comments: [
+   126→          { user: "@alex_k", text: "How is the bass response compared to Sony XM5?", time: "5m ago" },
+   127→          { user: "@sam_dev", text: "Joined the group buy! Need 1 more person to unlock $109!", time: "12m ago" }
+   128→        ]
+   129→      },
+   130→      {
+   131→        id: "post_2",
+   132→        type: "live_deal",
+   133→        creator: {
+   134→          name: "Elena Rostova",
+   135→          handle: "@StyleByElena",
+   136→          avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+   137→          verified: true,
+   138→          bio: "Vintage street fashion styling & capsule wardrobe curator.",
+   139→          followers: "512K",
+   140→          trustRating: "98.8%"
+   141→        },
+   142→        seller: {
+   143→          name: "Atelier Vintage",
+   144→          trustBadge: "Top Fashion Seller",
+   145→          rating: 4.8,
+   146→          reviewsCount: 1940,
+   147→          returnDays: 14,
+   148→          shipTime: "Free 2-day Express",
+   149→          guarantee: "Hand-inspected Genuine Leather Guarantee"
+   150→        },
+   151→        media: [
+   152→          "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=80",
+   153→          "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=800&auto=format&fit=crop&q=80"
+   154→        ],
+   155→        title: "Over-Sized Distressed Vintage Biker Leather Jacket",
+   156→        description: "Heavyweight genuine grain leather with custom brushed brass hardware. Perfect fall drop!",
+   157→        price: 189.00,
+   158→        originalPrice: 280.00,
+   159→        discountPercentage: 32,
+   160→        category: "Fashion",
+   161→        likes: 3890,
+   162→        saves: 1120,
+   163→        commentsCount: 214,
+   164→        socialProof: "89 people bought in the last 24h",
+   165→        liveDeal: {
+   166→          stockLeft: 12,
+   167→          endsIn: "18m 42s",
+   168→          claimedPercent: 88
+   169→        },
+   170→        tags: ["Fashion", "Vintage", "Streetwear"],
+   171→        comments: [
+   172→          { user: "@clara_m", text: "Is this true to size or oversized fit?", time: "2m ago" },
+   173→          { user: "@StyleByElena", text: "@clara_m Oversized! I'm wearing a Medium in video.", time: "1m ago" }
+   174→        ]
+   175→      },
+   176→      {
+   177→        id: "post_3",
+   178→        type: "standard",
+   179→        creator: {
+   180→          name: "Glow Beauty Lab",
+   181→          handle: "@GlowLab_Beauty",
+   182→          avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+   183→          verified: true,
+   184→          bio: "Clean, vegan dermatological skin barrier essentials.",
+   185→          followers: "120K",
+   186→          trustRating: "99.9%"
+   187→        },
+   188→        seller: {
+   189→          name: "GlowLab Skincare",
+   190→          trustBadge: "Dermatologist Approved",
+   191→          rating: 5.0,
+   192→          reviewsCount: 8400,
+   193→          returnDays: 30,
+   194→          shipTime: "Same Day Dispatch",
+   195→          guarantee: "100% Hypoallergenic & Cruelty-Free Certified"
+   196→        },
+   197→        media: [
+   198→          "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&auto=format&fit=crop&q=80"
+   199→        ],
+   200→        title: "Hydrating Botanical Glow Serum w/ Niacinamide & Hyaluronic",
+   201→        description: "Restores skin barrier in 7 days. Non-greasy, fast-absorbing formula with triple hydration complex.",
+   202→        price: 34.50,
+   203→        originalPrice: 48.00,
+   204→        discountPercentage: 28,
+   205→        category: "Beauty",
+   206→        likes: 2710,
+   207→        saves: 950,
+   208→        commentsCount: 142,
+   209→        socialProof: "410 people added this to cart today",
+   210→        tags: ["Beauty", "Skincare", "GlowRoutine"],
+   211→        comments: [
+   212→          { user: "@sarah_g", text: "Does this work well under foundation?", time: "15m ago" },
+   213→          { user: "@GlowLab_Beauty", text: "@sarah_g Yes! It acts as a hydrating primer.", time: "10m ago" }
+   214→        ]
+   215→      },
+   216→      {
+   217→        id: "post_4",
+   218→        type: "group_buy",
+   219→        creator: {
+   220→          name: "Chef Marcus",
+   221→          handle: "@NookCoffee_Craft",
+   222→          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+   223→          verified: false,
+   224→          bio: "Specialty coffee roaster and slow brew enthusiast.",
+   225→          followers: "85K",
+   226→          trustRating: "97.5%"
+   227→        },
+   228→        seller: {
+   229→          name: "Craft Ceramics Studio",
+   230→          trustBadge: "Artisan Maker",
+   231→          rating: 4.9,
+   232→          reviewsCount: 620,
+   233→          returnDays: 14,
+   234→          shipTime: "Ships in 2 days",
+   235→          guarantee: "Breakage-free Transit Guarantee"
+   236→        },
+   237→        media: [
+   238→          "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80"
+   239→        ],
+   240→        title: "Minimalist Matte Ceramic Pour-Over Dripper Set",
+   241→        description: "Handcrafted stoneware pour-over kettle & dripper set. Maintains ideal 93°C brewing temperature.",
+   242→        price: 42.00,
+   243→        originalPrice: 65.00,
+   244→        discountPercentage: 35,
+   245→        category: "Home",
+   246→        likes: 1840,
+   247→        saves: 620,
+   248→        commentsCount: 54,
+   249→        socialProof: "65 group buys completed this week",
+   250→        groupBuy: {
+   251→          required: 3,
+   252→          current: 2,
+   253→          timeRemaining: "05h 40m",
+   254→          unlockedPrice: 35.00
+   255→        },
+   256→        tags: ["Home", "Coffee", "Ceramics"],
+   257→        comments: [
+   258→          { user: "@barista_joe", text: "Stunning glaze finish on this!", time: "1h ago" }
+   259→        ]
+   260→      }
+   261→    ];
+   262→
+   263→    // CATEGORIES LIST
+   264→    const CATEGORIES = ["All", "Fashion", "Beauty", "Tech", "Home", "Fitness", "Deals"];
+   265→
+   266→    // --- MAIN APP COMPONENT ---
+   267→    function App() {
+   268→      const [feedItems, setFeedItems] = useState(INITIAL_FEED);
+   269→      const [activeTab, setActiveTab] = useState("For You"); // 'For You', 'Following', 'Shops', 'Live'
+   270→      const [activeCategory, setActiveCategory] = useState("All");
+   271→      const [searchQuery, setSearchQuery] = useState("");
+   272→      
+   273→      // Dynamic Engagement States
+   274→      const [likedPosts, setLikedPosts] = useState(new Set());
+   275→      const [savedPosts, setSavedPosts] = useState(new Set());
+   276→      
+   277→      // Modals & Drawers
+   278→      const [selectedProduct, setSelectedProduct] = useState(null); // Product Drawer
+   279→      const [selectedCreator, setSelectedCreator] = useState(null); // Creator Profile Drawer
+   280→      const [selectedTrustSeller, setSelectedTrustSeller] = useState(null); // Trust Badge Modal
+   281→      const [checkoutItem, setCheckoutItem] = useState(null); // Quick Buy Checkout Drawer
+   282→      const [commentPost, setCommentPost] = useState(null); // Comments Drawer
+   283→      const [newComment, setNewComment] = useState("");
+   284→      const [cart, setCart] = useState([]);
+   285→      const [isCartOpen, setIsCartOpen] = useState(false);
+   286→      const [isNotifOpen, setIsNotifOpen] = useState(false);
+   287→
+   288→      // Toast Notifications System (No native alert!)
+   289→      const [toastMessage, setToastMessage] = useState(null);
+   290→
+   291→      const showToast = (msg) => {
+   292→        setToastMessage(msg);
+   293→        setTimeout(() => setToastMessage(null), 3500);
+   294→      };
+   295→
+   296→      // --- HANDLERS ---
+   297→      const toggleLike = (postId) => {
+   298→        const next = new Set(likedPosts);
+   299→        if (next.has(postId)) {
+   300→          next.delete(postId);
+   301→          showToast("Unliked post");
+   302→        } else {
+   303→          next.add(postId);
+   304→          showToast("❤️ Saved to your liked items!");
+   305→        }
+   306→        setLikedPosts(next);
+   307→      };
+   308→
+   309→      const toggleSave = (postId) => {
+   310→        const next = new Set(savedPosts);
+   311→        if (next.has(postId)) {
+   312→          next.delete(postId);
+   313→          showToast("Removed from saved collection");
+   314→        } else {
+   315→          next.add(postId);
+   316→          showToast("📌 Saved to your Shopping Wishlist!");
+   317→        }
+   318→        setSavedPosts(next);
+   319→      };
+   320→
+   321→      const handleShare = (post) => {
+   322→        const shareText = `Check out this deal on ${post.title}: $${post.price}!`;
+   323→        if (navigator.clipboard) {
+   324→          navigator.clipboard.writeText(shareText);
+   325→        }
+   326→        showToast("🔗 Link copied to clipboard! Share on WhatsApp or Telegram.");
+   327→      };
+   328→
+   329→      const addToCart = (product) => {
+   330→        setCart((prev) => {
+   331→          const exists = prev.find(item => item.id === product.id);
+   332→          if (exists) {
+   333→            return prev.map(item => item.id === product.id ? {...item, qty: item.qty + 1} : item);
+   334→          }
+   335→          return [...prev, {...product, qty: 1}];
+   336→        });
+   337→        showToast(`🛍️ ${product.title.slice(0, 24)}... added to bag!`);
+   338→      };
+   339→
+   340→      const joinGroupBuy = (post) => {
+   341→        showToast(`🎉 You joined the Group Buy for ${post.title}! Invite 1 friend to unlock $${post.groupBuy ? post.groupBuy.unlockedPrice : post.price}.`);
+   342→        setCheckoutItem(post);
+   343→      };
+   344→
+   345→      const handleAddComment = (e) => {
+   346→        e.preventDefault();
+   347→        if (!newComment.trim() || !commentPost) return;
+   348→        const updatedFeed = feedItems.map(item => {
+   349→          if (item.id === commentPost.id) {
+   350→            return {
+   351→              ...item,
+   352→              commentsCount: item.commentsCount + 1,
+   353→              comments: [{ user: "@you", text: newComment, time: "Just now" }, ...item.comments]
+   354→            };
+   355→          }
+   356→          return item;
+   357→        });
+   358→        setFeedItems(updatedFeed);
+   359→        setCommentPost(updatedFeed.find(item => item.id === commentPost.id));
+   360→        setNewComment("");
+   361→        showToast("💬 Comment posted!");
+   362→      };
+   363→
+   364→      // Filtered Feed items based on activeTab, category, and search
+   365→      const filteredFeed = feedItems.filter(item => {
+   366→        // Tab Filter
+   367→        if (activeTab === "Live" && item.type !== "live_deal") return false;
+   368→        if (activeTab === "Shops" && !item.seller.trustBadge) return false;
+   369→        // Category Filter
+   370→        if (activeCategory !== "All" && item.category !== activeCategory && !(activeCategory === "Deals" && (item.type === "group_buy" || item.type === "live_deal"))) return false;
+   371→        // Search Filter
+   372→        if (searchQuery.trim() !== "") {
+   373→          const q = searchQuery.toLowerCase();
+   374→          return item.title.toLowerCase().includes(q) || item.creator.name.toLowerCase().includes(q) || item.category.toLowerCase().includes(q);
+   375→        }
+   376→        return true;
+   377→      });
+   378→
+   379→      return (
+   380→        <div className="min-h-screen bg-slate-950 text-slate-100 pb-20 md:pb-8 flex flex-col items-center">
+   381→
+   382→          {}
+   383→          {toastMessage && (
+   384→            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-rose-600 text-white font-medium text-sm px-5 py-3 rounded-full shadow-2xl border border-rose-400 flex items-center gap-2 animate-bounce-short">
+   385→              <i className="fa-solid fa-sparkles text-amber-300"></i>
+   386→              <span>{toastMessage}</span>
+   387→            </div>
+   388→          )}
+   389→
+   390→          {/* LAYER 1: TOP NAVIGATION BAR */}
+   391→          {}
+   392→          <header className="sticky top-0 z-40 w-full max-w-2xl bg-slate-950/90 backdrop-blur-glass border-b border-slate-800/80 px-4 py-2.5">
+   393→            <div className="flex items-center justify-between gap-3">
+   394→              {/* Brand Logo */}
+   395→              <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setActiveTab("For You"); setActiveCategory("All"); setSearchQuery(""); }}>
+   396→                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-purple-600 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-rose-500/20">
+   397→                  S
+   398→                </div>
+   399→                <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-rose-400 bg-clip-text text-transparent hidden sm:inline">
+   400→                  StreamShop
+   401→                </span>
+   402→              </div>
+   403→
+   404→              {/* Search Bar */}
+   405→              <div className="flex-1 max-w-sm relative">
+   406→                <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+   407→                <input
+   408→                  type="text"
+   409→                  placeholder="Search drops, creators, styles..."
+   410→                  value={searchQuery}
+   411→                  onChange={(e) => setSearchQuery(e.target.value)}
+   412→                  className="w-full bg-slate-900 border border-slate-800 text-slate-100 placeholder-slate-400 text-xs rounded-full pl-9 pr-4 py-2 focus:outline-none focus:border-rose-500 transition"
+   413→                />
+   414→                {searchQuery && (
+   415→                  <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
+   416→                    <i className="fa-solid fa-xmark"></i>
+   417→                  </button>
+   418→                )}
+   419→              </div>
+   420→
+   421→              {/* Right Action Icons */}
+   422→              <div className="flex items-center gap-1.5 sm:gap-3">
+   423→                <button 
+   424→                  onClick={() => setIsNotifOpen(true)}
+   425→                  className="relative p-2 text-slate-300 hover:text-white rounded-full hover:bg-slate-900 transition"
+   426→                  title="Notifications"
+   427→                >
+   428→                  <i className="fa-regular fa-bell text-lg"></i>
+   429→                  <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+   430→                </button>
+   431→
+   432→                <button 
+   433→                  onClick={() => showToast("✉️ Messages drawer: 2 unread seller responses!")}
+   434→                  className="p-2 text-slate-300 hover:text-white rounded-full hover:bg-slate-900 transition hidden sm:inline-flex"
+   435→                  title="Messages"
+   436→                >
+   437→                  <i className="fa-regular fa-comment-dots text-lg"></i>
+   438→                </button>
+   439→
+   440→                {/* Cart Icon */}
+   441→                <button 
+   442→                  onClick={() => setIsCartOpen(true)}
+   443→                  className="relative p-2 text-slate-300 hover:text-white rounded-full hover:bg-slate-900 transition"
+   444→                  title="Cart Bag"
+   445→                >
+   446→                  <i className="fa-solid fa-bag-shopping text-lg text-rose-400"></i>
+   447→                  {cart.length > 0 && (
+   448→                    <span className="absolute -top-1 -right-1 bg-rose-600 text-white font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center border border-slate-950">
+   449→                      {cart.reduce((a, b) => a + b.qty, 0)}
+   450→                    </span>
+   451→                  )}
+   452→                </button>
+   453→
+   454→                {/* User Avatar */}
+   455→                <img
+   456→                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
+   457→                  alt="Profile"
+   458→                  onClick={() => showToast("👤 Logged in as @AlexShopper")}
+   459→                  className="w-8 h-8 rounded-full border border-rose-500/50 cursor-pointer object-cover"
+   460→                />
+   461→              </div>
+   462→            </div>
+   463→
+   464→            {/* Social Switcher Tabs: For You / Following / Shops / Live */}
+   465→            <div className="flex items-center justify-around border-t border-slate-800/60 mt-2.5 pt-2 text-xs font-semibold">
+   466→              {["For You", "Following", "Shops", "Live"].map((tab) => (
+   467→                <button
+   468→                  key={tab}
+   469→                  onClick={() => setActiveTab(tab)}
+   470→                  className={`pb-1 px-3 relative transition-colors ${
+   471→                    activeTab === tab
+   472→                      ? "text-rose-400 font-bold"
+   473→                      : "text-slate-400 hover:text-slate-200"
+   474→                  }`}
+   475→                >
+   476→                  {tab === "Live" && <i className="fa-solid fa-circle text-[8px] text-rose-500 mr-1 animate-pulse"></i>}
+   477→                  {tab}
+   478→                  {activeTab === tab && (
+   479→                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500 rounded-full"></div>
+   480→                  )}
+   481→                </button>
+   482→              ))}
+   483→            </div>
+   484→          </header>
+   485→
+   486→          {/* MAIN WRAPPER CONTAINER */}
+   487→          <main className="w-full max-w-2xl px-2 sm:px-4 py-3 flex flex-col gap-4">
+   488→
+   489→            {/* LAYER 4: SECONDARY DISCOVERY MODULE (ABOVE THE FOLD DENSITY) */}
+   490→            {}
+   491→            <section className="flex flex-col gap-3">
+   492→              {/* Category Chips Horizontal Scroll */}
+   493→              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+   494→                {CATEGORIES.map((cat) => (
+   495→                  <button
+   496→                    key={cat}
+   497→                    onClick={() => setActiveCategory(cat)}
+   498→                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+   499→                      activeCategory === cat
+   500→                        ? "bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-2 ring-rose-400/50"
+   501→                        : "bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+   502→                    }`}
+   503→                  >
+   504→                    {cat === "Deals" && <i className="fa-solid fa-bolt text-amber-400 mr-1.5"></i>}
+   505→                    {cat}
+   506→                  </button>
+   507→                ))}
+   508→              </div>
+   509→
+   510→              {/* Featured Live Deals / Trending Drops Ticker Banner */}
+   511→              <div className="bg-gradient-to-r from-rose-950/80 via-purple-950/80 to-slate-900 border border-rose-500/30 rounded-2xl p-3 flex items-center justify-between gap-3 shadow-lg">
+   512→                <div className="flex items-center gap-3">
+   513→                  <div className="w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/40 flex items-center justify-center shrink-0">
+   514→                    <i className="fa-solid fa-fire text-rose-400 text-lg animate-bounce"></i>
+   515→                  </div>
+   516→                  <div>
+   517→                    <div className="flex items-center gap-2">
+   518→                      <span className="text-[10px] font-extrabold tracking-wider uppercase px-2 py-0.5 rounded bg-rose-500 text-white">
+   519→                        LIVE FLASH DEAL
+   520→                      </span>
+   521→                      <span className="text-xs text-rose-300 font-mono">Ends in 14m 20s</span>
+   522→                    </div>
+   523→                    <p className="text-xs font-semibold text-slate-100 mt-0.5">
+   524→                      Group Buys active: Unlock up to 40% OFF with 1 invite!
+   525→                    </p>
+   526→                  </div>
+   527→                </div>
+   528→                <button 
+   529→                  onClick={() => setActiveCategory("Deals")}
+   530→                  className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-2 rounded-xl shrink-0 transition"
+   531→                >
+   532→                  Explore <i className="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+   533→                </button>
+   534→              </div>
+   535→            </section>
+   536→
+   537→            {/* LAYER 2: PERSONALIZED FEED (SHOPPABLE SOCIAL CARDS) */}
+   538→            {}
+   539→            <section className="flex flex-col gap-6 mt-1">
+   540→              {filteredFeed.length === 0 ? (
+   541→                <div className="text-center py-16 bg-slate-900/50 rounded-3xl border border-slate-800">
+   542→                  <i className="fa-solid fa-filter-circle-xmark text-4xl text-slate-600 mb-3"></i>
+   543→                  <p className="text-slate-300 font-semibold text-sm">No shoppable posts found for this filter</p>
+   544→                  <button 
+   545→                    onClick={() => { setActiveTab("For You"); setActiveCategory("All"); setSearchQuery(""); }}
+   546→                    className="mt-3 text-xs text-rose-400 font-bold hover:underline"
+   547→                  >
+   548→                    Reset all filters
+   549→                  </button>
+   550→                </div>
+   551→              ) : (
+   552→                filteredFeed.map((post) => {
+   553→                  const isLiked = likedPosts.has(post.id);
+   554→                  const isSaved = savedPosts.has(post.id);
+   555→
+   556→                  return (
+   557→                    <article 
+   558→                      key={post.id} 
+   559→                      className="bg-slate-900/80 border border-slate-800/90 rounded-3xl overflow-hidden shadow-2xl flex flex-col transition hover:border-slate-700"
+   560→                    >
+   561→                      {/* CARD HEADER: Creator & Seller Trust Badge */}
+   562→                      <div className="p-3.5 flex items-center justify-between gap-2 border-b border-slate-800/60 bg-slate-900/40">
+   563→                        {/* Creator Info */}
+   564→                        <div 
+   565→                          className="flex items-center gap-2.5 cursor-pointer group"
+   566→                          onClick={() => setSelectedCreator(post.creator)}
+   567→                        >
+   568→                          <div className="relative">
+   569→                            <img
+   570→                              src={post.creator.avatar}
+   571→                              alt={post.creator.name}
+   572→                              className="w-10 h-10 rounded-full object-cover ring-2 ring-rose-500/40 group-hover:ring-rose-500 transition"
+   573→                            />
+   574→                            {post.creator.verified && (
+   575→                              <i className="fa-solid fa-circle-check text-rose-500 text-xs absolute -bottom-0.5 -right-0.5 bg-slate-950 rounded-full"></i>
+   576→                            )}
+   577→                          </div>
+   578→                          <div>
+   579→                            <div className="flex items-center gap-1.5">
+   580→                              <span className="font-bold text-xs text-slate-100 group-hover:text-rose-400 transition">
+   581→                                {post.creator.name}
+   582→                              </span>
+   583→                              <span className="text-[11px] text-slate-400">{post.creator.handle}</span>
+   584→                            </div>
+   585→                            {/* Seller Trust Badge Button */}
+   586→                            <button
+   587→                              onClick={(e) => {
+   588→                                e.stopPropagation();
+   589→                                setSelectedTrustSeller({ ...post.seller, creator: post.creator });
+   590→                              }}
+   591→                              className="inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:text-emerald-300 font-medium bg-emerald-950/60 border border-emerald-800/50 px-2 py-0.5 rounded-full mt-0.5"
+   592→                            >
+   593→                              <i className="fa-solid fa-shield-halved text-[9px]"></i>
+   594→                              <span>{post.seller.trustBadge}</span>
+   595→                              <i className="fa-solid fa-circle-info text-[9px] ml-0.5"></i>
+   596→                            </button>
+   597→                          </div>
+   598→                        </div>
+   599→
+   600→                        {/* Follow Button */}
+   601→                        <button 
+   602→                          onClick={() => showToast(`Followed ${post.creator.handle}!`)}
+   603→                          className="text-xs font-semibold text-rose-400 border border-rose-500/40 hover:bg-rose-600 hover:text-white px-3 py-1 rounded-full transition"
+   604→                        >
+   605→                          Follow
+   606→                        </button>
+   607→                      </div>
+   608→
+   609→                      {/* CARD MEDIA (IMAGE CAROUSEL / VIDEO SIMULATION) */}
+   610→                      <div className="relative w-full aspect-[4/3] bg-slate-950 overflow-hidden group">
+   611→                        <img
+   612→                          src={post.media[0]}
+   613→                          alt={post.title}
+   614→                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+   615→                        />
+   616→
+   617→                        {/* Type Indicator Tag */}
+   618→                        {post.type === "group_buy" && (
+   619→                          <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+   620→                            <i className="fa-solid fa-users text-[10px]"></i> GROUP BUY
+   621→                          </div>
+   622→                        )}
+   623→                        {post.type === "live_deal" && (
+   624→                          <div className="absolute top-3 left-3 bg-gradient-to-r from-rose-600 to-amber-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse">
+   625→                            <i className="fa-solid fa-bolt text-[10px]"></i> FLASH DEAL
+   626→                          </div>
+   627→                        )}
+   628→
+   629→                        {/* Social Proof Overlay Floating Badge */}
+   630→                        <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md text-slate-200 text-[11px] font-medium px-3 py-1 rounded-full border border-slate-700/60 flex items-center gap-1.5">
+   631→                          <i className="fa-solid fa-fire text-amber-400"></i>
+   632→                          <span>{post.socialProof}</span>
+   633→                        </div>
+   634→
+   635→                        {/* Quick View Button on Image */}
+   636→                        <button
+   637→                          onClick={() => setSelectedProduct(post)}
+   638→                          className="absolute bottom-3 right-3 bg-slate-900/90 hover:bg-slate-800 text-white font-semibold text-xs px-3 py-1.5 rounded-full border border-slate-700 shadow-xl flex items-center gap-1.5 transition"
+   639→                        >
+   640→                          <i className="fa-regular fa-eye"></i> Quick View
+   641→                        </button>
+   642→                      </div>
+   643→
+   644→                      {/* DYNAMIC OFFER BANNERS (GROUP BUY / LIVE DEAL) */}
+   645→                      {post.groupBuy && (
+   646→                        <div className="bg-gradient-to-r from-purple-950/90 via-slate-900 to-purple-950/90 border-y border-purple-500/30 px-4 py-2.5 flex items-center justify-between">
+   647→                          <div className="flex flex-col">
+   648→                            <span className="text-[11px] font-bold text-purple-300">
+   649→                              Group Buy: {post.groupBuy.current}/{post.groupBuy.required} joined
+   650→                            </span>
+   651→                            <span className="text-[10px] text-slate-400">
+   652→                              Unlock ${post.groupBuy.unlockedPrice} price • Ends in {post.groupBuy.timeRemaining}
+   653→                            </span>
+   654→                          </div>
+   655→                          <button 
+   656→                            onClick={() => joinGroupBuy(post)}
+   657→                            className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition shadow-md shadow-purple-600/30"
+   658→                          >
+   659→                            Join Group Deal
+   660→                          </button>
+   661→                        </div>
+   662→                      )}
+   663→
+   664→                      {post.liveDeal && (
+   665→                        <div className="bg-gradient-to-r from-rose-950/90 via-slate-900 to-rose-950/90 border-y border-rose-500/30 px-4 py-2.5 flex items-center justify-between">
+   666→                          <div className="flex flex-col">
+   667→                            <div className="flex items-center gap-2">
+   668→                              <span className="text-xs font-bold text-rose-300">
+   669→                                Only {post.liveDeal.stockLeft} left in stock!
+   670→                              </span>
+   671→                              <span className="text-[10px] text-rose-400 font-mono">
+   672→                                {post.liveDeal.endsIn}
+   673→                              </span>
+   674→                            </div>
+   675→                            {/* Stock progress bar */}
+   676→                            <div className="w-36 h-1.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
+   677→                              <div className="h-full bg-gradient-to-r from-amber-400 to-rose-500" style={{ width: `${post.liveDeal.claimedPercent}%` }}></div>
+   678→                            </div>
+   679→                          </div>
+   680→                          <button 
+   681→                            onClick={() => setCheckoutItem(post)}
+   682→                            className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition shadow-md shadow-rose-600/30"
+   683→                          >
+   684→                            Claim Deal
+   685→                          </button>
+   686→                        </div>
+   687→                      )}
+   688→
+   689→                      {/* CARD CONTENT & COMMERCE INFO */}
+   690→                      <div className="p-4 flex flex-col gap-2">
+   691→                        {/* Title & Category Tag */}
+   692→                        <div className="flex items-start justify-between gap-2">
+   693→                          <h3 
+   694→                            onClick={() => setSelectedProduct(post)}
+   695→                            className="font-bold text-sm text-slate-100 hover:text-rose-400 transition cursor-pointer line-clamp-1"
+   696→                          >
+   697→                            {post.title}
+   698→                          </h3>
+   699→                        </div>
+   700→
+   701→                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+   702→                          {post.description}
+   703→                        </p>
+   704→
+   705→                        {/* Price & Discount Bar */}
+   706→                        <div className="flex items-center justify-between mt-1">
+   707→                          <div className="flex items-baseline gap-2">
+   708→                            <span className="text-lg font-extrabold text-white">
+   709→                              ${post.price.toFixed(2)}
+   710→                            </span>
+   711→                            <span className="text-xs text-slate-500 line-through">
+   712→                              ${post.originalPrice.toFixed(2)}
+   713→                            </span>
+   714→                            <span className="text-[10px] font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded">
+   715→                              -{post.discountPercentage}%
+   716→                            </span>
+   717→                          </div>
+   718→
+   719→                          <div className="flex items-center gap-1 text-[11px] text-amber-400 font-medium">
+   720→                            <i className="fa-solid fa-star text-[10px]"></i>
+   721→                            <span>{post.seller.rating}</span>
+   722→                            <span className="text-slate-500">({post.seller.reviewsCount})</span>
+   723→                          </div>
+   724→                        </div>
+   725→
+   726→                        {/* ACTION BUTTONS: VIEW ITEM & BUY NOW */}
+   727→                        <div className="grid grid-cols-2 gap-2 mt-2">
+   728→                          <button
+   729→                            onClick={() => setSelectedProduct(post)}
+   730→                            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs py-2.5 rounded-2xl border border-slate-700 transition flex items-center justify-center gap-1.5"
+   731→                          >
+   732→                            <i className="fa-regular fa-file-lines text-slate-400"></i> View Item
+   733→                          </button>
+   734→                          
+   735→                          <button
+   736→                            onClick={() => setCheckoutItem(post)}
+   737→                            className="w-full bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-extrabold text-xs py-2.5 rounded-2xl shadow-lg shadow-rose-600/30 transition flex items-center justify-center gap-1.5"
+   738→                          >
+   739→                            <i className="fa-solid fa-bolt text-amber-300"></i> Buy Now
+   740→                          </button>
+   741→                        </div>
+   742→
+   743→                        {/* SOCIAL ENGAGEMENT ACTION ROW (Like, Comment, Save, Share) */}
+   744→                        <div className="flex items-center justify-between border-t border-slate-800/80 pt-3 mt-1 text-slate-400 text-xs">
+   745→                          {/* Like */}
+   746→                          <button
+   747→                            onClick={() => toggleLike(post.id)}
+   748→                            className={`flex items-center gap-1.5 hover:text-rose-400 transition ${isLiked ? "text-rose-500 font-bold" : ""}`}
+   749→                          >
+   750→                            <i className={`${isLiked ? "fa-solid" : "fa-regular"} fa-heart text-base`}></i>
+   751→                            <span>{post.likes + (isLiked ? 1 : 0)}</span>
+   752→                          </button>
+   753→
+   754→                          {/* Comment */}
+   755→                          <button
+   756→                            onClick={() => setCommentPost(post)}
+   757→                            className="flex items-center gap-1.5 hover:text-slate-200 transition"
+   758→                          >
+   759→                            <i className="fa-regular fa-comment text-base"></i>
+   760→                            <span>{post.commentsCount}</span>
+   761→                          </button>
+   762→
+   763→                          {/* Save */}
+   764→                          <button
+   765→                            onClick={() => toggleSave(post.id)}
+   766→                            className={`flex items-center gap-1.5 hover:text-amber-400 transition ${isSaved ? "text-amber-400 font-bold" : ""}`}
+   767→                          >
+   768→                            <i className={`${isSaved ? "fa-solid" : "fa-regular"} fa-bookmark text-base`}></i>
+   769→                            <span>{post.saves + (isSaved ? 1 : 0)}</span>
+   770→                          </button>
+   771→
+   772→                          {/* Share */}
+   773→                          <button
+   774→                            onClick={() => handleShare(post)}
+   775→                            className="flex items-center gap-1.5 hover:text-rose-400 transition"
+   776→                          >
+   777→                            <i className="fa-solid fa-share-nodes text-base"></i>
+   778→                            <span className="hidden sm:inline">Share</span>
+   779→                          </button>
+   780→                        </div>
+   781→                      </div>
+   782→                    </article>
+   783→                  );
+   784→                })
+   785→              )}
+   786→            </section>
+   787→          </main>
+   788→
+   789→          {/* LAYER 3: STICKY BOTTOM ACTIONS (MOBILE/SOCIAL CONVENIENCE NAV) */}
+   790→          {}
+   791→          <nav className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-glass border-t border-slate-800 px-6 py-2">
+   792→            <div className="max-w-md mx-auto flex items-center justify-between text-xs font-medium">
+   793→              <button 
+   794→                onClick={() => { setActiveTab("For You"); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+   795→                className="flex flex-col items-center gap-1 text-rose-500 font-bold"
+   796→              >
+   797→                <i className="fa-solid fa-house-chimney text-lg"></i>
+   798→                <span>Feed</span>
+   799→              </button>
+   800→
+   801→              <button 
+   802→                onClick={() => setActiveCategory("Deals")}
+   803→                className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition"
+   804→              >
+   805→                <i className="fa-solid fa-compass text-lg"></i>
+   806→                <span>Explore</span>
+   807→              </button>
+   808→
+   809→              <button 
+   810→                onClick={() => setActiveTab("Live")}
+   811→                className="flex flex-col items-center gap-1 text-slate-400 hover:text-rose-400 transition relative"
+   812→              >
+   813→                <i className="fa-solid fa-tower-broadcast text-lg"></i>
+   814→                <span>Live</span>
+   815→                <span className="absolute top-0 right-2 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+   816→              </button>
+   817→
+   818→              <button 
+   819→                onClick={() => setIsCartOpen(true)}
+   820→                className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition relative"
+   821→              >
+   822→                <i className="fa-solid fa-bag-shopping text-lg"></i>
+   823→                <span>Bag</span>
+   824→                {cart.length > 0 && (
+   825→                  <span className="absolute -top-1 right-2 bg-rose-600 text-white font-bold text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
+   826→                    {cart.length}
+   827→                  </span>
+   828→                )}
+   829→              </button>
+   830→
+   831→              <button 
+   832→                onClick={() => showToast("👤 Profile & Orders: 1 active order in transit!")}
+   833→                className="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition"
+   834→              >
+   835→                <i className="fa-regular fa-user text-lg"></i>
+   836→                <span>Me</span>
+   837→              </button>
+   838→            </div>
+   839→          </nav>
+   840→
+   841→          {/* ========================================================= */}
+   842→          {/* LAYER 5: TRUST, PURCHASE CONTROLS, AND MODALS */}
+   843→          {/* ========================================================= */}
+   844→
+   845→          {}
+   846→
+   847→          {/* 1. PRODUCT DETAIL SLIDE-OVER DRAWER */}
+   848→          {selectedProduct && (
+   849→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+   850→              <div className="w-full max-w-lg bg-slate-900 h-full overflow-y-auto p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+   851→                <div>
+   852→                  {/* Close button */}
+   853→                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+   854→                    <span className="font-extrabold text-sm text-slate-300 uppercase tracking-wider">Product Details</span>
+   855→                    <button 
+   856→                      onClick={() => setSelectedProduct(null)}
+   857→                      className="p-2 text-slate-400 hover:text-white rounded-full bg-slate-800"
+   858→                    >
+   859→                      <i className="fa-solid fa-xmark text-lg"></i>
+   860→                    </button>
+   861→                  </div>
+   862→
+   863→                  {/* Main Product Image */}
+   864→                  <img
+   865→                    src={selectedProduct.media[0]}
+   866→                    alt={selectedProduct.title}
+   867→                    className="w-full h-64 object-cover rounded-2xl mb-4 border border-slate-800"
+   868→                  />
+   869→
+   870→                  {/* Title & Price */}
+   871→                  <h2 className="text-lg font-bold text-slate-100">{selectedProduct.title}</h2>
+   872→                  
+   873→                  <div className="flex items-center gap-3 my-3">
+   874→                    <span className="text-2xl font-black text-rose-400">${selectedProduct.price.toFixed(2)}</span>
+   875→                    <span className="text-sm text-slate-500 line-through">${selectedProduct.originalPrice.toFixed(2)}</span>
+   876→                    <span className="text-xs bg-rose-500/20 text-rose-400 font-bold px-2 py-0.5 rounded">
+   877→                      Save {selectedProduct.discountPercentage}%
+   878→                    </span>
+   879→                  </div>
+   880→
+   881→                  {/* Trust Specs */}
+   882→                  <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80 my-4 space-y-2 text-xs">
+   883→                    <div className="flex items-center justify-between text-slate-300">
+   884→                      <span className="flex items-center gap-1.5"><i className="fa-solid fa-truck text-rose-400"></i> Shipping:</span>
+   885→                      <span className="font-semibold">{selectedProduct.seller.shipTime}</span>
+   886→                    </div>
+   887→                    <div className="flex items-center justify-between text-slate-300">
+   888→                      <span className="flex items-center gap-1.5"><i className="fa-solid fa-rotate-left text-rose-400"></i> Returns:</span>
+   889→                      <span className="font-semibold">{selectedProduct.seller.returnDays} Days Easy Return</span>
+   890→                    </div>
+   891→                    <div className="flex items-center justify-between text-slate-300">
+   892→                      <span className="flex items-center gap-1.5"><i className="fa-solid fa-shield-check text-rose-400"></i> Guarantee:</span>
+   893→                      <span className="font-semibold text-emerald-400">{selectedProduct.seller.trustBadge}</span>
+   894→                    </div>
+   895→                  </div>
+   896→
+   897→                  {/* Description */}
+   898→                  <div className="text-xs text-slate-300 space-y-2 leading-relaxed">
+   899→                    <p className="font-semibold text-slate-200">About this item:</p>
+   900→                    <p>{selectedProduct.description}</p>
+   901→                  </div>
+   902→                </div>
+   903→
+   904→                {/* Bottom CTA Drawer */}
+   905→                <div className="pt-4 border-t border-slate-800 flex gap-2">
+   906→                  <button
+   907→                    onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
+   908→                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs py-3 rounded-2xl border border-slate-700 transition"
+   909→                  >
+   910→                    Add to Bag
+   911→                  </button>
+   912→                  <button
+   913→                    onClick={() => { const p = selectedProduct; setSelectedProduct(null); setCheckoutItem(p); }}
+   914→                    className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs py-3 rounded-2xl shadow-lg shadow-rose-600/30 transition"
+   915→                  >
+   916→                    Buy Now ⚡
+   917→                  </button>
+   918→                </div>
+   919→              </div>
+   920→            </div>
+   921→          )}
+   922→
+   923→          {/* 2. INSTANT CHECKOUT SLIDE-OVER */}
+   924→          {checkoutItem && (
+   925→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+   926→              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+   927→                <div>
+   928→                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+   929→                    <span className="font-extrabold text-sm text-slate-100 flex items-center gap-2">
+   930→                      <i className="fa-solid fa-lock text-rose-500"></i> 1-Tap Express Checkout
+   931→                    </span>
+   932→                    <button 
+   933→                      onClick={() => setCheckoutItem(null)}
+   934→                      className="p-2 text-slate-400 hover:text-white rounded-full bg-slate-800"
+   935→                    >
+   936→                      <i className="fa-solid fa-xmark text-lg"></i>
+   937→                    </button>
+   938→                  </div>
+   939→
+   940→                  {/* Order Summary Item */}
+   941→                  <div className="flex gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 mb-4">
+   942→                    <img src={checkoutItem.media[0]} alt="" className="w-16 h-16 rounded-xl object-cover" />
+   943→                    <div>
+   944→                      <h4 className="font-bold text-xs text-slate-200 line-clamp-1">{checkoutItem.title}</h4>
+   945→                      <p className="text-[11px] text-slate-400 mt-0.5">Sold by: {checkoutItem.seller.name}</p>
+   946→                      <p className="text-sm font-black text-rose-400 mt-1">${checkoutItem.price.toFixed(2)}</p>
+   947→                    </div>
+   948→                  </div>
+   949→
+   950→                  {/* Delivery Address */}
+   951→                  <div className="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 mb-4 text-xs">
+   952→                    <div className="flex items-center justify-between mb-1">
+   953→                      <span className="font-semibold text-slate-300">Shipping Address</span>
+   954→                      <button className="text-rose-400 font-bold hover:underline">Change</button>
+   955→                    </div>
+   956→                    <p className="text-slate-200 font-medium">Alex Johnson • +1 (555) 019-2834</p>
+   957→                    <p className="text-slate-400 text-[11px] mt-0.5">742 Evergreen Terrace, Springfield, OR 97477</p>
+   958→                  </div>
+   959→
+   960→                  {/* Payment Options */}
+   961→                  <div className="space-y-2 mb-4">
+   962→                    <span className="text-xs font-semibold text-slate-300">Payment Method</span>
+   963→                    <div className="p-3 bg-slate-950 border border-rose-500/50 rounded-xl flex items-center justify-between text-xs cursor-pointer">
+   964→                      <div className="flex items-center gap-2">
+   965→                        <i className="fa-brands fa-apple-pay text-2xl text-white"></i>
+   966→                        <span className="font-semibold text-slate-200">Apple Pay</span>
+   967→                      </div>
+   968→                      <i className="fa-solid fa-circle-check text-rose-500"></i>
+   969→                    </div>
+   970→                  </div>
+   971→                </div>
+   972→
+   973→                {/* Final Confirmation Button */}
+   974→                <div className="pt-4 border-t border-slate-800">
+   975→                  <div className="flex items-center justify-between mb-3 text-xs">
+   976→                    <span className="text-slate-400">Total Payable:</span>
+   977→                    <span className="text-lg font-black text-white">${checkoutItem.price.toFixed(2)}</span>
+   978→                  </div>
+   979→                  <button
+   980→                    onClick={() => {
+   981→                      showToast("🎉 Order Confirmed! Tracking sent to your email.");
+   982→                      setCheckoutItem(null);
+   983→                    }}
+   984→                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-sm py-3.5 rounded-2xl shadow-xl transition flex items-center justify-center gap-2"
+   985→                  >
+   986→                    <i className="fa-solid fa-shield-check"></i> Complete Purchase
+   987→                  </button>
+   988→                </div>
+   989→              </div>
+   990→            </div>
+   991→          )}
+   992→
+   993→          {/* 3. SELLER TRUST INSPECTOR MODAL */}
+   994→          {selectedTrustSeller && (
+   995→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+   996→              <div className="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-5 shadow-2xl relative">
+   997→                <button 
+   998→                  onClick={() => setSelectedTrustSeller(null)}
+   999→                  className="absolute top-4 right-4 text-slate-400 hover:text-white"
+  1000→                >
+  1001→                  <i className="fa-solid fa-xmark text-lg"></i>
+  1002→                </button>
+  1003→
+  1004→                <div className="flex flex-col items-center text-center gap-2">
+  1005→                  <div className="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl">
+  1006→                    <i className="fa-solid fa-shield-halved"></i>
+  1007→                  </div>
+  1008→                  <h3 className="font-bold text-base text-slate-100">{selectedTrustSeller.name}</h3>
+  1009→                  <span className="text-xs text-emerald-400 font-semibold bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 rounded-full">
+  1010→                    {selectedTrustSeller.trustBadge}
+  1011→                  </span>
+  1012→                </div>
+  1013→
+  1014→                <div className="grid grid-cols-2 gap-3 my-4">
+  1015→                  <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-center">
+  1016→                    <span className="text-lg font-black text-slate-100">{selectedTrustSeller.rating} ★</span>
+  1017→                    <p className="text-[10px] text-slate-400">Seller Score ({selectedTrustSeller.reviewsCount} reviews)</p>
+  1018→                  </div>
+  1019→                  <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-center">
+  1020→                    <span className="text-lg font-black text-slate-100">{selectedTrustSeller.returnDays} Days</span>
+  1021→                    <p className="text-[10px] text-slate-400">Buyer Money-back Guarantee</p>
+  1022→                  </div>
+  1023→                </div>
+  1024→
+  1025→                <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-2xl border border-slate-800/60 mb-4">
+  1026→                  <i className="fa-solid fa-check text-emerald-400 mr-1.5"></i>
+  1027→                  {selectedTrustSeller.guarantee}
+  1028→                </p>
+  1029→
+  1030→                <button
+  1031→                  onClick={() => setSelectedTrustSeller(null)}
+  1032→                  className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs py-2.5 rounded-xl border border-slate-700 transition"
+  1033→                >
+  1034→                  Close Inspection
+  1035→                </button>
+  1036→              </div>
+  1037→            </div>
+  1038→          )}
+  1039→
+  1040→          {/* 4. CREATOR PROFILE DRAWER */}
+  1041→          {selectedCreator && (
+  1042→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+  1043→              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 overflow-y-auto shadow-2xl">
+  1044→                <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+  1045→                  <span className="font-bold text-xs text-slate-400 uppercase">Creator Showcase</span>
+  1046→                  <button 
+  1047→                    onClick={() => setSelectedCreator(null)}
+  1048→                    className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+  1049→                  >
+  1050→                    <i className="fa-solid fa-xmark"></i>
+  1051→                  </button>
+  1052→                </div>
+  1053→
+  1054→                <div className="flex flex-col items-center text-center gap-2">
+  1055→                  <img src={selectedCreator.avatar} alt="" className="w-20 h-20 rounded-full object-cover ring-4 ring-rose-500/30" />
+  1056→                  <h3 className="font-extrabold text-base text-slate-100">{selectedCreator.name}</h3>
+  1057→                  <span className="text-xs text-slate-400">{selectedCreator.handle}</span>
+  1058→                  <p className="text-xs text-slate-300 max-w-xs my-1">{selectedCreator.bio}</p>
+  1059→                  
+  1060→                  <div className="flex items-center gap-6 my-2 text-xs">
+  1061→                    <div>
+  1062→                      <span className="font-bold text-slate-100">{selectedCreator.followers}</span>
+  1063→                      <p className="text-[10px] text-slate-500">Followers</p>
+  1064→                    </div>
+  1065→                    <div>
+  1066→                      <span className="font-bold text-emerald-400">{selectedCreator.trustRating}</span>
+  1067→                      <p className="text-[10px] text-slate-500">Positive Rating</p>
+  1068→                    </div>
+  1069→                  </div>
+  1070→
+  1071→                  <button 
+  1072→                    onClick={() => showToast(`Followed ${selectedCreator.handle}!`)}
+  1073→                    className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-6 py-2 rounded-full transition shadow-lg shadow-rose-600/30"
+  1074→                  >
+  1075→                    + Follow Creator
+  1076→                  </button>
+  1077→                </div>
+  1078→              </div>
+  1079→            </div>
+  1080→          )}
+  1081→
+  1082→          {/* 5. COMMENTS DRAWER */}
+  1083→          {commentPost && (
+  1084→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+  1085→              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+  1086→                <div>
+  1087→                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+  1088→                    <span className="font-bold text-xs text-slate-200">Comments ({commentPost.commentsCount})</span>
+  1089→                    <button 
+  1090→                      onClick={() => setCommentPost(null)}
+  1091→                      className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+  1092→                    >
+  1093→                      <i className="fa-solid fa-xmark"></i>
+  1094→                    </button>
+  1095→                  </div>
+  1096→
+  1097→                  {/* Comments list */}
+  1098→                  <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+  1099→                    {commentPost.comments.map((c, i) => (
+  1100→                      <div key={i} className="bg-slate-950 p-3 rounded-2xl border border-slate-800/80 text-xs">
+  1101→                        <div className="flex items-center justify-between mb-1">
+  1102→                          <span className="font-bold text-rose-400">{c.user}</span>
+  1103→                          <span className="text-[10px] text-slate-500">{c.time}</span>
+  1104→                        </div>
+  1105→                        <p className="text-slate-300">{c.text}</p>
+  1106→                      </div>
+  1107→                    ))}
+  1108→                  </div>
+  1109→                </div>
+  1110→
+  1111→                {/* Add comment input */}
+  1112→                <form onSubmit={handleAddComment} className="pt-3 border-t border-slate-800 flex gap-2">
+  1113→                  <input
+  1114→                    type="text"
+  1115→                    placeholder="Add a comment..."
+  1116→                    value={newComment}
+  1117→                    onChange={(e) => setNewComment(e.target.value)}
+  1118→                    className="flex-1 bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-rose-500"
+  1119→                  />
+  1120→                  <button type="submit" className="bg-rose-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl">
+  1121→                    Post
+  1122→                  </button>
+  1123→                </form>
+  1124→              </div>
+  1125→            </div>
+  1126→          )}
+  1127→
+  1128→          {/* 6. CART BAG SLIDE-OVER */}
+  1129→          {isCartOpen && (
+  1130→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+  1131→              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+  1132→                <div>
+  1133→                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+  1134→                    <span className="font-extrabold text-sm text-slate-100 flex items-center gap-2">
+  1135→                      <i className="fa-solid fa-bag-shopping text-rose-500"></i> Shopping Bag ({cart.length})
+  1136→                    </span>
+  1137→                    <button 
+  1138→                      onClick={() => setIsCartOpen(false)}
+  1139→                      className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+  1140→                    >
+  1141→                      <i className="fa-solid fa-xmark"></i>
+  1142→                    </button>
+  1143→                  </div>
+  1144→
+  1145→                  {cart.length === 0 ? (
+  1146→                    <p className="text-xs text-slate-400 text-center py-10">Your bag is currently empty.</p>
+  1147→                  ) : (
+  1148→                    <div className="space-y-3">
+  1149→                      {cart.map((item) => (
+  1150→                        <div key={item.id} className="flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800">
+  1151→                          <div className="flex items-center gap-3">
+  1152→                            <img src={item.media[0]} className="w-12 h-12 rounded-xl object-cover" />
+  1153→                            <div>
+  1154→                              <h5 className="font-bold text-xs text-slate-200 line-clamp-1">{item.title}</h5>
+  1155→                              <p className="text-xs text-rose-400 font-bold">${item.price.toFixed(2)} x {item.qty}</p>
+  1156→                            </div>
+  1157→                          </div>
+  1158→                        </div>
+  1159→                      ))}
+  1160→                    </div>
+  1161→                  )}
+  1162→                </div>
+  1163→
+  1164→                {cart.length > 0 && (
+  1165→                  <button 
+  1166→                    onClick={() => { setIsCartOpen(false); setCheckoutItem(cart[0]); }}
+  1167→                    className="w-full bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-xl transition"
+  1168→                  >
+  1169→                    Proceed to Checkout (${cart.reduce((a, b) => a + (b.price * b.qty), 0).toFixed(2)})
+  1170→                  </button>
+  1171→                )}
+  1172→              </div>
+  1173→            </div>
+  1174→          )}
+  1175→
+  1176→          {/* 7. NOTIFICATIONS SLIDE-OVER */}
+  1177→          {isNotifOpen && (
+  1178→            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+  1179→              <div className="w-full max-w-md bg-slate-900 h-full p-5 border-l border-slate-800 flex flex-col justify-between shadow-2xl">
+  1180→                <div>
+  1181→                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+  1182→                    <span className="font-bold text-xs text-slate-200">Activity & Alerts</span>
+  1183→                    <button 
+  1184→                      onClick={() => setIsNotifOpen(false)}
+  1185→                      className="p-1.5 text-slate-400 hover:text-white rounded-full bg-slate-800"
+  1186→                    >
+  1187→                      <i className="fa-solid fa-xmark"></i>
+  1188→                    </button>
+  1189→                  </div>
+  1190→
+  1191→                  <div className="space-y-2 text-xs">
+  1192→                    <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+  1193→                      <div className="w-8 h-8 rounded-full bg-purple-600/20 text-purple-400 flex items-center justify-center">
+  1194→                        <i className="fa-solid fa-users"></i>
+  1195→                      </div>
+  1196→                      <div>
+  1197→                        <p className="font-semibold text-slate-200">Group Buy Price Unlocked!</p>
+  1198→                        <p className="text-[10px] text-slate-400">@sam_dev joined your group buy for Aura Headphones.</p>
+  1199→                      </div>
+  1200→                    </div>
+  1201→
+  1202→                    <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+  1203→                      <div className="w-8 h-8 rounded-full bg-rose-600/20 text-rose-400 flex items-center justify-center">
+  1204→                        <i className="fa-solid fa-tag"></i>
+  1205→                      </div>
+  1206→                      <div>
+  1207→                        <p className="font-semibold text-slate-200">Price Drop Alert</p>
+  1208→                        <p className="text-[10px] text-slate-400">Vintage Leather Jacket is now 32% OFF for the next hour!</p>
+  1209→                      </div>
+  1210→                    </div>
+  1211→                  </div>
+  1212→                </div>
+  1213→              </div>
+  1214→            </div>
+  1215→          )}
+  1216→
+  1217→        </div>
+  1218→      );
+  1219→    }
+  1220→
+  1221→    const root = ReactDOM.createRoot(document.getElementById('root'));
+  1222→    root.render(<App />);
+  1223→  </script>
+  1224→</body>
+  1225→</html>
