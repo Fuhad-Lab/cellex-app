@@ -226,3 +226,37 @@ Stage Summary:
 - ✅ Share icon fixed (Share2, not paper-plane)
 - ✅ Mobile nav icons fixed (Shorts=Play, Category=Grid3x3)
 - ✅ Live on https://eesha-learn.onrender.com
+
+---
+Task ID: 10 (Cellex — Color rebrand + functional tabs + search fix)
+Agent: main (super-z)
+Task: User wants: (1) make page functional (no static content), (2) remove flash deal banner, (3) fix search page styling, (4) rebrand to midnight charcoal + blush coral + warm sand palette.
+
+Work Log:
+- COLOR REBRAND: Updated globals.css with new palette:
+    Background #0F1115, Surface #171A21, Primary Text #F5F7FA, Secondary Text #A7B0BE,
+    Primary Accent/CTA #FF6B6B (coral), Secondary Accent #F4B860 (sand),
+    Success #28C76F, Border #262B36.
+    Added semantic CSS custom properties (--cellex-bg, --cellex-surface, --cellex-coral, etc.).
+    Updated fx-card, fx-topbar, fx-nav, fx-btn-primary, brand-gradient.
+
+- FUNCTIONAL SOCIAL TABS: For You (all), Following (followed sellers), Shops (products only), Live (live posts). Actually filters the feed array.
+
+- FUNCTIONAL CATEGORY CHIPS: All/Deals/Electronics/Fashion/etc. Filters by product.category. Deals = group buy + live deal posts. Empty state with 'Reset filters' button.
+
+- REMOVED flash deal banner entirely (LIVE FLASH DEAL / Ends soon / Group Buys active...).
+
+- SEARCH PAGE FIX: The sticky header had bg-white/95 (white bar on dark content = broken). Fixed to rgba(15,17,21,0.9) with backdrop-blur. Rebranded all indigo-600 → coral, text-slate-* → --cellex-text-muted, text-white → --cellex-text, bg-white/* → --cellex-surface-2, border-white/10 → --cellex-border.
+
+- MOBILE NAV: Active icon color white → coral, inactive slate-400 → --cellex-text-muted.
+
+- Feed cards rebranded: rose-500/purple/indigo → coral/sand. Buy Now button = coral gradient. Trust badge = success green. Save icon active = sand amber. Like icon active = coral.
+
+- Pushed commit 62d4632. Render live at 23:55 UTC. Homepage HTTP 200 in 0.21s. Search page HTTP 200 in 0.27s.
+
+Stage Summary:
+- ✅ Page is functional — social tabs and category chips actually filter the feed
+- ✅ Flash deal banner removed
+- ✅ Search page fixed (was broken white header, now dark premium)
+- ✅ Color rebrand complete: midnight charcoal + coral + warm sand across globals.css, page.tsx, search page, mobile nav
+- ✅ Live on https://eesha-learn.onrender.com
