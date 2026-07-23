@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-Seed Chroma Vector DB with product embeddings from NVIDIA NIM.
+Seed product embeddings into Supabase pgvector (replaces Chroma seeding).
 
-Uses Chroma v1 API (this deployment does not expose v2 endpoints):
-- POST /api/v1/collections  {"name":"..."}  -> returns {id, name}
-- POST /api/v1/collections/{id}/add
-- POST /api/v1/collections/{id}/query
+This script:
+1. Fetches all products from Supabase
+2. Generates text embeddings using NVIDIA nv-embedqa-e5-v5 (1024-dim)
+3. Upserts them into the product_embeddings table (vector(1024) column)
 
-Reads NVIDIA_API_KEY from env (do NOT hardcode keys in source).
+pgvector is persistent — data survives restarts, unlike Chroma on Render free tier.
+Run once after deploying. Can be re-run to update embeddings (uses ON CONFLICT upsert).
+
+Usage:
+  NVIDIA_API_KEY=nvapi-... python3 scripts/seed_chroma.py
 """
 import json
 import os
@@ -24,30 +28,15 @@ SUPABASE_TOKEN = os.environ.get(
 PROJECT = os.environ.get("SUPABASE_PROJECT", "tcwdbokruvlizkxcpkzj")
 NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "")
 NVIDIA_URL = "https://integrate.api.nvidia.com/v1/embeddings"
-CHROMA_URL = os.environ.get("CHROMA_URL", "https://eesha-search-8ebb.onrender.com")
-COLLECTION_NAME = os.environ.get("CHROMA_COLLECTION", "cellex_products")
 
 if not NVIDIA_API_KEY:
     print("ERROR: NVIDIA_API_KEY env var is not set. Aborting.", file=sys.stderr)
     sys.exit(1)
 
 print(f"Using NVIDIA key: {NVIDIA_API_KEY[:12]}...{NVIDIA_API_KEY[-4:]}")
-print(f"Chroma URL: {CHROMA_URL}")
-print(f"Collection: {COLLECTION_NAME}")
+print(f"Supabase project: {PROJECT}")
+print(f"Target: product_embeddings table (pgvector, 1024-dim)")
 print()
-
-
-def http_json(method, url, body=None, timeout=30):
-    data = json.dumps(body).encode("utf-8") if body is not None else None
-    req = urllib.request.Request(
-        url,
-        data=data,
-        method=method,
-        headers={"Content-Type": "application/json"} if data else {},
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        raw = r.read()
-        return json.loads(raw) if raw else {}
 
 
 def run_sql(query):
@@ -64,16 +53,12 @@ def run_sql(query):
             "User-Agent": "Mozilla/5.0",
         },
     )
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with urllib.request.urlopen(req, timeout=60) as r:
         return json.load(r)
 
 
 def generate_embedding(text):
-    """Generate embedding using NVIDIA nv-embedqa-e5-v5 (1024-dim).
-
-    Uses input_type='passage' because these embeddings are for DOCUMENT STORAGE
-    in Chroma (not for search queries). Search queries should use 'query'.
-    """
+    """Generate embedding using NVIDIA nv-embedqa-e5-v5 (1024-dim, passage type)."""
     data = json.dumps(
         {
             "model": "nvidia/nv-embedqa-e5-v5",
@@ -104,75 +89,49 @@ def generate_embedding(text):
         return None
 
 
-def get_or_create_collection(name):
-    """
-    Chroma v1: list collections, find by name; if missing, create.
-    Returns the collection id (string).
-    """
-    # List existing collections
-    try:
-        collections = http_json("GET", f"{CHROMA_URL}/api/v1/collections")
-        for c in collections:
-            if c.get("name") == name:
-                print(f"  Collection already exists: id={c['id']}")
-                return c["id"]
-    except Exception as e:
-        print(f"  List collections error: {e}", file=sys.stderr)
+def upsert_embedding(product_id, embedding, search_text, name, category, price, image_url):
+    """Upsert a product embedding into pgvector."""
+    # Format embedding as pgvector literal: [0.1,0.2,...]
+    embedding_literal = "[" + ",".join(str(float(x)) for x in embedding) + "]"
 
-    # Create
-    try:
-        c = http_json("POST", f"{CHROMA_URL}/api/v1/collections", {"name": name})
-        print(f"  Collection created: id={c['id']}")
-        return c["id"]
-    except urllib.error.HTTPError as e:
-        if e.code == 409:
-            # Race: list again
-            collections = http_json("GET", f"{CHROMA_URL}/api/v1/collections")
-            for c in collections:
-                if c.get("name") == name:
-                    return c["id"]
-        raise
+    # Escape single quotes in text fields
+    def esc(s):
+        return str(s or "").replace("'", "''")
 
-
-def add_to_chroma(collection_id, product_id, embedding, metadata):
-    """Add a single product embedding to Chroma v1."""
-    url = f"{CHROMA_URL}/api/v1/collections/{collection_id}/add"
-    body = {
-        "ids": [str(product_id)],
-        "embeddings": [embedding],
-        "metadatas": [metadata],
-        "documents": [metadata.get("text", "")],
-    }
+    query = f"""
+        INSERT INTO product_embeddings (product_id, embedding, search_text, name, category, price, image_url, updated_at)
+        VALUES ({product_id}::bigint, '{embedding_literal}', '{esc(search_text)}', '{esc(name)}', '{esc(category)}', {price or 0}, '{esc(image_url)}', NOW())
+        ON CONFLICT (product_id) DO UPDATE SET
+            embedding = EXCLUDED.embedding,
+            search_text = EXCLUDED.search_text,
+            name = EXCLUDED.name,
+            category = EXCLUDED.category,
+            price = EXCLUDED.price,
+            image_url = EXCLUDED.image_url,
+            updated_at = NOW();
+    """.strip()
     try:
-        http_json("POST", url, body, timeout=15)
+        run_sql(query)
         return True
     except Exception as e:
-        print(f"\n  Chroma add error: {e}", file=sys.stderr)
+        print(f"\n  pgvector upsert error: {e}", file=sys.stderr)
         return False
 
 
-def count_collection(collection_id):
-    """Return number of items in the collection (Chroma v1 count endpoint)."""
-    try:
-        url = f"{CHROMA_URL}/api/v1/collections/{collection_id}/count"
-        with urllib.request.urlopen(url, timeout=10) as r:
-            return int(r.read().strip())
-    except Exception:
-        return -1
-
-
 def main():
-    print("=== Chroma Seeding Script (v1 API) ===")
+    print("=== pgvector Seeding Script ===")
     print()
 
-    # 1. Collection
-    print("1. Ensuring Chroma collection exists...")
-    collection_id = get_or_create_collection(COLLECTION_NAME)
-    print(f"   collection_id = {collection_id}")
-    print(f"   existing items: {count_collection(collection_id)}")
+    # 1. Check pgvector is enabled + table exists
+    print("1. Checking pgvector + product_embeddings table...")
+    check = run_sql(
+        "SELECT COUNT(*) AS count FROM product_embeddings;"
+    )
+    existing_count = check[0]["count"] if check else 0
+    print(f"   Existing embeddings in table: {existing_count}")
     print()
 
-    # 2. Fetch products
+    # 2. Fetch all products
     print("2. Fetching products from Supabase...")
     products = run_sql(
         "SELECT id, name, price, category, description, image_url FROM products ORDER BY id;"
@@ -180,8 +139,8 @@ def main():
     print(f"   Found {len(products)} products")
     print()
 
-    # 3. Seed
-    print("3. Generating embeddings with NVIDIA nv-embedqa-e5-v5 and storing in Chroma...")
+    # 3. Generate embeddings and upsert into pgvector
+    print("3. Generating embeddings with NVIDIA nv-embedqa-e5-v5 and upserting into pgvector...")
     success = 0
     failed = 0
     t0 = time.time()
@@ -198,26 +157,30 @@ def main():
         label = (product.get("name") or "")[:40]
         print(f"  [{i+1}/{len(products)}] {label}...", end=" ", flush=True)
 
+        if not search_text:
+            print("SKIP (empty text)")
+            failed += 1
+            continue
+
         emb = generate_embedding(search_text)
         if not emb:
             print("FAILED (no embedding)")
             failed += 1
             continue
 
-        metadata = {
-            "product_id": str(product["id"]),
-            "name": product.get("name", ""),
-            "price": str(product.get("price", 0)),
-            "category": product.get("category", ""),
-            "image_url": product.get("image_url", ""),
-            "text": search_text,
-        }
-
-        if add_to_chroma(collection_id, product["id"], emb, metadata):
+        if upsert_embedding(
+            product["id"],
+            emb,
+            search_text,
+            product.get("name", ""),
+            product.get("category", ""),
+            product.get("price", 0),
+            product.get("image_url", ""),
+        ):
             print("OK")
             success += 1
         else:
-            print("FAILED (Chroma)")
+            print("FAILED (pgvector)")
             failed += 1
 
         time.sleep(0.15)  # avoid rate limit
@@ -229,12 +192,12 @@ def main():
     print(f"Failed:  {failed}")
     print(f"Total:   {len(products)}")
     print(f"Elapsed: {elapsed:.1f}s")
-    print(f"Collection items now: {count_collection(collection_id)}")
+
+    # Verify
+    final_count = run_sql("SELECT COUNT(*) AS count FROM product_embeddings;")
+    print(f"Embeddings in table now: {final_count[0]['count'] if final_count else '?'}")
     print()
-    print(f"Chroma URL: {CHROMA_URL}")
-    print(f"Collection: {COLLECTION_NAME} ({collection_id})")
-    print()
-    print("You can now use /api/smart-search for semantic product search!")
+    print("Smart search (/api/smart-search) now uses pgvector — persistent, no spin-down wipes.")
 
 
 if __name__ == "__main__":

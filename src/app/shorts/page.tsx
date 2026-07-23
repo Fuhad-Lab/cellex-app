@@ -84,7 +84,7 @@ export default function ShortsPage() {
       // REAL: persist to Supabase via the videos edge function + fire Gorse feedback
       if (newLiked) api.videos.like(videoId);
       else api.videos.unlike(videoId);
-      api.feedback(String(videoId), newLiked ? 'like' : 'unlike', newLiked ? 1 : 0);
+      api.feedback(`video:${videoId}`, newLiked ? 'like' : 'unlike', newLiked ? 1 : 0);
       return { ...prev, [videoId]: newLiked };
     });
   }, []);
@@ -93,9 +93,8 @@ export default function ShortsPage() {
     setSaved((prev) => {
       const newState = !prev[videoId];
       if (newState) toast({ title: 'Saved!' });
-      // REAL: fire save/unsave feedback (persists to buyers_wishlist for products,
-      // Gorse feedback for videos)
-      api.feedback(String(videoId), newState ? 'save' : 'unsave', newState ? 1 : 0);
+      // REAL: fire save/unsave feedback to Gorse (prefixed so Gorse sees it as a video)
+      api.feedback(`video:${videoId}`, newState ? 'save' : 'unsave', newState ? 1 : 0);
       return { ...prev, [videoId]: newState };
     });
   }, [toast]);

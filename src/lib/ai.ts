@@ -22,10 +22,17 @@ export const NVIDIA_MODELS = {
   llm: 'meta/llama-3.1-70b-instruct',
 } as const;
 
-// Cache the collection id from Chroma (v1 API addresses collections by id, not name).
-let cachedChromaCollectionId: string | null = null;
+// === Vector Search (pgvector in Supabase) ===
+// Previously used Chroma DB on Render (free tier, ephemeral storage — data wiped
+// on every spin-down/redeploy). Migrated to pgvector in Supabase Postgres:
+//   - Persistent (auto-backed-up with the DB)
+//   - No spin-down
+//   - No separate service to maintain
+//   - HNSW index for fast cosine similarity search
+// The CHROMA_URL/CHROMA_COLLECTION exports are kept for backward compat but
+// no longer used by any function.
 
-// === Chroma Vector DB ===
+// === Chroma Vector DB (DEPRECATED — migrated to pgvector) ===
 export const CHROMA_URL = process.env.CHROMA_URL || 'http://localhost:8000';
 export const CHROMA_COLLECTION = 'cellex_products';
 
@@ -145,80 +152,48 @@ export async function generateImageEmbedding(imageUrl: string, prompt?: string):
 }
 
 /**
- * Resolve the Chroma collection id for CHROMA_COLLECTION.
- * Chroma v1 API addresses collections by id, not name, so we list collections
- * once, find ours by name, and cache the id. If the collection doesn't exist,
- * we create it (so first-run works without manual setup).
- */
-async function ensureChromaCollectionId(): Promise<string | null> {
-  if (cachedChromaCollectionId) return cachedChromaCollectionId;
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), PERF.chromaTimeoutMs);
-
-  try {
-    const listResp = await fetch(`${CHROMA_URL}/api/v1/collections`, {
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-
-    if (!listResp.ok) {
-      console.error('[AI] Chroma list collections error:', listResp.status);
-      return null;
-    }
-
-    const collections = await listResp.json();
-    const found = (collections as Array<{ id: string; name: string }>).find(
-      (c) => c.name === CHROMA_COLLECTION,
-    );
-
-    if (found) {
-      cachedChromaCollectionId = found.id;
-      return found.id;
-    }
-
-    // Not found — create it
-    const createResp = await fetch(`${CHROMA_URL}/api/v1/collections`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: CHROMA_COLLECTION }),
-    });
-    if (!createResp.ok) {
-      console.error('[AI] Chroma create collection error:', createResp.status);
-      return null;
-    }
-    const created = await createResp.json();
-    cachedChromaCollectionId = created.id;
-    return created.id;
-  } catch (err) {
-    clearTimeout(timeout);
-    console.error('[AI] Chroma collection resolution failed:', err);
-    return null;
-  }
-}
-
-/**
- * Query Chroma Vector DB for similar product IDs.
- * Uses Chroma v1 API (collections addressed by id).
- * Returns array of { id, score } pairs.
+ * Query pgvector for similar product IDs.
+ * Replaces the old queryChroma function (which queried Chroma DB).
+ *
+ * Uses cosine distance (`<=>` operator) with the HNSW index for fast
+ * approximate nearest-neighbor search. Returns array of { id, score }
+ * where score = 1 - cosine_distance (so higher = more similar).
+ *
+ * The embedding is passed as a string literal `[0.1,0.2,...]` which
+ * pgvector parses into a vector(1024) column.
  */
 export async function queryChroma(embedding: number[], limit: number = 20): Promise<Array<{ id: string; score: number }>> {
   if (!embedding.length) return [];
 
-  const collectionId = await ensureChromaCollectionId();
-  if (!collectionId) return [];
+  const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || process.env.SUPABASE_SERVICE_KEY || '';
+  const PROJECT = process.env.SUPABASE_PROJECT || 'tcwdbokruvlizkxcpkzj';
+  if (!SUPABASE_TOKEN) {
+    console.error('[AI] queryChroma (pgvector): SUPABASE_TOKEN not set');
+    return [];
+  }
+
+  // Format embedding as pgvector literal: [0.1,0.2,...]
+  const embeddingLiteral = `[${embedding.join(',')}]`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), PERF.chromaTimeoutMs);
 
   try {
-    const resp = await fetch(`${CHROMA_URL}/api/v1/collections/${collectionId}/query`, {
+    const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_TOKEN}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'cellex-pgvector',
+      },
       body: JSON.stringify({
-        query_embeddings: [embedding],
-        n_results: limit,
-        include: ['distances', 'documents', 'metadatas'],
+        query: `
+          SELECT product_id::text AS id,
+                 1 - (embedding <=> '${embeddingLiteral}') AS score
+          FROM product_embeddings
+          ORDER BY embedding <=> '${embeddingLiteral}'
+          LIMIT ${Math.min(limit, 50)};
+        `.trim(),
       }),
       signal: controller.signal,
     });
@@ -226,21 +201,21 @@ export async function queryChroma(embedding: number[], limit: number = 20): Prom
     clearTimeout(timeout);
 
     if (!resp.ok) {
-      console.error('[AI] Chroma query error:', resp.status);
+      const errText = await resp.text().catch(() => '');
+      console.error('[AI] pgvector query error:', resp.status, errText.slice(0, 200));
       return [];
     }
 
     const data = await resp.json();
-    const ids = data.ids?.[0] || [];
-    const distances = data.distances?.[0] || [];
+    if (!Array.isArray(data)) return [];
 
-    return ids.map((id: string, i: number) => ({
-      id,
-      score: 1 - (distances[i] || 0), // Convert distance to similarity score
+    return data.map((r: any) => ({
+      id: String(r.id),
+      score: Number(r.score) || 0,
     }));
   } catch (err) {
     clearTimeout(timeout);
-    console.error('[AI] Chroma query failed:', err);
+    console.error('[AI] pgvector query failed:', err);
     return [];
   }
 }
@@ -414,9 +389,12 @@ export function buildProductSearchText(p: {
 }
 
 /**
- * Add (or update) a single product's embedding in Chroma.
+ * Add (or update) a single product's embedding in pgvector.
  * Called when a seller creates or updates a product.
- * Uses Chroma v1 API: POST /api/v1/collections/{id}/add (upsert semantics).
+ * Uses UPSERT (INSERT ... ON CONFLICT UPDATE) so it works for both new and existing products.
+ *
+ * Replaces the old upsertProductToChroma function (which wrote to Chroma DB).
+ * Function name kept for backward compat with /api/seller-products route.
  *
  * Non-throwing — logs errors and returns boolean.
  */
@@ -425,92 +403,121 @@ export async function upsertProductToChroma(
   product: { name?: string | null; category?: string | null; description?: string | null; price?: number | string | null; image_url?: string | null },
 ): Promise<boolean> {
   if (!NVIDIA_API_KEY) {
-    console.warn('[AI] upsertProductToChroma: NVIDIA_API_KEY not set, skipping');
+    console.warn('[AI] upsertProductToChroma (pgvector): NVIDIA_API_KEY not set, skipping');
     return false;
   }
 
   const text = buildProductSearchText(product);
   if (!text) {
-    console.warn(`[AI] upsertProductToChroma: empty text for product ${productId}, skipping`);
+    console.warn(`[AI] upsertProductToChroma (pgvector): empty text for product ${productId}, skipping`);
     return false;
   }
 
   const embedding = await generateProductPassageEmbedding(text);
   if (!embedding.length) {
-    console.error(`[AI] upsertProductToChroma: failed to embed product ${productId}`);
+    console.error(`[AI] upsertProductToChroma (pgvector): failed to embed product ${productId}`);
     return false;
   }
 
-  const collectionId = await ensureChromaCollectionId();
-  if (!collectionId) {
-    console.error('[AI] upsertProductToChroma: no Chroma collection id');
+  const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || process.env.SUPABASE_SERVICE_KEY || '';
+  const PROJECT = process.env.SUPABASE_PROJECT || 'tcwdbokruvlizkxcpkzj';
+  if (!SUPABASE_TOKEN) {
+    console.error('[AI] upsertProductToChroma (pgvector): SUPABASE_TOKEN not set');
     return false;
   }
 
-  const metadata = {
-    product_id: String(productId),
-    name: product.name || '',
-    price: String(product.price ?? 0),
-    category: product.category || '',
-    image_url: product.image_url || '',
-    text,
-  };
+  // Format embedding as pgvector literal
+  const embeddingLiteral = `[${embedding.join(',')}]`;
+  const safeText = text.replace(/'/g, "''");
+  const safeName = (product.name || '').replace(/'/g, "''");
+  const safeCategory = (product.category || '').replace(/'/g, "''");
+  const safePrice = Number(product.price) || 0;
+  const safeImageUrl = (product.image_url || '').replace(/'/g, "''");
+  const safeProductId = String(productId).replace(/'/g, "''");
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), PERF.chromaTimeoutMs);
 
   try {
-    const resp = await fetch(`${CHROMA_URL}/api/v1/collections/${collectionId}/add`, {
+    const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_TOKEN}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'cellex-pgvector',
+      },
       body: JSON.stringify({
-        ids: [String(productId)],
-        embeddings: [embedding],
-        metadatas: [metadata],
-        documents: [text],
+        query: `
+          INSERT INTO product_embeddings (product_id, embedding, search_text, name, category, price, image_url, updated_at)
+          VALUES (${safeProductId}::bigint, '${embeddingLiteral}', '${safeText}', '${safeName}', '${safeCategory}', ${safePrice}, '${safeImageUrl}', NOW())
+          ON CONFLICT (product_id) DO UPDATE SET
+            embedding = EXCLUDED.embedding,
+            search_text = EXCLUDED.search_text,
+            name = EXCLUDED.name,
+            category = EXCLUDED.category,
+            price = EXCLUDED.price,
+            image_url = EXCLUDED.image_url,
+            updated_at = NOW();
+        `.trim(),
       }),
       signal: controller.signal,
     });
     clearTimeout(timeout);
     if (!resp.ok) {
-      console.error(`[AI] Chroma upsert error for product ${productId}:`, resp.status);
+      const errText = await resp.text().catch(() => '');
+      console.error(`[AI] pgvector upsert error for product ${productId}:`, resp.status, errText.slice(0, 200));
       return false;
     }
     return true;
   } catch (err) {
     clearTimeout(timeout);
-    console.error(`[AI] Chroma upsert failed for product ${productId}:`, err);
+    console.error(`[AI] pgvector upsert failed for product ${productId}:`, err);
     return false;
   }
 }
 
 /**
- * Delete a single product's embedding from Chroma.
+ * Delete a single product's embedding from pgvector.
  * Called when a seller deletes a product.
+ * (The table has ON DELETE CASCADE via FK to products(id), so this is also
+ * done automatically when the product is deleted — but we keep this function
+ * for explicit cleanup.)
+ *
+ * Replaces the old deleteProductFromChroma function.
+ * Function name kept for backward compat with /api/seller-products route.
  */
 export async function deleteProductFromChroma(productId: string | number): Promise<boolean> {
-  const collectionId = await ensureChromaCollectionId();
-  if (!collectionId) return false;
+  const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || process.env.SUPABASE_SERVICE_KEY || '';
+  const PROJECT = process.env.SUPABASE_PROJECT || 'tcwdbokruvlizkxcpkzj';
+  if (!SUPABASE_TOKEN) return false;
+
+  const safeProductId = String(productId).replace(/'/g, "''");
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), PERF.chromaTimeoutMs);
 
   try {
-    const resp = await fetch(`${CHROMA_URL}/api/v1/collections/${collectionId}/delete`, {
+    const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: [String(productId)] }),
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_TOKEN}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'cellex-pgvector',
+      },
+      body: JSON.stringify({
+        query: `DELETE FROM product_embeddings WHERE product_id = ${safeProductId}::bigint;`,
+      }),
       signal: controller.signal,
     });
     clearTimeout(timeout);
     if (!resp.ok) {
-      console.error(`[AI] Chroma delete error for product ${productId}:`, resp.status);
+      console.error(`[AI] pgvector delete error for product ${productId}:`, resp.status);
       return false;
     }
     return true;
   } catch (err) {
     clearTimeout(timeout);
-    console.error(`[AI] Chroma delete failed for product ${productId}:`, err);
+    console.error(`[AI] pgvector delete failed for product ${productId}:`, err);
     return false;
   }
 }

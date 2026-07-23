@@ -77,7 +77,8 @@ export default function HomePage() {
   const trackView = (postId: string, videoId?: number, productId?: number) => {
     if (viewedPosts.current.has(postId)) return;
     viewedPosts.current.add(postId);
-    const itemId = videoId ? String(videoId) : productId ? String(productId) : postId;
+    // Prefix with type so Gorse sees videos and products as distinct items
+    const itemId = videoId ? `video:${videoId}` : productId ? `product:${productId}` : postId;
     api.feedback(itemId, 'view', 0.3);
   };
 
@@ -87,15 +88,18 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
-        // Use REAL AI-driven feed (Gorse → Chroma personalization → real trending)
-        // No more hardcoded api.products.home() — let the recommender drive the feed.
-        const [vidResp, recommendResp, storiesResp, liveResp, sellersResp] = await Promise.all([
-          api.videos.feed(20),
+        // PURELY AI-DRIVEN FEED — Gorse decides the order of every post.
+        // No hardcoded interleave logic, no fixed video/product ratio.
+        // The recommend API returns a unified `posts` array (videos + products
+        // mixed together, ranked by Gorse). The frontend just renders them
+        // in the exact order Gorse returned.
+        const [recommendResp, storiesResp, liveResp, sellersResp] = await Promise.all([
           api.recommend.home(40),
           api.stories.activeBar().catch(() => ({ success: false })),
           api.live.list('live').catch(() => ({ success: false })),
           api.social.discover(60).catch(() => ({ success: false })),
         ]);
+
         const sellerMap = new Map<string, { name: string; image?: string; slug?: string }>();
         if (sellersResp.success) {
           const sellersList = sellersResp.sellers || [];
@@ -107,79 +111,62 @@ export default function HomePage() {
 
         const posts: FeedPost[] = [];
 
-        if (vidResp.success) {
-          (vidResp.videos || []).forEach((v: any) => {
-            const seller = v.seller || {};
-            // If the video seller doesn't have a slug, look it up via sellerMap
-            const sellerInfo = seller.id ? sellerMap.get(seller.id) : null;
-            posts.push({
-              type: 'video',
-              id: `vid-${v.id}`,
-              videoId: v.id,
-              productId: v.product?.id,
-              liked: v.liked || false,
-              sellerId: seller.id,
-              sellerSlug: seller.slug || sellerInfo?.slug,
-              sellerName: seller.business_name || 'Seller',
-              sellerImage: seller.profile_image,
-              mediaUrl: v.video_url || '',
-              caption: v.caption || '',
-              // REAL counts from DB — no more Math.floor(views/20) fake math
-              likes: v.likes_count || 0,
-              views: v.views_count || 0,
-              comments: v.comments_count || 0,
-              product: v.product,
-              soldCount: v.product?.units_sold,
-              createdAt: v.created_at,
-              verified: true,
-            });
+        // The recommend API returns `posts` — a unified, Gorse-ranked list of
+        // videos and products. Each post has a `type` field ('video' | 'product').
+        if (recommendResp.success && recommendResp.posts) {
+          recommendResp.posts.forEach((item: any) => {
+            if (item.type === 'video') {
+              const seller = item.seller || {};
+              const sellerInfo = seller.id ? sellerMap.get(seller.id) : null;
+              posts.push({
+                type: 'video',
+                id: `vid-${item.id}`,
+                videoId: item.id,
+                productId: item.product_id || item.product?.id,
+                liked: item.liked || false,
+                sellerId: seller.id || item.seller_id,
+                sellerSlug: seller.slug || sellerInfo?.slug,
+                sellerName: seller.business_name || sellerInfo?.name || 'Seller',
+                sellerImage: seller.profile_image || sellerInfo?.image,
+                mediaUrl: item.video_url || '',
+                caption: item.caption || '',
+                likes: item.likes_count || 0,
+                views: item.views_count || 0,
+                comments: item.comments_count || 0,
+                product: item.product,
+                soldCount: item.product?.units_sold,
+                createdAt: item.created_at,
+                verified: true,
+              });
+            } else if (item.type === 'product') {
+              const sellerInfo = item.seller_id ? sellerMap.get(item.seller_id) : null;
+              posts.push({
+                type: 'product',
+                id: `prod-${item.id}`,
+                productId: item.id,
+                sellerId: item.seller_id,
+                sellerSlug: sellerInfo?.slug,
+                sellerName: sellerInfo?.name || 'Cellex Seller',
+                sellerImage: sellerInfo?.image,
+                mediaUrl: item.image_url || '',
+                caption: item.name,
+                likes: item.likes_count || 0,
+                views: item._views_count || item.views_count || 0,
+                comments: item.comments_count || item.review_count || 0,
+                product: item,
+                soldCount: item.units_sold,
+                verified: true,
+              });
+            }
           });
         }
 
-        // AI-driven product feed — posts come from the recommender (Gorse/Chroma/trending).
-        // Each product's likes/views/comments are REAL numbers from Supabase, never faked.
-        if (recommendResp.success) {
-          // The recommend API returns a flat `products` array (regardless of source).
-          // No more flashDeals/trending/newArrivals hardcoded buckets.
-          const allProducts: Product[] = recommendResp.products || [];
+        // Feed is EXACTLY what Gorse/trending returned — no interleave, no reordering.
+        setFeed(posts);
 
-          allProducts.forEach((p: any) => {
-            const sellerInfo = p.seller_id ? sellerMap.get(p.seller_id) : null;
-            posts.push({
-              type: 'product',
-              id: `prod-${p.id}`,
-              productId: p.id,
-              sellerId: p.seller_id,
-              sellerSlug: sellerInfo?.slug,
-              sellerName: sellerInfo?.name || 'Cellex Seller',
-              sellerImage: sellerInfo?.image,
-              mediaUrl: p.image_url || '',
-              caption: p.name,
-              // REAL counts — no more Math.floor(units_sold * 0.3) fake math.
-              // If a count is not tracked in the DB yet, show 0 (honest) instead of a lie.
-              likes: p.likes_count || 0,
-              views: p._views_count || p.views_count || 0,
-              comments: p.comments_count || p.review_count || 0,
-              product: p,
-              soldCount: p.units_sold,
-              verified: true,
-            });
-          });
-        }
-
-        // Interleave videos and products
-        const videoPosts = posts.filter(p => p.type === 'video');
-        const productPosts = posts.filter(p => p.type === 'product');
-        const interleaved: FeedPost[] = [];
-        const maxLen = Math.max(videoPosts.length, productPosts.length);
-        for (let i = 0; i < maxLen; i++) {
-          if (i < videoPosts.length) interleaved.push(videoPosts[i]);
-          if (i < productPosts.length) interleaved.push(productPosts[i]);
-        }
-        setFeed(interleaved);
         // Initialize liked posts from API response
         const initialLiked = new Set<string>();
-        interleaved.forEach(p => {
+        posts.forEach(p => {
           if (p.liked) initialLiked.add(p.id);
         });
         setLikedPosts(initialLiked);
@@ -187,19 +174,19 @@ export default function HomePage() {
         if (storiesResp.success) setStories(storiesResp.stories || []);
         if (liveResp.success) setLiveSessions(liveResp.sessions || []);
 
-        // Store video posts as Shorts (for the Shorts section).
-        // These are the same videos that appear in the feed, but presented
-        // as vertical 9:16 cards in a horizontal scroll (YouTube Shorts style).
-        if (vidResp.success) {
-          const videoShorts = (vidResp.videos || []).slice(0, 10).map((v: any) => ({
-            id: v.id,
-            videoUrl: v.video_url || '',
-            caption: v.caption || '',
-            views: v.views_count || 0,
-            likes: v.likes_count || 0,
-            seller: v.seller || {},
-            product: v.product,
-            createdAt: v.created_at,
+        // Shorts section: extract video posts from the feed (the ones Gorse
+        // ranked highest). No separate API call — the feed IS the source of truth.
+        const videoPosts = posts.filter(p => p.type === 'video').slice(0, 10);
+        if (videoPosts.length > 0) {
+          const videoShorts = videoPosts.map(p => ({
+            id: p.videoId!,
+            videoUrl: p.mediaUrl,
+            caption: p.caption,
+            views: p.views || 0,
+            likes: p.likes || 0,
+            seller: { id: p.sellerId, business_name: p.sellerName, profile_image: p.sellerImage, slug: p.sellerSlug },
+            product: p.product,
+            createdAt: p.createdAt,
           }));
           setShorts(videoShorts);
         }
@@ -233,7 +220,7 @@ export default function HomePage() {
     }
     // Send REAL feedback (persists to product_view_log/buyers_wishlist for products,
     // fires to Gorse for both products and videos)
-    const itemId = post.videoId ? String(post.videoId) : post.productId ? String(post.productId) : postId;
+    const itemId = post.videoId ? `video:${post.videoId}` : post.productId ? `product:${post.productId}` : postId;
     api.feedback(itemId, isLiking ? 'like' : 'unlike', isLiking ? 1 : 0);
   };
 
@@ -255,10 +242,10 @@ export default function HomePage() {
     // REAL save: persist to buyers_wishlist via the feedback API
     // (which writes a real row to Supabase + fires Gorse feedback in background)
     if (post.productId) {
-      api.feedback(String(post.productId), isSaving ? 'save' : 'unsave', isSaving ? 1 : 0, { page: 'feed' });
+      api.feedback(`product:${post.productId}`, isSaving ? 'save' : 'unsave', isSaving ? 1 : 0, { page: 'feed' });
     } else if (post.videoId) {
       // Video saves — only Gorse feedback (no dedicated table yet)
-      api.feedback(String(post.videoId), isSaving ? 'save' : 'unsave', isSaving ? 1 : 0, { page: 'feed' });
+      api.feedback(`video:${post.videoId}`, isSaving ? 'save' : 'unsave', isSaving ? 1 : 0, { page: 'feed' });
     }
   };
 
@@ -285,7 +272,7 @@ export default function HomePage() {
     burst(e.clientX, e.clientY, 'check');
     toast({ title: 'Added to cart!', description: product.name });
     // Send feedback to Gorse (strong signal — intent to buy)
-    api.feedback(String(product.id), 'click', 1.5, { page: 'feed' });
+    api.feedback(`product:${product.id}`, 'click', 1.5, { page: 'feed' });
   };
 
   if (loading) {
@@ -597,8 +584,8 @@ function FeedPostCard({
             toast({ title: 'Link copied!' });
           }
           // Fire share feedback to Gorse (non-blocking)
-          if (post.videoId) api.feedback(String(post.videoId), 'share', 0.5, { page: 'feed' });
-          else if (post.productId) api.feedback(String(post.productId), 'share', 0.5, { page: 'feed' });
+          if (post.videoId) api.feedback(`video:${post.videoId}`, 'share', 0.5, { page: 'feed' });
+          else if (post.productId) api.feedback(`product:${post.productId}`, 'share', 0.5, { page: 'feed' });
         }} aria-label="Share">
           <Send className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>

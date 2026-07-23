@@ -105,13 +105,14 @@ export async function POST(request: NextRequest) {
 
 /**
  * Persist feedback to the REAL Supabase engagement tables.
- * - view  → INSERT into product_view_log
- * - save  → INSERT into buyers_wishlist (if not already saved)
- * - unsave → DELETE from buyers_wishlist
- * - like  → (videos use the dedicated videos edge function; products don't have a likes table yet)
+ * - view   → INSERT into product_view_log (products only)
+ * - save   → INSERT into buyers_wishlist (products only)
+ * - unsave → DELETE from buyers_wishlist (products only)
+ * - like/click/etc → Gorse only (no dedicated Supabase table)
  *
- * Uses the Supabase management SQL API (service-role token) to write directly.
- * All writes are non-blocking from the caller's perspective (caller doesn't await).
+ * Item IDs are prefixed ("video:5", "product:22") so Gorse can distinguish
+ * videos from products. We strip the prefix here to get the raw numeric ID
+ * for Supabase writes. Video feedback is Gorse-only (no Supabase table).
  */
 async function persistFeedbackToSupabase(
   userId: string,
@@ -120,21 +121,38 @@ async function persistFeedbackToSupabase(
   metadata: any,
 ): Promise<void> {
   const safeUserId = userId.replace(/'/g, "''");
-  const safeItemId = itemId.replace(/'/g, "''");
   const safeSource = (metadata?.page || 'feed').replace(/'/g, "''").slice(0, 50);
+
+  // Parse prefixed item ID: "video:5" → {type:'video', id:'5'}
+  //                          "product:22" → {type:'product', id:'22'}
+  //                          "22" (legacy bare numeric) → {type:'product', id:'22'}
+  const s = String(itemId);
+  let itemType = 'product';
+  let rawId = s;
+  if (s.startsWith('video:')) {
+    itemType = 'video';
+    rawId = s.slice(6);
+  } else if (s.startsWith('product:')) {
+    itemType = 'product';
+    rawId = s.slice(8);
+  }
+
+  // Only products have Supabase engagement tables (product_view_log, buyers_wishlist).
+  // Video feedback goes to Gorse only.
+  if (itemType !== 'product') return;
+
+  const safeItemId = rawId.replace(/'/g, "''");
+  if (!/^\d+$/.test(safeItemId)) return; // not a valid numeric ID
 
   let query = '';
 
   if (type === 'view') {
-    // Insert a view row (no dedup — multiple views by same user are allowed and meaningful)
     query = `INSERT INTO product_view_log (product_id, user_id, source) VALUES (${safeItemId}::bigint, '${safeUserId}'::uuid, '${safeSource}');`;
   } else if (type === 'save') {
-    // Insert wishlist row, ignore if already exists (UNIQUE constraint on user_id+product_id if present)
     query = `INSERT INTO buyers_wishlist (user_id, product_id) VALUES ('${safeUserId}'::uuid, ${safeItemId}::bigint) ON CONFLICT DO NOTHING;`;
   } else if (type === 'unsave') {
     query = `DELETE FROM buyers_wishlist WHERE user_id = '${safeUserId}'::uuid AND product_id = ${safeItemId}::bigint;`;
   } else {
-    // Other types (like, click, etc.) don't have a dedicated table — only Gorse gets them
     return;
   }
 
