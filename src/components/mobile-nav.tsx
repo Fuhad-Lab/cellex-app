@@ -96,10 +96,13 @@ export function MobileNav() {
               <div className="relative flex items-center justify-center">
                 <Icon
                   className={`w-6 h-6 transition-all duration-300 ${
-                    isActive ? 'text-white scale-110' : 'text-slate-400'
+                    isActive ? 'scale-110' : ''
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
-                  fill={isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? 'currentColor' : 'none'}
+                  style={{
+                    color: isActive ? 'var(--cellex-coral)' : 'var(--cellex-text-muted)',
+                    fill: isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? 'var(--cellex-coral)' : 'none',
+                  }}
                 />
                 {item.showBadge && cartCount > 0 && (
                   <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">

@@ -349,7 +349,8 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Social switcher tabs — Gemini-style: For You / Following / Shops / Live */}
+      {/* Social switcher tabs — For You / Following / Shops / Live.
+          FUNCTIONAL: filters the feed by post type / seller relationship. */}
       <div className="fx-topbar border-t border-white/5" style={{ paddingTop: 0, paddingBottom: '8px' }}>
         <div className="flex items-center justify-around text-xs font-semibold">
           {(['For You', 'Following', 'Shops', 'Live'] as const).map((tab) => (
@@ -358,25 +359,24 @@ export default function HomePage() {
               onClick={() => setActiveTab(tab)}
               className="pb-1.5 px-3 relative transition-colors"
               style={{
-                color: activeTab === tab ? '#f43f5e' : '#94a3b8',
+                color: activeTab === tab ? 'var(--cellex-coral)' : 'var(--cellex-text-muted)',
                 fontWeight: activeTab === tab ? 700 : 500,
               }}
             >
               {tab === 'Live' && (
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 mr-1 animate-pulse" style={{ verticalAlign: 'middle' }} />
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--cellex-coral)] mr-1 animate-pulse" style={{ verticalAlign: 'middle' }} />
               )}
               {tab}
               {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500 rounded-full" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: 'var(--cellex-coral)' }} />
               )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Category chips + flash deal banner — Gemini-style discovery module */}
-      <div className="flex flex-col gap-2.5 px-3 py-3">
-        {/* Category chips horizontal scroll */}
+      {/* Category chips — FUNCTIONAL: filters feed by product category. */}
+      <div className="px-3 py-3">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
           {CATEGORIES.map((cat) => (
             <button
@@ -385,49 +385,17 @@ export default function HomePage() {
               className="px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all"
               style={{
                 background: activeCategory === cat
-                  ? 'linear-gradient(135deg, #be123c, #8b5cf6)'
-                  : 'rgba(255,255,255,0.06)',
-                color: activeCategory === cat ? '#fff' : '#cbd5e1',
-                border: activeCategory === cat ? '1px solid rgba(244,63,94,0.5)' : '1px solid rgba(255,255,255,0.08)',
-                boxShadow: activeCategory === cat ? '0 2px 12px rgba(244,63,94,0.3)' : 'none',
+                  ? 'linear-gradient(135deg, var(--cellex-coral), var(--cellex-sand))'
+                  : 'var(--cellex-surface-2)',
+                color: activeCategory === cat ? '#0F1115' : 'var(--cellex-text-muted)',
+                border: activeCategory === cat ? '1px solid var(--cellex-coral)' : '1px solid var(--cellex-border)',
+                boxShadow: activeCategory === cat ? '0 2px 12px rgba(255, 107, 107, 0.3)' : 'none',
               }}
             >
-              {cat === 'Deals' && <Zap className="w-3 h-3 text-amber-400 inline mr-1" />}
+              {cat === 'Deals' && <Zap className="w-3 h-3 text-[var(--cellex-sand)] inline mr-1" />}
               {cat}
             </button>
           ))}
-        </div>
-
-        {/* Flash deal banner */}
-        <div
-          className="rounded-2xl p-3 flex items-center justify-between gap-3"
-          style={{
-            background: 'linear-gradient(90deg, rgba(190,18,60,0.25), rgba(124,58,237,0.25), rgba(15,23,42,0.4))',
-            border: '1px solid rgba(244,63,94,0.3)',
-          }}
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(244,63,94,0.15)', border: '1px solid rgba(244,63,94,0.4)' }}>
-              <Flame className="w-5 h-5 text-rose-400" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold tracking-wider uppercase px-2 py-0.5 rounded bg-rose-500 text-white">
-                  LIVE FLASH DEAL
-                </span>
-                <span className="text-xs text-rose-300 font-mono">Ends soon</span>
-              </div>
-              <p className="text-xs font-semibold text-slate-100 mt-0.5 truncate">
-                Group Buys active: Unlock up to 40% OFF with 1 invite!
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setActiveCategory('Deals')}
-            className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-3 py-2 rounded-xl shrink-0 transition flex items-center gap-1"
-          >
-            Explore <ChevronRight className="w-3 h-3" />
-          </button>
         </div>
       </div>
 
@@ -472,13 +440,52 @@ export default function HomePage() {
         <ShortsSection shorts={shorts} />
       )}
 
-      {/* Feed — IG-style.
-          Every 3 feed posts, insert a horizontal "Suggested Sellers" carousel.
-          The carousel shows 3 seller cards followed by a "See all" card that
-          links to /sellers. Sellers are rotated so each carousel shows a
-          different batch. */}
+      {/* Feed — filtered by active tab + category.
+          Every 3 feed posts, insert a horizontal "Suggested Sellers" carousel. */}
       <div>
-        {feed.map((post, index) => {
+        {(() => {
+          // FUNCTIONAL filtering — no static content.
+          // Tab filters: For You = all, Following = only followed sellers' posts,
+          // Shops = products only, Live = live sessions (handled separately above).
+          // Category filter: matches post.product.category (products) or skips (videos).
+          let filteredFeed = feed;
+          if (activeTab === 'Following') {
+            filteredFeed = feed.filter(p => p.sellerId && following.has(p.sellerId));
+          } else if (activeTab === 'Shops') {
+            filteredFeed = feed.filter(p => p.type === 'product');
+          } else if (activeTab === 'Live') {
+            filteredFeed = feed.filter(p => p.isLive);
+          }
+          if (activeCategory !== 'All') {
+            filteredFeed = filteredFeed.filter(p => {
+              if (activeCategory === 'Deals') return p.product?.group_buy_enabled || p.isLive;
+              const cat = p.product?.category || '';
+              return cat.toLowerCase() === activeCategory.toLowerCase();
+            });
+          }
+
+          if (filteredFeed.length === 0) {
+            return (
+              <div className="text-center py-16 px-4">
+                <div className="w-14 h-14 rounded-full border-2 flex items-center justify-center mx-auto mb-3" style={{ borderColor: 'var(--cellex-border)' }}>
+                  <Sparkles className="w-6 h-6" style={{ color: 'var(--cellex-text-muted)' }} />
+                </div>
+                <p className="text-sm font-semibold" style={{ color: 'var(--cellex-text)' }}>No posts found</p>
+                <p className="text-xs mt-1" style={{ color: 'var(--cellex-text-muted)' }}>
+                  Try a different tab or category.
+                </p>
+                <button
+                  onClick={() => { setActiveTab('For You'); setActiveCategory('All'); }}
+                  className="mt-4 text-xs font-bold transition"
+                  style={{ color: 'var(--cellex-coral)' }}
+                >
+                  Reset filters
+                </button>
+              </div>
+            );
+          }
+
+          return filteredFeed.map((post, index) => {
           // Insert a seller carousel AFTER every 3rd post (index 2, 5, 8, ...)
           const showSellers = sellers.length > 0 && (index + 1) % 3 === 0;
           // Rotate the seller batch: carousel 0 shows sellers[0..2], carousel 1 shows sellers[3..5], etc.
@@ -509,16 +516,17 @@ export default function HomePage() {
               )}
             </div>
           );
-        })}
+        });
+        })()}
       </div>
 
-      {/* End of feed — IG-style */}
+      {/* End of feed */}
       <div className="text-center py-12 px-4">
-        <div className="w-14 h-14 rounded-full border-2 border-white/15 flex items-center justify-center mx-auto mb-3">
-          <Sparkles className="w-6 h-6 text-slate-500" />
+        <div className="w-14 h-14 rounded-full border-2 flex items-center justify-center mx-auto mb-3" style={{ borderColor: 'var(--cellex-border)' }}>
+          <Sparkles className="w-6 h-6" style={{ color: 'var(--cellex-text-muted)' }} />
         </div>
-        <p className="text-sm font-semibold text-slate-300">You're all caught up</p>
-        <p className="text-xs text-slate-500 mt-1">You've seen all new posts from the last 3 days.</p>
+        <p className="text-sm font-semibold" style={{ color: 'var(--cellex-text)' }}>You're all caught up</p>
+        <p className="text-xs mt-1" style={{ color: 'var(--cellex-text-muted)' }}>You've seen all new posts from the last 3 days.</p>
       </div>
     </div>
   );
@@ -584,37 +592,37 @@ function FeedPostCard({
       style={{ borderRadius: '24px', padding: 0 }}
     >
       {/* CARD HEADER: Creator & Seller Trust Badge */}
-      <div className="flex items-center justify-between gap-2 px-3.5 py-3 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+      <div className="flex items-center justify-between gap-2 px-3.5 py-3 border-b" style={{ background: 'var(--cellex-surface-2)', borderColor: 'var(--cellex-border)' }}>
         {/* Creator Info */}
         <Link
           href={post.sellerSlug ? `/${post.sellerSlug}` : (post.sellerId ? `/seller-profile?id=${post.sellerId}` : '#')}
           className="flex items-center gap-2.5 cursor-pointer group min-w-0"
         >
           <div className="relative shrink-0">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 ring-2 ring-rose-500/40 group-hover:ring-rose-500 transition">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 ring-2 transition" style={{ '--tw-ring-color': 'rgba(255,107,107,0.4)' } as React.CSSProperties}>
               {post.sellerImage ? (
                 <img src={post.sellerImage} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">{post.sellerName.charAt(0)}</span>
+                  <span className="text-sm font-bold" style={{ color: 'var(--cellex-text)' }}>{post.sellerName.charAt(0)}</span>
                 </div>
               )}
             </div>
             {post.verified && (
-              <CheckCircle className="w-3.5 h-3.5 text-rose-500 fill-rose-500 stroke-slate-950 absolute -bottom-0.5 -right-0.5" />
+              <CheckCircle className="w-3.5 h-3.5 absolute -bottom-0.5 -right-0.5" style={{ color: 'var(--cellex-coral)', fill: 'var(--cellex-coral)', stroke: 'var(--cellex-bg)' }} />
             )}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-xs text-slate-100 group-hover:text-rose-400 transition truncate">
+              <span className="font-bold text-xs truncate" style={{ color: 'var(--cellex-text)' }}>
                 {post.sellerName}
               </span>
               {post.createdAt && (
-                <span className="text-[11px] text-slate-500">• {timeAgo(post.createdAt)}</span>
+                <span className="text-[11px]" style={{ color: 'var(--cellex-text-muted)' }}>• {timeAgo(post.createdAt)}</span>
               )}
             </div>
             {/* Seller trust badge */}
-            <div className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-medium bg-emerald-950/40 border border-emerald-800/50 px-2 py-0.5 rounded-full mt-0.5">
+            <div className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full mt-0.5" style={{ color: 'var(--cellex-success)', background: 'rgba(40,199,111,0.1)', border: '1px solid rgba(40,199,111,0.3)' }}>
               <ShieldCheck className="w-2.5 h-2.5" />
               <span>Verified Seller</span>
             </div>
@@ -625,7 +633,8 @@ function FeedPostCard({
         {post.sellerId && !isFollowing && (
           <button
             onClick={onFollow}
-            className="text-xs font-semibold text-rose-400 border border-rose-500/40 hover:bg-rose-600 hover:text-white px-3 py-1 rounded-full transition shrink-0"
+            className="text-xs font-semibold px-3 py-1 rounded-full transition shrink-0"
+            style={{ color: 'var(--cellex-coral)', border: '1px solid var(--cellex-coral)' }}
           >
             Follow
           </button>
@@ -662,20 +671,20 @@ function FeedPostCard({
 
         {/* Type indicator tag — top-left */}
         {post.product?.group_buy_enabled && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+          <div className="absolute top-3 left-3 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1" style={{ background: 'linear-gradient(90deg, var(--cellex-sand), #e8a347)' }}>
             <Users className="w-2.5 h-2.5" /> GROUP BUY
           </div>
         )}
         {post.isLive && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-rose-600 to-amber-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse">
+          <div className="absolute top-3 left-3 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse" style={{ background: 'linear-gradient(90deg, var(--cellex-coral), var(--cellex-sand))' }}>
             <Zap className="w-2.5 h-2.5" /> FLASH DEAL
           </div>
         )}
 
         {/* Social proof overlay — bottom-left */}
         {fomoText && (
-          <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md text-slate-200 text-[11px] font-medium px-3 py-1 rounded-full border border-white/10 flex items-center gap-1.5">
-            <Flame className="w-3 h-3 text-amber-400" />
+          <div className="absolute bottom-3 left-3 backdrop-blur-md text-[11px] font-medium px-3 py-1 rounded-full flex items-center gap-1.5" style={{ background: 'rgba(15,17,21,0.8)', color: 'var(--cellex-text)', border: '1px solid var(--cellex-border)' }}>
+            <Flame className="w-3 h-3" style={{ color: 'var(--cellex-sand)' }} />
             <span>{fomoText}</span>
           </div>
         )}
@@ -684,7 +693,8 @@ function FeedPostCard({
         {post.product && (
           <Link
             href={`/product?id=${post.product.id}`}
-            className="absolute bottom-3 right-3 bg-slate-900/90 hover:bg-slate-800 text-white font-semibold text-xs px-3 py-1.5 rounded-full border border-white/10 shadow-xl flex items-center gap-1.5 transition"
+            className="absolute bottom-3 right-3 font-semibold text-xs px-3 py-1.5 rounded-full shadow-xl flex items-center gap-1.5 transition"
+            style={{ background: 'rgba(23,26,33,0.9)', color: 'var(--cellex-text)', border: '1px solid var(--cellex-border)' }}
           >
             <Eye className="w-3 h-3" /> Quick View
           </Link>
@@ -696,17 +706,17 @@ function FeedPostCard({
         {/* Title */}
         {post.product ? (
           <Link href={`/product?id=${post.product.id}`}>
-            <h3 className="font-bold text-sm text-slate-100 hover:text-rose-400 transition cursor-pointer line-clamp-1">
+            <h3 className="font-bold text-sm line-clamp-1 cursor-pointer transition" style={{ color: 'var(--cellex-text)' }}>
               {post.caption}
             </h3>
           </Link>
         ) : (
-          <h3 className="font-bold text-sm text-slate-100 line-clamp-1">{post.caption}</h3>
+          <h3 className="font-bold text-sm line-clamp-1" style={{ color: 'var(--cellex-text)' }}>{post.caption}</h3>
         )}
 
         {/* Description */}
         {post.product?.description && (
-          <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+          <p className="text-xs line-clamp-2 leading-relaxed" style={{ color: 'var(--cellex-text-muted)' }}>
             {post.product.description}
           </p>
         )}
@@ -715,18 +725,18 @@ function FeedPostCard({
         {post.product && (
           <div className="flex items-center justify-between mt-1">
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-extrabold text-white">
+              <span className="text-lg font-extrabold" style={{ color: 'var(--cellex-text)' }}>
                 {formatPrice(post.product.price)}
               </span>
               {post.product.units_sold && post.product.units_sold > 0 && (
-                <span className="text-[10px] font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded" style={{ color: 'var(--cellex-sand)', background: 'rgba(244,184,96,0.15)', border: '1px solid rgba(244,184,96,0.3)' }}>
                   {post.product.units_sold} sold
                 </span>
               )}
             </div>
             {post.soldCount && post.soldCount > 0 && (
-              <div className="flex items-center gap-1 text-[11px] text-amber-400 font-medium">
-                <Star className="w-3 h-3 fill-amber-400" />
+              <div className="flex items-center gap-1 text-[11px] font-medium" style={{ color: 'var(--cellex-sand)' }}>
+                <Star className="w-3 h-3" style={{ fill: 'var(--cellex-sand)', color: 'var(--cellex-sand)' }} />
                 <span>Trending</span>
               </div>
             )}
@@ -738,28 +748,31 @@ function FeedPostCard({
           <div className="grid grid-cols-2 gap-2 mt-2">
             <Link
               href={`/product?id=${post.product.id}`}
-              className="w-full bg-white/8 hover:bg-white/12 text-slate-200 font-semibold text-xs py-2.5 rounded-2xl border border-white/10 transition flex items-center justify-center gap-1.5"
+              className="w-full font-semibold text-xs py-2.5 rounded-2xl transition flex items-center justify-center gap-1.5"
+              style={{ background: 'var(--cellex-surface-2)', color: 'var(--cellex-text)', border: '1px solid var(--cellex-border)' }}
             >
-              <Eye className="w-3.5 h-3.5 text-slate-400" /> View Item
+              <Eye className="w-3.5 h-3.5" style={{ color: 'var(--cellex-text-muted)' }} /> View Item
             </Link>
             <button
               onClick={onAddToCart}
-              className="w-full bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-extrabold text-xs py-2.5 rounded-2xl shadow-lg shadow-rose-600/30 transition flex items-center justify-center gap-1.5 active:scale-95"
+              className="w-full font-extrabold text-xs py-2.5 rounded-2xl shadow-lg transition flex items-center justify-center gap-1.5 active:scale-95"
+              style={{ background: 'linear-gradient(90deg, var(--cellex-coral), #ff5252)', color: '#0F1115', boxShadow: '0 4px 16px rgba(255,107,107,0.3)' }}
             >
-              <Zap className="w-3.5 h-3.5 text-amber-300" /> Buy Now
+              <Zap className="w-3.5 h-3.5" style={{ color: 'var(--cellex-sand)' }} /> Buy Now
             </button>
           </div>
         )}
 
         {/* SOCIAL ENGAGEMENT ROW: Like, Comment, Save, Share */}
-        <div className="flex items-center justify-between border-t border-white/8 pt-3 mt-1 text-slate-400 text-xs">
+        <div className="flex items-center justify-between border-t pt-3 mt-1 text-xs" style={{ borderColor: 'var(--cellex-border)', color: 'var(--cellex-text-muted)' }}>
           {/* Like */}
           <button
             onClick={onLike}
-            className={`flex items-center gap-1.5 hover:text-rose-400 transition ${liked ? 'text-rose-500 font-bold' : ''}`}
+            className="flex items-center gap-1.5 transition"
+            style={{ color: liked ? 'var(--cellex-coral)' : undefined, fontWeight: liked ? 700 : undefined }}
           >
             <motion.div whileTap={{ scale: 1.2 }}>
-              <Heart className={`w-4 h-4 ${liked ? 'fill-rose-500' : ''}`} strokeWidth={2} />
+              <Heart className="w-4 h-4" style={{ fill: liked ? 'var(--cellex-coral)' : 'none', color: liked ? 'var(--cellex-coral)' : undefined }} strokeWidth={2} />
             </motion.div>
             <span>{formatCount(likeCount)}</span>
           </button>
@@ -767,7 +780,7 @@ function FeedPostCard({
           {/* Comment */}
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCommentsOpen(true); }}
-            className="flex items-center gap-1.5 hover:text-slate-200 transition"
+            className="flex items-center gap-1.5 transition hover:opacity-70"
           >
             <MessageCircle className="w-4 h-4" strokeWidth={2} />
             <span>{formatCount(commentCount)}</span>
@@ -776,9 +789,10 @@ function FeedPostCard({
           {/* Save */}
           <button
             onClick={onSave}
-            className={`flex items-center gap-1.5 hover:text-amber-400 transition ${saved ? 'text-amber-400 font-bold' : ''}`}
+            className="flex items-center gap-1.5 transition"
+            style={{ color: saved ? 'var(--cellex-sand)' : undefined, fontWeight: saved ? 700 : undefined }}
           >
-            <Bookmark className={`w-4 h-4 ${saved ? 'fill-amber-400' : ''}`} strokeWidth={2} />
+            <Bookmark className="w-4 h-4" style={{ fill: saved ? 'var(--cellex-sand)' : 'none', color: saved ? 'var(--cellex-sand)' : undefined }} strokeWidth={2} />
             <span className="hidden sm:inline">{saved ? 'Saved' : 'Save'}</span>
           </button>
 
@@ -797,7 +811,7 @@ function FeedPostCard({
               if (post.videoId) api.feedback(`video:${post.videoId}`, 'share', 0.5, { page: 'feed' });
               else if (post.productId) api.feedback(`product:${post.productId}`, 'share', 0.5, { page: 'feed' });
             }}
-            className="flex items-center gap-1.5 hover:text-rose-400 transition"
+            className="flex items-center gap-1.5 transition hover:opacity-70"
           >
             <Share2 className="w-4 h-4" strokeWidth={2} />
             <span className="hidden sm:inline">Share</span>
