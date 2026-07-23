@@ -44,9 +44,9 @@ export const GORSE_API_KEY = process.env.GORSE_API_KEY || '';
 export const PERF = {
   targetResponseMs: 3000,    // 3 second overall target
   nvidiaTimeoutMs: 2000,     // NVIDIA API timeout
-  chromaTimeoutMs: 1000,     // Chroma query timeout
+  chromaTimeoutMs: 3000,     // pgvector query timeout (was 1000 — too short for SQL API)
   gorseTimeoutMs: 1000,      // Gorse recommendation timeout
-  supabaseTimeoutMs: 3000,   // Supabase hydration timeout (was 1000 — too short for SQL API CTEs)
+  supabaseTimeoutMs: 3000,   // Supabase hydration timeout
 } as const;
 
 /**

@@ -518,7 +518,7 @@ async function hydrateVideos(videoIds: string[]): Promise<any[]> {
       method: 'POST',
       headers: sqlHeaders,
       body: JSON.stringify({
-        query: `SELECT v.id, v.video_url, v.caption, v.views_count, v.likes_count, v.created_at, v.product_id, p.name as product_name, p.price, p.image_url, s.business_name as seller_name, s.profile_image as seller_image FROM videos v LEFT JOIN products p ON v.product_id = p.id LEFT JOIN sellers s ON v.seller_id = s.id WHERE v.id IN (${ids});`,
+        query: `SELECT v.id, v.video_url, v.caption, v.views_count, v.likes_count, v.created_at, v.product_id, v.seller_id, p.name as product_name, p.price, p.image_url, s.business_name as seller_name, s.profile_image as seller_image, s.slug as seller_slug FROM product_videos v LEFT JOIN products p ON v.product_id = p.id LEFT JOIN sellers s ON v.seller_id = s.id WHERE v.id IN (${ids});`,
       }),
     });
 
