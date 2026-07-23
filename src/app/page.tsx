@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { motion } from 'framer-motion';
-import { Search, Heart, MessageCircle, Send, Bookmark,
+import { Search, Heart, MessageCircle, Send, Bookmark, Share2,
   Store, ChevronRight, Play,
   CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Users } from 'lucide-react';
 import Link from 'next/link';
@@ -587,7 +587,7 @@ function FeedPostCard({
           if (post.videoId) api.feedback(`video:${post.videoId}`, 'share', 0.5, { page: 'feed' });
           else if (post.productId) api.feedback(`product:${post.productId}`, 'share', 0.5, { page: 'feed' });
         }} aria-label="Share">
-          <Send className="w-7 h-7 text-white" strokeWidth={1.5} />
+          <Share2 className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button onClick={onSave} className="ml-auto" aria-label="Save">
           <Bookmark className={`w-7 h-7 transition-colors ${saved ? 'fill-indigo-600 text-white' : 'text-white'}`} strokeWidth={1.5} />

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { api, formatPrice } from '@/lib/api';
-import { Heart, Send, Bookmark, Volume2, VolumeX, ChevronLeft, ShoppingBag, Play } from 'lucide-react';
+import { Heart, Send, Bookmark, Share2, MessageCircle, Volume2, VolumeX, ChevronLeft, ShoppingBag, Play } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
@@ -196,7 +196,7 @@ export default function ShortsPage() {
                   className="flex flex-col items-center gap-1 text-white"
                   aria-label="Comments"
                 >
-                  <Send className="w-8 h-8" strokeWidth={1.5} />
+                  <MessageCircle className="w-8 h-8" strokeWidth={1.5} />
                   <span className="text-[10px] font-semibold">{formatCount(commentsCount)}</span>
                 </button>
 
@@ -213,7 +213,7 @@ export default function ShortsPage() {
                   className="flex flex-col items-center gap-1 text-white"
                   aria-label="Share"
                 >
-                  <Send className="w-8 h-8 rotate-[-15deg]" strokeWidth={1.5} />
+                  <Share2 className="w-8 h-8" strokeWidth={1.5} />
                   <span className="text-[10px] font-semibold">Share</span>
                 </button>
 

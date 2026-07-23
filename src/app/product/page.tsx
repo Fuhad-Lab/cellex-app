@@ -178,7 +178,7 @@ function ProductContent() {
         </button>
         <div className="flex-1" />
         <button onClick={() => shareProduct('whatsapp')} className="ig-icon-btn" aria-label="Share">
-          <Send className="w-6 h-6" />
+          <Share2 className="w-6 h-6" />
         </button>
         <button onClick={addToWishlist} className="ig-icon-btn" aria-label="Save">
           <Bookmark className={`w-6 h-6 ${saved ? 'fill-indigo-600' : ''}`} />
@@ -232,7 +232,7 @@ function ProductContent() {
           <MessageCircle className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
         <button onClick={() => shareProduct('whatsapp')} aria-label="Share">
-          <Send className="w-7 h-7 text-white" strokeWidth={1.5} />
+          <Share2 className="w-7 h-7 text-white" strokeWidth={1.5} />
         </button>
       </div>
 

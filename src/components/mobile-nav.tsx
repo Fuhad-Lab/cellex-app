@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Plus, ShoppingCart, User, Send, Grid3x3 } from 'lucide-react';
+import { Home, Search, Plus, ShoppingCart, User, Send, Grid3x3, Play } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
@@ -22,16 +22,16 @@ export function MobileNav() {
   const navItems = isSeller
     ? [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/shorts', label: 'Shorts', icon: Grid3x3 },
+        { href: '/shorts', label: 'Shorts', icon: Play },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
         { href: '/messenger', label: 'Messages', icon: Send },
-        { href: '/shorts', label: 'Shorts', icon: Grid3x3 },
+        { href: '/shorts', label: 'Shorts', icon: Play },
         { href: '/', label: 'Home', icon: Home, center: true },
-        { href: '/categories', label: 'Category', icon: Search },
+        { href: '/categories', label: 'Category', icon: Grid3x3 },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
       ];
 
@@ -99,7 +99,7 @@ export function MobileNav() {
                     isActive ? 'text-white scale-110' : 'text-slate-400'
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
-                  fill={isActive && (item.label === 'Home' || item.label === 'Messages') ? 'currentColor' : 'none'}
+                  fill={isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? 'currentColor' : 'none'}
                 />
                 {item.showBadge && cartCount > 0 && (
                   <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
