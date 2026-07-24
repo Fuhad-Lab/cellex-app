@@ -66,9 +66,9 @@ function S({ className = '' }: { className?: string }) {
 // ============================================================
 function HomeSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-xl mx-auto">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-xl mx-auto">
       {/* Top bar: logo + search + icons */}
-      <div className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30 flex items-center gap-2">
+      <div className="px-3 pt-3 pb-2 sticky top-0 z-30 flex items-center gap-2">
         <S className="w-8 h-8 rounded-lg shrink-0" />
         <S className="flex-1 h-10 rounded-full" />
         <S className="w-10 h-10 rounded-full shrink-0" />
@@ -125,9 +125,9 @@ function HomeSkeleton() {
 // ============================================================
 function CategoriesSkeleton() {
   return (
-    <div className="bg-white min-h-screen">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen">
       {/* Search bar */}
-      <div className="sticky top-0 z-30 bg-white px-3 pt-3 pb-2 border-b border-white/5 flex items-center gap-2">
+      <div className="sticky top-0 z-30 px-3 pt-3 pb-2 border-b border-white/5 flex items-center gap-2">
         <S className="w-5 h-5 shrink-0" />
         <S className="flex-1 h-9 rounded-full" />
         <S className="w-5 h-5 shrink-0" />
@@ -155,7 +155,7 @@ function CategoriesSkeleton() {
       {/* Product grid 2-col — matches MobileCategoryProductCard */}
       <div className="grid grid-cols-2 gap-2 px-3 py-3">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-lg overflow-hidden border border-white/5">
+          <div key={i} className="rounded-lg overflow-hidden border border-white/5">
             <S className="w-full aspect-square rounded-none" />
             <div className="p-2 space-y-1.5">
               <S className="w-full h-3" />
@@ -178,7 +178,7 @@ function CategoriesSkeleton() {
 // ============================================================
 function ProductSkeleton() {
   return (
-    <div className="bg-white min-h-screen pb-20">
+    <div style={{ background: 'var(--cellex-bg)' }} className="min-h-screen pb-20">
       {/* Top bar with back button */}
       <div className="flex items-center px-3 py-3">
         <S className="w-9 h-9 rounded-full" />
@@ -221,7 +221,7 @@ function ProductSkeleton() {
         <S className="w-full h-16 rounded-lg" />
       </div>
       {/* Bottom action bar — fixed */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-white/5 px-3 py-2 flex gap-2 items-center">
+      <div className="fixed bottom-0 left-0 right-0 border-t px-3 py-2 flex gap-2 items-center" style={{ background: 'var(--cellex-surface)', borderColor: 'var(--cellex-border)' }}>
         <S className="w-10 h-10 rounded-lg" />
         <S className="w-10 h-10 rounded-lg" />
         <S className="flex-1 h-10 rounded-full" />
@@ -237,7 +237,7 @@ function ProductSkeleton() {
 // ============================================================
 function CartSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-3xl mx-auto px-4 py-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-3xl mx-auto px-4 py-4">
       <S className="w-20 h-7 mb-4" />
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="flex gap-3 p-3 border border-white/5 rounded-xl mb-3">
@@ -271,7 +271,7 @@ function CartSkeleton() {
 // ============================================================
 function CheckoutSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto px-4 py-4 space-y-4">
       <S className="w-28 h-7" />
       {/* Shipping form */}
       <div className="space-y-3">
@@ -297,7 +297,7 @@ function CheckoutSkeleton() {
 // ============================================================
 function OrdersSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-3xl mx-auto px-4 py-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-3xl mx-auto px-4 py-4">
       <S className="w-24 h-7 mb-4" />
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -335,9 +335,9 @@ function OrdersSkeleton() {
 // ============================================================
 function SearchSkeleton() {
   return (
-    <div className="bg-white min-h-screen">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen">
       {/* Header with search + tabs */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-white/5">
+      <div className="sticky top-0 z-40 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <S className="w-9 h-9 rounded-full shrink-0" />
           <S className="flex-1 h-10 rounded-full" />
@@ -374,7 +374,7 @@ function SearchSkeleton() {
         </div>
       </div>
       {/* Follow-up input bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-white/5 px-4 py-3">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-white/5 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-2">
           <S className="w-10 h-10 rounded-full" />
           <S className="flex-1 h-10 rounded-full" />
@@ -397,7 +397,7 @@ function ProfileSkeleton() {
         <S className="w-9 h-9 rounded-full" />
       </div>
       {/* User card */}
-      <div className="bg-white p-4 rounded-xl border border-white/5">
+      <div className="p-4 rounded-xl border border-white/5">
         <div className="flex items-center gap-3 mb-4">
           <S className="w-16 h-16 rounded-full" />
           <div className="flex-1 space-y-2">
@@ -414,7 +414,7 @@ function ProfileSkeleton() {
       {/* Stats grid */}
       <div className="grid grid-cols-3 gap-2">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="bg-white p-3 rounded-xl border border-white/5 text-center space-y-1">
+          <div key={i} className="p-3 rounded-xl border border-white/5 text-center space-y-1">
             <S className="w-6 h-5 mx-auto" />
             <S className="w-12 h-3 mx-auto" />
           </div>
@@ -422,7 +422,7 @@ function ProfileSkeleton() {
       </div>
       {/* Menu items */}
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="bg-white p-3 rounded-xl border border-white/5 flex items-center gap-3">
+        <div key={i} className="p-3 rounded-xl border border-white/5 flex items-center gap-3">
           <S className="w-10 h-10 rounded-xl" />
           <div className="flex-1 space-y-1">
             <S className="w-24 h-4" />
@@ -441,7 +441,7 @@ function ProfileSkeleton() {
 // ============================================================
 function LoginSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-cyan-50 via-white to-white">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
           <S className="w-14 h-14 rounded-2xl mx-auto" />
@@ -473,7 +473,7 @@ function LoginSkeleton() {
 // ============================================================
 function AIChatSkeleton() {
   return (
-    <div className="bg-white min-h-screen flex flex-col max-w-3xl mx-auto">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen flex flex-col max-w-3xl mx-auto">
       {/* Header */}
       <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
         <S className="w-9 h-9 rounded-xl shrink-0" />
@@ -549,7 +549,7 @@ function VideosSkeleton() {
 // ============================================================
 function LiveSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-5xl mx-auto px-4 py-4 space-y-6">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-5xl mx-auto px-4 py-4 space-y-6">
       <div className="flex items-center gap-2">
         <S className="w-6 h-6" />
         <S className="w-32 h-7" />
@@ -578,7 +578,7 @@ function LiveSkeleton() {
 // ============================================================
 function GroupBuySkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto px-4 py-4">
       <S className="w-32 h-4 mb-3" />
       {/* Group buy banner */}
       <S className="w-full h-24 rounded-2xl mb-4" />
@@ -603,7 +603,7 @@ function GroupBuySkeleton() {
 // ============================================================
 function WishlistSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-4xl mx-auto px-4 py-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-4xl mx-auto px-4 py-4">
       <S className="w-28 h-7 mb-4" />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -627,7 +627,7 @@ function WishlistSkeleton() {
 // ============================================================
 function LinkAccountSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto px-4 py-4">
       <S className="w-32 h-4 mb-3" />
       <div className="flex items-center gap-3 mb-4">
         <S className="w-12 h-12 rounded-2xl" />
@@ -648,7 +648,7 @@ function LinkAccountSkeleton() {
 // ============================================================
 function TelegramSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto px-4 py-4">
       <S className="w-32 h-4 mb-3" />
       <div className="flex items-center gap-3 mb-4">
         <S className="w-12 h-12 rounded-2xl" />
@@ -673,7 +673,7 @@ function TelegramSkeleton() {
 // ============================================================
 function PaymentSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto px-4 py-4 space-y-4">
       <S className="w-24 h-7" />
       {/* Steps indicator */}
       <div className="flex items-center justify-center gap-2">
@@ -695,7 +695,7 @@ function PaymentSkeleton() {
 // ============================================================
 function SellerDashboardSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto pb-24">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto pb-24">
       <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
         <S className="w-9 h-9 rounded-full" />
         <S className="w-20 h-5" />
@@ -1048,8 +1048,8 @@ function SettingsSkeleton() {
 // ============================================================
 function MessengerSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto">
-      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center gap-3">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto">
+      <div className="sticky top-0 z-30 border-b border-white/5 px-4 py-3 flex items-center gap-3">
         <S className="w-9 h-9 rounded-full" />
         <S className="w-24 h-6 flex-1" />
         <S className="w-9 h-9 rounded-full" />
@@ -1078,8 +1078,8 @@ function MessengerSkeleton() {
 // ============================================================
 function NotificationsSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-2xl mx-auto">
-      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center gap-3">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-2xl mx-auto">
+      <div className="sticky top-0 z-30 border-b border-white/5 px-4 py-3 flex items-center gap-3">
         <S className="w-9 h-9 rounded-full" />
         <S className="w-28 h-6 flex-1" />
         <S className="w-20 h-3" />
@@ -1103,8 +1103,8 @@ function NotificationsSkeleton() {
 // ============================================================
 function CreateSkeleton() {
   return (
-    <div className="bg-white min-h-screen max-w-md mx-auto">
-      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center justify-between">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen max-w-md mx-auto">
+      <div className="sticky top-0 z-30 border-b border-white/5 px-4 py-3 flex items-center justify-between">
         <S className="w-16 h-6" />
         <S className="w-9 h-9 rounded-full" />
       </div>
@@ -1128,7 +1128,7 @@ function CreateSkeleton() {
 // ============================================================
 function MinimalSkeleton() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div style={{ background: "var(--cellex-bg)" }} className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-4">
         <S className="w-24 h-8 mx-auto" />
         <S className="w-full h-12" />

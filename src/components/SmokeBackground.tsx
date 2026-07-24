@@ -34,11 +34,22 @@ export default function SmokeBackground() {
         muted
         playsInline         // Inline is absolutely mandatory for iOS Safari autoplay
         preload="auto"      // Encourages aggressive browser background caching
+        // Slow down playback for a calm, premium, heavy smoke feel.
+        // 0.5 = half speed (default 1.0 was too fast/jittery for a background).
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: 0.65     // Slightly lowered opacity protects text readability
+          opacity: 0.65,    // Slightly lowered opacity protects text readability
+        }}
+        // playbackRate must be set via ref or onLoadedMetadata because the
+        // <video> element doesn't accept it as a prop in React.
+        ref={(el) => {
+          if (el) {
+            el.playbackRate = 0.5;
+            // Re-apply after metadata loads (some browsers reset on load)
+            el.onloadedmetadata = () => { el.playbackRate = 0.5; };
+          }
         }}
       >
         <source src="/smoke-bg.mp4" type="video/mp4" />

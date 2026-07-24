@@ -302,16 +302,21 @@ button {
 .delay-400 { animation-delay: 400ms; }
 .delay-500 { animation-delay: 500ms; }
 
-/* Skeleton shimmer */
+/* Skeleton shimmer — OPAQUE blocks so the smoke background doesn't bleed through.
+   Uses solid surface color (#171A21) as the base, with a lighter shimmer
+   sweep on top. This ensures skeletons look like clean gray placeholder
+   blocks, not "smoky texture" leaking through. */
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background: #171A21;
+  background-image: linear-gradient(90deg, #171A21 25%, #262B36 50%, #171A21 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Shimmer utility — used by loading.tsx skeleton */
+/* Shimmer utility — used by loading.tsx skeleton. Same opaque treatment. */
 .shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
+  background: #171A21;
+  background-image: linear-gradient(90deg, #171A21 0%, #262B36 50%, #171A21 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
