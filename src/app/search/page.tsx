@@ -138,7 +138,7 @@ function SearchContent() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--cellex-bg)' }}>
+    <div className="min-h-screen">
       {/* Header */}
       <div ref={searchBarRef} className="sticky top-0 z-40 backdrop-blur-xl border-b" style={{ background: 'rgba(15,17,21,0.9)', borderColor: 'var(--cellex-border)' }}>
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">

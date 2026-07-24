@@ -176,7 +176,7 @@ function LoginContent() {
   const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-white/10">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Top bar back button */}
         {next !== '/' && (

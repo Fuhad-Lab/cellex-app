@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
-      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-slate-100 bg-[#050508]`}>
+      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-slate-100`}>
         {/* Background Layer — Grok-style heavy fluid smoke */}
         <FluidBackground />
         

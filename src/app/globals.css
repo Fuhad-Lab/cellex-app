@@ -353,7 +353,7 @@ button, a {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #050508;
+  background: transparent;
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -1101,14 +1101,16 @@ html, body {
   animation: glassPillSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Subtle page background gradient for glass to look good */
+/* Body background is transparent so the Grok-style fluid smoke (mounted at
+   z-50 in layout.tsx) shows through. The smoke shader provides the dark
+   base color (#050505 → #4D5966) — no solid body bg needed. */
 body {
-  background: linear-gradient(180deg, #050508 0%, #0a0a14 50%, #050508 100%) !important;
+  background: transparent !important;
   min-height: 100vh;
 }
 
 .dark body {
-  background: linear-gradient(180deg, #050508 0%, #0a0a14 50%, #050508 100%) !important;
+  background: transparent !important;
 }
 /* ============================================================
    LIQUID GLASS — High-fidelity glassmorphism for dark smoke bg

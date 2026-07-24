@@ -72,11 +72,13 @@ const SmokeShader = {
 
       float f = fbm(uv + r);
 
-      // Mix colors: Dark Grey to Black
-      vec3 color = mix(vec3(0.05, 0.05, 0.05), vec3(0.3, 0.35, 0.4), clamp((f*f)*4.0, 0.0, 1.0));
+      // Mix colors: Dark Grey to lighter grey for visible smoke contrast.
+      // Original Grok values (0.05 → 0.3-0.4) were too dark to see against
+      // transparent body. Boosted to (0.08 → 0.45-0.55) for visibility.
+      vec3 color = mix(vec3(0.08, 0.08, 0.10), vec3(0.45, 0.50, 0.55), clamp((f*f)*4.0, 0.0, 1.0));
 
-      // Heavy vignette
-      color = mix(color, vec3(0.0), 0.5 * length(uv - 1.0));
+      // Heavy vignette — slightly reduced from 0.5 to 0.4 so edges aren't fully black
+      color = mix(color, vec3(0.02, 0.02, 0.03), 0.4 * length(uv - 1.0));
 
       gl_FragColor = vec4(color, 1.0);
     }
