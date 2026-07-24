@@ -395,3 +395,33 @@ Stage Summary:
 - ✅ Categories skeleton: 3/10 → 6/10 (VLM verified)
 - ✅ Removed 'Loading...' text from categories + search (clean skeleton blocks only)
 - ✅ Live on https://eesha-learn.onrender.com
+
+---
+Task ID: 15 (Cellex — Smoke speed actually applied 0.25x)
+Agent: main (super-z)
+Task: User: "No difference in the smoke video background speed" — the 0.5x wasn't visible.
+
+ROOT CAUSE:
+- Old code used inline ref callback + direct onloadedmetadata assignment
+- React's event system could overwrite the onloadedmetadata handler
+- The ref callback only ran once on mount — playbackRate may have been reset
+- 0.5x was also too subtle (the original video has fast smoke motion)
+
+FIX:
+- Rewrote SmokeBackground.tsx with proper useRef + useEffect pattern
+- Set playbackRate=0.25 (quarter speed, was 0.5)
+- Added event listeners for loadedmetadata, play, AND timeupdate
+- timeupdate listener continuously enforces 0.25x (catches loop resets)
+- Cleanup on unmount
+
+VERIFICATION (live on Render):
+- agent-browser eval: playbackRate=0.25, readyState=4, paused=false
+- Video duration 22.5s → at 0.25x = ~90s per loop (4x slower)
+- Frame comparison: pixels change between 2s and 8s frames (smoke IS moving, just slowly)
+
+- Pushed commit 12c0a31. Render live at 12:32 UTC.
+
+Stage Summary:
+- ✅ Smoke speed confirmed 0.25x on live site (verified via JS eval)
+- ✅ ~90 seconds per loop (was ~22s at 1.0x, ~45s at 0.5x)
+- ✅ Slow, calm, premium heavy smoke drift
