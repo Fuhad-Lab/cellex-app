@@ -475,3 +475,46 @@ Stage Summary:
 - ✅ usePrefetchNext hook created (background fetch next item)
 - ✅ Integrated into homepage feed, product page, categories page
 - ✅ Live on https://eesha-learn.onrender.com
+
+---
+Task ID: 17 (Cellex — Light-mode Pearlescent Smoke glassmorphism rebrand)
+Agent: main (super-z)
+Task: User provided a detailed light-mode "Pearlescent Smoke" palette spec. Rebrand from dark to light mode with frosted pearl glass, silk reflection borders, deep obsidian text, champagne gold accent, liquid meniscus buttons.
+
+Work Log:
+- Updated globals.css :root + .dark with new light palette:
+  * Background: transparent (smoke video + white/20 veil = light base)
+  * Glass panels: rgba(255,255,255,0.45) frosted pearl
+  * Glass borders: rgba(255,255,255,0.6) silk reflection + 0.8 top/left light catches
+  * Text: #1A1D20 deep obsidian (primary), #64748B slate-500 (secondary)
+  * Accent: #D4AF37 champagne gold (was #FF6B6B coral)
+  * Secondary accent: #98B4A6 sage/matcha (for gradients)
+- SmokeBackground.tsx: added white/20 overlay veil with 2px blur. Changed dark vignette to white/30 light vignette.
+- fx-card: white/45 frosted pearl bg, white/60 borders, white/80 top/left light catches, soft wide drop shadows (shadow-black/8%) to lift cards off moving video.
+- fx-topbar: white/50 glass (was dark)
+- fx-nav: white/55 floating island (was dark)
+- fx-btn-primary: champagne gold gradient + liquid meniscus (inset 0 -4px 10px rgba(255,255,255,0.5))
+- fx-btn-ghost: glossy milk base + liquid meniscus (inset 0 -4px 10px rgba(255,255,255,0.8))
+- Skeleton/shimmer: light-mode (white/60 → white/80 sweep, was dark)
+- brand-gradient: champagne gold → sage
+- Mobile nav: inactive icons slate-500, active champagne gold
+- layout.tsx: body text-slate-900 (was text-slate-100)
+
+VLM VERIFICATION (live):
+- Mode: Light Mode ✅
+- Smoke video visible through glass ✅
+- Glass cards: white/frosted ✅
+- Text: dark and readable ✅
+- Accent: yellow/gold (champagne) for active tabs, category pills, Follow button ✅
+- Premium feel: 8/10 ("high-end, app-of-the-year aesthetic")
+
+- Pushed commit 149c1b7. Render live at 16:57 UTC.
+
+Stage Summary:
+- ✅ Light-mode "Pearlescent Smoke" glassmorphism live
+- ✅ Frosted pearl glass cards with silk reflection borders
+- ✅ Deep obsidian text on light glass
+- ✅ Champagne gold (#D4AF37) accent for CTAs
+- ✅ Liquid meniscus buttons (inset white bottom pool)
+- ✅ White/20 veil over smoke video for light-mode readability
+- ✅ VLM rated 8/10 premium feel
