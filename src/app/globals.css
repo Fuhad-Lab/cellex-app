@@ -1176,20 +1176,29 @@ select:focus-visible {
 .text-caption { font-size: 0.75rem; line-height: 1.4; }
 .text-micro { font-size: 0.625rem; line-height: 1.3; }
 
-/* --- Glass Cards (unified) --- */
+/* --- Glass Cards (unified) — Liquid Glass on top of fluid smoke --- */
 .fx-card {
-  background: var(--cellex-surface);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid var(--cellex-border);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Top light catch */
+  border-left: 1px solid rgba(255, 255, 255, 0.2); /* Left light catch */
   border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   color: var(--cellex-text);
   transition: all 0.3s ease;
 }
 .fx-card:hover {
   border-color: rgba(255, 107, 107, 0.3);
-  box-shadow: 0 8px 32px rgba(255, 107, 107, 0.1);
+  border-top-color: rgba(255, 107, 107, 0.4);
+  border-left-color: rgba(255, 107, 107, 0.4);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(255, 107, 107, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 /* --- Glass Topbar --- */
@@ -1352,3 +1361,38 @@ select:focus-visible {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* ============================================================
+   Liquid Glass Utility Classes
+   Sits on top of the Grok-style heavy fluid smoke background.
+   Thick glass with reflective borders (top + left light catches),
+   depth shadows, and inner rim for a 3D heavy feel.
+   ============================================================ */
+@layer utilities {
+  .liquid-glass {
+    /* Base Glass */
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+
+    /* Reflective Borders */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Top light catch */
+    border-left: 1px solid rgba(255, 255, 255, 0.2); /* Left light catch */
+
+    /* Depth Shadows */
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.4), /* Drop shadow */
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* Inner rim */
+  }
+
+  .liquid-glass-high-contrast {
+    /* For active states or buttons */
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+}
