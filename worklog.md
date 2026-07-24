@@ -518,3 +518,54 @@ Stage Summary:
 - ✅ Liquid meniscus buttons (inset white bottom pool)
 - ✅ White/20 veil over smoke video for light-mode readability
 - ✅ VLM rated 8/10 premium feel
+
+---
+Task ID: 18 (Cellex — Unified post creation with required product attachment)
+Agent: main (super-z)
+Task: User: "For You tab shows videos without products. Shops tab shows product cards. All tabs should show cards with products attached. Update seller Add page to allow text/photo/video/story posts with required product attachment. Test it."
+
+Work Log:
+- VLM comparison of For You vs Shops tabs confirmed: For You showed videos WITHOUT product cards. Shops showed product cards. User wants ALL post types to have products attached.
+
+- Created feed_posts table in Supabase:
+  * post_type: 'product' | 'video' | 'photo' | 'text' | 'story'
+  * product_id: NOT NULL (required — every post must have a product)
+  * caption, media_url, thumbnail_url, story_expires_at (24h for stories)
+  * views/likes/comments counts
+  * RLS enabled (public read, service-role write)
+  * Trigger: auto-update comments_count from feed_comments
+
+- Created /api/feed-posts API:
+  * list: joins products + sellers, returns full card data
+  * create: requires auth + seller account + product_id
+  * delete: only seller who created can delete
+  * mine: list seller's own posts
+
+- Rewrote /create page as unified post creator:
+  * 4 post types: Photo, Video, Text, Story (grid selector with icons)
+  * Product attachment REQUIRED (dropdown of seller's products, with preview)
+  * Media upload (image/video via upload-image/upload-video endpoints)
+  * Caption field (required for text posts)
+  * Story posts auto-expire after 24h
+  * Validations: product required, media required for non-text, caption required for text
+  * "Post" button in topbar, disabled until all required fields filled
+
+- Updated homepage feed:
+  * Fetches feed_posts + recommend API in parallel
+  * Feed posts shown first (primary content)
+  * Each feed post includes attached product (image, price, buy button)
+  * All post types show product card — same as Shops tab
+
+- API VERIFIED on live:
+  * list: success, 0 posts (no posts created yet — expected)
+  * create without auth: "Login required" (correct)
+
+- Pushed commit 68651c1. Render live at 17:26 UTC.
+
+Stage Summary:
+- ✅ feed_posts table created with required product_id
+- ✅ /api/feed-posts API created (list/create/delete/mine)
+- ✅ /create page rewritten as unified post creator (4 types + required product)
+- ✅ Homepage feed now fetches feed_posts and shows product in every card
+- ✅ API verified working on live (list returns empty, create requires auth)
+- ⚠️ Need a seller to log in and create test posts to fully verify the feed
