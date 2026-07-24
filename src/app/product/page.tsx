@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { TryItOnModal } from '@/components/try-it-on';
 import { CommentsModal } from '@/components/comments-modal';
+import { SmartImage } from '@/components/smart-image';
 import { API_BASE } from '@/lib/api';
 
 function ProductContent() {
@@ -188,7 +189,7 @@ function ProductContent() {
       {/* Image gallery — IG-style square with dot pagination */}
       <div className="relative aspect-square bg-white/5">
         {images[activeImage] ? (
-          <img src={images[activeImage]} alt={product.name} className="w-full h-full object-cover" />
+          <SmartImage src={images[activeImage]} alt={product.name} width={600} className="w-full h-full" loading="eager" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-600">
             <Store className="w-16 h-16" />

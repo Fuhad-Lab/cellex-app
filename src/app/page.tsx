@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useOptimisticUI } from '@/components/optimistic-ui';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { CommentsModal } from '@/components/comments-modal';
+import { SmartImage } from '@/components/smart-image';
+import { SmartVideo } from '@/components/smart-video';
 
 interface FeedPost {
   type: 'video' | 'product';
@@ -601,7 +603,7 @@ function FeedPostCard({
           <div className="relative shrink-0">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 ring-2 transition" style={{ '--tw-ring-color': 'rgba(255,107,107,0.4)' } as React.CSSProperties}>
               {post.sellerImage ? (
-                <img src={post.sellerImage} alt="" className="w-full h-full object-cover" />
+                <SmartImage src={post.sellerImage} alt="" width={40} height={40} className="w-full h-full" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <span className="text-sm font-bold" style={{ color: 'var(--cellex-text)' }}>{post.sellerName.charAt(0)}</span>
@@ -645,26 +647,25 @@ function FeedPostCard({
       <div className="relative w-full overflow-hidden bg-slate-950" style={{ aspectRatio: '4 / 3' }}>
         {isVideo ? (
           <Link href="/videos" className="block w-full h-full relative">
-            <video
-              ref={videoRef}
+            <SmartVideo
               src={post.mediaUrl}
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover"
+              className="w-full h-full"
+              autoPlay={true}
+              loop={true}
+              onInView={() => trackView(post.id, post.videoId, post.productId)}
             />
-            <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
+            <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 z-10">
               <Play className="w-3 h-3 text-white fill-white" />
               <span className="text-white text-[10px] font-semibold">Video</span>
             </div>
           </Link>
         ) : (
           <Link href={post.product ? `/product?id=${post.product.id}` : '#'} className="block w-full h-full group">
-            <img
+            <SmartImage
               src={post.mediaUrl}
               alt={post.caption}
-              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-              loading="lazy"
+              width={600}
+              className="w-full h-full group-hover:scale-105 transition duration-500"
             />
           </Link>
         )}

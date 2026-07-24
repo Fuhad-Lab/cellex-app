@@ -6,6 +6,7 @@ import { api, formatPrice, type Product } from '@/lib/api';
 import { Search, Camera, ChevronLeft, Store, Filter, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { SmartImage } from '@/components/smart-image';
 const ALL_CATEGORIES = [
   { label: 'All', value: '' },
   { label: 'Electronics', value: 'Electronics' },
@@ -260,7 +261,7 @@ function CategoryProductCard({ product }: { product: Product }) {
     <Link href={`/product?id=${product.id}`} className="fx-card ig-card block">
       <div className="aspect-square bg-white/5 relative">
         {product.image_url ? (
-          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
+          <SmartImage src={product.image_url} alt={product.name} width={300} className="w-full h-full" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-600">
             <Store className="w-10 h-10" />
