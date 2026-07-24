@@ -260,3 +260,41 @@ Stage Summary:
 - ✅ Search page fixed (was broken white header, now dark premium)
 - ✅ Color rebrand complete: midnight charcoal + coral + warm sand across globals.css, page.tsx, search page, mobile nav
 - ✅ Live on https://eesha-learn.onrender.com
+
+---
+Task ID: 11 (Cellex — Grok-style heavy fluid smoke + liquid glass UI)
+Agent: main (super-z)
+Task: User provided exact GLSL shader + CSS for a Grok-style heavy fluid smoke background with liquid glassmorphism UI. Replace the existing RealisticSmoke with the custom shader.
+
+Work Log:
+- Installed @react-three/drei (three + @react-three/fiber already present).
+- Created src/components/FluidBackground.tsx with the exact GLSL shader provided:
+    * Vertex shader: passes UVs + position
+    * Fragment shader: Domain Warping FBM (Fractal Brownian Motion)
+      - Simplex noise (snoise) with mod289/permute helpers
+      - 3-octave FBM: 0.5 + 0.25 + 0.125 weights
+      - Domain warping: q = fbm(uv), r = fbm(uv + q + offsets), f = fbm(uv + r)
+      - Color mix: dark grey #050505 → #4D5966 via clamp(f*f*4)
+      - Heavy vignette: mix to black at edges
+      - uTime * 0.15 = slow heavy drift (the 'Grok' feel)
+    * Canvas at z-50, pointer-events-none, bg-black
+    * useFrame updates uTime uniform each frame
+- Added liquid-glass utility classes to globals.css:
+    * .liquid-glass: rgba(255,255,255,0.03) bg, blur(20px) saturate(150%),
+      border-top + border-left at 0.2 opacity (light catches), drop shadow
+      0 20px 40px + inset rim
+    * .liquid-glass-high-contrast: gradient bg for active states
+- Applied liquid-glass treatment to .fx-card (all feed cards, product cards,
+  modals) — thick 3D glass with top/left light catches. Hover state adds
+  coral glow border.
+- Updated layout.tsx: RealisticSmoke → FluidBackground
+- Removed dependency on react-smoke package (no longer used)
+
+- Pushed commit 02c0012. Render live at 00:03 UTC. Homepage HTTP 200 in 0.21s.
+
+Stage Summary:
+- ✅ Grok-style heavy fluid smoke background live (custom GLSL Domain Warping FBM)
+- ✅ Liquid glass utility classes added (.liquid-glass, .liquid-glass-high-contrast)
+- ✅ .fx-card now uses liquid glass treatment (thick 3D, top/left light catches)
+- ✅ Slow heavy drift (uTime * 0.15) — smoke has mass and thickness
+- ✅ Live on https://eesha-learn.onrender.com
