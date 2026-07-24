@@ -298,3 +298,34 @@ Stage Summary:
 - ✅ .fx-card now uses liquid glass treatment (thick 3D, top/left light catches)
 - ✅ Slow heavy drift (uTime * 0.15) — smoke has mass and thickness
 - ✅ Live on https://eesha-learn.onrender.com
+
+---
+Task ID: 12 (Cellex — Fix invisible smoke + add PageContainer/SectionGroup)
+Agent: main (super-z)
+Task: User couldn't see the smoke background on live site. Also wants card-grouped UI structure with PageContainer + SectionGroup components.
+
+ROOT CAUSE (smoke was invisible):
+- globals.css had `body { background: linear-gradient(...#050508...) !important; }` — a solid opaque background at z-0 that completely painted over the FluidBackground canvas at z-50.
+- layout.tsx body class had `bg-[#050508]` (solid black).
+- page-transition overlay had `background: #050508` (covered smoke during navigation).
+- login page had `bg-white/10` wrapper. search page had `var(--cellex-bg)` wrapper. Both covered smoke.
+
+FIXES:
+- globals.css body background → `transparent !important` (smoke shows through)
+- layout.tsx body class → removed `bg-[#050508]`
+- page-transition → background transparent
+- FluidBackground shader: boosted color range from (0.05→0.3-0.4) to (0.08→0.45-0.55), reduced vignette from 0.5 to 0.4 — smoke now visible while still dark/premium
+- login page: removed bg-white/10 wrapper
+- search page: removed solid var(--cellex-bg) wrapper
+
+NEW COMPONENTS:
+- src/components/PageContainer.tsx: standardized page layout wrapper. max-w-1280px centered, px-4 py-6, flex-col gap-6.
+- src/components/SectionGroup.tsx: modular liquid-glass section container. Optional title + action button header. Uses .liquid-glass class.
+
+- Pushed commit 68715d6. Render live at 00:13 UTC. Homepage HTTP 200 in 0.21s. Canvas present in HTML.
+
+Stage Summary:
+- ✅ Smoke background now visible on all pages (body bg transparent, shader brightened)
+- ✅ PageContainer component created for standardized page layout
+- ✅ SectionGroup component created for liquid-glass section grouping
+- ✅ Live on https://eesha-learn.onrender.com
