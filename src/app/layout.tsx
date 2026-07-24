@@ -8,7 +8,7 @@ import { OptimisticUIProvider } from "@/components/optimistic-ui";
 import { GlobalSpotlight } from "@/components/global-spotlight";
 import { NavShell } from "@/components/nav-shell";
 import { NativeBackGesture } from "@/components/native-back-gesture";
-import FluidBackground from "@/components/FluidBackground";
+import SmokeBackground from "@/components/SmokeBackground";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -48,8 +48,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
       <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-slate-100`}>
-        {/* Background Layer — Grok-style heavy fluid smoke */}
-        <FluidBackground />
+        {/* Background Layer — video-based smoke (royalty-free from Mixkit) */}
+        <SmokeBackground />
         
         {/* Content Viewport */}
         <div className="relative z-10 w-full min-h-screen">
