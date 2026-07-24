@@ -202,8 +202,8 @@ function CategoriesContent() {
 
       {/* Sort bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <div className="text-xs text-slate-400">
-          {loading ? 'Loading...' : `${products.length} products`}
+        <div className="text-xs" style={{ color: 'var(--cellex-text-muted)' }}>
+          {loading ? '' : `${products.length} products`}
         </div>
         <div className="relative">
           <button
@@ -237,7 +237,7 @@ function CategoriesContent() {
       <div className="grid grid-cols-2 gap-2 px-3 py-3">
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white/5 rounded-md animate-pulse aspect-[3/4]" />
+            <div key={i} className="shimmer rounded-md aspect-[3/4]" />
           ))
         ) : products.length === 0 ? (
           <div className="col-span-2 text-center py-12">

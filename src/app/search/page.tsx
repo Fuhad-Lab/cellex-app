@@ -307,12 +307,12 @@ function SearchContent() {
         {view === 'products' && (
           <div className="animate-fade-in">
             <div className="text-sm mb-4" style={{ color: 'var(--cellex-text-muted)' }}>
-              {loading ? 'Loading...' : `${allProducts.length} results for "${query}"`}
+              {loading ? '' : `${allProducts.length} results for "${query}"`}
             </div>
             {loading ? (
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex gap-3 animate-pulse">
+                  <div key={i} className="flex gap-3">
                     <div className="skeleton w-24 h-24 rounded-lg shrink-0" />
                     <div className="flex-1 space-y-2">
                       <div className="skeleton h-4 rounded w-3/4" />
@@ -336,7 +336,7 @@ function SearchContent() {
         {view === 'videos' && (
           <div className="animate-fade-in">
             <div className="text-sm mb-4" style={{ color: 'var(--cellex-text-muted)' }}>
-              {loading ? 'Loading...' : `${videos.length} videos for "${query}"`}
+              {loading ? '' : `${videos.length} videos for "${query}"`}
             </div>
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
