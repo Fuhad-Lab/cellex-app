@@ -329,3 +329,36 @@ Stage Summary:
 - ✅ PageContainer component created for standardized page layout
 - ✅ SectionGroup component created for liquid-glass section grouping
 - ✅ Live on https://eesha-learn.onrender.com
+
+---
+Task ID: 13 (Cellex — Video smoke background from Mixkit)
+Agent: main (super-z)
+Task: User couldn't see the shader smoke. Suggested using a real video instead. User added 3 Mixkit smoke videos to the repo.
+
+Work Log:
+- Took screenshot of live site, VLM confirmed: "background is a flat, solid dark color" — shader smoke invisible.
+- User added 3 Mixkit smoke videos to repo root:
+    1. mixkit-a-trail-of-smoke-rapidly-twirls-over-a-dark-background-50951-hd-ready.mp4 (7.5 MB)
+    2. mixkit-grey-smoke-on-a-black-background-45298-hd-ready.mp4 (5.8 MB)
+    3. mixkit-white-smoke-with-black-background-1960-hd-ready.mp4 (4.4 MB)
+- Moved to public/, extracted frames, evaluated all 3 with VLM:
+    * Video 1 (trail): elegant ribbon swirls, high contrast, 40-50% negative space — WINNER
+    * Video 2 (grey): dense bottom-heavy clouds, awkward layout constraints
+    * Video 3 (white): chaotic turbulent fill, too noisy behind glass
+- Copied Video 1 → smoke-bg.mp4
+- Created SmokeBackground.tsx (exact code from user): fixed full-screen z-1, video autoPlay loop muted playsInline, opacity 0.65, radial vignette overlay
+- Updated layout.tsx: FluidBackground → SmokeBackground
+- Pushed commit 2097a42. Render live at 01:17 UTC.
+- Video file accessible: HTTP 200, 7.7 MB, content-type video/mp4
+
+VERIFICATION:
+- agent-browser eval: videoExists=true, readyState=4 (fully loaded), paused=false (playing), z-index=-1
+- Pixel sampling: center pixel RGB(83,83,83) = visible grey smoke; other pixels show varying dark tones
+- VLM on fresh screenshot: "a dark, smoky/foggy texture... cloudy, atmospheric appearance with subtle gray gradients that resemble smoke or mist... not a solid black... has soft variations in tone creating depth"
+
+Stage Summary:
+- ✅ Smoke background now VISIBLE on live site (real video, not invisible shader)
+- ✅ Used user's Mixkit video #1 (trail of smoke twirling) — VLM-selected best
+- ✅ All 3 user-provided videos kept in /public/ for reference
+- ✅ SmokeBackground component uses exact user-provided code
+- ✅ Live on https://eesha-learn.onrender.com — smoke confirmed visible via VLM + pixel sampling
