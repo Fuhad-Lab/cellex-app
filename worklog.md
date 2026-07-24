@@ -425,3 +425,53 @@ Stage Summary:
 - ✅ Smoke speed confirmed 0.25x on live site (verified via JS eval)
 - ✅ ~90 seconds per loop (was ~22s at 1.0x, ~45s at 0.5x)
 - ✅ Slow, calm, premium heavy smoke drift
+
+---
+Task ID: 16 (Cellex — Performance optimization: image/video/prefetch)
+Agent: main (super-z)
+Task: User: "page is hanging and lagging". Execute 4 performance optimizations: (1) Supabase URL transformation, (2) high-performance Image component with LQIP, (3) smart video feed component, (4) next-item prefetching.
+
+Work Log:
+- Investigated media URLs: products use gstatic.com (external), videos use test-videos.co.uk. Supabase Storage URLs would be optimized; external URLs pass through.
+- Created 4 utilities + components:
+
+1. src/lib/image-utils.ts (Supabase URL transformation):
+   - optimizeImage(url, {width, height, quality=70, format='webp'}) — auto-appends transform params to Supabase Storage URLs
+   - isSupabaseUrl(url) — checks if URL is Supabase Storage
+   - getLqipUrl(url) — generates 20px blurred placeholder
+   - optimizeImageSrcSet(url, widths) — responsive srcset
+
+2. src/components/smart-image.tsx (SmartImage):
+   - loading='lazy' (deferred until near viewport)
+   - LQIP blur-up: 20px image loads instantly, blurred, swaps to full-res with fade-in
+   - Auto-optimizes Supabase URLs (width/quality/webp)
+   - Optional responsive srcset
+   - decoding='async'
+
+3. src/components/smart-video.tsx (SmartVideo):
+   - preload='metadata' (only duration/dimensions, NOT full video)
+   - IntersectionObserver: auto-plays at 50% viewport, pauses when scrolled away
+   - Muted + playsInline (iOS/Android autoplay compatible)
+   - Click to toggle play/pause with icon overlay
+   - Shimmer placeholder until metadata loads
+
+4. src/hooks/use-prefetch-next.ts (usePrefetchNext):
+   - Detects when user near end of item (70% threshold)
+   - Background-fetches next media asset
+   - Images: new Image() to warm cache
+   - Videos: <link rel='preload'> + temp <video> for metadata cache
+
+- Integrated into:
+  - Homepage feed: <img> → <SmartImage>, <video> → <SmartVideo> with onInView for view tracking. Seller avatars use SmartImage.
+  - Product page: main image gallery uses SmartImage (eager load for LCP)
+  - Categories page: product grid cards use SmartImage
+
+- Pushed commit cdace59. Render live at 16:39 UTC.
+
+Stage Summary:
+- ✅ Supabase URL transformation utility created (optimizeImage, getLqipUrl, optimizeImageSrcSet)
+- ✅ SmartImage component created (lazy + LQIP blur-up + WebP optimization)
+- ✅ SmartVideo component created (preload=metadata + IntersectionObserver autoplay)
+- ✅ usePrefetchNext hook created (background fetch next item)
+- ✅ Integrated into homepage feed, product page, categories page
+- ✅ Live on https://eesha-learn.onrender.com
