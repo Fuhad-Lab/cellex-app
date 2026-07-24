@@ -1,0 +1,1141 @@
+     1→/**
+     2→ * PageSkeleton — pixel-perfect loading skeletons that EXACTLY match each page's
+     3→ * actual DOM structure.
+     4→ *
+     5→ * KEY PRINCIPLE: When the real content loads and replaces the skeleton, there
+     6→ * must be ZERO layout shift. Every skeleton block has the same width, height,
+     7→ * padding, margin, border-radius, and position as its real counterpart.
+     8→ *
+     9→ * The shimmer class is defined in globals.css.
+    10→ */
+    11→
+    12→type Variant =
+    13→  | 'home' | 'categories' | 'product' | 'cart' | 'checkout' | 'orders'
+    14→  | 'search' | 'profile' | 'login' | 'ai-chat' | 'videos' | 'live'
+    15→  | 'group-buy' | 'wishlist' | 'link-account' | 'telegram' | 'payment'
+    16→  | 'seller-dashboard' | 'seller-products' | 'seller-orders' | 'seller-profile'
+    17→  | 'seller-go-live' | 'seller-videos' | 'seller-stories' | 'seller-settings'
+    18→  | 'seller-academy' | 'become-seller' | 'settings' | 'messenger'
+    19→  | 'notifications' | 'create' | 'minimal';
+    20→
+    21→export function PageSkeleton({ variant = 'minimal' }: { variant?: Variant }) {
+    22→  switch (variant) {
+    23→    case 'home':              return <HomeSkeleton />;
+    24→    case 'categories':        return <CategoriesSkeleton />;
+    25→    case 'product':           return <ProductSkeleton />;
+    26→    case 'cart':              return <CartSkeleton />;
+    27→    case 'checkout':          return <CheckoutSkeleton />;
+    28→    case 'orders':            return <OrdersSkeleton />;
+    29→    case 'search':            return <SearchSkeleton />;
+    30→    case 'profile':           return <ProfileSkeleton />;
+    31→    case 'login':             return <LoginSkeleton />;
+    32→    case 'ai-chat':           return <AIChatSkeleton />;
+    33→    case 'videos':            return <VideosSkeleton />;
+    34→    case 'live':              return <LiveSkeleton />;
+    35→    case 'group-buy':         return <GroupBuySkeleton />;
+    36→    case 'wishlist':          return <WishlistSkeleton />;
+    37→    case 'link-account':      return <LinkAccountSkeleton />;
+    38→    case 'telegram':          return <TelegramSkeleton />;
+    39→    case 'payment':           return <PaymentSkeleton />;
+    40→    case 'seller-dashboard':  return <SellerDashboardSkeleton />;
+    41→    case 'seller-products':   return <SellerProductsSkeleton />;
+    42→    case 'seller-orders':     return <SellerOrdersSkeleton />;
+    43→    case 'seller-profile':    return <SellerProfileSkeleton />;
+    44→    case 'seller-go-live':    return <SellerGoLiveSkeleton />;
+    45→    case 'seller-videos':     return <SellerVideosSkeleton />;
+    46→    case 'seller-stories':    return <SellerStoriesSkeleton />;
+    47→    case 'seller-settings':   return <SellerSettingsSkeleton />;
+    48→    case 'seller-academy':    return <SellerAcademySkeleton />;
+    49→    case 'become-seller':     return <BecomeSellerSkeleton />;
+    50→    case 'settings':          return <SettingsSkeleton />;
+    51→    case 'messenger':         return <MessengerSkeleton />;
+    52→    case 'notifications':     return <NotificationsSkeleton />;
+    53→    case 'create':            return <CreateSkeleton />;
+    54→    default:                  return <MinimalSkeleton />;
+    55→  }
+    56→}
+    57→
+    58→// ---- Reusable shimmer block ----
+    59→function S({ className = '' }: { className?: string }) {
+    60→  return <div className={`shimmer ${className}`} />;
+    61→}
+    62→
+    63→// ============================================================
+    64→// HOME (feed) — matches page.tsx exactly:
+    65→//   top bar (logo+search+icons) → stories bar → live banner → feed posts
+    66→// ============================================================
+    67→function HomeSkeleton() {
+    68→  return (
+    69→    <div className="bg-white min-h-screen max-w-xl mx-auto">
+    70→      {/* Top bar: logo + search + icons */}
+    71→      <div className="px-3 pt-3 pb-2 bg-white sticky top-0 z-30 flex items-center gap-2">
+    72→        <S className="w-8 h-8 rounded-lg shrink-0" />
+    73→        <S className="flex-1 h-10 rounded-full" />
+    74→        <S className="w-10 h-10 rounded-full shrink-0" />
+    75→      </div>
+    76→      {/* Stories bar */}
+    77→      <div className="flex gap-3 px-3 py-2 border-b border-white/5">
+    78→        {Array.from({ length: 6 }).map((_, i) => (
+    79→          <div key={i} className="shrink-0 flex flex-col items-center gap-1">
+    80→            <S className="w-14 h-14 rounded-full" />
+    81→            <S className="w-10 h-2" />
+    82→          </div>
+    83→        ))}
+    84→      </div>
+    85→      {/* Live banner */}
+    86→      <div className="px-3 mt-2">
+    87→        <S className="w-full h-12 rounded-xl" />
+    88→      </div>
+    89→      {/* Feed posts — match FeedPostCard structure */}
+    90→      {Array.from({ length: 2 }).map((_, i) => (
+    91→        <div key={i} className="border-b border-white/5">
+    92→          {/* Seller header */}
+    93→          <div className="flex items-center gap-2.5 px-3 py-2.5">
+    94→            <S className="w-9 h-9 rounded-full shrink-0" />
+    95→            <div className="flex-1">
+    96→              <S className="w-24 h-3 mb-1" />
+    97→              <S className="w-12 h-2" />
+    98→            </div>
+    99→            <S className="w-16 h-8 rounded-full" />
+   100→          </div>
+   101→          {/* Media — aspect-square */}
+   102→          <S className="w-full aspect-square rounded-none" />
+   103→          {/* Action bar */}
+   104→          <div className="flex items-center gap-4 px-3 py-2">
+   105→            <S className="w-6 h-6" />
+   106→            <S className="w-6 h-6" />
+   107→            <S className="w-6 h-6" />
+   108→            <S className="w-6 h-6 ml-auto" />
+   109→          </div>
+   110→          {/* Likes + caption */}
+   111→          <div className="px-3 pb-3 space-y-1.5">
+   112→            <S className="w-20 h-3" />
+   113→            <S className="w-3/4 h-3" />
+   114→            <S className="w-1/2 h-3" />
+   115→          </div>
+   116→        </div>
+   117→      ))}
+   118→    </div>
+   119→  );
+   120→}
+   121→
+   122→// ============================================================
+   123→// CATEGORIES — matches categories/page.tsx:
+   124→//   search bar (sticky) → category tabs → subcategory grid → sort bar → 2-col grid
+   125→// ============================================================
+   126→function CategoriesSkeleton() {
+   127→  return (
+   128→    <div className="bg-white min-h-screen">
+   129→      {/* Search bar */}
+   130→      <div className="sticky top-0 z-30 bg-white px-3 pt-3 pb-2 border-b border-white/5 flex items-center gap-2">
+   131→        <S className="w-5 h-5 shrink-0" />
+   132→        <S className="flex-1 h-9 rounded-full" />
+   133→        <S className="w-5 h-5 shrink-0" />
+   134→      </div>
+   135→      {/* Category tabs */}
+   136→      <div className="flex items-center gap-5 px-3 py-2 border-b border-white/5">
+   137→        {Array.from({ length: 7 }).map((_, i) => (
+   138→          <S key={i} className="w-16 h-4 shrink-0" />
+   139→        ))}
+   140→      </div>
+   141→      {/* Subcategory grid (5-col) */}
+   142→      <div className="grid grid-cols-5 gap-2 px-3 py-3 border-b border-white/5">
+   143→        {Array.from({ length: 10 }).map((_, i) => (
+   144→          <div key={i} className="flex flex-col items-center gap-1">
+   145→            <S className="w-11 h-11 rounded-full" />
+   146→            <S className="w-10 h-2" />
+   147→          </div>
+   148→        ))}
+   149→      </div>
+   150→      {/* Sort bar */}
+   151→      <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
+   152→        <S className="w-20 h-3" />
+   153→        <S className="w-20 h-7 rounded-lg" />
+   154→      </div>
+   155→      {/* Product grid 2-col — matches MobileCategoryProductCard */}
+   156→      <div className="grid grid-cols-2 gap-2 px-3 py-3">
+   157→        {Array.from({ length: 8 }).map((_, i) => (
+   158→          <div key={i} className="bg-white rounded-lg overflow-hidden border border-white/5">
+   159→            <S className="w-full aspect-square rounded-none" />
+   160→            <div className="p-2 space-y-1.5">
+   161→              <S className="w-full h-3" />
+   162→              <S className="w-2/3 h-3" />
+   163→              <S className="w-16 h-3 rounded-full" />
+   164→              <S className="w-14 h-4" />
+   165→              <S className="w-10 h-2" />
+   166→            </div>
+   167→          </div>
+   168→        ))}
+   169→      </div>
+   170→    </div>
+   171→  );
+   172→}
+   173→
+   174→// ============================================================
+   175→// PRODUCT DETAIL — matches product/page.tsx:
+   176→//   back btn → image gallery → price → title → trust badges → seller card →
+   177→//   group buy banner → reviews → details → bottom action bar
+   178→// ============================================================
+   179→function ProductSkeleton() {
+   180→  return (
+   181→    <div className="bg-white min-h-screen pb-20">
+   182→      {/* Top bar with back button */}
+   183→      <div className="flex items-center px-3 py-3">
+   184→        <S className="w-9 h-9 rounded-full" />
+   185→      </div>
+   186→      {/* Image gallery — aspect-square */}
+   187→      <S className="w-full aspect-square rounded-none" />
+   188→      {/* Image dots */}
+   189→      <div className="flex justify-center gap-1 py-2">
+   190→        {Array.from({ length: 4 }).map((_, i) => (
+   191→          <S key={i} className="w-1.5 h-1.5 rounded-full" />
+   192→        ))}
+   193→      </div>
+   194→      {/* Price + title */}
+   195→      <div className="px-4 py-3 space-y-2">
+   196→        <S className="w-24 h-7" />
+   197→        <S className="w-3/4 h-5" />
+   198→        <S className="w-20 h-3" />
+   199→      </div>
+   200→      {/* Trust badges */}
+   201→      <div className="px-4 py-2 flex gap-2">
+   202→        <S className="w-28 h-5 rounded-full" />
+   203→        <S className="w-24 h-5 rounded-full" />
+   204→      </div>
+   205→      {/* Group buy banner */}
+   206→      <div className="mx-4 my-3">
+   207→        <S className="w-full h-16 rounded-xl" />
+   208→      </div>
+   209→      {/* Seller card */}
+   210→      <div className="px-4 py-3 flex items-center gap-3 border-t border-white/5">
+   211→        <S className="w-10 h-10 rounded-full" />
+   212→        <div className="flex-1 space-y-1.5">
+   213→          <S className="w-20 h-3" />
+   214→          <S className="w-16 h-2" />
+   215→        </div>
+   216→        <S className="w-14 h-7 rounded-full" />
+   217→      </div>
+   218→      {/* Reviews section */}
+   219→      <div className="px-4 py-3 border-t border-white/5 space-y-2">
+   220→        <S className="w-28 h-4" />
+   221→        <S className="w-full h-16 rounded-lg" />
+   222→      </div>
+   223→      {/* Bottom action bar — fixed */}
+   224→      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-white/5 px-3 py-2 flex gap-2 items-center">
+   225→        <S className="w-10 h-10 rounded-lg" />
+   226→        <S className="w-10 h-10 rounded-lg" />
+   227→        <S className="flex-1 h-10 rounded-full" />
+   228→        <S className="flex-1 h-10 rounded-full" />
+   229→      </div>
+   230→    </div>
+   231→  );
+   232→}
+   233→
+   234→// ============================================================
+   235→// CART — matches cart/page.tsx:
+   236→//   header → cart items (image + name + qty controls) → summary
+   237→// ============================================================
+   238→function CartSkeleton() {
+   239→  return (
+   240→    <div className="bg-white min-h-screen max-w-3xl mx-auto px-4 py-4">
+   241→      <S className="w-20 h-7 mb-4" />
+   242→      {Array.from({ length: 3 }).map((_, i) => (
+   243→        <div key={i} className="flex gap-3 p-3 border border-white/5 rounded-xl mb-3">
+   244→          <S className="w-20 h-20 rounded-xl shrink-0" />
+   245→          <div className="flex-1 space-y-2">
+   246→            <S className="w-3/4 h-4" />
+   247→            <S className="w-16 h-5" />
+   248→            <div className="flex items-center gap-2">
+   249→              <S className="w-8 h-8 rounded-lg" />
+   250→              <S className="w-6 h-4" />
+   251→              <S className="w-8 h-8 rounded-lg" />
+   252→            </div>
+   253→          </div>
+   254→          <S className="w-16 h-4" />
+   255→        </div>
+   256→      ))}
+   257→      {/* Summary */}
+   258→      <div className="border-t border-white/5 pt-4 mt-4 space-y-2">
+   259→        <div className="flex justify-between"><S className="w-16 h-4" /><S className="w-20 h-4" /></div>
+   260→        <div className="flex justify-between"><S className="w-20 h-4" /><S className="w-16 h-4" /></div>
+   261→        <div className="flex justify-between"><S className="w-12 h-5" /><S className="w-24 h-5" /></div>
+   262→        <S className="w-full h-11 rounded-full mt-3" />
+   263→      </div>
+   264→    </div>
+   265→  );
+   266→}
+   267→
+   268→// ============================================================
+   269→// CHECKOUT — matches checkout/page.tsx:
+   270→//   header → shipping form fields → payment method card → place order button
+   271→// ============================================================
+   272→function CheckoutSkeleton() {
+   273→  return (
+   274→    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4 space-y-4">
+   275→      <S className="w-28 h-7" />
+   276→      {/* Shipping form */}
+   277→      <div className="space-y-3">
+   278→        <S className="w-full h-11 rounded-lg" />
+   279→        <S className="w-full h-11 rounded-lg" />
+   280→        <div className="grid grid-cols-2 gap-3">
+   281→          <S className="w-full h-11 rounded-lg" />
+   282→          <S className="w-full h-11 rounded-lg" />
+   283→        </div>
+   284→        <S className="w-full h-20 rounded-lg" />
+   285→      </div>
+   286→      {/* Payment method */}
+   287→      <S className="w-full h-16 rounded-xl" />
+   288→      {/* Place order button */}
+   289→      <S className="w-full h-12 rounded-full" />
+   290→    </div>
+   291→  );
+   292→}
+   293→
+   294→// ============================================================
+   295→// ORDERS — matches orders/page.tsx:
+   296→//   header → order cards (header + item thumbnails + total)
+   297→// ============================================================
+   298→function OrdersSkeleton() {
+   299→  return (
+   300→    <div className="bg-white min-h-screen max-w-3xl mx-auto px-4 py-4">
+   301→      <S className="w-24 h-7 mb-4" />
+   302→      <div className="space-y-3">
+   303→        {Array.from({ length: 4 }).map((_, i) => (
+   304→          <div key={i} className="border border-white/5 rounded-xl overflow-hidden">
+   305→            {/* Order header */}
+   306→            <div className="p-4 flex items-center gap-3">
+   307→              <S className="w-10 h-10 rounded-xl shrink-0" />
+   308→              <div className="flex-1 space-y-1.5">
+   309→                <S className="w-20 h-4" />
+   310→                <S className="w-16 h-2" />
+   311→              </div>
+   312→              <S className="w-16 h-5 rounded-full" />
+   313→            </div>
+   314→            {/* Item thumbnails */}
+   315→            <div className="px-4 pb-3 flex gap-2">
+   316→              <S className="w-12 h-12 rounded-lg" />
+   317→              <S className="w-12 h-12 rounded-lg" />
+   318→              <S className="w-12 h-12 rounded-lg" />
+   319→            </div>
+   320→            {/* Total */}
+   321→            <div className="px-4 py-3 border-t border-white/5 flex justify-between">
+   322→              <S className="w-16 h-4" />
+   323→              <S className="w-20 h-4" />
+   324→            </div>
+   325→          </div>
+   326→        ))}
+   327→      </div>
+   328→    </div>
+   329→  );
+   330→}
+   331→
+   332→// ============================================================
+   333→// SEARCH — matches search/page.tsx:
+   334→//   header (search bar + tabs) → AI answer bubble → product grid → follow-up input
+   335→// ============================================================
+   336→function SearchSkeleton() {
+   337→  return (
+   338→    <div className="bg-white min-h-screen">
+   339→      {/* Header with search + tabs */}
+   340→      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-white/5">
+   341→        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+   342→          <S className="w-9 h-9 rounded-full shrink-0" />
+   343→          <S className="flex-1 h-10 rounded-full" />
+   344→        </div>
+   345→        <div className="max-w-3xl mx-auto px-4 flex gap-4">
+   346→          <S className="w-10 h-6" />
+   347→          <S className="w-24 h-6" />
+   348→          <S className="w-16 h-6" />
+   349→        </div>
+   350→      </div>
+   351→      <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
+   352→        {/* User query bubble */}
+   353→        <div className="flex justify-end">
+   354→          <S className="w-40 h-9 rounded-2xl" />
+   355→        </div>
+   356→        {/* AI answer */}
+   357→        <div className="flex items-start gap-3">
+   358→          <S className="w-8 h-8 rounded-full shrink-0" />
+   359→          <div className="flex-1 space-y-2">
+   360→            <S className="w-full h-3" />
+   361→            <S className="w-5/6 h-3" />
+   362→            <S className="w-4/6 h-3" />
+   363→          </div>
+   364→        </div>
+   365→        {/* Product recommendations */}
+   366→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+   367→          {Array.from({ length: 4 }).map((_, i) => (
+   368→            <div key={i} className="space-y-1.5">
+   369→              <S className="w-full aspect-square rounded-lg" />
+   370→              <S className="w-3/4 h-3" />
+   371→              <S className="w-12 h-4" />
+   372→            </div>
+   373→          ))}
+   374→        </div>
+   375→      </div>
+   376→      {/* Follow-up input bar */}
+   377→      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-white/5 px-4 py-3">
+   378→        <div className="max-w-3xl mx-auto flex items-center gap-2">
+   379→          <S className="w-10 h-10 rounded-full" />
+   380→          <S className="flex-1 h-10 rounded-full" />
+   381→          <S className="w-10 h-10 rounded-full" />
+   382→        </div>
+   383→      </div>
+   384→    </div>
+   385→  );
+   386→}
+   387→
+   388→// ============================================================
+   389→// PROFILE — matches profile/page.tsx:
+   390→//   header → user card → stats grid → menu items → logout
+   391→// ============================================================
+   392→function ProfileSkeleton() {
+   393→  return (
+   394→    <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
+   395→      <div className="flex items-center justify-between">
+   396→        <S className="w-24 h-7" />
+   397→        <S className="w-9 h-9 rounded-full" />
+   398→      </div>
+   399→      {/* User card */}
+   400→      <div className="bg-white p-4 rounded-xl border border-white/5">
+   401→        <div className="flex items-center gap-3 mb-4">
+   402→          <S className="w-16 h-16 rounded-full" />
+   403→          <div className="flex-1 space-y-2">
+   404→            <S className="w-24 h-4" />
+   405→            <S className="w-32 h-3" />
+   406→          </div>
+   407→          <S className="w-14 h-8 rounded-lg" />
+   408→        </div>
+   409→        <div className="space-y-2">
+   410→          <S className="w-40 h-3" />
+   411→          <S className="w-32 h-3" />
+   412→        </div>
+   413→      </div>
+   414→      {/* Stats grid */}
+   415→      <div className="grid grid-cols-3 gap-2">
+   416→        {Array.from({ length: 3 }).map((_, i) => (
+   417→          <div key={i} className="bg-white p-3 rounded-xl border border-white/5 text-center space-y-1">
+   418→            <S className="w-6 h-5 mx-auto" />
+   419→            <S className="w-12 h-3 mx-auto" />
+   420→          </div>
+   421→        ))}
+   422→      </div>
+   423→      {/* Menu items */}
+   424→      {Array.from({ length: 5 }).map((_, i) => (
+   425→        <div key={i} className="bg-white p-3 rounded-xl border border-white/5 flex items-center gap-3">
+   426→          <S className="w-10 h-10 rounded-xl" />
+   427→          <div className="flex-1 space-y-1">
+   428→            <S className="w-24 h-4" />
+   429→            <S className="w-16 h-3" />
+   430→          </div>
+   431→          <S className="w-4 h-4" />
+   432→        </div>
+   433→      ))}
+   434→    </div>
+   435→  );
+   436→}
+   437→
+   438→// ============================================================
+   439→// LOGIN — matches login/page.tsx:
+   440→//   centered logo → title → tab switcher → email/password form → submit button
+   441→// ============================================================
+   442→function LoginSkeleton() {
+   443→  return (
+   444→    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-cyan-50 via-white to-white">
+   445→      <div className="w-full max-w-md space-y-6">
+   446→        <div className="text-center space-y-2">
+   447→          <S className="w-14 h-14 rounded-2xl mx-auto" />
+   448→          <S className="w-20 h-7 mx-auto" />
+   449→          <S className="w-32 h-3 mx-auto" />
+   450→        </div>
+   451→        {/* Tab switcher */}
+   452→        <S className="w-full h-10 rounded-xl" />
+   453→        {/* Form fields */}
+   454→        <div className="space-y-4">
+   455→          <div className="space-y-1.5">
+   456→            <S className="w-12 h-3" />
+   457→            <S className="w-full h-11 rounded-xl" />
+   458→          </div>
+   459→          <div className="space-y-1.5">
+   460→            <S className="w-16 h-3" />
+   461→            <S className="w-full h-11 rounded-xl" />
+   462→          </div>
+   463→          <S className="w-full h-11 rounded-xl" />
+   464→        </div>
+   465→      </div>
+   466→    </div>
+   467→  );
+   468→}
+   469→
+   470→// ============================================================
+   471→// AI CHAT — matches ai-chat/page.tsx:
+   472→//   header → messages (user bubble + AI bubble) → suggestion chips → input bar
+   473→// ============================================================
+   474→function AIChatSkeleton() {
+   475→  return (
+   476→    <div className="bg-white min-h-screen flex flex-col max-w-3xl mx-auto">
+   477→      {/* Header */}
+   478→      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
+   479→        <S className="w-9 h-9 rounded-xl shrink-0" />
+   480→        <div className="flex-1">
+   481→          <S className="w-32 h-4 mb-1" />
+   482→          <S className="w-20 h-2" />
+   483→        </div>
+   484→        <S className="w-8 h-8 rounded-lg" />
+   485→      </div>
+   486→      {/* Messages */}
+   487→      <div className="flex-1 p-4 space-y-4">
+   488→        <div className="flex justify-end">
+   489→          <S className="w-40 h-9 rounded-2xl" />
+   490→        </div>
+   491→        <div className="flex items-start gap-2">
+   492→          <S className="w-8 h-8 rounded-full shrink-0" />
+   493→          <div className="flex-1 space-y-2">
+   494→            <S className="w-full h-3" />
+   495→            <S className="w-5/6 h-3" />
+   496→            <S className="w-4/6 h-3" />
+   497→          </div>
+   498→        </div>
+   499→      </div>
+   500→      {/* Suggestion chips */}
+   501→      <div className="px-4 py-2 flex gap-2 flex-wrap">
+   502→        {Array.from({ length: 3 }).map((_, i) => (
+   503→          <S key={i} className="w-32 h-8 rounded-full" />
+   504→        ))}
+   505→      </div>
+   506→      {/* Input bar */}
+   507→      <div className="px-4 py-3 border-t border-white/5 flex items-center gap-2">
+   508→        <S className="w-10 h-10 rounded-full" />
+   509→        <S className="flex-1 h-10 rounded-full" />
+   510→        <S className="w-10 h-10 rounded-full" />
+   511→      </div>
+   512→    </div>
+   513→  );
+   514→}
+   515→
+   516→// ============================================================
+   517→// VIDEOS — TikTok-style vertical feed:
+   518→//   full-screen video cards with right action rail + bottom caption
+   519→// ============================================================
+   520→function VideosSkeleton() {
+   521→  return (
+   522→    <div className="bg-black min-h-screen">
+   523→      {Array.from({ length: 2 }).map((_, i) => (
+   524→        <div key={i} className="relative w-full aspect-[9/16] bg-slate-900">
+   525→          <S className="w-full h-full rounded-none" />
+   526→          {/* Right action rail */}
+   527→          <div className="absolute right-2 bottom-20 flex flex-col gap-4">
+   528→            <S className="w-10 h-10 rounded-full" />
+   529→            <S className="w-10 h-10 rounded-full" />
+   530→            <S className="w-10 h-10 rounded-full" />
+   531→            <S className="w-10 h-10 rounded-full" />
+   532→          </div>
+   533→          {/* Bottom caption */}
+   534→          <div className="absolute bottom-4 left-4 right-16 space-y-2">
+   535→            <S className="w-24 h-4" />
+   536→            <S className="w-full h-3" />
+   537→            <S className="w-3/4 h-3" />
+   538→            <S className="w-32 h-8 rounded-lg" />
+   539→          </div>
+   540→        </div>
+   541→      ))}
+   542→    </div>
+   543→  );
+   544→}
+   545→
+   546→// ============================================================
+   547→// LIVE — matches live/page.tsx:
+   548→//   header → "LIVE NOW" section → grid of live session cards
+   549→// ============================================================
+   550→function LiveSkeleton() {
+   551→  return (
+   552→    <div className="bg-white min-h-screen max-w-5xl mx-auto px-4 py-4 space-y-6">
+   553→      <div className="flex items-center gap-2">
+   554→        <S className="w-6 h-6" />
+   555→        <S className="w-32 h-7" />
+   556→      </div>
+   557→      <div>
+   558→        <S className="w-24 h-5 mb-3" />
+   559→        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+   560→          {Array.from({ length: 3 }).map((_, i) => (
+   561→            <div key={i} className="rounded-xl overflow-hidden border border-white/5">
+   562→              <S className="w-full aspect-video" />
+   563→              <div className="p-3 space-y-2">
+   564→                <S className="w-3/4 h-4" />
+   565→                <S className="w-16 h-3" />
+   566→              </div>
+   567→            </div>
+   568→          ))}
+   569→        </div>
+   570→      </div>
+   571→    </div>
+   572→  );
+   573→}
+   574→
+   575→// ============================================================
+   576→// GROUP BUY — matches group-buy/page.tsx:
+   577→//   back link → group buy banner → product card → join section
+   578→// ============================================================
+   579→function GroupBuySkeleton() {
+   580→  return (
+   581→    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4">
+   582→      <S className="w-32 h-4 mb-3" />
+   583→      {/* Group buy banner */}
+   584→      <S className="w-full h-24 rounded-2xl mb-4" />
+   585→      {/* Product card */}
+   586→      <div className="flex gap-3 p-3 border border-white/5 rounded-xl mb-4">
+   587→        <S className="w-20 h-20 rounded-xl shrink-0" />
+   588→        <div className="flex-1 space-y-2">
+   589→          <S className="w-3/4 h-4" />
+   590→          <S className="w-16 h-5" />
+   591→          <S className="w-20 h-3" />
+   592→        </div>
+   593→      </div>
+   594→      {/* Join section */}
+   595→      <S className="w-full h-16 rounded-xl" />
+   596→    </div>
+   597→  );
+   598→}
+   599→
+   600→// ============================================================
+   601→// WISHLIST — matches wishlist/page.tsx:
+   602→//   header → list of product cards (image + name + price + remove)
+   603→// ============================================================
+   604→function WishlistSkeleton() {
+   605→  return (
+   606→    <div className="bg-white min-h-screen max-w-4xl mx-auto px-4 py-4">
+   607→      <S className="w-28 h-7 mb-4" />
+   608→      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   609→        {Array.from({ length: 4 }).map((_, i) => (
+   610→          <div key={i} className="p-3 border border-white/5 rounded-xl flex gap-3">
+   611→            <S className="w-20 h-20 rounded-xl shrink-0" />
+   612→            <div className="flex-1 space-y-2">
+   613→              <S className="w-3/4 h-4" />
+   614→              <S className="w-16 h-5" />
+   615→              <S className="w-20 h-3" />
+   616→            </div>
+   617→          </div>
+   618→        ))}
+   619→      </div>
+   620→    </div>
+   621→  );
+   622→}
+   623→
+   624→// ============================================================
+   625→// LINK ACCOUNT — matches link-account/page.tsx:
+   626→//   back link → header card → info card → steps
+   627→// ============================================================
+   628→function LinkAccountSkeleton() {
+   629→  return (
+   630→    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4">
+   631→      <S className="w-32 h-4 mb-3" />
+   632→      <div className="flex items-center gap-3 mb-4">
+   633→        <S className="w-12 h-12 rounded-2xl" />
+   634→        <div>
+   635→          <S className="w-32 h-6 mb-1" />
+   636→          <S className="w-48 h-3" />
+   637→        </div>
+   638→      </div>
+   639→      <S className="w-full h-24 rounded-xl mb-4" />
+   640→      <S className="w-full h-12 rounded-xl" />
+   641→    </div>
+   642→  );
+   643→}
+   644→
+   645→// ============================================================
+   646→// TELEGRAM — matches telegram/page.tsx:
+   647→//   back link → header → channel info card → features list
+   648→// ============================================================
+   649→function TelegramSkeleton() {
+   650→  return (
+   651→    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4">
+   652→      <S className="w-32 h-4 mb-3" />
+   653→      <div className="flex items-center gap-3 mb-4">
+   654→        <S className="w-12 h-12 rounded-2xl" />
+   655→        <div>
+   656→          <S className="w-36 h-6 mb-1" />
+   657→          <S className="w-48 h-3" />
+   658→        </div>
+   659→      </div>
+   660→      <S className="w-full h-20 rounded-xl mb-4" />
+   661→      <div className="space-y-3">
+   662→        {Array.from({ length: 3 }).map((_, i) => (
+   663→          <S key={i} className="w-full h-12 rounded-xl" />
+   664→        ))}
+   665→      </div>
+   666→    </div>
+   667→  );
+   668→}
+   669→
+   670→// ============================================================
+   671→// PAYMENT — matches payment/page.tsx:
+   672→//   steps indicator → payment details card → status card
+   673→// ============================================================
+   674→function PaymentSkeleton() {
+   675→  return (
+   676→    <div className="bg-white min-h-screen max-w-2xl mx-auto px-4 py-4 space-y-4">
+   677→      <S className="w-24 h-7" />
+   678→      {/* Steps indicator */}
+   679→      <div className="flex items-center justify-center gap-2">
+   680→        {Array.from({ length: 3 }).map((_, i) => (
+   681→          <S key={i} className="w-8 h-8 rounded-full" />
+   682→        ))}
+   683→      </div>
+   684→      {/* Payment details */}
+   685→      <S className="w-full h-40 rounded-xl" />
+   686→      {/* Status */}
+   687→      <S className="w-full h-20 rounded-xl" />
+   688→    </div>
+   689→  );
+   690→}
+   691→
+   692→// ============================================================
+   693→// SELLER DASHBOARD — matches seller-dashboard/page.tsx:
+   694→//   header → store profile card → stats grid → menu sections
+   695→// ============================================================
+   696→function SellerDashboardSkeleton() {
+   697→  return (
+   698→    <div className="bg-white min-h-screen max-w-2xl mx-auto pb-24">
+   699→      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
+   700→        <S className="w-9 h-9 rounded-full" />
+   701→        <S className="w-20 h-5" />
+   702→      </div>
+   703→      {/* Store header */}
+   704→      <div className="px-4 py-6 text-center border-b border-white/5">
+   705→        <S className="w-20 h-20 rounded-full mx-auto mb-3" />
+   706→        <S className="w-32 h-6 mx-auto mb-2" />
+   707→        <S className="w-24 h-3 mx-auto" />
+   708→      </div>
+   709→      {/* Stats grid */}
+   710→      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-white/5">
+   711→        {Array.from({ length: 4 }).map((_, i) => (
+   712→          <div key={i} className="text-center space-y-1">
+   713→            <S className="w-4 h-4 mx-auto" />
+   714→            <S className="w-8 h-4 mx-auto" />
+   715→            <S className="w-10 h-2 mx-auto" />
+   716→          </div>
+   717→        ))}
+   718→      </div>
+   719→      {/* Menu sections */}
+   720→      {Array.from({ length: 3 }).map((_, section) => (
+   721→        <div key={section} className="px-4 py-3">
+   722→          <S className="w-16 h-3 mb-2" />
+   723→          <div className="border border-white/5 rounded-xl divide-y divide-white/5">
+   724→            {Array.from({ length: 3 }).map((_, i) => (
+   725→              <div key={i} className="flex items-center gap-3 p-3">
+   726→                <S className="w-9 h-9 rounded-lg" />
+   727→                <div className="flex-1 space-y-1">
+   728→                  <S className="w-24 h-4" />
+   729→                  <S className="w-16 h-3" />
+   730→                </div>
+   731→                <S className="w-4 h-4" />
+   732→              </div>
+   733→            ))}
+   734→          </div>
+   735→        </div>
+   736→      ))}
+   737→    </div>
+   738→  );
+   739→}
+   740→
+   741→// ============================================================
+   742→// SELLER PRODUCTS — matches seller/products/page.tsx:
+   743→//   header → search bar → product grid with edit/delete overlays
+   744→// ============================================================
+   745→function SellerProductsSkeleton() {
+   746→  return (
+   747→    <div className="space-y-4 max-w-4xl mx-auto p-4">
+   748→      <S className="w-32 h-7" />
+   749→      <S className="w-full h-11 rounded-full" />
+   750→      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+   751→        {Array.from({ length: 6 }).map((_, i) => (
+   752→          <div key={i} className="rounded-xl overflow-hidden border border-white/5">
+   753→            <S className="w-full aspect-square" />
+   754→            <div className="p-3 space-y-2">
+   755→              <S className="w-3/4 h-3" />
+   756→              <S className="w-16 h-4" />
+   757→              <div className="flex gap-2">
+   758→                <S className="flex-1 h-8 rounded-lg" />
+   759→                <S className="flex-1 h-8 rounded-lg" />
+   760→              </div>
+   761→            </div>
+   762→          </div>
+   763→        ))}
+   764→      </div>
+   765→    </div>
+   766→  );
+   767→}
+   768→
+   769→// ============================================================
+   770→// SELLER ORDERS — matches seller/orders/page.tsx:
+   771→//   header → order list with item breakdown
+   772→// ============================================================
+   773→function SellerOrdersSkeleton() {
+   774→  return (
+   775→    <div className="space-y-3 max-w-4xl mx-auto p-4">
+   776→      <S className="w-24 h-7 mb-4" />
+   777→      {Array.from({ length: 4 }).map((_, i) => (
+   778→        <div key={i} className="border border-white/5 rounded-xl p-4 space-y-2">
+   779→          <div className="flex justify-between">
+   780→            <S className="w-20 h-4" />
+   781→            <S className="w-16 h-5 rounded-full" />
+   782→          </div>
+   783→          <div className="flex gap-2">
+   784→            <S className="w-12 h-12 rounded-lg" />
+   785→            <S className="w-12 h-12 rounded-lg" />
+   786→          </div>
+   787→          <S className="w-16 h-4" />
+   788→        </div>
+   789→      ))}
+   790→    </div>
+   791→  );
+   792→}
+   793→
+   794→// ============================================================
+   795→// SELLER PROFILE (edit) — matches seller/profile/page.tsx:
+   796→//   header → logo upload → form fields → save button
+   797→// ============================================================
+   798→function SellerProfileSkeleton() {
+   799→  return (
+   800→    <div className="space-y-4 max-w-2xl mx-auto p-4">
+   801→      <S className="w-32 h-7" />
+   802→      <div className="border border-white/5 rounded-xl p-4 space-y-3">
+   803→        <S className="w-16 h-16 rounded-2xl mx-auto" />
+   804→        <div className="space-y-2">
+   805→          <S className="w-20 h-3" />
+   806→          <S className="w-full h-11 rounded-lg" />
+   807→        </div>
+   808→        <div className="space-y-2">
+   809→          <S className="w-16 h-3" />
+   810→          <S className="w-full h-11 rounded-lg" />
+   811→        </div>
+   812→        <div className="space-y-2">
+   813→          <S className="w-24 h-3" />
+   814→          <S className="w-full h-20 rounded-lg" />
+   815→        </div>
+   816→      </div>
+   817→      <S className="w-full h-11 rounded-full" />
+   818→    </div>
+   819→  );
+   820→}
+   821→
+   822→// ============================================================
+   823→// SELLER GO LIVE — matches seller/go-live/page.tsx:
+   824→//   header → form → active session card
+   825→// ============================================================
+   826→function SellerGoLiveSkeleton() {
+   827→  return (
+   828→    <div className="space-y-4 max-w-2xl mx-auto p-4">
+   829→      <S className="w-24 h-7" />
+   830→      <div className="border border-white/5 rounded-xl p-4 space-y-3">
+   831→        <div className="space-y-2">
+   832→          <S className="w-20 h-3" />
+   833→          <S className="w-full h-11 rounded-lg" />
+   834→        </div>
+   835→        <div className="space-y-2">
+   836→          <S className="w-16 h-3" />
+   837→          <S className="w-full h-11 rounded-lg" />
+   838→        </div>
+   839→      </div>
+   840→      <S className="w-full h-11 rounded-full" />
+   841→      <S className="w-full h-24 rounded-xl" />
+   842→    </div>
+   843→  );
+   844→}
+   845→
+   846→// ============================================================
+   847→// SELLER VIDEOS — matches seller/videos/page.tsx:
+   848→//   header → post form → video list
+   849→// ============================================================
+   850→function SellerVideosSkeleton() {
+   851→  return (
+   852→    <div className="space-y-4 max-w-2xl mx-auto p-4">
+   853→      <S className="w-24 h-7" />
+   854→      <div className="border border-white/5 rounded-xl p-4 space-y-3">
+   855→        <div className="space-y-2">
+   856→          <S className="w-20 h-3" />
+   857→          <S className="w-full h-11 rounded-lg" />
+   858→        </div>
+   859→        <div className="space-y-2">
+   860→          <S className="w-16 h-3" />
+   861→          <S className="w-full h-11 rounded-lg" />
+   862→        </div>
+   863→        <S className="w-full h-11 rounded-full" />
+   864→      </div>
+   865→      {Array.from({ length: 3 }).map((_, i) => (
+   866→        <div key={i} className="flex gap-3 border border-white/5 rounded-xl p-3">
+   867→          <S className="w-20 h-20 rounded-lg shrink-0" />
+   868→          <div className="flex-1 space-y-2">
+   869→            <S className="w-3/4 h-4" />
+   870→            <S className="w-16 h-3" />
+   871→            <div className="flex gap-2">
+   872→              <S className="w-12 h-3" />
+   873→              <S className="w-12 h-3" />
+   874→            </div>
+   875→          </div>
+   876→        </div>
+   877→      ))}
+   878→    </div>
+   879→  );
+   880→}
+   881→
+   882→// ============================================================
+   883→// SELLER STORIES — matches seller/stories/page.tsx:
+   884→//   header → story type selector → form
+   885→// ============================================================
+   886→function SellerStoriesSkeleton() {
+   887→  return (
+   888→    <div className="space-y-4 max-w-2xl mx-auto p-4">
+   889→      <S className="w-24 h-7" />
+   890→      <div className="grid grid-cols-2 gap-2">
+   891→        {Array.from({ length: 4 }).map((_, i) => (
+   892→          <S key={i} className="w-full h-16 rounded-xl" />
+   893→        ))}
+   894→      </div>
+   895→      <div className="border border-white/5 rounded-xl p-4 space-y-3">
+   896→        <div className="space-y-2">
+   897→          <S className="w-20 h-3" />
+   898→          <S className="w-full h-11 rounded-lg" />
+   899→        </div>
+   900→        <div className="space-y-2">
+   901→          <S className="w-16 h-3" />
+   902→          <S className="w-full h-20 rounded-lg" />
+   903→        </div>
+   904→        <S className="w-full h-11 rounded-full" />
+   905→      </div>
+   906→    </div>
+   907→  );
+   908→}
+   909→
+   910→// ============================================================
+   911→// SELLER SETTINGS — matches seller/settings/page.tsx:
+   912→//   header → account → notifications → region → security → danger zone
+   913→// ============================================================
+   914→function SellerSettingsSkeleton() {
+   915→  return (
+   916→    <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+   917→      <div className="flex items-center gap-3">
+   918→        <S className="w-9 h-9 rounded-full" />
+   919→        <S className="w-20 h-7" />
+   920→      </div>
+   921→      {Array.from({ length: 4 }).map((_, section) => (
+   922→        <div key={section}>
+   923→          <S className="w-20 h-3 mb-2" />
+   924→          <div className="border border-white/5 rounded-xl divide-y divide-white/5">
+   925→            {Array.from({ length: 3 }).map((_, i) => (
+   926→              <div key={i} className="flex items-center gap-3 p-4">
+   927→                <S className="w-9 h-9 rounded-lg" />
+   928→                <div className="flex-1 space-y-1">
+   929→                  <S className="w-24 h-4" />
+   930→                  <S className="w-16 h-3" />
+   931→                </div>
+   932→              </div>
+   933→            ))}
+   934→          </div>
+   935→        </div>
+   936→      ))}
+   937→    </div>
+   938→  );
+   939→}
+   940→
+   941→// ============================================================
+   942→// SELLER ACADEMY — matches seller/academy/page.tsx:
+   943→//   header → hero card → course cards grid
+   944→// ============================================================
+   945→function SellerAcademySkeleton() {
+   946→  return (
+   947→    <div className="space-y-6 max-w-4xl mx-auto p-4">
+   948→      <S className="w-24 h-7" />
+   949→      <S className="w-full h-32 rounded-xl" />
+   950→      <S className="w-32 h-5" />
+   951→      <div className="grid gap-3 sm:grid-cols-2">
+   952→        {Array.from({ length: 4 }).map((_, i) => (
+   953→          <div key={i} className="border border-white/5 rounded-xl p-4">
+   954→            <div className="flex items-start gap-3">
+   955→              <S className="w-10 h-10 rounded-lg shrink-0" />
+   956→              <div className="flex-1 space-y-2">
+   957→                <S className="w-3/4 h-4" />
+   958→                <S className="w-full h-3" />
+   959→                <div className="flex gap-2">
+   960→                  <S className="w-12 h-4 rounded-full" />
+   961→                  <S className="w-16 h-4 rounded-full" />
+   962→                </div>
+   963→              </div>
+   964→            </div>
+   965→          </div>
+   966→        ))}
+   967→      </div>
+   968→    </div>
+   969→  );
+   970→}
+   971→
+   972→// ============================================================
+   973→// BECOME SELLER — matches become-seller/page.tsx:
+   974→//   header + progress bar → form fields
+   975→// ============================================================
+   976→function BecomeSellerSkeleton() {
+   977→  return (
+   978→    <div className="max-w-md mx-auto px-4 py-4">
+   979→      <div className="flex items-center gap-3 mb-6">
+   980→        <S className="w-9 h-9 rounded-full" />
+   981→        <div className="flex-1">
+   982→          <S className="w-28 h-5 mb-1" />
+   983→          <S className="w-16 h-3" />
+   984→        </div>
+   985→      </div>
+   986→      <div className="flex gap-1.5 mb-6">
+   987→        {Array.from({ length: 3 }).map((_, i) => (
+   988→          <S key={i} className="h-1.5 flex-1 rounded-full" />
+   989→        ))}
+   990→      </div>
+   991→      <div className="space-y-5">
+   992→        <div className="flex flex-col items-center gap-2">
+   993→          <S className="w-24 h-24 rounded-full" />
+   994→        </div>
+   995→        <div className="space-y-1.5">
+   996→          <S className="w-20 h-3" />
+   997→          <S className="w-full h-11 rounded-lg" />
+   998→        </div>
+   999→        <div className="space-y-2">
+  1000→          <S className="w-16 h-3" />
+  1001→          <div className="grid grid-cols-3 gap-2">
+  1002→            {Array.from({ length: 3 }).map((_, i) => (
+  1003→              <S key={i} className="w-full h-14 rounded-xl" />
+  1004→            ))}
+  1005→          </div>
+  1006→        </div>
+  1007→        <S className="w-full h-11 rounded-full" />
+  1008→      </div>
+  1009→    </div>
+  1010→  );
+  1011→}
+  1012→
+  1013→// ============================================================
+  1014→// SETTINGS — matches settings/page.tsx:
+  1015→//   header → account → preferences → selling → support → security
+  1016→// ============================================================
+  1017→function SettingsSkeleton() {
+  1018→  return (
+  1019→    <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+  1020→      <div className="flex items-center gap-3">
+  1021→        <S className="w-9 h-9 rounded-full" />
+  1022→        <S className="w-20 h-7" />
+  1023→      </div>
+  1024→      {Array.from({ length: 5 }).map((_, section) => (
+  1025→        <div key={section}>
+  1026→          <S className="w-20 h-3 mb-2" />
+  1027→          <div className="border border-white/5 rounded-xl divide-y divide-white/5">
+  1028→            {Array.from({ length: 3 }).map((_, i) => (
+  1029→              <div key={i} className="flex items-center gap-3 p-4">
+  1030→                <S className="w-9 h-9 rounded-lg" />
+  1031→                <div className="flex-1 space-y-1">
+  1032→                  <S className="w-24 h-4" />
+  1033→                  <S className="w-16 h-3" />
+  1034→                </div>
+  1035→                <S className="w-11 h-6 rounded-full" />
+  1036→              </div>
+  1037→            ))}
+  1038→          </div>
+  1039→        </div>
+  1040→      ))}
+  1041→    </div>
+  1042→  );
+  1043→}
+  1044→
+  1045→// ============================================================
+  1046→// MESSENGER — matches messenger/page.tsx:
+  1047→//   header → tabs → conversation list
+  1048→// ============================================================
+  1049→function MessengerSkeleton() {
+  1050→  return (
+  1051→    <div className="bg-white min-h-screen max-w-2xl mx-auto">
+  1052→      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center gap-3">
+  1053→        <S className="w-9 h-9 rounded-full" />
+  1054→        <S className="w-24 h-6 flex-1" />
+  1055→        <S className="w-9 h-9 rounded-full" />
+  1056→      </div>
+  1057→      <div className="border-b border-white/5 px-2 flex gap-1">
+  1058→        {Array.from({ length: 4 }).map((_, i) => (
+  1059→          <S key={i} className="w-16 h-6 my-3" />
+  1060→        ))}
+  1061→      </div>
+  1062→      {Array.from({ length: 5 }).map((_, i) => (
+  1063→        <div key={i} className="flex items-center gap-3 px-4 py-3 border-b border-slate-50">
+  1064→          <S className="w-12 h-12 rounded-full shrink-0" />
+  1065→          <div className="flex-1 space-y-1.5">
+  1066→            <S className="w-24 h-4" />
+  1067→            <S className="w-40 h-3" />
+  1068→          </div>
+  1069→        </div>
+  1070→      ))}
+  1071→    </div>
+  1072→  );
+  1073→}
+  1074→
+  1075→// ============================================================
+  1076→// NOTIFICATIONS — matches notifications/page.tsx:
+  1077→//   header → notification list with typed icons
+  1078→// ============================================================
+  1079→function NotificationsSkeleton() {
+  1080→  return (
+  1081→    <div className="bg-white min-h-screen max-w-2xl mx-auto">
+  1082→      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center gap-3">
+  1083→        <S className="w-9 h-9 rounded-full" />
+  1084→        <S className="w-28 h-6 flex-1" />
+  1085→        <S className="w-20 h-3" />
+  1086→      </div>
+  1087→      {Array.from({ length: 6 }).map((_, i) => (
+  1088→        <div key={i} className="flex items-start gap-3 px-4 py-3 border-b border-slate-50">
+  1089→          <S className="w-10 h-10 rounded-full shrink-0" />
+  1090→          <div className="flex-1 space-y-1.5">
+  1091→            <S className="w-32 h-4" />
+  1092→            <S className="w-full h-3" />
+  1093→          </div>
+  1094→        </div>
+  1095→      ))}
+  1096→    </div>
+  1097→  );
+  1098→}
+  1099→
+  1100→// ============================================================
+  1101→// CREATE — matches create/page.tsx:
+  1102→//   header → option cards
+  1103→// ============================================================
+  1104→function CreateSkeleton() {
+  1105→  return (
+  1106→    <div className="bg-white min-h-screen max-w-md mx-auto">
+  1107→      <div className="sticky top-0 z-30 bg-white border-b border-white/5 px-4 py-3 flex items-center justify-between">
+  1108→        <S className="w-16 h-6" />
+  1109→        <S className="w-9 h-9 rounded-full" />
+  1110→      </div>
+  1111→      <div className="p-4 space-y-2">
+  1112→        {Array.from({ length: 4 }).map((_, i) => (
+  1113→          <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-white/5">
+  1114→            <S className="w-12 h-12 rounded-xl shrink-0" />
+  1115→            <div className="flex-1 space-y-1.5">
+  1116→              <S className="w-24 h-4" />
+  1117→              <S className="w-32 h-3" />
+  1118→            </div>
+  1119→          </div>
+  1120→        ))}
+  1121→      </div>
+  1122→    </div>
+  1123→  );
+  1124→}
+  1125→
+  1126→// ============================================================
+  1127→// MINIMAL (fallback)
+  1128→// ============================================================
+  1129→function MinimalSkeleton() {
+  1130→  return (
+  1131→    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+  1132→      <div className="w-full max-w-md space-y-4">
+  1133→        <S className="w-24 h-8 mx-auto" />
+  1134→        <S className="w-full h-12" />
+  1135→        <S className="w-full h-12" />
+  1136→        <S className="w-full h-12" />
+  1137→      </div>
+  1138→    </div>
+  1139→  );
+  1140→}
+  1141→
