@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
-      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-slate-100`}>
+      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-slate-900`}>
         {/* Background Layer — video-based smoke (royalty-free from Mixkit) */}
         <SmokeBackground />
         

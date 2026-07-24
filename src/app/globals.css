@@ -54,78 +54,80 @@
    ============================================================ */
 
 :root {
-  /* Cellex dark premium fashion palette — midnight charcoal + blush coral + warm sand */
-  --background: #0F1115;
-  --foreground: #F5F7FA;
-  --card: #171A21;
-  --card-foreground: #F5F7FA;
-  --popover: #171A21;
-  --popover-foreground: #F5F7FA;
-  --primary: #FF6B6B;
-  --primary-hover: #ff5252;
-  --primary-foreground: #0F1115;
-  --secondary: #171A21;
-  --secondary-foreground: #F5F7FA;
-  --muted: #1C2028;
-  --muted-foreground: #A7B0BE;
-  --accent: #F4B860;
-  --accent-foreground: #0F1115;
-  --destructive: #FF6B6B;
+  /* Cellex "Pearlescent Smoke" — light-mode glassmorphism over smoke video.
+     Palette: frosted pearl glass, silk reflection borders, deep obsidian text,
+     champagne gold accent for CTAs. */
+  --background: #F8F9FA;
+  --foreground: #1A1D20;
+  --card: rgba(255, 255, 255, 0.45);
+  --card-foreground: #1A1D20;
+  --popover: rgba(255, 255, 255, 0.75);
+  --popover-foreground: #1A1D20;
+  --primary: #D4AF37;
+  --primary-hover: #C4A030;
+  --primary-foreground: #1A1D20;
+  --secondary: rgba(248, 249, 250, 0.75);
+  --secondary-foreground: #1A1D20;
+  --muted: rgba(255, 255, 255, 0.3);
+  --muted-foreground: #64748B;
+  --accent: #D4AF37;
+  --accent-foreground: #1A1D20;
+  --destructive: #E53E3E;
   --destructive-foreground: #ffffff;
-  --border: #262B36;
-  --input: #262B36;
-  --ring: #FF6B6B;
-  --chart-1: #FF6B6B;
-  --chart-2: #F4B860;
+  --border: rgba(255, 255, 255, 0.6);
+  --input: rgba(255, 255, 255, 0.5);
+  --ring: #D4AF37;
+  --chart-1: #D4AF37;
+  --chart-2: #98B4A6;
   --chart-3: #28C76F;
-  --chart-4: #A7B0BE;
-  --chart-5: #262B36;
+  --chart-4: #64748B;
+  --chart-5: #94A3B8;
   --radius: 0.5rem;
-  --sidebar: #171A21;
-  --sidebar-foreground: #F5F7FA;
-  --sidebar-primary: #FF6B6B;
-  --sidebar-primary-foreground: #0F1115;
-  --sidebar-accent: #1C2028;
-  --sidebar-accent-foreground: #F5F7FA;
-  --sidebar-border: #262B36;
-  --sidebar-ring: #FF6B6B;
+  --sidebar: rgba(255, 255, 255, 0.45);
+  --sidebar-foreground: #1A1D20;
+  --sidebar-primary: #D4AF37;
+  --sidebar-primary-foreground: #1A1D20;
+  --sidebar-accent: rgba(255, 255, 255, 0.3);
+  --sidebar-accent-foreground: #1A1D20;
+  --sidebar-border: rgba(255, 255, 255, 0.6);
+  --sidebar-ring: #D4AF37;
 
-  /* Semantic tokens for the new palette */
-  --cellex-bg: #0F1115;
-  --cellex-surface: #171A21;
-  --cellex-surface-2: #1C2028;
-  --cellex-text: #F5F7FA;
-  --cellex-text-muted: #A7B0BE;
-  --cellex-coral: #FF6B6B;
-  --cellex-coral-hover: #ff5252;
-  --cellex-sand: #F4B860;
+  /* Semantic tokens — Pearlescent Smoke light mode */
+  --cellex-bg: transparent;          /* transparent so smoke video shows through */
+  --cellex-surface: rgba(255, 255, 255, 0.45);  /* frosted pearl glass */
+  --cellex-surface-2: rgba(248, 249, 250, 0.75); /* glossy milk fluid (buttons) */
+  --cellex-text: #1A1D20;            /* deep obsidian */
+  --cellex-text-muted: #64748B;      /* slate-500 — readable on light glass */
+  --cellex-coral: #D4AF37;           /* champagne gold (was coral) */
+  --cellex-coral-hover: #C4A030;
+  --cellex-sand: #D4AF37;            /* champagne gold (was warm sand) */
   --cellex-success: #28C76F;
-  --cellex-border: #262B36;
+  --cellex-border: rgba(255, 255, 255, 0.6);  /* silk reflection edge */
 
   /* IG-style font stack */
   --font-ig: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .dark {
-  --background: #0F1115;
-  --foreground: #F5F7FA;
-  --card: #171A21;
-  --card-foreground: #F5F7FA;
-  --popover: #171A21;
-  --popover-foreground: #F5F7FA;
-  --primary: #FF6B6B;
-  --primary-foreground: #0F1115;
-  --secondary: #1C2028;
-  --secondary-foreground: #F5F7FA;
-  --muted: #1C2028;
-  --muted-foreground: #A7B0BE;
-  --accent: #F4B860;
-  --accent-foreground: #0F1115;
-  --destructive: #FF6B6B;
+  --background: #F8F9FA;
+  --foreground: #1A1D20;
+  --card: rgba(255, 255, 255, 0.45);
+  --card-foreground: #1A1D20;
+  --popover: rgba(255, 255, 255, 0.75);
+  --popover-foreground: #1A1D20;
+  --primary: #D4AF37;
+  --primary-foreground: #1A1D20;
+  --secondary: rgba(248, 249, 250, 0.75);
+  --secondary-foreground: #1A1D20;
+  --muted: rgba(255, 255, 255, 0.3);
+  --muted-foreground: #64748B;
+  --accent: #D4AF37;
+  --accent-foreground: #1A1D20;
+  --destructive: #E53E3E;
   --destructive-foreground: #ffffff;
-  --border: #262B36;
-  --input: #262B36;
-  --ring: #FF6B6B;
+  --border: rgba(255, 255, 255, 0.6);
+  --input: rgba(255, 255, 255, 0.5);
+  --ring: #D4AF37;
 }
 
 * {
@@ -150,18 +152,18 @@ h1 { font-size: 1.5rem; line-height: 1.3; }
 h2 { font-size: 1.25rem; line-height: 1.35; }
 h3 { font-size: 1.125rem; line-height: 1.4; }
 
-/* Brand — coral gradient for the new premium fashion theme */
+/* Brand — champagne gold gradient for light pearlescent theme */
 .brand-gradient {
-  background: linear-gradient(135deg, #FF6B6B 0%, #F4B860 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #98B4A6 100%);
 }
 
 .brand-text {
   color: var(--cellex-text);
 }
 
-/* Price — off-white bold (dark premium theme) */
+/* Price — deep obsidian bold (light pearlescent theme) */
 .price {
-  color: #ffffff;
+  color: #1A1D20;
   font-weight: 700;
 }
 
@@ -302,21 +304,19 @@ button {
 .delay-400 { animation-delay: 400ms; }
 .delay-500 { animation-delay: 500ms; }
 
-/* Skeleton shimmer — OPAQUE blocks so the smoke background doesn't bleed through.
-   Uses solid surface color (#171A21) as the base, with a lighter shimmer
-   sweep on top. This ensures skeletons look like clean gray placeholder
-   blocks, not "smoky texture" leaking through. */
+/* Skeleton shimmer — light-mode opaque blocks (pearlescent gray sweep).
+   Uses solid light surface so the smoke video doesn't bleed through. */
 .skeleton {
-  background: #171A21;
-  background-image: linear-gradient(90deg, #171A21 25%, #262B36 50%, #171A21 75%);
+  background: rgba(255, 255, 255, 0.6);
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.5) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Shimmer utility — used by loading.tsx skeleton. Same opaque treatment. */
+/* Shimmer utility — same light treatment. */
 .shimmer {
-  background: #171A21;
-  background-image: linear-gradient(90deg, #171A21 0%, #262B36 50%, #171A21 100%);
+  background: rgba(255, 255, 255, 0.6);
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.5) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -1106,16 +1106,17 @@ html, body {
   animation: glassPillSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Body background is transparent so the Grok-style fluid smoke (mounted at
-   z-50 in layout.tsx) shows through. The smoke shader provides the dark
-   base color (#050505 → #4D5966) — no solid body bg needed. */
+/* Body background is transparent so the smoke video (with white/20 veil) shows
+   through. The smoke + veil provides the light-mode base — no solid body bg needed. */
 body {
   background: transparent !important;
   min-height: 100vh;
+  color: #1A1D20;
 }
 
 .dark body {
   background: transparent !important;
+  color: #1A1D20;
 }
 /* ============================================================
    LIQUID GLASS — High-fidelity glassmorphism for dark smoke bg
@@ -1183,79 +1184,90 @@ select:focus-visible {
 .text-caption { font-size: 0.75rem; line-height: 1.4; }
 .text-micro { font-size: 0.625rem; line-height: 1.3; }
 
-/* --- Glass Cards (unified) — Liquid Glass on top of fluid smoke --- */
+/* --- Glass Cards (Pearlescent Smoke light mode) --- */
 .fx-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Top light catch */
-  border-left: 1px solid rgba(255, 255, 255, 0.2); /* Left light catch */
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.8); /* top light catch */
+  border-left: 1px solid rgba(255, 255, 255, 0.8); /* left light catch */
   border-radius: 20px;
+  /* Soft wide drop shadow lifts the card off the moving video */
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.4),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
   color: var(--cellex-text);
   transition: all 0.3s ease;
 }
 .fx-card:hover {
-  border-color: rgba(255, 107, 107, 0.3);
-  border-top-color: rgba(255, 107, 107, 0.4);
-  border-left-color: rgba(255, 107, 107, 0.4);
+  border-color: rgba(212, 175, 55, 0.4);
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.5),
-    0 0 24px rgba(255, 107, 107, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(212, 175, 55, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
-/* --- Glass Topbar --- */
+/* --- Glass Topbar (light) --- */
 .fx-topbar {
-  background: rgba(15, 17, 21, 0.8) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border-bottom: 1px solid var(--cellex-border) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6) !important;
 }
 
-/* --- Glass Nav --- */
+/* --- Glass Nav (light floating island) --- */
 .fx-nav {
-  background: rgba(23, 26, 33, 0.8) !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-  border: 1px solid var(--cellex-border) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(25px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* --- Buttons --- */
+/* --- Buttons (liquid meniscus effect) --- */
 .fx-btn-primary {
-  background: linear-gradient(135deg, #FF6B6B 0%, #ff5252 100%);
-  color: #0F1115;
+  background: linear-gradient(135deg, #D4AF37 0%, #C4A030 100%);
+  color: #1A1D20;
   font-weight: 700;
   border-radius: 9999px;
   padding: 12px 24px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
+  /* Liquid meniscus: heavy bottom pool of white light */
+  box-shadow:
+    0 4px 16px rgba(212, 175, 55, 0.3),
+    inset 0 -4px 10px rgba(255, 255, 255, 0.5),
+    inset 0 0 12px rgba(255, 255, 255, 0.3);
 }
 .fx-btn-primary:hover {
-  background: linear-gradient(135deg, #ff5252 0%, #e84545 100%);
-  box-shadow: 0 6px 24px rgba(255, 107, 107, 0.4);
+  background: linear-gradient(135deg, #C4A030 0%, #B49020 100%);
+  box-shadow:
+    0 6px 24px rgba(212, 175, 55, 0.4),
+    inset 0 -4px 12px rgba(255, 255, 255, 0.6),
+    inset 0 0 16px rgba(255, 255, 255, 0.4);
   transform: translateY(-1px);
 }
 .fx-btn-primary:active { transform: translateY(0); }
 
 .fx-btn-ghost {
-  background: var(--cellex-surface-2);
+  background: rgba(248, 249, 250, 0.75);
   color: var(--cellex-text);
   font-weight: 600;
   border-radius: 9999px;
   padding: 12px 24px;
-  border: 1px solid var(--cellex-border);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: all 0.3s ease;
+  /* Liquid meniscus for ghost buttons too */
+  box-shadow:
+    inset 0 -4px 10px rgba(255, 255, 255, 0.8),
+    inset 0 0 12px rgba(255, 255, 255, 0.5);
 }
 .fx-btn-ghost:hover {
-  background: var(--cellex-surface);
+  background: rgba(255, 255, 255, 0.85);
   border-color: var(--cellex-coral);
 }
 

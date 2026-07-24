@@ -83,13 +83,26 @@ export default function SmokeBackground() {
         <source src="/smoke-bg.mp4" type="video/mp4" />
       </video>
 
-      {/* Modern Vignette Overlay: Darkens the edges so white website text pops cleanly */}
+      {/* Light-mode veil: white/20 overlay + slight blur keeps the smoke
+          visible but bright enough for light glass UI readability. */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%)',
-          pointerEvents: 'none' // Allows clicking of items "through" the vignette layer
+          background: 'rgba(255, 255, 255, 0.2)',
+          backdropFilter: 'blur(2px)',
+          WebkitBackdropFilter: 'blur(2px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Edge vignette for depth (softer in light mode) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle, rgba(255,255,255,0) 40%, rgba(255,255,255,0.3) 100%)',
+          pointerEvents: 'none',
         }}
       />
     </div>

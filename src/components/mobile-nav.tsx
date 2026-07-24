@@ -100,7 +100,7 @@ export function MobileNav() {
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
                   style={{
-                    color: isActive ? 'var(--cellex-coral)' : 'var(--cellex-text-muted)',
+                    color: isActive ? 'var(--cellex-coral)' : '#64748B',
                     fill: isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? 'var(--cellex-coral)' : 'none',
                   }}
                 />
