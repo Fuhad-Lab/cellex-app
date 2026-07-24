@@ -95,12 +95,12 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
-        // PURELY AI-DRIVEN FEED — Gorse decides the order of every post.
-        // No hardcoded interleave logic, no fixed video/product ratio.
-        // The recommend API returns a unified `posts` array (videos + products
-        // mixed together, ranked by Gorse). The frontend just renders them
-        // in the exact order Gorse returned.
-        const [recommendResp, storiesResp, liveResp, sellersResp] = await Promise.all([
+        // Fetch feed_posts (seller-created posts with product attached) +
+        // recommend API (Gorse/trending) in parallel.
+        // Feed posts include video, photo, text, and story types — all with
+        // a product attached that shows in the card.
+        const [feedPostsResp, recommendResp, storiesResp, liveResp, sellersResp] = await Promise.all([
+          api.feedPosts.list(50).catch(() => ({ success: false, posts: [] })),
           api.recommend.home(40),
           api.stories.activeBar().catch(() => ({ success: false })),
           api.live.list('live').catch(() => ({ success: false })),
@@ -117,6 +117,42 @@ export default function HomePage() {
         }
 
         const posts: FeedPost[] = [];
+
+        // Feed posts (seller-created: video, photo, text, story — all with product attached).
+        // These are the primary feed content. Every post has a product that shows in the card.
+        if (feedPostsResp.success && feedPostsResp.posts) {
+          feedPostsResp.posts.forEach((fp: any) => {
+            const product = fp.product || {};
+            const seller = fp.seller || {};
+            posts.push({
+              type: fp.postType === 'video' ? 'video' : 'product',
+              id: `fp-${fp.id}`,
+              videoId: fp.postType === 'video' ? fp.id : undefined,
+              productId: product.id,
+              sellerId: seller.slug ? undefined : undefined, // seller slug is on the post
+              sellerSlug: seller.slug,
+              sellerName: seller.name || 'Seller',
+              sellerImage: seller.image,
+              mediaUrl: fp.mediaUrl || product.image_url || '',
+              caption: fp.caption || product.name || '',
+              likes: fp.likesCount || 0,
+              views: fp.viewsCount || 0,
+              comments: fp.commentsCount || 0,
+              product: {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image_url: product.image_url,
+                units_sold: product.units_sold,
+                category: product.category,
+                group_buy_enabled: product.group_buy_enabled,
+              },
+              soldCount: product.units_sold,
+              createdAt: fp.createdAt,
+              verified: true,
+            });
+          });
+        }
 
         // The recommend API returns `posts` — a unified, Gorse-ranked list of
         // videos and products. Each post has a `type` field ('video' | 'product').

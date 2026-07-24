@@ -296,6 +296,18 @@ export const api = {
     markAllRead: () => apiCall('notifications', { op: 'mark_all_read' }),
     unreadCount: () => apiCall('notifications', { op: 'unread_count' }),
   },
+
+  // ===== Feed Posts (unified: text, photo, video, story — all with product) =====
+  feedPosts: {
+    list: (limit = 50, sellerId?: string) =>
+      apiCall('feed-posts', { op: 'list', limit, sellerId }),
+    create: (data: { postType: 'video' | 'photo' | 'text' | 'story'; productId: number; caption?: string; mediaUrl?: string; thumbnailUrl?: string }) =>
+      apiCall('feed-posts', { op: 'create', ...data }),
+    delete: (postId: number) =>
+      apiCall('feed-posts', { op: 'delete', postId }),
+    mine: () =>
+      apiCall('feed-posts', { op: 'mine' }),
+  },
 };
 
 // ===== Utility functions =====
