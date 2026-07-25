@@ -237,7 +237,7 @@ export default function CreatePage() {
             if (!p) return null;
             return (
               <div className="mt-2 flex items-center gap-3 p-2 rounded-xl" style={{ background: 'var(--cellex-surface)', border: '1px solid var(--cellex-border)' }}>
-                <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/10 shrink-0">
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#F5F5F5] shrink-0">
                   {p.image_url && <img src={p.image_url} alt="" className="w-full h-full object-cover" />}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -267,7 +267,7 @@ export default function CreatePage() {
                   className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center"
                   aria-label="Remove media"
                 >
-                  <X className="w-4 h-4 text-white" />
+                  <X className="w-4 h-4 text-black" />
                 </button>
               </div>
             ) : (

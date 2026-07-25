@@ -249,13 +249,13 @@ export default function SellerProductsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-extrabold">Products</h1>
-        <Button onClick={openCreate} className="bg-indigo-600 text-white hover:bg-white/10 font-bold">
+        <Button onClick={openCreate} className="bg-[#D4AF37] text-black hover:bg-[#F5F5F5] font-bold">
           <Plus className="w-4 h-4 mr-1" /> Add product
         </Button>
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -269,31 +269,31 @@ export default function SellerProductsPage() {
           icon={<Package className="w-8 h-8" />}
           title="No products yet"
           message="Add your first product to start selling on Cellex."
-          action={<Button onClick={openCreate} className="bg-indigo-600 text-white hover:bg-white/10">Add product</Button>}
+          action={<Button onClick={openCreate} className="bg-[#D4AF37] text-black hover:bg-[#F5F5F5]">Add product</Button>}
         />
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {filtered.map((p) => (
-            <div key={p.id} className="overflow-hidden bg-white/10 border border-white/10 rounded-lg">
-              <div className="aspect-square bg-white/5 relative">
+            <div key={p.id} className="overflow-hidden bg-[#F5F5F5] border border-[#E5E5E5] rounded-lg">
+              <div className="aspect-square bg-[#F5F5F5] relative">
                 {p.image_url ? (
                   <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-600">
+                  <div className="w-full h-full flex items-center justify-center text-[#666666]">
                     <Store className="w-10 h-10" />
                   </div>
                 )}
                 <div className="absolute top-1.5 right-1.5 flex gap-1">
                   <button
                     onClick={() => openEdit(p)}
-                    className="bg-white/90 backdrop-blur p-1.5 rounded-lg shadow hover:bg-white/10"
+                    className="bg-white/90 backdrop-blur p-1.5 rounded-lg shadow hover:bg-[#F5F5F5]"
                     aria-label="Edit"
                   >
-                    <Edit className="w-3.5 h-3.5 text-slate-300" />
+                    <Edit className="w-3.5 h-3.5 text-[#666666]" />
                   </button>
                   <button
                     onClick={() => remove(p.id)}
-                    className="bg-white/90 backdrop-blur p-1.5 rounded-lg shadow hover:bg-white/10"
+                    className="bg-white/90 backdrop-blur p-1.5 rounded-lg shadow hover:bg-[#F5F5F5]"
                     aria-label="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-red-500" />
@@ -303,11 +303,11 @@ export default function SellerProductsPage() {
               <div className="p-2 sm:p-3">
                 <h3 className="font-semibold text-xs sm:text-sm line-clamp-1">{p.name}</h3>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="font-bold text-sm text-white">{formatPrice(p.price)}</span>
-                  <span className="text-[10px] text-slate-400">{p.units_sold || 0} sold</span>
+                  <span className="font-bold text-sm text-black">{formatPrice(p.price)}</span>
+                  <span className="text-[10px] text-[#666666]">{p.units_sold || 0} sold</span>
                 </div>
                 {p.category && (
-                  <span className="inline-block mt-1.5 text-[9px] bg-white/5 px-1.5 py-0.5 rounded text-slate-400">{p.category}</span>
+                  <span className="inline-block mt-1.5 text-[9px] bg-[#F5F5F5] px-1.5 py-0.5 rounded text-[#666666]">{p.category}</span>
                 )}
               </div>
             </div>
@@ -325,20 +325,20 @@ export default function SellerProductsPage() {
             {/* Image upload — Instagram Create style */}
             <div className="space-y-2">
               <Label className="text-xs font-semibold">Product photos *</Label>
-              <p className="text-[11px] text-slate-400 -mt-1">Upload from your device. First photo is the cover. Max 4 photos.</p>
+              <p className="text-[11px] text-[#666666] -mt-1">Upload from your device. First photo is the cover. Max 4 photos.</p>
 
               {images.length > 0 && (
                 <div className="grid grid-cols-4 gap-2 mb-2">
                   {images.map((url, idx) => (
-                    <div key={idx} className="relative aspect-square rounded-md overflow-hidden bg-white/5 group">
+                    <div key={idx} className="relative aspect-square rounded-md overflow-hidden bg-[#F5F5F5] group">
                       <img src={url} alt="" className="w-full h-full object-cover" />
                       {idx === 0 && (
-                        <span className="absolute top-1 left-1 bg-indigo-600 text-white text-[8px] font-bold px-1 py-0.5 rounded">COVER</span>
+                        <span className="absolute top-1 left-1 bg-[#D4AF37] text-black text-[8px] font-bold px-1 py-0.5 rounded">COVER</span>
                       )}
                       <button
                         type="button"
                         onClick={() => removeImage(idx)}
-                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-indigo-600"
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-black flex items-center justify-center hover:bg-[#D4AF37]"
                         aria-label="Remove image"
                       >
                         <X className="w-3 h-3" />
@@ -353,21 +353,21 @@ export default function SellerProductsPage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingImage}
-                  className="w-full border-2 border-dashed border-white/15 rounded-xl p-6 flex flex-col items-center justify-center hover:border-white/10 hover:bg-white/5 transition-colors disabled:opacity-50"
+                  className="w-full border-2 border-dashed border-white/15 rounded-xl p-6 flex flex-col items-center justify-center hover:border-[#E5E5E5] hover:bg-[#F5F5F5] transition-colors disabled:opacity-50"
                 >
                   {uploadingImage ? (
                     <>
-                      <Loader2 className="w-7 h-7 text-slate-500 animate-spin mb-2" />
-                      <span className="text-xs text-slate-400">Uploading...</span>
+                      <Loader2 className="w-7 h-7 text-[#666666] animate-spin mb-2" />
+                      <span className="text-xs text-[#666666]">Uploading...</span>
                     </>
                   ) : (
                     <>
-                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-2">
-                        <ImageIcon className="w-6 h-6 text-slate-400" />
+                      <div className="w-12 h-12 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-2">
+                        <ImageIcon className="w-6 h-6 text-[#666666]" />
                       </div>
-                      <span className="text-sm font-semibold text-white">Upload photos</span>
-                      <span className="text-[11px] text-slate-400 mt-0.5">Tap to choose from your device</span>
-                      <span className="text-[10px] text-slate-500 mt-0.5">JPG, PNG, WebP · Max 5MB each</span>
+                      <span className="text-sm font-semibold text-black">Upload photos</span>
+                      <span className="text-[11px] text-[#666666] mt-0.5">Tap to choose from your device</span>
+                      <span className="text-[10px] text-[#666666] mt-0.5">JPG, PNG, WebP · Max 5MB each</span>
                     </>
                   )}
                   <input
@@ -385,10 +385,10 @@ export default function SellerProductsPage() {
             {/* Video upload */}
             <div className="space-y-2">
               <Label className="text-xs font-semibold">Product video (optional)</Label>
-              <p className="text-[11px] text-slate-400 -mt-1">Show authenticity. Max 10MB.</p>
+              <p className="text-[11px] text-[#666666] -mt-1">Show authenticity. Max 10MB.</p>
               {videoUrl ? (
                 <div className="flex items-center gap-3">
-                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-indigo-600" muted />
+                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-[#D4AF37]" muted />
                   <button
                     type="button"
                     onClick={() => setVideoUrl('')}
@@ -402,17 +402,17 @@ export default function SellerProductsPage() {
                   type="button"
                   onClick={() => videoInputRef.current?.click()}
                   disabled={uploadingVideo}
-                  className="w-full border-2 border-dashed border-white/15 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-white/10 hover:bg-white/5 transition-colors disabled:opacity-50"
+                  className="w-full border-2 border-dashed border-white/15 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-[#E5E5E5] hover:bg-[#F5F5F5] transition-colors disabled:opacity-50"
                 >
                   {uploadingVideo ? (
                     <>
-                      <Loader2 className="w-5 h-5 text-slate-500 animate-spin" />
-                      <span className="text-xs text-slate-400">Uploading...</span>
+                      <Loader2 className="w-5 h-5 text-[#666666] animate-spin" />
+                      <span className="text-xs text-[#666666]">Uploading...</span>
                     </>
                   ) : (
                     <>
-                      <Upload className="w-5 h-5 text-slate-400" />
-                      <span className="text-xs text-slate-300 font-medium">Upload a video</span>
+                      <Upload className="w-5 h-5 text-[#666666]" />
+                      <span className="text-xs text-[#666666] font-medium">Upload a video</span>
                     </>
                   )}
                   <input
@@ -440,7 +440,7 @@ export default function SellerProductsPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm bg-white/10"
+                  className="w-full px-3 py-2 border border-[#E5E5E5] rounded-lg text-sm bg-[#F5F5F5]"
                 >
                   {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                 </select>
@@ -452,22 +452,22 @@ export default function SellerProductsPage() {
             </div>
 
             {/* Group Buy Toggle */}
-            <div className="border-t border-white/5 pt-3 space-y-3">
+            <div className="border-t border-[#E5E5E5] pt-3 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-slate-400" />
+                  <Users className="w-4 h-4 text-[#666666]" />
                   <div>
                     <Label className="text-xs font-bold">Enable Group Buy</Label>
-                    <p className="text-[10px] text-slate-400">Let buyers team up for bulk discounts</p>
+                    <p className="text-[10px] text-[#666666]">Let buyers team up for bulk discounts</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setGroupBuyEnabled(!groupBuyEnabled)}
-                  className={`relative w-11 h-6 rounded-full transition-colors ${groupBuyEnabled ? 'bg-indigo-600' : 'bg-white/10'}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${groupBuyEnabled ? 'bg-[#D4AF37]' : 'bg-[#F5F5F5]'}`}
                   aria-label="Toggle group buy"
                 >
-                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white/10 shadow transition-transform ${groupBuyEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-[#F5F5F5] shadow transition-transform ${groupBuyEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
                 </button>
               </div>
               {groupBuyEnabled && (
@@ -484,7 +484,7 @@ export default function SellerProductsPage() {
               )}
             </div>
 
-            <Button onClick={save} disabled={saving} className="w-full bg-indigo-600 text-white hover:bg-white/10 font-bold">
+            <Button onClick={save} disabled={saving} className="w-full bg-[#D4AF37] text-black hover:bg-[#F5F5F5] font-bold">
               {saving ? 'Saving...' : editing ? 'Update product' : 'Create product'}
             </Button>
           </div>

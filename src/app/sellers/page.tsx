@@ -63,19 +63,19 @@ export default function SellersPage() {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Sellers</h1>
-        <span className="text-xs text-slate-400">{filteredSellers.length}</span>
+        <span className="text-xs text-[#666666]">{filteredSellers.length}</span>
       </div>
 
       {/* Filters */}
-      <div className="px-4 py-3 space-y-3 border-b border-white/5">
+      <div className="px-4 py-3 space-y-3 border-b border-[#E5E5E5]">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search sellers..."
-            className="w-full bg-white/5 rounded-md pl-9 pr-3 py-2.5 text-sm outline-none focus:bg-white/10 focus:ring-1 focus:ring-white/20"
+            className="w-full bg-[#F5F5F5] rounded-md pl-9 pr-3 py-2.5 text-sm outline-none focus:bg-[#F5F5F5] focus:ring-1 focus:ring-white/20"
           />
         </div>
 
@@ -87,8 +87,8 @@ export default function SellersPage() {
               onClick={() => setCategory(c)}
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                 category === c
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  ? 'bg-[#D4AF37] text-black'
+                  : 'bg-[#F5F5F5] text-[#666666] hover:bg-[#F5F5F5]'
               }`}
             >
               {c}
@@ -98,7 +98,7 @@ export default function SellersPage() {
 
         {/* Sort */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-400">Sort by:</span>
+          <span className="text-[#666666]">Sort by:</span>
           {[
             { key: 'followers' as const, label: 'Followers' },
             { key: 'products' as const, label: 'Most products' },
@@ -108,7 +108,7 @@ export default function SellersPage() {
               key={s.key}
               onClick={() => setSort(s.key)}
               className={`px-3 py-1 rounded-full font-semibold transition-colors ${
-                sort === s.key ? 'bg-white/5 text-white' : 'bg-white/5 text-slate-400'
+                sort === s.key ? 'bg-[#F5F5F5] text-black' : 'bg-[#F5F5F5] text-[#666666]'
               }`}
             >
               {s.label}
@@ -141,19 +141,19 @@ export default function SellersPage() {
               <Link
                 key={seller.id}
                 href={sellerHref}
-                className="block p-4 hover:bg-white/5 transition-colors"
+                className="block p-4 hover:bg-[#F5F5F5] transition-colors"
               >
                 <div className="flex items-center gap-3">
                   {seller.profile_image ? (
                     <img src={seller.profile_image} className="w-12 h-12 rounded-full object-cover shrink-0" alt="" />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-[#D4AF37] flex items-center justify-center text-black font-bold text-sm shrink-0">
                       {initial}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm text-white truncate">{name}</div>
-                    <div className="text-xs text-slate-400 flex items-center gap-2 flex-wrap">
+                    <div className="font-semibold text-sm text-black truncate">{name}</div>
+                    <div className="text-xs text-[#666666] flex items-center gap-2 flex-wrap">
                       <span className="flex items-center gap-0.5">
                         <Users className="w-3 h-3" /> {seller.followers || 0}
                       </span>
@@ -167,14 +167,14 @@ export default function SellersPage() {
                       )}
                     </div>
                   </div>
-                  <span className="text-xs font-semibold text-white bg-white/5 px-3 py-1.5 rounded-md">
+                  <span className="text-xs font-semibold text-black bg-[#F5F5F5] px-3 py-1.5 rounded-md">
                     Shop
                   </span>
                 </div>
                 {sellerProducts.length > 0 && (
                   <div className="grid grid-cols-3 gap-1 mt-3">
                     {sellerProducts.map((p) => (
-                      <div key={p.id} className="aspect-square rounded-sm overflow-hidden bg-white/5">
+                      <div key={p.id} className="aspect-square rounded-sm overflow-hidden bg-[#F5F5F5]">
                         {p.image_url && (
                           <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
                         )}

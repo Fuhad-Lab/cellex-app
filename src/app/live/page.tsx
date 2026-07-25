@@ -45,39 +45,39 @@ export default function LivePage() {
         </h2>
         {liveNow.length === 0 ? (
           <div className="text-center py-8">
-            <Radio className="w-8 h-8 mx-auto text-slate-600 mb-2" />
-            <p className="text-sm text-slate-400">No live sessions right now</p>
-            <p className="text-xs text-slate-500 mt-1">Check back later or follow your favorite sellers</p>
+            <Radio className="w-8 h-8 mx-auto text-[#666666] mb-2" />
+            <p className="text-sm text-[#666666]">No live sessions right now</p>
+            <p className="text-xs text-[#666666] mt-1">Check back later or follow your favorite sellers</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {liveNow.map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
-                <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
-                  <div className="aspect-video bg-indigo-600 relative">
-                    <div className="w-full h-full flex items-center justify-center text-white">
+                <div className="overflow-hidden border border-[#E5E5E5] rounded-md hover:opacity-90 transition-opacity">
+                  <div className="aspect-video bg-[#D4AF37] relative">
+                    <div className="w-full h-full flex items-center justify-center text-black">
                       <Radio className="w-10 h-10" />
                     </div>
-                    <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-white/10 rounded-full animate-pulse" />
+                    <div className="absolute top-2 left-2 bg-red-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-[#F5F5F5] rounded-full animate-pulse" />
                       LIVE
                     </div>
-                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur text-black text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                       <Eye className="w-3 h-3" /> {s.viewer_count || 0}
                     </div>
                   </div>
-                  <div className="p-3 bg-white/10">
+                  <div className="p-3 bg-[#F5F5F5]">
                     <h3 className="font-semibold text-sm line-clamp-1">{s.title}</h3>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
-                      <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold">
+                    <div className="flex items-center gap-2 mt-1 text-xs text-[#666666]">
+                      <div className="w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center text-black text-[10px] font-bold">
                         {(s.seller_name || 'S').charAt(0)}
                       </div>
                       <span>{s.seller_name}</span>
                     </div>
                     {s.featured_product && (
-                      <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-xs text-slate-400 line-clamp-1">{s.featured_product.name}</span>
-                        <span className="text-sm font-bold text-white">{formatPrice(s.featured_product.price)}</span>
+                      <div className="mt-2 pt-2 border-t border-[#E5E5E5] flex items-center justify-between">
+                        <span className="text-xs text-[#666666] line-clamp-1">{s.featured_product.name}</span>
+                        <span className="text-sm font-bold text-black">{formatPrice(s.featured_product.price)}</span>
                       </div>
                     )}
                   </div>
@@ -95,13 +95,13 @@ export default function LivePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {recent.slice(0, 6).map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
-                <div className="overflow-hidden border border-white/10 rounded-md hover:opacity-90 transition-opacity">
-                  <div className="aspect-video bg-white/5 flex items-center justify-center">
-                    <Radio className="w-6 h-6 text-slate-600" />
+                <div className="overflow-hidden border border-[#E5E5E5] rounded-md hover:opacity-90 transition-opacity">
+                  <div className="aspect-video bg-[#F5F5F5] flex items-center justify-center">
+                    <Radio className="w-6 h-6 text-[#666666]" />
                   </div>
-                  <div className="p-2 bg-white/10">
+                  <div className="p-2 bg-[#F5F5F5]">
                     <h3 className="font-semibold text-xs line-clamp-1">{s.title}</h3>
-                    <div className="text-[10px] text-slate-400 mt-0.5">{s.seller_name}</div>
+                    <div className="text-[10px] text-[#666666] mt-0.5">{s.seller_name}</div>
                   </div>
                 </div>
               </Link>
@@ -118,7 +118,7 @@ export default function LivePage() {
             message="Sellers can go live to showcase their products in real-time. Follow sellers to get notified when they go live."
             action={
               <Link href="/categories">
-                <button className="bg-indigo-600 text-white font-semibold rounded-md px-4 py-2.5 hover:bg-white/10">
+                <button className="bg-[#D4AF37] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Browse products
                 </button>
               </Link>

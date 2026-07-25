@@ -160,25 +160,25 @@ function CategoriesContent() {
         <button
           type="button"
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-          className="flex-1 flex items-center bg-white/5 rounded-md px-3 py-2 hover:bg-white/10 transition-colors text-left"
+          className="flex-1 flex items-center bg-[#F5F5F5] rounded-md px-3 py-2 hover:bg-[#F5F5F5] transition-colors text-left"
           aria-label="Open Smart Search"
         >
-          <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
-          <span className="flex-1 text-sm text-slate-400 truncate">Search for items you want</span>
-          <Camera className="w-4 h-4 text-slate-400 ml-2 shrink-0" />
+          <Search className="w-4 h-4 text-[#666666] mr-2 shrink-0" />
+          <span className="flex-1 text-sm text-[#666666] truncate">Search for items you want</span>
+          <Camera className="w-4 h-4 text-[#666666] ml-2 shrink-0" />
         </button>
       </div>
 
       {/* Category pills — horizontal scroll */}
-      <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
+      <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-[#E5E5E5]">
         {ALL_CATEGORIES.map((cat) => (
           <button
             key={cat.value}
             onClick={() => handleCategoryChange(cat.value)}
             className={`text-sm font-semibold px-4 py-1.5 rounded-full whitespace-nowrap transition-all ${
               category === cat.value
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white/5 text-white hover:bg-white/10'
+                ? 'bg-[#D4AF37] text-black'
+                : 'bg-[#F5F5F5] text-black hover:bg-[#F5F5F5]'
             }`}
           >
             {cat.label}
@@ -188,12 +188,12 @@ function CategoriesContent() {
 
       {/* Subcategory chips (only when a category is selected) */}
       {subcats.length > 0 && (
-        <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
+        <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto no-scrollbar border-b border-[#E5E5E5]">
           {subcats.map((sub) => (
             <button
               key={sub}
               onClick={() => searchBySubcategory(sub)}
-              className="shrink-0 text-xs font-medium text-white bg-white/5 hover:bg-white/5 px-3 py-1.5 rounded-full border border-white/10"
+              className="shrink-0 text-xs font-medium text-black bg-[#F5F5F5] hover:bg-[#F5F5F5] px-3 py-1.5 rounded-full border border-[#E5E5E5]"
             >
               {sub}
             </button>
@@ -202,14 +202,14 @@ function CategoriesContent() {
       )}
 
       {/* Sort bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E5E5]">
         <div className="text-xs" style={{ color: 'var(--cellex-text-muted)' }}>
           {loading ? '' : `${products.length} products`}
         </div>
         <div className="relative">
           <button
             onClick={() => setShowSortMenu(!showSortMenu)}
-            className="flex items-center gap-1 text-xs font-semibold text-white px-3 py-1.5 rounded-md border border-white/10"
+            className="flex items-center gap-1 text-xs font-semibold text-black px-3 py-1.5 rounded-md border border-[#E5E5E5]"
             aria-label="Sort"
           >
             <Filter className="w-3 h-3" />
@@ -217,13 +217,13 @@ function CategoriesContent() {
             <ChevronDown className="w-3 h-3" />
           </button>
           {showSortMenu && (
-            <div className="absolute right-0 top-9 z-10 bg-white/10 border border-white/10 rounded-md shadow-lg py-1 min-w-[180px]">
+            <div className="absolute right-0 top-9 z-10 bg-[#F5F5F5] border border-[#E5E5E5] rounded-md shadow-lg py-1 min-w-[180px]">
               {SORTS.map((s) => (
                 <button
                   key={s.key}
                   onClick={() => handleSortChange(s.key)}
-                  className={`block w-full text-left px-3 py-2 text-xs hover:bg-white/5 ${
-                    sort === s.key ? 'text-white font-bold' : 'text-white'
+                  className={`block w-full text-left px-3 py-2 text-xs hover:bg-[#F5F5F5] ${
+                    sort === s.key ? 'text-black font-bold' : 'text-black'
                   }`}
                 >
                   {s.label}
@@ -242,8 +242,8 @@ function CategoriesContent() {
           ))
         ) : products.length === 0 ? (
           <div className="col-span-2 text-center py-12">
-            <Store className="w-10 h-10 mx-auto text-slate-600 mb-2" />
-            <p className="text-sm text-slate-400">No products found</p>
+            <Store className="w-10 h-10 mx-auto text-[#666666] mb-2" />
+            <p className="text-sm text-[#666666]">No products found</p>
           </div>
         ) : (
           products.map((p) => (
@@ -259,29 +259,29 @@ function CategoriesContent() {
 function CategoryProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/product?id=${product.id}`} className="fx-card ig-card block">
-      <div className="aspect-square bg-white/5 relative">
+      <div className="aspect-square bg-[#F5F5F5] relative">
         {product.image_url ? (
           <SmartImage src={product.image_url} alt={product.name} width={300} className="w-full h-full" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-600">
+          <div className="w-full h-full flex items-center justify-center text-[#666666]">
             <Store className="w-10 h-10" />
           </div>
         )}
       </div>
       <div className="p-2">
-        <div className="text-xs font-medium text-white line-clamp-2 h-8 leading-tight">
+        <div className="text-xs font-medium text-black line-clamp-2 h-8 leading-tight">
           {product.name}
         </div>
         <div className="flex items-baseline gap-1 mt-1">
-          <span className="text-base font-bold text-white leading-none">{formatPrice(product.price)}</span>
+          <span className="text-base font-bold text-black leading-none">{formatPrice(product.price)}</span>
           {typeof product.units_sold === 'number' && product.units_sold > 0 && (
-            <span className="text-[10px] text-slate-500">
+            <span className="text-[10px] text-[#666666]">
               {product.units_sold > 1000 ? `${(product.units_sold / 1000).toFixed(1)}k` : product.units_sold} sold
             </span>
           )}
         </div>
         {product.category && (
-          <div className="text-[10px] text-slate-400 mt-0.5">{product.category}</div>
+          <div className="text-[10px] text-[#666666] mt-0.5">{product.category}</div>
         )}
       </div>
     </Link>

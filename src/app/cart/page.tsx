@@ -74,12 +74,12 @@ export default function CartPage() {
           <h1 className="text-base font-semibold flex-1 ml-2">Cart</h1>
         </div>
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-          <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4">
-            <ShoppingCart className="w-10 h-10 text-slate-600" />
+          <div className="w-20 h-20 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-4">
+            <ShoppingCart className="w-10 h-10 text-[#666666]" />
           </div>
           <h2 className="text-lg font-bold mb-1">Your cart is empty</h2>
-          <p className="text-sm text-slate-400 mb-6 max-w-xs">Browse our marketplace and find great deals from local Nigerian sellers.</p>
-          <Link href="/categories" className="bg-indigo-600 text-white font-semibold rounded-full px-6 py-3 text-sm hover:bg-white/10 transition-colors">
+          <p className="text-sm text-[#666666] mb-6 max-w-xs">Browse our marketplace and find great deals from local Nigerian sellers.</p>
+          <Link href="/categories" className="bg-[#D4AF37] text-black font-semibold rounded-full px-6 py-3 text-sm hover:bg-[#F5F5F5] transition-colors">
             Start shopping
           </Link>
         </div>
@@ -108,20 +108,20 @@ export default function CartPage() {
             <button
               onClick={() => removeItem(item.id)}
               disabled={updating === item.id}
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-500/80 hover:text-white transition-colors z-10"
+              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center hover:bg-red-500/80 hover:text-black transition-colors z-10"
               aria-label="Remove item"
             >
-              <Trash2 className="w-4 h-4 text-slate-500" />
+              <Trash2 className="w-4 h-4 text-[#666666]" />
             </button>
 
             <div className="p-4 flex gap-3">
               {/* Product image */}
               <Link href={`/product?id=${item.product_id}`} className="shrink-0">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5">
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#F5F5F5]">
                   {item.products?.image_url ? (
                     <img src={item.products.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-600">
+                    <div className="w-full h-full flex items-center justify-center text-[#666666]">
                       <Store className="w-8 h-8" />
                     </div>
                   )}
@@ -131,14 +131,14 @@ export default function CartPage() {
               {/* Product details */}
               <div className="flex-1 min-w-0 pr-8">
                 <Link href={`/product?id=${item.product_id}`}>
-                  <h3 className="font-semibold text-sm text-white line-clamp-2 hover:opacity-70">
+                  <h3 className="font-semibold text-sm text-black line-clamp-2 hover:opacity-70">
                     {item.products?.name || 'Product'}
                   </h3>
                 </Link>
                 {item.products?.category && (
-                  <span className="inline-block text-[10px] text-slate-400 mt-1">{item.products.category}</span>
+                  <span className="inline-block text-[10px] text-[#666666] mt-1">{item.products.category}</span>
                 )}
-                <div className="text-white font-bold text-base mt-1">{formatPrice(item.products?.price || 0)}</div>
+                <div className="text-black font-bold text-base mt-1">{formatPrice(item.products?.price || 0)}</div>
               </div>
             </div>
 
@@ -148,7 +148,7 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQty(item.id, -1)}
                   disabled={updating === item.id}
-                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full border border-[#E5E5E5] flex items-center justify-center hover:bg-[#F5F5F5] disabled:opacity-50"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-3 h-3" />
@@ -157,14 +157,14 @@ export default function CartPage() {
                 <button
                   onClick={() => updateQty(item.id, 1)}
                   disabled={updating === item.id}
-                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full border border-[#E5E5E5] flex items-center justify-center hover:bg-[#F5F5F5] disabled:opacity-50"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-3 h-3" />
                 </button>
               </div>
-              <div className="text-xs text-slate-400">
-                Subtotal: <span className="font-semibold text-white">{formatPrice((item.products?.price || 0) * item.quantity)}</span>
+              <div className="text-xs text-[#666666]">
+                Subtotal: <span className="font-semibold text-black">{formatPrice((item.products?.price || 0) * item.quantity)}</span>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function CartPage() {
       <div className="px-3 py-4">
         <Link
           href="/categories"
-          className="block text-center text-sm font-semibold text-white border border-white/10 rounded-full py-3 hover:bg-white/5 transition-colors"
+          className="block text-center text-sm font-semibold text-black border border-[#E5E5E5] rounded-full py-3 hover:bg-[#F5F5F5] transition-colors"
         >
           Continue shopping
         </Link>
@@ -194,32 +194,32 @@ export default function CartPage() {
       >
         <div className="space-y-1.5 text-sm mb-4">
           <div className="flex justify-between">
-            <span className="text-slate-400">Subtotal</span>
+            <span className="text-[#666666]">Subtotal</span>
             <span className="font-semibold">{formatPrice(subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400">Shipping</span>
+            <span className="text-[#666666]">Shipping</span>
             <span className="font-semibold">
               {shipping === 0 ? <span className="text-green-600">FREE</span> : formatPrice(shipping)}
             </span>
           </div>
           {shipping > 0 && subtotal < 50000 && (
-            <div className="text-[10px] text-slate-500">
+            <div className="text-[10px] text-[#666666]">
               Add {formatPrice(50000 - subtotal)} more for free shipping
             </div>
           )}
-          <div className="flex justify-between pt-2 border-t border-white/5">
+          <div className="flex justify-between pt-2 border-t border-[#E5E5E5]">
             <span className="font-bold">Total</span>
-            <span className="font-extrabold text-white text-lg">{formatPrice(total)}</span>
+            <span className="font-extrabold text-black text-lg">{formatPrice(total)}</span>
           </div>
         </div>
         <button
           onClick={() => router.push('/checkout')}
-          className="w-full bg-indigo-600 text-white font-semibold rounded-full py-3.5 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-[#D4AF37] text-black font-semibold rounded-full py-3.5 hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-2"
         >
           Checkout <ArrowRight className="w-4 h-4" />
         </button>
-        <div className="mt-2 text-center text-[10px] text-slate-500">
+        <div className="mt-2 text-center text-[10px] text-[#666666]">
           Secure payment via PalmPay bank transfer
         </div>
       </div>

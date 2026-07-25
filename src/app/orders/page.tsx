@@ -11,12 +11,12 @@ import { PageSkeleton } from '@/components/page-skeleton';
 
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-700',
-  confirmed: 'bg-white/5 text-slate-300',
+  confirmed: 'bg-[#F5F5F5] text-[#666666]',
   paid: 'bg-green-100 text-green-700',
-  shipped: 'bg-white/5 text-slate-300',
+  shipped: 'bg-[#F5F5F5] text-[#666666]',
   delivered: 'bg-green-100 text-green-700',
   cancelled: 'bg-red-100 text-red-700',
-  pending_payment_sent: 'bg-white/5 text-slate-300',
+  pending_payment_sent: 'bg-[#F5F5F5] text-[#666666]',
 };
 
 export default function OrdersPage() {
@@ -62,7 +62,7 @@ export default function OrdersPage() {
             message="When you place your first order, it will appear here."
             action={
               <Link href="/categories">
-                <button className="bg-indigo-600 text-white font-semibold rounded-md px-4 py-2.5 hover:bg-white/10">
+                <button className="bg-[#D4AF37] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Start shopping
                 </button>
               </Link>
@@ -87,17 +87,17 @@ export default function OrdersPage() {
         {orders.map((order) => {
           const isExpanded = expanded === order.id;
           const status = (order.status || 'pending').toLowerCase();
-          const statusStyle = STATUS_STYLES[status] || 'bg-white/5 text-slate-300';
+          const statusStyle = STATUS_STYLES[status] || 'bg-[#F5F5F5] text-[#666666]';
           const isPendingPayment = status === 'pending' || status === 'pending_payment_sent' || status === 'confirmed';
 
           return (
             <div key={order.id}>
               <button
                 onClick={() => setExpanded(isExpanded ? null : order.id)}
-                className="w-full p-4 text-left flex items-center gap-3 hover:bg-white/5"
+                className="w-full p-4 text-left flex items-center gap-3 hover:bg-[#F5F5F5]"
               >
-                <div className="w-10 h-10 rounded-md bg-white/5 flex items-center justify-center shrink-0">
-                  <Package className="w-5 h-5 text-slate-400" />
+                <div className="w-10 h-10 rounded-md bg-[#F5F5F5] flex items-center justify-center shrink-0">
+                  <Package className="w-5 h-5 text-[#666666]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -106,11 +106,11 @@ export default function OrdersPage() {
                       {status.replace(/_/g, ' ')}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-400 mt-0.5">
+                  <div className="text-xs text-[#666666] mt-0.5">
                     {order.item_count || 0} item(s) · {formatPrice(order.total)} · {timeAgo(order.created_at)}
                   </div>
                 </div>
-                <ChevronRight className={`w-4 h-4 text-slate-600 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                <ChevronRight className={`w-4 h-4 text-[#666666] transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
               </button>
 
               {isExpanded && (
@@ -120,12 +120,12 @@ export default function OrdersPage() {
                     <div className="space-y-2">
                       {order.items.map((item: any, i: number) => (
                         <div key={i} className="flex gap-3 items-center">
-                          <div className="w-12 h-12 rounded-md bg-white/5 overflow-hidden shrink-0">
+                          <div className="w-12 h-12 rounded-md bg-[#F5F5F5] overflow-hidden shrink-0">
                             {item.products?.image_url ? (
                               <img src={item.products.image_url} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Store className="w-4 h-4 text-slate-600" />
+                                <Store className="w-4 h-4 text-[#666666]" />
                               </div>
                             )}
                           </div>
@@ -133,7 +133,7 @@ export default function OrdersPage() {
                             <Link href={`/product?id=${item.product_id}`} className="text-sm font-medium hover:opacity-70 line-clamp-1">
                               {item.product_name || item.products?.name}
                             </Link>
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-[#666666]">
                               Qty {item.quantity} × {formatPrice(item.price)}
                             </div>
                           </div>
@@ -145,7 +145,7 @@ export default function OrdersPage() {
 
                   {/* Shipping */}
                   {order.shipping_address && (
-                    <div className="bg-white/5 rounded-md p-3 text-xs text-slate-300">
+                    <div className="bg-[#F5F5F5] rounded-md p-3 text-xs text-[#666666]">
                       <div className="font-semibold mb-1">Shipping to:</div>
                       <div>
                         {typeof order.shipping_address === 'string'
@@ -158,7 +158,7 @@ export default function OrdersPage() {
                   {/* Action */}
                   {isPendingPayment && (
                     <Link href={`/payment?order=${order.id}`}>
-                      <button className="w-full bg-indigo-600 text-white font-semibold rounded-md py-2.5 hover:bg-white/10">
+                      <button className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-2.5 hover:bg-[#F5F5F5]">
                         Complete payment
                       </button>
                     </Link>

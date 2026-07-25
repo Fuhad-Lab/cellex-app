@@ -170,23 +170,23 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Profile header */}
-      <div className="px-4 py-6 text-center border-b border-white/5">
-        <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+      <div className="px-4 py-6 text-center border-b border-[#E5E5E5]">
+        <div className="w-20 h-20 rounded-full bg-[#D4AF37] flex items-center justify-center mx-auto mb-3 overflow-hidden">
           {seller?.profile_image ? (
             <img src={seller.profile_image} alt="" className="w-full h-full object-cover" />
           ) : (
-            <Store className="w-10 h-10 text-white" />
+            <Store className="w-10 h-10 text-black" />
           )}
         </div>
         <h2 className="text-xl font-bold">{sellerName}</h2>
-        <p className="text-sm text-slate-400 capitalize">
+        <p className="text-sm text-[#666666] capitalize">
           {seller?.seller_type || 'business'} · {seller?.business_category || 'General'}
         </p>
         {seller?.business_location && (
-          <p className="text-xs text-slate-500 mt-1">{seller.business_location}</p>
+          <p className="text-xs text-[#666666] mt-1">{seller.business_location}</p>
         )}
         {seller?.business_description && (
-          <p className="text-sm text-slate-400 mt-3 max-w-md mx-auto">{seller.business_description}</p>
+          <p className="text-sm text-[#666666] mt-3 max-w-md mx-auto">{seller.business_description}</p>
         )}
         {sellerSlug && (
           <Link
@@ -199,7 +199,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Stats grid — all numbers are real */}
-      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-white/5">
+      <div className="grid grid-cols-4 gap-2 px-4 py-4 border-b border-[#E5E5E5]">
         <StatBox icon={Package} value={totalProducts} label="Products" />
         <StatBox icon={ShoppingBag} value={totalOrders} label="Orders" />
         <StatBox icon={DollarSign} value={formatPrice(totalRevenue)} label="Revenue" small />
@@ -207,9 +207,9 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Recent orders section — real orders from seller-orders API */}
-      <div className="px-4 py-4 border-b border-white/5">
+      <div className="px-4 py-4 border-b border-[#E5E5E5]">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+          <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wide flex items-center gap-1.5">
             <ShoppingBag className="w-3.5 h-3.5" />
             Recent Orders
           </h3>
@@ -222,14 +222,14 @@ export default function SellerDashboardPage() {
 
         {recentOrders.length === 0 ? (
           <EmptyStateCard
-            icon={<BagIcon className="w-6 h-6 text-slate-600" />}
+            icon={<BagIcon className="w-6 h-6 text-[#666666]" />}
             title="No orders yet"
             message="Orders from buyers will appear here once you start selling."
             actionHref="/seller/products"
             actionLabel="Add products"
           />
         ) : (
-          <div className="divide-y divide-white/5 border-y border-white/5">
+          <div className="divide-y divide-white/5 border-y border-[#E5E5E5]">
             {recentOrders.map((o) => {
               const itemCount = (o.items || []).reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
               const firstItemName = o.items?.[0]?.product_name;
@@ -238,31 +238,31 @@ export default function SellerDashboardPage() {
                 <Link
                   key={o.id}
                   href="/seller/orders"
-                  className="flex items-center gap-3 py-3 hover:bg-white/5 -mx-2 px-2 rounded-md transition-colors"
+                  className="flex items-center gap-3 py-3 hover:bg-[#F5F5F5] -mx-2 px-2 rounded-md transition-colors"
                 >
-                  <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                    <ShoppingBag className="w-4 h-4 text-slate-400" />
+                  <div className="w-9 h-9 rounded-full bg-[#F5F5F5] flex items-center justify-center shrink-0">
+                    <ShoppingBag className="w-4 h-4 text-[#666666]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-sm">#{String(o.id || '').slice(0, 8)}</span>
-                      <span className="text-[10px] font-medium bg-white/5 text-slate-300 px-1.5 py-0.5 rounded-full capitalize">
+                      <span className="text-[10px] font-medium bg-[#F5F5F5] text-[#666666] px-1.5 py-0.5 rounded-full capitalize">
                         {o.status || 'pending'}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-400 truncate">
+                    <div className="text-xs text-[#666666] truncate">
                       {firstItemName ? (
                         <>
                           {firstItemName}
-                          {extraItems > 0 && <span className="text-slate-500"> · +{extraItems} more</span>}
-                          <span className="text-slate-500"> · {itemCount} item{itemCount === 1 ? '' : 's'}</span>
+                          {extraItems > 0 && <span className="text-[#666666]"> · +{extraItems} more</span>}
+                          <span className="text-[#666666]"> · {itemCount} item{itemCount === 1 ? '' : 's'}</span>
                         </>
                       ) : (
                         <span>{itemCount} item{itemCount === 1 ? '' : 's'}</span>
                       )}
                     </div>
                     {o.created_at && (
-                      <div className="text-[10px] text-slate-500 mt-0.5">{timeAgo(o.created_at)}</div>
+                      <div className="text-[10px] text-[#666666] mt-0.5">{timeAgo(o.created_at)}</div>
                     )}
                   </div>
                   <div className="text-right shrink-0">
@@ -276,9 +276,9 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Top products section — sorted by units_sold */}
-      <div className="px-4 py-4 border-b border-white/5">
+      <div className="px-4 py-4 border-b border-[#E5E5E5]">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+          <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wide flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5" />
             Top Products
           </h3>
@@ -291,7 +291,7 @@ export default function SellerDashboardPage() {
 
         {topProducts.length === 0 ? (
           <EmptyStateCard
-            icon={<PackageOpen className="w-6 h-6 text-slate-600" />}
+            icon={<PackageOpen className="w-6 h-6 text-[#666666]" />}
             title="No products yet"
             message="Add your first product to start selling on Cellex."
             actionHref="/seller/products"
@@ -303,18 +303,18 @@ export default function SellerDashboardPage() {
               <Link
                 key={p.id}
                 href={`/product?id=${p.id}`}
-                className="block border border-white/10 rounded-lg overflow-hidden hover:shadow-md transition-all"
+                className="block border border-[#E5E5E5] rounded-lg overflow-hidden hover:shadow-md transition-all"
               >
-                <div className="aspect-square bg-white/5 relative">
+                <div className="aspect-square bg-[#F5F5F5] relative">
                   {p.image_url ? (
                     <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-600">
+                    <div className="w-full h-full flex items-center justify-center text-[#666666]">
                       <Store className="w-8 h-8" />
                     </div>
                   )}
                   {(p.units_sold || 0) > 0 && (
-                    <span className="absolute top-1.5 left-1.5 bg-black/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute top-1.5 left-1.5 bg-black/80 text-black text-[9px] font-bold px-1.5 py-0.5 rounded">
                       {p.units_sold} sold
                     </span>
                   )}
@@ -324,7 +324,7 @@ export default function SellerDashboardPage() {
                   <div className="flex items-center justify-between mt-1">
                     <span className="font-bold text-sm">{formatPrice(p.price)}</span>
                     {p.category && (
-                      <span className="text-[9px] bg-white/5 px-1.5 py-0.5 rounded text-slate-400">{p.category}</span>
+                      <span className="text-[9px] bg-[#F5F5F5] px-1.5 py-0.5 rounded text-[#666666]">{p.category}</span>
                     )}
                   </div>
                 </div>
@@ -335,8 +335,8 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Quick actions */}
-      <div className="px-4 py-4 border-b border-white/5">
-        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+      <div className="px-4 py-4 border-b border-[#E5E5E5]">
+        <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 flex items-center gap-1.5">
           <PlusCircle className="w-3.5 h-3.5" />
           Quick Actions
         </h3>
@@ -350,24 +350,24 @@ export default function SellerDashboardPage() {
       {/* Menu sections */}
       {menuSections.map((section) => (
         <div key={section.title} className="px-4 py-3">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
+          <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-2">
             {section.title}
           </h3>
-          <div className="divide-y divide-white/5 border-y border-white/5">
+          <div className="divide-y divide-white/5 border-y border-[#E5E5E5]">
             {section.items.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 px-2 py-3 hover:bg-white/5 transition-colors"
+                  className="flex items-center gap-3 px-2 py-3 hover:bg-[#F5F5F5] transition-colors"
                 >
-                  <Icon className="w-5 h-5 text-white shrink-0" />
+                  <Icon className="w-5 h-5 text-black shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{item.label}</div>
-                    <div className="text-xs text-slate-400">{item.sub}</div>
+                    <div className="text-xs text-[#666666]">{item.sub}</div>
                   </div>
-                  <ChevronLeft className="w-4 h-4 text-slate-600 rotate-180" />
+                  <ChevronLeft className="w-4 h-4 text-[#666666] rotate-180" />
                 </Link>
               );
             })}
@@ -381,9 +381,9 @@ export default function SellerDashboardPage() {
 function StatBox({ icon: Icon, value, label, small }: { icon: any; value: any; label: string; small?: boolean }) {
   return (
     <div className="text-center">
-      <Icon className="w-4 h-4 mx-auto text-slate-400 mb-1" />
+      <Icon className="w-4 h-4 mx-auto text-[#666666] mb-1" />
       <div className={`font-bold ${small ? 'text-xs' : 'text-base'}`}>{value}</div>
-      <div className="text-[10px] text-slate-400">{label}</div>
+      <div className="text-[10px] text-[#666666]">{label}</div>
     </div>
   );
 }
@@ -392,10 +392,10 @@ function QuickAction({ href, icon: Icon, label }: { href: string; icon: any; lab
   return (
     <Link
       href={href}
-      className="flex flex-col items-center gap-1.5 py-3 border border-white/10 rounded-lg hover:bg-white/5 hover:border-white/15 transition-colors"
+      className="flex flex-col items-center gap-1.5 py-3 border border-[#E5E5E5] rounded-lg hover:bg-[#F5F5F5] hover:border-white/15 transition-colors"
     >
-      <Icon className="w-5 h-5 text-white" />
-      <span className="text-[11px] font-semibold text-white">{label}</span>
+      <Icon className="w-5 h-5 text-black" />
+      <span className="text-[11px] font-semibold text-black">{label}</span>
     </Link>
   );
 }
@@ -414,14 +414,14 @@ function EmptyStateCard({
   actionLabel?: string;
 }) {
   return (
-    <div className="text-center py-8 px-4 border border-dashed border-white/10 rounded-lg">
+    <div className="text-center py-8 px-4 border border-dashed border-[#E5E5E5] rounded-lg">
       <div className="flex justify-center mb-2">{icon}</div>
-      <p className="text-sm font-semibold text-slate-300">{title}</p>
-      <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">{message}</p>
+      <p className="text-sm font-semibold text-[#666666]">{title}</p>
+      <p className="text-xs text-[#666666] mt-1 max-w-xs mx-auto">{message}</p>
       {actionHref && actionLabel && (
         <Link
           href={actionHref}
-          className="inline-block mt-3 bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-md hover:bg-white/10"
+          className="inline-block mt-3 bg-[#D4AF37] text-black text-xs font-semibold px-4 py-2 rounded-md hover:bg-[#F5F5F5]"
         >
           {actionLabel}
         </Link>

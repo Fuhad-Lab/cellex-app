@@ -99,8 +99,8 @@ export default function CheckoutPage() {
     );
   }
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
-  const labelClass = "text-xs font-semibold text-slate-300";
+  const inputClass = "w-full bg-[#F5F5F5] border border-[#E5E5E5] rounded-md px-3 py-2.5 text-sm focus:bg-[#F5F5F5] focus:border-[#E5E5E5] outline-none";
+  const labelClass = "text-xs font-semibold text-[#666666]";
 
   return (
     <div className="ig-container min-h-screen pb-32 ig-topbar-offset">
@@ -116,7 +116,7 @@ export default function CheckoutPage() {
         {/* Shipping Address */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <MapPin className="w-4 h-4 text-white" />
+            <MapPin className="w-4 h-4 text-black" />
             <h3 className="font-semibold text-sm">Shipping Address</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
                 <option value="FCMB">FCMB</option>
                 <option value="Other">Other</option>
               </select>
-              <p className="text-[10px] text-slate-500">Used to match your PalmPay transfer email — must match the bank you transfer from.</p>
+              <p className="text-[10px] text-[#666666]">Used to match your PalmPay transfer email — must match the bank you transfer from.</p>
             </div>
             <div className="space-y-1.5 sm:col-span-2">
               <label className={labelClass}>Street address *</label>
@@ -179,19 +179,19 @@ export default function CheckoutPage() {
         {/* Payment method */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <CreditCard className="w-4 h-4 text-white" />
+            <CreditCard className="w-4 h-4 text-black" />
             <h3 className="font-semibold text-sm">Payment Method</h3>
           </div>
           <div className="border border-white/15 rounded-md p-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md bg-white/5 flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-md bg-[#F5F5F5] flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-black" />
             </div>
             <div className="flex-1">
               <div className="font-semibold text-sm">PalmPay Bank Transfer</div>
-              <div className="text-xs text-slate-400">Pay via bank transfer — auto-verified within 30 seconds</div>
+              <div className="text-xs text-[#666666]">Pay via bank transfer — auto-verified within 30 seconds</div>
             </div>
-            <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
-              <Check className="w-3 h-3 text-white" />
+            <div className="w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center">
+              <Check className="w-3 h-3 text-black" />
             </div>
           </div>
         </section>
@@ -202,45 +202,45 @@ export default function CheckoutPage() {
           <div className="space-y-2 mb-3">
             {items.map((item) => (
               <div key={item.id} className="flex gap-3 items-center">
-                <div className="w-10 h-10 rounded-md bg-white/5 overflow-hidden shrink-0">
+                <div className="w-10 h-10 rounded-md bg-[#F5F5F5] overflow-hidden shrink-0">
                   {item.products?.image_url ? (
                     <img src={item.products.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Store className="w-4 h-4 text-slate-600" />
+                      <Store className="w-4 h-4 text-[#666666]" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-medium truncate">{item.products?.name}</div>
-                  <div className="text-[10px] text-slate-400">Qty {item.quantity} · {formatPrice(item.products?.price || 0)}</div>
+                  <div className="text-[10px] text-[#666666]">Qty {item.quantity} · {formatPrice(item.products?.price || 0)}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="space-y-1.5 text-sm border-t border-white/5 pt-3">
+          <div className="space-y-1.5 text-sm border-t border-[#E5E5E5] pt-3">
             <div className="flex justify-between">
-              <span className="text-slate-400">Subtotal</span>
+              <span className="text-[#666666]">Subtotal</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Shipping</span>
+              <span className="text-[#666666]">Shipping</span>
               <span>{shipping === 0 ? <span className="text-green-600">FREE</span> : formatPrice(shipping)}</span>
             </div>
-            <div className="flex justify-between font-bold pt-1 border-t border-white/5">
+            <div className="flex justify-between font-bold pt-1 border-t border-[#E5E5E5]">
               <span>Total</span>
-              <span className="text-white text-lg">{formatPrice(total)}</span>
+              <span className="text-black text-lg">{formatPrice(total)}</span>
             </div>
           </div>
         </section>
       </div>
 
       {/* Sticky bottom place order bar */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[470px] bg-white/10 border-t border-white/10 p-4 z-40">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[470px] bg-[#F5F5F5] border-t border-[#E5E5E5] p-4 z-40">
         <button
           onClick={placeOrder}
           disabled={placing}
-          className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50"
+          className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
         >
           {placing ? (
             <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />

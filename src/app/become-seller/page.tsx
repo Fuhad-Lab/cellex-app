@@ -86,7 +86,7 @@ export default function BecomeSellerPage() {
     setSaving(false);
   };
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-md px-3 py-2.5 text-sm focus:bg-white/10 focus:border-white/10 outline-none";
+  const inputClass = "w-full bg-[#F5F5F5] border border-[#E5E5E5] rounded-md px-3 py-2.5 text-sm focus:bg-[#F5F5F5] focus:border-[#E5E5E5] outline-none";
 
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
@@ -97,7 +97,7 @@ export default function BecomeSellerPage() {
         </Link>
         <div className="flex-1 ml-1">
           <h1 className="text-base font-semibold">Become a Seller</h1>
-          <p className="text-[10px] text-slate-400">Step {step} of 3</p>
+          <p className="text-[10px] text-[#666666]">Step {step} of 3</p>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ export default function BecomeSellerPage() {
         {[1, 2, 3].map((s) => (
           <div
             key={s}
-            className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? 'bg-indigo-600' : 'bg-white/10'}`}
+            className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? 'bg-[#D4AF37]' : 'bg-[#F5F5F5]'}`}
           />
         ))}
       </div>
@@ -116,27 +116,27 @@ export default function BecomeSellerPage() {
         <div className="px-4 py-4 space-y-5">
           <div>
             <h2 className="text-xl font-bold mb-1">Set up your store</h2>
-            <p className="text-sm text-slate-400">Tell us about your business</p>
+            <p className="text-sm text-[#666666]">Tell us about your business</p>
           </div>
 
           {/* Profile image */}
           <div className="flex flex-col items-center gap-2">
             <label className="cursor-pointer">
-              <div className="w-24 h-24 rounded-full bg-white/5 border-2 border-dashed border-white/15 flex items-center justify-center overflow-hidden hover:border-white/10 transition-colors">
+              <div className="w-24 h-24 rounded-full bg-[#F5F5F5] border-2 border-dashed border-white/15 flex items-center justify-center overflow-hidden hover:border-[#E5E5E5] transition-colors">
                 {profileImage ? (
                   <img src={profileImage} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <Camera className="w-8 h-8 text-slate-500" />
+                  <Camera className="w-8 h-8 text-[#666666]" />
                 )}
               </div>
               <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
             </label>
-            <span className="text-xs text-slate-400">Tap to upload store logo</span>
+            <span className="text-xs text-[#666666]">Tap to upload store logo</span>
           </div>
 
           {/* Store name */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-slate-300">Store Name *</Label>
+            <Label className="text-xs font-semibold text-[#666666]">Store Name *</Label>
             <Input
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
@@ -147,7 +147,7 @@ export default function BecomeSellerPage() {
 
           {/* Seller type */}
           <div className="space-y-2">
-            <Label className="text-xs font-semibold text-slate-300">Seller Type</Label>
+            <Label className="text-xs font-semibold text-[#666666]">Seller Type</Label>
             <div className="grid grid-cols-3 gap-2">
               {SELLER_TYPES.map((type) => {
                 const Icon = type.icon;
@@ -157,16 +157,16 @@ export default function BecomeSellerPage() {
                     key={type.value}
                     onClick={() => setSellerType(type.value)}
                     className={`flex flex-col items-center gap-1 p-3 rounded-md border-2 transition-all ${
-                      isActive ? 'border-white/10 bg-white/5' : 'border-white/10'
+                      isActive ? 'border-[#E5E5E5] bg-[#F5F5F5]' : 'border-[#E5E5E5]'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-                    <span className={`text-xs font-semibold ${isActive ? 'text-white' : 'text-slate-400'}`}>{type.label}</span>
+                    <Icon className={`w-5 h-5 ${isActive ? 'text-black' : 'text-[#666666]'}`} />
+                    <span className={`text-xs font-semibold ${isActive ? 'text-black' : 'text-[#666666]'}`}>{type.label}</span>
                   </button>
                 );
               })}
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#666666]">
               {SELLER_TYPES.find(t => t.value === sellerType)?.desc}
             </p>
           </div>
@@ -174,7 +174,7 @@ export default function BecomeSellerPage() {
           {/* Farm name (conditional) */}
           {sellerType === 'farmer' && (
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-300">Farm Name</Label>
+              <Label className="text-xs font-semibold text-[#666666]">Farm Name</Label>
               <Input
                 value={farmName}
                 onChange={(e) => setFarmName(e.target.value)}
@@ -187,7 +187,7 @@ export default function BecomeSellerPage() {
           <button
             onClick={() => setStep(2)}
             disabled={!canProceedStep1}
-            className="w-full bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50"
+            className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
           >
             Continue
           </button>
@@ -199,12 +199,12 @@ export default function BecomeSellerPage() {
         <div className="px-4 py-4 space-y-5">
           <div>
             <h2 className="text-xl font-bold mb-1">Location & Category</h2>
-            <p className="text-sm text-slate-400">Help buyers find you</p>
+            <p className="text-sm text-[#666666]">Help buyers find you</p>
           </div>
 
           {/* Location */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <Label className="text-xs font-semibold text-[#666666] flex items-center gap-1.5">
               <MapPin className="w-3 h-3" /> Business Location *
             </Label>
             <Input
@@ -217,7 +217,7 @@ export default function BecomeSellerPage() {
 
           {/* Category */}
           <div className="space-y-2">
-            <Label className="text-xs font-semibold text-slate-300">Primary Category</Label>
+            <Label className="text-xs font-semibold text-[#666666]">Primary Category</Label>
             <div className="grid grid-cols-3 gap-2">
               {CATEGORIES.map((cat) => {
                 const isActive = businessCategory === cat;
@@ -226,7 +226,7 @@ export default function BecomeSellerPage() {
                     key={cat}
                     onClick={() => setBusinessCategory(cat)}
                     className={`px-3 py-2.5 rounded-md border-2 text-xs font-semibold transition-all ${
-                      isActive ? 'border-white/10 bg-white/5 text-white' : 'border-white/10 text-slate-400'
+                      isActive ? 'border-[#E5E5E5] bg-[#F5F5F5] text-black' : 'border-[#E5E5E5] text-[#666666]'
                     }`}
                   >
                     {cat}
@@ -238,7 +238,7 @@ export default function BecomeSellerPage() {
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <Label className="text-xs font-semibold text-[#666666] flex items-center gap-1.5">
               <FileText className="w-3 h-3" /> Store Description
             </Label>
             <Textarea
@@ -248,17 +248,17 @@ export default function BecomeSellerPage() {
               placeholder="Tell buyers what makes your store special..."
               className={`resize-none ${inputClass}`}
             />
-            <p className="text-[10px] text-slate-500">{businessDescription.length}/300 characters</p>
+            <p className="text-[10px] text-[#666666]">{businessDescription.length}/300 characters</p>
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => setStep(1)} className="flex-1 bg-white/10 border border-white/15 text-white font-semibold rounded-md py-3 hover:bg-white/5">
+            <button onClick={() => setStep(1)} className="flex-1 bg-[#F5F5F5] border border-white/15 text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5]">
               Back
             </button>
             <button
               onClick={() => setStep(3)}
               disabled={!canProceedStep2}
-              className="flex-1 bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50"
+              className="flex-1 bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
             >
               Continue
             </button>
@@ -271,22 +271,22 @@ export default function BecomeSellerPage() {
         <div className="px-4 py-4 space-y-5">
           <div>
             <h2 className="text-xl font-bold mb-1">Review & Launch</h2>
-            <p className="text-sm text-slate-400">Confirm your store details</p>
+            <p className="text-sm text-[#666666]">Confirm your store details</p>
           </div>
 
           {/* Summary card */}
-          <div className="border border-white/10 rounded-md p-4 space-y-3">
-            <div className="flex items-center gap-3 pb-3 border-b border-white/5">
-              <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
+          <div className="border border-[#E5E5E5] rounded-md p-4 space-y-3">
+            <div className="flex items-center gap-3 pb-3 border-b border-[#E5E5E5]">
+              <div className="w-14 h-14 rounded-full bg-[#F5F5F5] flex items-center justify-center overflow-hidden shrink-0">
                 {profileImage ? (
                   <img src={profileImage} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <Store className="w-6 h-6 text-slate-500" />
+                  <Store className="w-6 h-6 text-[#666666]" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm truncate">{businessName}</div>
-                <div className="text-xs text-slate-400 capitalize">{sellerType} · {businessCategory}</div>
+                <div className="text-xs text-[#666666] capitalize">{sellerType} · {businessCategory}</div>
               </div>
             </div>
 
@@ -296,16 +296,16 @@ export default function BecomeSellerPage() {
           </div>
 
           {/* What happens next */}
-          <div className="bg-white/5 rounded-md p-4 space-y-2">
-            <div className="text-xs font-semibold text-slate-300 mb-2">What happens next?</div>
+          <div className="bg-[#F5F5F5] rounded-md p-4 space-y-2">
+            <div className="text-xs font-semibold text-[#666666] mb-2">What happens next?</div>
             {[
               'Add your first product',
               'Set up payment methods',
               'Start receiving orders',
               'Go live to showcase products',
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
-                <div className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[9px] font-bold shrink-0">
+              <div key={i} className="flex items-center gap-2 text-xs text-[#666666]">
+                <div className="w-4 h-4 rounded-full bg-[#D4AF37] text-black flex items-center justify-center text-[9px] font-bold shrink-0">
                   {i + 1}
                 </div>
                 {item}
@@ -314,13 +314,13 @@ export default function BecomeSellerPage() {
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => setStep(2)} className="flex-1 bg-white/10 border border-white/15 text-white font-semibold rounded-md py-3 hover:bg-white/5">
+            <button onClick={() => setStep(2)} className="flex-1 bg-[#F5F5F5] border border-white/15 text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5]">
               Back
             </button>
             <button
               onClick={submit}
               disabled={!canSubmit || saving}
-              className="flex-1 bg-indigo-600 text-white font-semibold rounded-md py-3 hover:bg-white/10 disabled:opacity-50"
+              className="flex-1 bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
             >
               {saving ? (
                 <>
@@ -344,7 +344,7 @@ export default function BecomeSellerPage() {
 function ReviewRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex gap-2 text-sm">
-      <span className="text-xs text-slate-400 w-20 shrink-0 pt-0.5">{label}</span>
+      <span className="text-xs text-[#666666] w-20 shrink-0 pt-0.5">{label}</span>
       <span className="text-neutral-800 flex-1">{value}</span>
     </div>
   );

@@ -52,30 +52,30 @@ export default function VideosPage() {
       {/* Shorts promo banner */}
       <Link
         href="/shorts"
-        className="block mx-3 mt-3 bg-gradient-to-r from-neutral-900 to-black text-white rounded-xl p-4 flex items-center gap-3 hover:from-neutral-800 hover:to-neutral-900 transition-colors"
+        className="block mx-3 mt-3 bg-gradient-to-r from-neutral-900 to-black text-black rounded-xl p-4 flex items-center gap-3 hover:from-neutral-800 hover:to-neutral-900 transition-colors"
       >
-        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center shrink-0">
           <Clapperboard className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold">Watch Shorts</div>
-          <div className="text-xs text-white/70">Swipe through short videos from sellers</div>
+          <div className="text-xs text-black/70">Swipe through short videos from sellers</div>
         </div>
         <Play className="w-5 h-5 fill-white shrink-0" />
       </Link>
 
       {/* Section header */}
       <div className="px-3 pt-4 pb-2 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-white">All Videos</h2>
-        <span className="text-xs text-slate-400">{videos.length} videos</span>
+        <h2 className="text-sm font-semibold text-black">All Videos</h2>
+        <span className="text-xs text-[#666666]">{videos.length} videos</span>
       </div>
 
       {/* Video grid — 2 columns of 9:16 thumbnails */}
       {videos.length === 0 ? (
         <div className="text-center py-16 px-4">
-          <Play className="w-10 h-10 mx-auto text-slate-600 mb-2" />
-          <p className="text-sm font-medium text-slate-300">No videos yet</p>
-          <p className="text-xs text-slate-500 mt-1">Videos from sellers will appear here.</p>
+          <Play className="w-10 h-10 mx-auto text-[#666666] mb-2" />
+          <p className="text-sm font-medium text-[#666666]">No videos yet</p>
+          <p className="text-xs text-[#666666] mt-1">Videos from sellers will appear here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-1 px-1">
@@ -91,7 +91,7 @@ export default function VideosPage() {
               <Link
                 key={video.id}
                 href="/shorts"
-                className="relative aspect-[9/16] bg-white/5 overflow-hidden group"
+                className="relative aspect-[9/16] bg-[#F5F5F5] overflow-hidden group"
               >
                 {video.video_url ? (
                   <video
@@ -112,24 +112,24 @@ export default function VideosPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
                 {/* Play count top-right */}
-                <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
+                <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-black text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
                   <Play className="w-2.5 h-2.5 fill-white" />
                   {formatCount(views)}
                 </div>
 
                 {/* Bottom info */}
                 <div className="absolute bottom-0 left-0 right-0 p-2">
-                  <div className="text-[10px] font-semibold text-white truncate mb-0.5">{sellerName}</div>
+                  <div className="text-[10px] font-semibold text-black truncate mb-0.5">{sellerName}</div>
                   {caption && (
-                    <div className="text-[10px] text-white/80 line-clamp-2 leading-tight">{caption}</div>
+                    <div className="text-[10px] text-black/80 line-clamp-2 leading-tight">{caption}</div>
                   )}
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="flex items-center gap-0.5 text-[9px] text-white/70">
-                      <Heart className="w-2.5 h-2.5 fill-red-500 text-red-500" />
+                    <span className="flex items-center gap-0.5 text-[9px] text-black/70">
+                      <Heart className="w-2.5 h-2.5 fill-[#D4AF37] text-[#D4AF37]" />
                       {formatCount(likes)}
                     </span>
                     {product && (
-                      <span className="text-[9px] text-white/70 truncate">
+                      <span className="text-[9px] text-black/70 truncate">
                         · {formatPrice(product.price)}
                       </span>
                     )}
@@ -139,7 +139,7 @@ export default function VideosPage() {
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Play className="w-5 h-5 text-white fill-white" />
+                    <Play className="w-5 h-5 text-black fill-white" />
                   </div>
                 </div>
               </Link>

@@ -105,11 +105,11 @@ export default function ShortsPage() {
 
   if (videos.length === 0) {
     return (
-      <div className="ig-container bg-indigo-600 min-h-screen flex flex-col items-center justify-center text-white">
-        <Play className="w-12 h-12 text-white/30 mb-3" />
+      <div className="ig-container bg-[#D4AF37] min-h-screen flex flex-col items-center justify-center text-black">
+        <Play className="w-12 h-12 text-black/30 mb-3" />
         <p className="text-sm font-semibold">No shorts yet</p>
-        <p className="text-xs text-white/50 mt-1">Check back later for short videos</p>
-        <Link href="/" className="mt-6 bg-white/10 text-white text-sm font-semibold px-6 py-2.5 rounded-md">
+        <p className="text-xs text-black/50 mt-1">Check back later for short videos</p>
+        <Link href="/" className="mt-6 bg-[#F5F5F5] text-black text-sm font-semibold px-6 py-2.5 rounded-md">
           Go home
         </Link>
       </div>
@@ -117,20 +117,20 @@ export default function ShortsPage() {
   }
 
   return (
-    <div className="bg-indigo-600 h-screen overflow-hidden fixed inset-0 z-[100]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="bg-[#D4AF37] h-screen overflow-hidden fixed inset-0 z-[100]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Top bar — minimal, overlaid on video */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 py-3" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 8px)' }}>
         <button
           onClick={() => router.back()}
-          className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+          className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-black"
           aria-label="Back"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-white font-semibold text-base">Shorts</h1>
+        <h1 className="text-black font-semibold text-base">Shorts</h1>
         <button
           onClick={() => setMuted(!muted)}
-          className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+          className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-black"
           aria-label={muted ? 'Unmute' : 'Mute'}
         >
           {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -180,11 +180,11 @@ export default function ShortsPage() {
                 {/* Like */}
                 <button
                   onClick={() => toggleLike(video.id)}
-                  className="flex flex-col items-center gap-1 text-white"
+                  className="flex flex-col items-center gap-1 text-black"
                   aria-label="Like"
                 >
                   <Heart
-                    className={`w-8 h-8 transition-transform ${isLiked ? 'fill-red-500 text-red-500 scale-110' : 'text-white'}`}
+                    className={`w-8 h-8 transition-transform ${isLiked ? 'fill-[#D4AF37] text-[#D4AF37] scale-110' : 'text-black'}`}
                     strokeWidth={1.5}
                   />
                   <span className="text-[10px] font-semibold">{formatCount(likesCount + (isLiked ? 1 : 0))}</span>
@@ -193,7 +193,7 @@ export default function ShortsPage() {
                 {/* Comment */}
                 <button
                   onClick={() => setCommentsOpenFor(video.id)}
-                  className="flex flex-col items-center gap-1 text-white"
+                  className="flex flex-col items-center gap-1 text-black"
                   aria-label="Comments"
                 >
                   <MessageCircle className="w-8 h-8" strokeWidth={1.5} />
@@ -210,7 +210,7 @@ export default function ShortsPage() {
                       toast({ title: 'Link copied' });
                     }
                   }}
-                  className="flex flex-col items-center gap-1 text-white"
+                  className="flex flex-col items-center gap-1 text-black"
                   aria-label="Share"
                 >
                   <Share2 className="w-8 h-8" strokeWidth={1.5} />
@@ -220,11 +220,11 @@ export default function ShortsPage() {
                 {/* Save */}
                 <button
                   onClick={() => toggleSave(video.id)}
-                  className="flex flex-col items-center gap-1 text-white"
+                  className="flex flex-col items-center gap-1 text-black"
                   aria-label="Save"
                 >
                   <Bookmark
-                    className={`w-8 h-8 ${isSaved ? 'fill-white text-white' : 'text-white'}`}
+                    className={`w-8 h-8 ${isSaved ? 'fill-white text-black' : 'text-black'}`}
                     strokeWidth={1.5}
                   />
                   <span className="text-[10px] font-semibold">Save</span>
@@ -236,23 +236,23 @@ export default function ShortsPage() {
                 {/* Seller row */}
                 <div className="flex items-center gap-2 mb-2">
                   <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')}>
-                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white bg-white/10 shrink-0">
+                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white bg-[#F5F5F5] shrink-0">
                       {sellerImage ? (
                         <img src={sellerImage} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm">
+                        <div className="w-full h-full flex items-center justify-center text-black font-bold text-sm">
                           {sellerName.charAt(0).toUpperCase()}
                         </div>
                       )}
                     </div>
                   </Link>
-                  <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')} className="text-white font-semibold text-sm hover:opacity-80">
+                  <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')} className="text-black font-semibold text-sm hover:opacity-80">
                     {sellerName}
                   </Link>
                   {!user && (
                     <Link
                       href="/login"
-                      className="ml-2 bg-white/10 text-white text-xs font-semibold px-3 py-1 rounded-md"
+                      className="ml-2 bg-[#F5F5F5] text-black text-xs font-semibold px-3 py-1 rounded-md"
                     >
                       Follow
                     </Link>
@@ -261,7 +261,7 @@ export default function ShortsPage() {
 
                 {/* Caption */}
                 {caption && (
-                  <p className="text-white text-sm leading-snug mb-2 line-clamp-2">{caption}</p>
+                  <p className="text-black text-sm leading-snug mb-2 line-clamp-2">{caption}</p>
                 )}
 
                 {/* Product CTA */}
@@ -270,23 +270,23 @@ export default function ShortsPage() {
                     href={`/product?id=${product.id}`}
                     className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-lg pl-2 pr-3 py-1.5 max-w-full"
                   >
-                    <div className="w-8 h-8 rounded overflow-hidden bg-white/5 shrink-0">
+                    <div className="w-8 h-8 rounded overflow-hidden bg-[#F5F5F5] shrink-0">
                       {product.image_url && (
                         <img src={product.image_url} alt="" className="w-full h-full object-cover" />
                       )}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-[10px] font-medium text-white truncate">{product.name}</div>
-                      <div className="text-xs font-bold text-white">{formatPrice(product.price)}</div>
+                      <div className="text-[10px] font-medium text-black truncate">{product.name}</div>
+                      <div className="text-xs font-bold text-black">{formatPrice(product.price)}</div>
                     </div>
-                    <ShoppingBag className="w-4 h-4 text-white ml-1 shrink-0" />
+                    <ShoppingBag className="w-4 h-4 text-black ml-1 shrink-0" />
                   </Link>
                 )}
               </div>
 
               {/* Index indicator (top center) */}
               {videos.length > 1 && (
-                <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full z-20">
+                <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-sm text-black text-[10px] font-semibold px-2 py-0.5 rounded-full z-20">
                   {idx + 1} / {videos.length}
                 </div>
               )}

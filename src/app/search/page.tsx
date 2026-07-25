@@ -419,7 +419,7 @@ function SearchResult({ product, index }: { product: Product; index: number }) {
             <span>{product.units_sold} sold</span>
           )}
           <span className="flex items-center gap-0.5">
-            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> 4.5
+            <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" /> 4.5
           </span>
           <span className="flex items-center gap-0.5 text-green-600">
             <ShoppingBag className="w-3 h-3" /> Pay on delivery

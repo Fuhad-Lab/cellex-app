@@ -339,7 +339,7 @@ export default function HomePage() {
             search bar, or via Cmd+K on physical keyboards. */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-          className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-white/10 transition-colors"
+          className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-[#F5F5F5] transition-colors"
           style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
           aria-label="Search"
         >
@@ -358,7 +358,7 @@ export default function HomePage() {
               <Send className="w-6 h-6" />
               {user && unreadMessages > 0 && (
                 <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-[var(--cellex-coral)] rounded-full border-2 border-white flex items-center justify-center">
-                  <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+                  <span className="text-black text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
                 </span>
               )}
             </Link>
@@ -389,7 +389,7 @@ export default function HomePage() {
 
       {/* Social switcher tabs — For You / Following / Shops / Live.
           FUNCTIONAL: filters the feed by post type / seller relationship. */}
-      <div className="fx-topbar border-t border-white/5" style={{ paddingTop: 0, paddingBottom: '8px' }}>
+      <div className="fx-topbar border-t border-[#E5E5E5]" style={{ paddingTop: 0, paddingBottom: '8px' }}>
         <div className="flex items-center justify-around text-xs font-semibold">
           {(['For You', 'Following', 'Shops', 'Live'] as const).map((tab) => (
             <button
@@ -439,14 +439,14 @@ export default function HomePage() {
 
       {/* Stories section — IG-style horizontal scroll with gradient rings */}
       {stories.length > 0 && (
-        <div className="ig-hero-bg border-b border-white/5">
+        <div className="ig-hero-bg border-b border-[#E5E5E5]">
           <div className="flex gap-4 px-3 py-3 overflow-x-auto no-scrollbar">
             {stories.slice(0, 12).map((s: any, i: number) => {
               const storyHref = s.slug ? `/${s.slug}` : `/seller-profile?id=${s.seller_id || ''}`;
               return (
                 <Link key={i} href={storyHref} className="shrink-0 flex flex-col items-center gap-1">
                   <div className="ig-story-ring" style={{ width: 56, height: 56 }}>
-                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-white/5">
+                    <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-[#F5F5F5]">
                       {s.profile_image ? (
                         <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -637,7 +637,7 @@ function FeedPostCard({
           className="flex items-center gap-2.5 cursor-pointer group min-w-0"
         >
           <div className="relative shrink-0">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 ring-2 transition" style={{ '--tw-ring-color': 'rgba(255,107,107,0.4)' } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-[#F5F5F5] ring-2 transition" style={{ '--tw-ring-color': 'rgba(255,107,107,0.4)' } as React.CSSProperties}>
               {post.sellerImage ? (
                 <SmartImage src={post.sellerImage} alt="" width={40} height={40} className="w-full h-full" />
               ) : (
@@ -691,8 +691,8 @@ function FeedPostCard({
               onInView={() => trackView(post.id, post.videoId, post.productId)}
             />
             <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 z-10">
-              <Play className="w-3 h-3 text-white fill-white" />
-              <span className="text-white text-[10px] font-semibold">Video</span>
+              <Play className="w-3 h-3 text-black fill-white" />
+              <span className="text-black text-[10px] font-semibold">Video</span>
             </div>
           </Link>
         ) : (
@@ -708,12 +708,12 @@ function FeedPostCard({
 
         {/* Type indicator tag — top-left */}
         {post.product?.group_buy_enabled && (
-          <div className="absolute top-3 left-3 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1" style={{ background: 'linear-gradient(90deg, var(--cellex-sand), #e8a347)' }}>
+          <div className="absolute top-3 left-3 text-black font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1" style={{ background: 'linear-gradient(90deg, var(--cellex-sand), #e8a347)' }}>
             <Users className="w-2.5 h-2.5" /> GROUP BUY
           </div>
         )}
         {post.isLive && (
-          <div className="absolute top-3 left-3 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse" style={{ background: 'linear-gradient(90deg, var(--cellex-coral), var(--cellex-sand))' }}>
+          <div className="absolute top-3 left-3 text-black font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse" style={{ background: 'linear-gradient(90deg, var(--cellex-coral), var(--cellex-sand))' }}>
             <Zap className="w-2.5 h-2.5" /> FLASH DEAL
           </div>
         )}
@@ -923,10 +923,10 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 bg-[var(--cellex-coral)] rounded-full ig-float" />
-            <span className="text-xs font-bold text-white tracking-wide">LIVE NOW</span>
+            <span className="text-xs font-bold text-black tracking-wide">LIVE NOW</span>
           </span>
-          <span className="text-xs text-white/50">·</span>
-          <span className="text-xs text-white/70">{sessions.length} seller{sessions.length === 1 ? '' : 's'} streaming</span>
+          <span className="text-xs text-black/50">·</span>
+          <span className="text-xs text-black/70">{sessions.length} seller{sessions.length === 1 ? '' : 's'} streaming</span>
         </div>
         <Link href="/live" className="text-xs font-semibold text-[var(--cellex-coral)] hover:opacity-70">
           See all
@@ -949,7 +949,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
             <Link
               key={session.id}
               href={`/live-watch?id=${session.id}`}
-              className="ig-bounce-in shrink-0 w-64 bg-white/10 rounded-xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-0.5"
+              className="ig-bounce-in shrink-0 w-64 bg-[#F5F5F5] rounded-xl overflow-hidden hover:shadow-xl transition-all hover:-translate-y-0.5"
               style={{ animationDelay: `${index * 80}ms` }}
             >
               {/* Top: avatar + LIVE badge + duration */}
@@ -957,38 +957,38 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
                 {/* Pulsing red ring around avatar */}
                 <div className="relative">
                   <div className="absolute inset-0 rounded-full bg-[var(--cellex-coral)] animate-ping opacity-40" />
-                  <div className="relative w-16 h-16 rounded-full border-2 border-[var(--cellex-coral)] overflow-hidden bg-white/10">
+                  <div className="relative w-16 h-16 rounded-full border-2 border-[var(--cellex-coral)] overflow-hidden bg-[#F5F5F5]">
                     {sellerImage ? (
                       <img src={sellerImage} alt={sellerName} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
+                      <div className="w-full h-full flex items-center justify-center text-black font-bold text-2xl">
                         {sellerName.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
                 </div>
                 {/* LIVE badge */}
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-[var(--cellex-coral)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
-                  <span className="w-1.5 h-1.5 bg-white/10 rounded-full" />
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-[var(--cellex-coral)] text-black text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
+                  <span className="w-1.5 h-1.5 bg-[#F5F5F5] rounded-full" />
                   LIVE
                 </div>
                 {/* Duration */}
                 {liveDuration && (
-                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-black text-[10px] font-semibold px-2 py-0.5 rounded-full">
                     {liveDuration}
                   </div>
                 )}
               </div>
               {/* Bottom: title + viewers + CTA */}
               <div className="p-3">
-                <div className="text-xs font-semibold text-white truncate mb-1">{sellerName}</div>
+                <div className="text-xs font-semibold text-black truncate mb-1">{sellerName}</div>
                 <div className="text-xs text-[var(--cellex-text-muted)] line-clamp-1 mb-2">{title}</div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1 text-[10px] text-[var(--cellex-text-muted)]">
                     <span className="w-1.5 h-1.5 bg-[var(--cellex-coral)] rounded-full" />
                     {formatCount(viewers)} watching
                   </span>
-                  <span className="bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                  <span className="bg-[#D4AF37] text-black text-[10px] font-bold px-3 py-1 rounded-full">
                     Watch Live
                   </span>
                 </div>
@@ -1018,8 +1018,8 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
-          <Play className="w-4 h-4 text-white fill-indigo-600" />
-          <h3 className="text-sm font-semibold text-white">Shorts</h3>
+          <Play className="w-4 h-4 text-black fill-indigo-600" />
+          <h3 className="text-sm font-semibold text-black">Shorts</h3>
         </div>
         <Link href="/shorts" className="text-xs font-semibold text-[var(--cellex-coral)] hover:opacity-70">
           See all
@@ -1040,11 +1040,11 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
             <Link
               key={short.id}
               href="/shorts"
-              className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-white/5 hover:shadow-lg transition-all hover:-translate-y-0.5"
+              className="ig-bounce-in shrink-0 w-32 rounded-xl overflow-hidden bg-[#F5F5F5] hover:shadow-lg transition-all hover:-translate-y-0.5"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               {/* Vertical 9:16 video thumbnail */}
-              <div className="relative aspect-[9/16] bg-white/10">
+              <div className="relative aspect-[9/16] bg-[#F5F5F5]">
                 {short.videoUrl ? (
                   <video
                     src={short.videoUrl}
@@ -1062,20 +1062,20 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
                 {/* Gradient overlay for caption readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 {/* Play count top-right */}
-                <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+                <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-black text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
                   <Play className="w-2 h-2 fill-white" />
                   {formatCount(views)}
                 </div>
                 {/* Caption + seller at bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-2">
-                  <div className="text-[10px] font-semibold text-white truncate mb-0.5">{sellerName}</div>
+                  <div className="text-[10px] font-semibold text-black truncate mb-0.5">{sellerName}</div>
                   {caption && (
-                    <div className="text-[10px] text-white/80 line-clamp-2 leading-tight">{caption}</div>
+                    <div className="text-[10px] text-black/80 line-clamp-2 leading-tight">{caption}</div>
                   )}
                   {/* Likes */}
                   <div className="flex items-center gap-1 mt-1">
                     <Heart className="w-2.5 h-2.5 fill-[var(--cellex-coral)] text-[var(--cellex-coral)]" />
-                    <span className="text-[9px] text-white/70">{formatCount(likes)}</span>
+                    <span className="text-[9px] text-black/70">{formatCount(likes)}</span>
                   </div>
                 </div>
               </div>
@@ -1121,7 +1121,7 @@ function SuggestedSellersCarousel({
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
           <Users className="w-4 h-4 text-[var(--cellex-text-muted)]" />
-          <h3 className="text-sm font-semibold text-white">{headerLabel}</h3>
+          <h3 className="text-sm font-semibold text-black">{headerLabel}</h3>
         </div>
         <Link href="/sellers" className="text-xs font-semibold text-[var(--cellex-coral)] hover:opacity-70">
           See All
@@ -1141,16 +1141,16 @@ function SuggestedSellersCarousel({
           return (
             <div
               key={sellerId}
-              className="ig-bounce-in shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-white/10"
+              className="ig-bounce-in shrink-0 w-36 border border-[#E5E5E5] rounded-2xl p-3 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-0.5 transition-all bg-[#F5F5F5]"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               <Link href={sellerHref} className="block">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 mb-2 ig-story-ring" style={{ padding: 2 }}>
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-[#F5F5F5] mb-2 ig-story-ring" style={{ padding: 2 }}>
                   <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
                     {image ? (
                       <img src={image} alt={name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-white/10 text-white font-bold text-xl">
+                      <div className="w-full h-full flex items-center justify-center bg-[#F5F5F5] text-black font-bold text-xl">
                         {name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -1159,7 +1159,7 @@ function SuggestedSellersCarousel({
               </Link>
               <Link
                 href={sellerHref}
-                className="text-xs font-semibold text-white truncate max-w-full hover:opacity-70 mb-0.5"
+                className="text-xs font-semibold text-black truncate max-w-full hover:opacity-70 mb-0.5"
               >
                 {name}
               </Link>
@@ -1170,8 +1170,8 @@ function SuggestedSellersCarousel({
                 onClick={(e) => onFollow(sellerId, e)}
                 className={`w-full text-xs font-semibold py-1.5 rounded-md transition-colors ${
                   isFollowing
-                    ? 'bg-white/5 text-[var(--cellex-text-muted)] hover:bg-white/10'
-                    : 'bg-indigo-600 text-white hover:bg-white/10'
+                    ? 'bg-[#F5F5F5] text-[var(--cellex-text-muted)] hover:bg-[#F5F5F5]'
+                    : 'bg-[#D4AF37] text-black hover:bg-[#F5F5F5]'
                 }`}
               >
                 {isFollowing ? 'Following' : 'Follow'}
@@ -1183,12 +1183,12 @@ function SuggestedSellersCarousel({
         {/* "See all sellers" card — links to /sellers page */}
         <Link
           href="/sellers"
-          className="shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors bg-white/10"
+          className="shrink-0 w-36 border border-[#E5E5E5] rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-[#F5F5F5] transition-colors bg-[#F5F5F5]"
         >
-          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-2">
+          <div className="w-16 h-16 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-2">
             <ChevronRight className="w-6 h-6 text-[var(--cellex-text-muted)]" />
           </div>
-          <span className="text-xs font-semibold text-white">See all sellers</span>
+          <span className="text-xs font-semibold text-black">See all sellers</span>
           <span className="text-[10px] text-[var(--cellex-text-muted)] mt-0.5">Discover more stores</span>
         </Link>
       </div>
