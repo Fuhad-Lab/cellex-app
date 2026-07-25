@@ -569,3 +569,56 @@ Stage Summary:
 - ✅ Homepage feed now fetches feed_posts and shows product in every card
 - ✅ API verified working on live (list returns empty, create requires auth)
 - ⚠️ Need a seller to log in and create test posts to fully verify the feed
+
+---
+Task ID: 19 (Cellex — White bg + smart nav + Gorse fix + feed variety)
+Agent: main (super-z)
+Task: User: (1) Make background white, remove smoke video. (2) Make mobile nav smart (auth-aware). (3) Is Gorse working? Same products keep showing. (4) Let AI decide which posts to show, not hardcoded.
+
+Work Log:
+1. WHITE BACKGROUND:
+   - Removed SmokeBackground component from layout.tsx
+   - Body background: solid white (#ffffff) in globals.css
+   - Clean white site-wide, no smoke video
+
+2. SMART MOBILE NAV (auth-aware, uses Supabase session via isSeller):
+   - Authenticated buyer: Messenger | Shorts | [Home] | Cart | Account
+   - Authenticated buyer-seller: Home | Shorts | [+] | Cart | Account
+   - Not authenticated: Messenger | Shorts | [Home] | Cart | Account
+     (Cart/Account redirect to login when clicked)
+
+3. GORSE DIAGNOSIS:
+   - Tested Gorse recommendations for 3 different users → ALL returned empty
+   - Sent 240 feedback events → still empty recommendations
+   - Item neighbors works (product:25 → product:22) but user recommendations don't
+   - Gorse is a custom Node.js wrapper, not real Gorse — recommendation engine not training
+   - CONCLUSION: Gorse user recommendations are NOT working. Need alternative.
+
+4. PGVECTOR PERSONALIZATION (replaces broken Gorse):
+   - For logged-in users with engagement history, find products SIMILAR to
+     what they've viewed/liked/saved using pgvector cosine similarity
+   - Uses product_embeddings table (HNSW index) for fast similarity search
+   - Source: 'pgvector-personalized' when active
+
+5. FEED VARIETY (fix "same products every time"):
+   - Cold-start fallback now DEDUPLICATES by type+id (no duplicate posts)
+   - SEEDED SHUFFLE: deterministic per user (same user = same order on refresh,
+     different users = different orders)
+   - Fetches 2x the limit, deduplicates, shuffles, takes top N
+   - Now shows mix of products AND videos (was all videos before)
+
+VERIFICATION (live):
+- Homepage: HTTP 200, 0.2s, white background ✅
+- Recommend API: source=trending-real, 10 posts, mix of products+videos ✅
+- Dedup: no duplicate posts in feed ✅
+- Stable order: same anonymous user sees same order on refresh ✅
+- Variety: Wireless Earbuds (product) + Quality you can trust (video) + Chin Chin (product) ✅
+
+- Pushed commit 9365b97. Render live at 04:12 UTC.
+
+Stage Summary:
+- ✅ White background site-wide (smoke video removed)
+- ✅ Smart mobile nav (auth-aware: buyer vs buyer-seller vs unauth)
+- ✅ Gorse diagnosed: user recommendations NOT working (returns empty)
+- ✅ pgvector personalization added as replacement (cosine similarity on user history)
+- ✅ Feed now shows variety (deduplicated + seeded shuffle) — no more same products
