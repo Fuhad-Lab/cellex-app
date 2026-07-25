@@ -1104,15 +1104,17 @@ html, body {
   animation: glassPillSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Body background — solid white */
+/* Body background — subtle warm gradient so frosted glass is visible.
+   Pure white makes glass effects invisible; this barely-perceptible
+   gradient gives the glass something to refract. */
 body {
-  background: #FFFFFF !important;
+  background: linear-gradient(135deg, #FAFAF8 0%, #F5F5F0 50%, #FAFAF8 100%) !important;
   min-height: 100vh;
   color: #000000;
 }
 
 .dark body {
-  background: #FFFFFF !important;
+  background: linear-gradient(135deg, #FAFAF8 0%, #F5F5F0 50%, #FAFAF8 100%) !important;
   color: #000000;
 }
 /* ============================================================
@@ -1181,31 +1183,45 @@ select:focus-visible {
 .text-caption { font-size: 0.75rem; line-height: 1.4; }
 .text-micro { font-size: 0.625rem; line-height: 1.3; }
 
-/* --- Cards — solid white with light border --- */
+/* --- Cards — frosted glass (liquid glassmorphism) --- */
 .fx-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 1);
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   color: #000000;
   transition: all 0.3s ease;
 }
 .fx-card:hover {
-  border-color: #D4AF37;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.12);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.1),
+    0 0 20px rgba(212, 175, 55, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
 
-/* --- Topbar — solid white --- */
+/* --- Topbar — frosted glass --- */
 .fx-topbar {
-  background: #FFFFFF !important;
-  border-bottom: 1px solid #E5E5E5 !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6) !important;
 }
 
-/* --- Nav — solid white floating island --- */
+/* --- Nav — floating glass pill (Telegram/WA0058 style) --- */
 .fx-nav {
-  background: #FFFFFF !important;
-  border: 1px solid #E5E5E5 !important;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* --- Buttons (champagne gold primary, white ghost) --- */
