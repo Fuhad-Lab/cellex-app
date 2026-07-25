@@ -343,8 +343,8 @@ export default function HomePage() {
           style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
           aria-label="Search"
         >
-          <Search className="w-4 h-4 text-slate-400 mr-2" />
-          <span className="text-sm text-slate-400 text-left flex-1">Search</span>
+          <Search className="w-4 h-4 text-[var(--cellex-text-muted)] mr-2" />
+          <span className="text-sm text-[var(--cellex-text-muted)] text-left flex-1">Search</span>
         </button>
 
         {/* Spacer on mobile (search hidden) */}
@@ -357,7 +357,7 @@ export default function HomePage() {
             <Link href="/messenger" className="ig-icon-btn relative" aria-label="Messages">
               <Send className="w-6 h-6" />
               {user && unreadMessages > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-[var(--cellex-coral)] rounded-full border-2 border-white flex items-center justify-center">
                   <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
                 </span>
               )}
@@ -380,7 +380,7 @@ export default function HomePage() {
             <Link href="/profile" className="ig-icon-btn relative" aria-label="Account">
               <User className="w-6 h-6" />
               {user && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[var(--cellex-coral)] rounded-full border-2 border-white" />
               )}
             </Link>
           </div>
@@ -451,12 +451,12 @@ export default function HomePage() {
                         <img src={s.profile_image} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Store className="w-5 h-5 text-slate-600" />
+                          <Store className="w-5 h-5 text-[var(--cellex-text-muted)]" />
                         </div>
                       )}
                     </div>
                   </div>
-                  <span className="text-[10px] text-slate-300 max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
+                  <span className="text-[10px] text-[var(--cellex-text-muted)] max-w-[60px] truncate">{s.business_name || 'Seller'}</span>
                 </Link>
               );
             })}
@@ -680,7 +680,7 @@ function FeedPostCard({
       </div>
 
       {/* CARD MEDIA: 4:3 aspect ratio with overlay badges */}
-      <div className="relative w-full overflow-hidden bg-slate-950" style={{ aspectRatio: '4 / 3' }}>
+      <div className="relative w-full overflow-hidden bg-[var(--cellex-surface-2)]" style={{ aspectRatio: '4 / 3' }}>
         {isVideo ? (
           <Link href="/videos" className="block w-full h-full relative">
             <SmartVideo
@@ -922,13 +922,13 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 bg-red-500 rounded-full ig-float" />
+            <span className="w-2 h-2 bg-[var(--cellex-coral)] rounded-full ig-float" />
             <span className="text-xs font-bold text-white tracking-wide">LIVE NOW</span>
           </span>
           <span className="text-xs text-white/50">·</span>
           <span className="text-xs text-white/70">{sessions.length} seller{sessions.length === 1 ? '' : 's'} streaming</span>
         </div>
-        <Link href="/live" className="text-xs font-semibold text-sky-400 hover:text-sky-300">
+        <Link href="/live" className="text-xs font-semibold text-[var(--cellex-coral)] hover:opacity-70">
           See all
         </Link>
       </div>
@@ -956,8 +956,8 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
               <div className="relative h-32 bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
                 {/* Pulsing red ring around avatar */}
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-40" />
-                  <div className="relative w-16 h-16 rounded-full border-2 border-red-500 overflow-hidden bg-white/10">
+                  <div className="absolute inset-0 rounded-full bg-[var(--cellex-coral)] animate-ping opacity-40" />
+                  <div className="relative w-16 h-16 rounded-full border-2 border-[var(--cellex-coral)] overflow-hidden bg-white/10">
                     {sellerImage ? (
                       <img src={sellerImage} alt={sellerName} className="w-full h-full object-cover" />
                     ) : (
@@ -968,7 +968,7 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
                   </div>
                 </div>
                 {/* LIVE badge */}
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-[var(--cellex-coral)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full ig-pulse-glow">
                   <span className="w-1.5 h-1.5 bg-white/10 rounded-full" />
                   LIVE
                 </div>
@@ -982,10 +982,10 @@ function LiveAuctionsSection({ sessions }: { sessions: any[] }) {
               {/* Bottom: title + viewers + CTA */}
               <div className="p-3">
                 <div className="text-xs font-semibold text-white truncate mb-1">{sellerName}</div>
-                <div className="text-xs text-slate-400 line-clamp-1 mb-2">{title}</div>
+                <div className="text-xs text-[var(--cellex-text-muted)] line-clamp-1 mb-2">{title}</div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                  <span className="flex items-center gap-1 text-[10px] text-[var(--cellex-text-muted)]">
+                    <span className="w-1.5 h-1.5 bg-[var(--cellex-coral)] rounded-full" />
                     {formatCount(viewers)} watching
                   </span>
                   <span className="bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">
@@ -1021,7 +1021,7 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
           <Play className="w-4 h-4 text-white fill-indigo-600" />
           <h3 className="text-sm font-semibold text-white">Shorts</h3>
         </div>
-        <Link href="/shorts" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+        <Link href="/shorts" className="text-xs font-semibold text-[var(--cellex-coral)] hover:opacity-70">
           See all
         </Link>
       </div>
@@ -1074,7 +1074,7 @@ function ShortsSection({ shorts }: { shorts: any[] }) {
                   )}
                   {/* Likes */}
                   <div className="flex items-center gap-1 mt-1">
-                    <Heart className="w-2.5 h-2.5 fill-red-500 text-red-500" />
+                    <Heart className="w-2.5 h-2.5 fill-[var(--cellex-coral)] text-[var(--cellex-coral)]" />
                     <span className="text-[9px] text-white/70">{formatCount(likes)}</span>
                   </div>
                 </div>
@@ -1120,10 +1120,10 @@ function SuggestedSellersCarousel({
       {/* Section header */}
       <div className="flex items-center justify-between px-3 mb-3">
         <div className="flex items-center gap-1.5">
-          <Users className="w-4 h-4 text-slate-300" />
+          <Users className="w-4 h-4 text-[var(--cellex-text-muted)]" />
           <h3 className="text-sm font-semibold text-white">{headerLabel}</h3>
         </div>
-        <Link href="/sellers" className="text-xs font-semibold text-sky-500 hover:text-sky-700">
+        <Link href="/sellers" className="text-xs font-semibold text-[var(--cellex-coral)] hover:opacity-70">
           See All
         </Link>
       </div>
@@ -1164,13 +1164,13 @@ function SuggestedSellersCarousel({
                 {name}
               </Link>
               {category && (
-                <p className="text-[10px] text-slate-400 truncate max-w-full mb-2">{category}</p>
+                <p className="text-[10px] text-[var(--cellex-text-muted)] truncate max-w-full mb-2">{category}</p>
               )}
               <button
                 onClick={(e) => onFollow(sellerId, e)}
                 className={`w-full text-xs font-semibold py-1.5 rounded-md transition-colors ${
                   isFollowing
-                    ? 'bg-white/5 text-slate-300 hover:bg-white/10'
+                    ? 'bg-white/5 text-[var(--cellex-text-muted)] hover:bg-white/10'
                     : 'bg-indigo-600 text-white hover:bg-white/10'
                 }`}
               >
@@ -1186,10 +1186,10 @@ function SuggestedSellersCarousel({
           className="shrink-0 w-36 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors bg-white/10"
         >
           <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-2">
-            <ChevronRight className="w-6 h-6 text-slate-300" />
+            <ChevronRight className="w-6 h-6 text-[var(--cellex-text-muted)]" />
           </div>
           <span className="text-xs font-semibold text-white">See all sellers</span>
-          <span className="text-[10px] text-slate-400 mt-0.5">Discover more stores</span>
+          <span className="text-[10px] text-[var(--cellex-text-muted)] mt-0.5">Discover more stores</span>
         </Link>
       </div>
     </section>

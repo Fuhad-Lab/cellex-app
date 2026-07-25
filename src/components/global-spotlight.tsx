@@ -75,10 +75,11 @@ export function GlobalSpotlight() {
       {showFloatingButton && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-indigo-600 shadow-lg flex items-center justify-center md:hidden hover:scale-105 transition-transform"
+          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full shadow-lg flex items-center justify-center md:hidden hover:scale-105 transition-transform"
+          style={{ background: '#D4AF37' }}
           aria-label="Search"
         >
-          <Search className="w-5 h-5 text-white" />
+          <Search className="w-5 h-5 text-black" />
         </button>
       )}
     </>
