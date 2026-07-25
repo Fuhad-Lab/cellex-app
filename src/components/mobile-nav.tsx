@@ -6,14 +6,19 @@ import { Home, Search, Plus, ShoppingCart, User, Send, Grid3x3, Play } from 'luc
 import { useAuth } from '@/components/auth-provider';
 
 /**
- * MobileNav — WhatsApp Liquid Glass floating island bottom navigation.
+ * MobileNav — smart floating island bottom navigation.
  *
- * BUYER nav: Messenger | Shorts | [Home] | Category | Cart
- *   (Notification + Account icons are in the HEADER, not the nav)
+ * Behavior depends on auth state (from Supabase session):
  *
- * SELLER nav: Home | Shorts | [+] | Cart | Account
- *   (Messenger + Notification icons are in the HEADER, not the nav)
- *   (Account in nav = /profile personal profile; Account in header = /seller-dashboard store)
+ * 1. AUTHENTICATED BUYER:
+ *    Messenger | Shorts | [Home] | Cart | Account
+ *
+ * 2. AUTHENTICATED BUYER-SELLER (isSeller=true):
+ *    Home | Shorts | [+] | Cart | Account
+ *
+ * 3. NOT AUTHENTICATED:
+ *    Messenger | Shorts | [Home] | Cart | Account
+ *    (same as buyer — Cart/Account redirect to login when clicked)
  */
 export function MobileNav() {
   const pathname = usePathname();
@@ -21,6 +26,7 @@ export function MobileNav() {
 
   const navItems = isSeller
     ? [
+        // Buyer-seller: Home | Shorts | [+] | Cart | Account
         { href: '/', label: 'Home', icon: Home },
         { href: '/shorts', label: 'Shorts', icon: Play },
         { href: '/create', label: 'Add', icon: Plus, center: true },
@@ -28,11 +34,12 @@ export function MobileNav() {
         { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
+        // Buyer (auth or not): Messenger | Shorts | [Home] | Cart | Account
         { href: '/messenger', label: 'Messages', icon: Send },
         { href: '/shorts', label: 'Shorts', icon: Play },
         { href: '/', label: 'Home', icon: Home, center: true },
-        { href: '/categories', label: 'Category', icon: Grid3x3 },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
+        { href: user ? '/profile' : '/login', label: 'Account', icon: User, showAvatar: !!user },
       ];
 
   return (
@@ -62,11 +69,11 @@ export function MobileNav() {
                 <div
                   className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
                   style={{
-                    background: 'linear-gradient(135deg, #000000 0%, #333333 100%)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                    background: 'linear-gradient(135deg, #D4AF37 0%, #C4A030 100%)',
+                    boxShadow: '0 4px 16px rgba(212,175,55,0.4)',
                   }}
                 >
-                  <Icon className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  <Icon className="w-5 h-5" style={{ color: '#1A1D20' }} strokeWidth={2.5} />
                 </div>
               </Link>
             );
@@ -100,8 +107,8 @@ export function MobileNav() {
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
                   style={{
-                    color: isActive ? 'var(--cellex-coral)' : '#64748B',
-                    fill: isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? 'var(--cellex-coral)' : 'none',
+                    color: isActive ? '#D4AF37' : '#64748B',
+                    fill: isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? '#D4AF37' : 'none',
                   }}
                 />
                 {item.showBadge && cartCount > 0 && (

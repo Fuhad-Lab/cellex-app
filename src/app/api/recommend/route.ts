@@ -139,20 +139,54 @@ async function handleHome(userId: string, limit: number) {
     sources.push('gorse:not-configured');
   }
 
-  // 2. Cold-start fallback — real trending across both videos AND products.
-  //    Rank them together by engagement score, return as a unified list.
-  const trendingPosts = await fetchRealTrendingUnified(limit);
+  // 2. Gorse item neighbors — for logged-in users with engagement history,
+  //    find products SIMILAR to what they've viewed/liked (via pgvector).
+  //    This provides REAL personalization even when Gorse recommendations fail.
+  if (userId && userId !== 'anonymous') {
+    const personalizedIds = await getPersonalizedProductIds(userId, limit);
+    if (personalizedIds.length > 0) {
+      const posts = await hydrateUnifiedPosts(personalizedIds.map(id => `product:${id}`));
+      if (posts.length > 0) {
+        return NextResponse.json({
+          success: true,
+          source: 'pgvector-personalized',
+          posts,
+          latencyMs: Date.now() - startTime,
+          debug: { sourcesTried: sources },
+        });
+      }
+    }
+    sources.push('pgvector:no-history');
+  }
+
+  // 3. Cold-start fallback — real trending across both videos AND products.
+  //    Shuffle the results so the user sees VARIETY (not the same products
+  //    every time). Deduplicate by product/post ID.
+  const trendingPosts = await fetchRealTrendingUnified(limit * 2);
   if (trendingPosts.length > 0) {
+    // Deduplicate by post ID (no duplicates in the feed)
+    const seen = new Set<string>();
+    const deduped = trendingPosts.filter((p: any) => {
+      const key = `${p.type}-${p.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    // Shuffle for variety (deterministic per user so refresh is stable within a session)
+    const seed = userId ? hashString(userId) : Date.now();
+    const shuffled = seededShuffle(deduped, seed);
+
     return NextResponse.json({
       success: true,
       source: 'trending-real',
-      posts: trendingPosts,
+      posts: shuffled.slice(0, limit),
       latencyMs: Date.now() - startTime,
       debug: { sourcesTried: sources },
     });
   }
 
-  // 3. Last resort — empty (no fake/hardcoded list)
+  // 4. Last resort — empty (no fake/hardcoded list)
   return NextResponse.json({
     success: true,
     source: 'empty',
@@ -160,6 +194,97 @@ async function handleHome(userId: string, limit: number) {
     latencyMs: Date.now() - startTime,
     debug: { sourcesTried: sources },
   });
+}
+
+/**
+ * Get personalized product IDs using pgvector similarity.
+ * Finds products similar to what the user has viewed/liked/saved.
+ * Uses the user's engagement history (product_view_log, buyers_wishlist, buyers_reviews)
+ * to find their interests, then queries pgvector for similar products.
+ */
+async function getPersonalizedProductIds(userId: string, limit: number): Promise<string[]> {
+  const SUPABASE_TOKEN = process.env.SUPABASE_TOKEN || process.env.SUPABASE_SERVICE_KEY || '';
+  const PROJECT = process.env.SUPABASE_PROJECT || 'tcwdbokruvlizkxcpkzj';
+  if (!SUPABASE_TOKEN || !userId || userId === 'anonymous') return [];
+
+  const safeUserId = userId.replace(/'/g, "''");
+
+  try {
+    // Get the user's engaged products + their embeddings, then find SIMILAR products
+    // using pgvector cosine similarity. This is REAL personalization.
+    const query = `
+      WITH user_products AS (
+        SELECT product_id FROM product_view_log WHERE user_id = '${safeUserId}'::uuid
+        UNION
+        SELECT product_id FROM buyers_wishlist WHERE user_id = '${safeUserId}'::uuid
+        UNION
+        SELECT product_id FROM buyers_reviews WHERE user_id = '${safeUserId}'::uuid
+      ),
+      user_embeddings AS (
+        SELECT e.embedding, e.product_id
+        FROM product_embeddings e
+        INNER JOIN user_products up ON up.product_id = e.product_id
+        LIMIT 10
+      )
+      SELECT DISTINCT sim.product_id::text AS id
+      FROM user_embeddings ue
+      CROSS JOIN LATERAL (
+        SELECT e.product_id, e.embedding <=> ue.embedding AS dist
+        FROM product_embeddings e
+        WHERE e.product_id NOT IN (SELECT product_id FROM user_products)
+        ORDER BY e.embedding <=> ue.embedding
+        LIMIT 5
+      ) sim
+      ORDER BY sim.dist
+      LIMIT ${limit};
+    `.trim();
+
+    const resp = await fetch(`https://api.supabase.com/v1/projects/${PROJECT}/database/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_TOKEN}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'cellex-recommend',
+      },
+      body: JSON.stringify({ query }),
+      signal: AbortSignal.timeout(3000),
+    });
+
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    if (!Array.isArray(data)) return [];
+    return data.map((r: any) => String(r.id)).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Simple string hash for deterministic shuffling (same user = same order).
+ */
+function hashString(s: string): number {
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) {
+    const char = s.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Seeded shuffle — deterministic per seed so the same user sees the same
+ * order on refresh, but different users see different orders.
+ */
+function seededShuffle<T>(array: T[], seed: number): T[] {
+  const result = [...array];
+  let rng = seed;
+  for (let i = result.length - 1; i > 0; i--) {
+    rng = (rng * 9301 + 49297) % 233280;
+    const j = Math.floor((rng / 233280) * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 /**
