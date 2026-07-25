@@ -6,7 +6,7 @@ import { api, formatPrice, type Product } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { Search, Heart, MessageCircle, Send, Bookmark, Share2,
   Store, ChevronRight, Play, Zap, Users, ShieldCheck, Star, Eye,
-  CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Flame } from 'lucide-react';
+  CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Flame, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -329,62 +329,51 @@ export default function HomePage() {
         ref={searchBarRef}
         className="fx-topbar ig-topbar"
       >
-        {/* Logo */}
+        {/* Logo — left (like Facebook logo) */}
         <Link href="/" className="shrink-0">
-          <span className="ig-logo">Cellex</span>
+          <span className="text-2xl font-extrabold" style={{ color: '#D4AF37', fontFamily: 'var(--font-geist-mono)' }}>Cellex</span>
         </Link>
 
-        {/* Search — desktop only (pill button).
-            Mobile users access Smart Search via the Explore/Categories page
-            search bar, or via Cmd+K on physical keyboards. */}
-        <button
-          onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-          className="hidden sm:flex flex-1 max-w-[260px] mx-auto items-center ig-search-input hover:bg-[#F5F5F5] transition-colors"
-          style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '8px', padding: '8px 16px' }}
-          aria-label="Search"
-        >
-          <Search className="w-4 h-4 text-[var(--cellex-text-muted)] mr-2" />
-          <span className="text-sm text-[var(--cellex-text-muted)] text-left flex-1">Search</span>
-        </button>
+        {/* Spacer */}
+        <div className="flex-1" />
 
-        {/* Spacer on mobile (search hidden) */}
-        <div className="flex-1 sm:hidden" />
+        {/* RIGHT SIDE — Facebook-style action icons: Create +, Search, Messenger */}
+        <div className="shrink-0 flex items-center gap-2">
+          {/* Create button */}
+          <Link
+            href="/create"
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+            style={{ background: '#F5F5F5', border: '1px solid #E5E5E5' }}
+            aria-label="Create"
+          >
+            <Plus className="w-5 h-5" style={{ color: '#000' }} />
+          </Link>
 
-        {/* RIGHT SIDE — role-dependent.
-            Badges are FUNCTIONAL: only show when there's actual unread data. */}
-        {isSeller ? (
-          <div className="shrink-0 flex items-center gap-1">
-            <Link href="/messenger" className="ig-icon-btn relative" aria-label="Messages">
-              <Send className="w-6 h-6" />
-              {user && unreadMessages > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-[var(--cellex-coral)] rounded-full border-2 border-white flex items-center justify-center">
-                  <span className="text-black text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
-                </span>
-              )}
-            </Link>
-            <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
-              <Bell className="w-6 h-6" />
-            </Link>
-            <Link href="/seller-dashboard" className="ig-icon-btn" aria-label="My Store">
-              <User className="w-6 h-6" />
-            </Link>
-          </div>
-        ) : (
-          /* Buyer: Notifications + Account icons in header.
-             Account links to /profile (personal profile).
-             Mobile nav no longer has Account — it has Shorts instead. */
-          <div className="shrink-0 flex items-center gap-1">
-            <Link href="/notifications" className="ig-icon-btn" aria-label="Notifications">
-              <Bell className="w-6 h-6" />
-            </Link>
-            <Link href="/profile" className="ig-icon-btn relative" aria-label="Account">
-              <User className="w-6 h-6" />
-              {user && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[var(--cellex-coral)] rounded-full border-2 border-white" />
-              )}
-            </Link>
-          </div>
-        )}
+          {/* Search button (opens spotlight) */}
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+            style={{ background: '#F5F5F5', border: '1px solid #E5E5E5' }}
+            aria-label="Search"
+          >
+            <Search className="w-5 h-5" style={{ color: '#000' }} />
+          </button>
+
+          {/* Messenger */}
+          <Link
+            href="/messenger"
+            className="w-9 h-9 rounded-full flex items-center justify-center relative transition-colors"
+            style={{ background: '#F5F5F5', border: '1px solid #E5E5E5' }}
+            aria-label="Messages"
+          >
+            <Send className="w-5 h-5" style={{ color: '#000' }} />
+            {user && unreadMessages > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: '#D4AF37', border: '2px solid #fff' }}>
+                <span className="text-[9px] font-bold leading-none" style={{ color: '#000' }}>{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
 
       {/* Social switcher tabs — For You / Following / Shops / Live.

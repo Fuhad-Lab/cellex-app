@@ -1200,13 +1200,12 @@ select:focus-visible {
   border-bottom: 1px solid #E5E5E5 !important;
 }
 
-/* --- Nav — DARK GLASS floating pill (WA0058 Telegram style) --- */
+/* --- Nav — handled directly in mobile-nav.tsx with inline styles for
+   the dark glass pill + separate search circle (WA0058 style) --- */
 .fx-nav {
-  background: rgba(20, 20, 22, 0.72) !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* --- Buttons (champagne gold primary, white ghost) --- */
