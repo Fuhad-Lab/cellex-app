@@ -622,3 +622,33 @@ Stage Summary:
 - ✅ Gorse diagnosed: user recommendations NOT working (returns empty)
 - ✅ pgvector personalization added as replacement (cosine similarity on user history)
 - ✅ Feed now shows variety (deduplicated + seeded shuffle) — no more same products
+
+---
+Task ID: 21 (Cellex — Re-analyze reference images + apply correct design)
+Agent: main (super-z)
+Task: User said "git revert" and re-analyze the 3 images. The website should look like WA0003 (clean white Facebook-style feed). The mobile nav should be exactly like WA0058 (dark glass pill with search inside). Maintain glassmorphism on the nav, not the cards.
+
+RE-ANALYSIS (corrected understanding):
+- WA0003: The MAIN WEBSITE should look like this — clean white background, solid white cards, Facebook-style feed. NOT glassmorphic cards.
+- WA0058: The MOBILE NAV should look like this — DARK GLASS floating pill (rgba(20,20,22,0.72) + blur), white icons, search INSIDE the pill.
+- WA0004: Sidebar/drawer menu (for later).
+
+PREVIOUS MISTAKE: I made the cards glassmorphic and the nav white. Should have been the OPPOSITE: cards solid white, nav dark glass.
+
+FIXES APPLIED:
+- Reverted previous glass/gradient changes
+- fx-card: solid white #FFFFFF + #E5E5E5 border (NOT glassmorphic)
+- fx-topbar: solid white
+- fx-nav: DARK GLASS pill rgba(20,20,22,0.72) + blur(25px) + white border (NOT white)
+- Body: solid white #FFFFFF (NOT gradient)
+- Nav icons: white rgba(255,255,255,0.7) inactive, gold #D4AF37 active
+- Search button INSIDE the nav pill (rightmost)
+- Removed GlobalSpotlight FAB
+
+VERIFIED (live, computed CSS):
+- Nav background: rgba(20, 20, 22, 0.72) — dark translucent ✅
+- Body background: rgb(255, 255, 255) — solid white ✅
+- Search icon inside nav pill ✅
+- White nav icons ✅
+
+- Pushed commit a05f513. Render live.
