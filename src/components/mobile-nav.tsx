@@ -107,7 +107,7 @@ export function MobileNav() {
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
                   style={{
-                    color: isActive ? '#D4AF37' : '#64748B',
+                    color: isActive ? '#D4AF37' : '#666666',
                     fill: isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? '#D4AF37' : 'none',
                   }}
                 />
