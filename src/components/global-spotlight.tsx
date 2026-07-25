@@ -70,18 +70,7 @@ export function GlobalSpotlight() {
   return (
     <>
       <SpotlightSearch isOpen={isOpen} onClose={() => setIsOpen(false)} />
-
-      {/* Floating search trigger (mobile only) */}
-      {showFloatingButton && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full shadow-lg flex items-center justify-center md:hidden hover:scale-105 transition-transform"
-          style={{ background: '#D4AF37' }}
-          aria-label="Search"
-        >
-          <Search className="w-5 h-5 text-black" />
-        </button>
-      )}
+      {/* Search FAB removed — search is now in the mobile nav bar */}
     </>
   );
 }
