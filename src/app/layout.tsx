@@ -46,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
-      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-black`}>
+      <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-black bg-white`}>
         {/* Content Viewport */}
         <div className="relative z-10 w-full min-h-screen">
           <NativeBackGesture>

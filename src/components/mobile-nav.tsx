@@ -6,15 +6,19 @@ import { Home, Search, Plus, ShoppingCart, User, Send, Grid3x3, Play } from 'luc
 import { useAuth } from '@/components/auth-provider';
 
 /**
- * MobileNav — floating glass pill navigation (Telegram/WA0058 style).
+ * MobileNav — smart floating island bottom navigation.
  *
- * Frosted glass pill with heavy backdrop blur, floating above content.
- * Search button is integrated inside the pill (rightmost position).
+ * Behavior depends on auth state (from Supabase session):
  *
- * Behavior depends on auth state:
- * 1. AUTHENTICATED BUYER: Messenger | Shorts | [Home] | Cart | Search
- * 2. AUTHENTICATED BUYER-SELLER: Home | Shorts | [+] | Cart | Search
- * 3. NOT AUTHENTICATED: Messenger | Shorts | [Home] | Cart | Search
+ * 1. AUTHENTICATED BUYER:
+ *    Messenger | Shorts | [Home] | Cart | Account
+ *
+ * 2. AUTHENTICATED BUYER-SELLER (isSeller=true):
+ *    Home | Shorts | [+] | Cart | Account
+ *
+ * 3. NOT AUTHENTICATED:
+ *    Messenger | Shorts | [Home] | Cart | Account
+ *    (same as buyer — Cart/Account redirect to login when clicked)
  */
 export function MobileNav() {
   const pathname = usePathname();
@@ -22,31 +26,25 @@ export function MobileNav() {
 
   const navItems = isSeller
     ? [
-        // Buyer-seller: Home | Shorts | [+] | Cart | Search
+        // Buyer-seller: Home | Shorts | [+] | Cart | Account
         { href: '/', label: 'Home', icon: Home },
         { href: '/shorts', label: 'Shorts', icon: Play },
         { href: '/create', label: 'Add', icon: Plus, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-        { href: '/search', label: 'Search', icon: Search, isSearch: true },
+        { href: '/profile', label: 'Account', icon: User, showAvatar: true },
       ]
     : [
-        // Buyer (auth or not): Messenger | Shorts | [Home] | Cart | Search
+        // Buyer (auth or not): Messenger | Shorts | [Home] | Cart | Account
         { href: '/messenger', label: 'Messages', icon: Send },
         { href: '/shorts', label: 'Shorts', icon: Play },
         { href: '/', label: 'Home', icon: Home, center: true },
         { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-        { href: '/search', label: 'Search', icon: Search, isSearch: true },
+        { href: user ? '/profile' : '/login', label: 'Account', icon: User, showAvatar: !!user },
       ];
-
-  const openSearch = () => {
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('open-spotlight'));
-    }
-  };
 
   return (
     <div
-      className="fx-nav fixed left-1/2 -translate-x-1/2 z-50 md:hidden"
+      className="fx-nav glass-nav fixed left-1/2 -translate-x-1/2 z-50 md:hidden"
       style={{
         bottom: 'calc(env(safe-area-inset-bottom) + 16px)',
         width: '90%',
@@ -59,27 +57,6 @@ export function MobileNav() {
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
-
-          // Search button — opens spotlight, not a link
-          if (item.isSearch) {
-            return (
-              <button
-                key={item.href}
-                onClick={openSearch}
-                className="flex items-center justify-center relative transition-all"
-                style={{ flex: '1 1 0', height: '100%' }}
-                aria-label="Search"
-              >
-                <div className="relative flex items-center justify-center">
-                  <Icon
-                    className="w-6 h-6 transition-all duration-300"
-                    strokeWidth={1.8}
-                    style={{ color: '#666666' }}
-                  />
-                </div>
-              </button>
-            );
-          }
 
           if (item.center) {
             return (
@@ -96,7 +73,7 @@ export function MobileNav() {
                     boxShadow: '0 4px 16px rgba(212,175,55,0.4)',
                   }}
                 >
-                  <Icon className="w-5 h-5" style={{ color: '#000000' }} strokeWidth={2.5} />
+                  <Icon className="w-5 h-5" style={{ color: '#1A1D20' }} strokeWidth={2.5} />
                 </div>
               </Link>
             );
@@ -112,7 +89,7 @@ export function MobileNav() {
             >
               {isActive && (
                 <div
-                  className="absolute"
+                  className="glass-active-pill glass-pill-enter absolute"
                   style={{
                     width: '48px',
                     height: '38px',
@@ -120,8 +97,6 @@ export function MobileNav() {
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
                     borderRadius: '14px',
-                    background: 'rgba(212, 175, 55, 0.15)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
                   }}
                 />
               )}
@@ -137,13 +112,16 @@ export function MobileNav() {
                   }}
                 />
                 {item.showBadge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#D4AF37] text-black text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                  <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
                     {cartCount}
                   </span>
                 )}
+                {item.showAvatar && user && (
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                )}
                 {item.label === 'Messages' && user && unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-[#D4AF37] rounded-full border-2 border-white flex items-center justify-center">
-                    <span className="text-black text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 rounded-full border-2 border-white flex items-center justify-center">
+                    <span className="text-white text-[9px] font-bold leading-none">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
                   </span>
                 )}
               </div>
