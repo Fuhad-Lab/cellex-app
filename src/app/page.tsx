@@ -4,9 +4,9 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { motion } from 'framer-motion';
-import { Search, Heart, MessageCircle, Send, Bookmark, Share2,
+import { Heart, MessageCircle, Bookmark, Share2,
   Store, ChevronRight, Play, Zap, Users, ShieldCheck, Star, Eye,
-  CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Flame, Plus } from 'lucide-react';
+  CheckCircle, Bell, User, Sparkles, Home as HomeIcon, Flame } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -323,62 +323,10 @@ export default function HomePage() {
   }
 
   return (
-    <div className="ig-container min-h-screen ig-topbar-offset">
-      {/* Top bar — IG-style: logo left, search center, icons right */}
-      <div
-        ref={searchBarRef}
-        className="fx-topbar ig-topbar"
-      >
-        {/* Logo — left (like Facebook logo) */}
-        <Link href="/" className="shrink-0">
-          <span className="text-2xl font-extrabold" style={{ color: '#D4AF37', fontFamily: 'var(--font-geist-mono)' }}>Cellex</span>
-        </Link>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* RIGHT SIDE — Facebook-style action icons: Create +, Search, Messenger */}
-        <div className="shrink-0 flex items-center gap-2">
-          {/* Create button */}
-          <Link
-            href="/create"
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-            style={{ background: '#F5F5F5', border: '1px solid #E5E5E5' }}
-            aria-label="Create"
-          >
-            <Plus className="w-5 h-5" style={{ color: '#000' }} />
-          </Link>
-
-          {/* Search button (opens spotlight) */}
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open-spotlight'))}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-            style={{ background: '#F5F5F5', border: '1px solid #E5E5E5' }}
-            aria-label="Search"
-          >
-            <Search className="w-5 h-5" style={{ color: '#000' }} />
-          </button>
-
-          {/* Messenger */}
-          <Link
-            href="/messenger"
-            className="w-9 h-9 rounded-full flex items-center justify-center relative transition-colors"
-            style={{ background: '#F5F5F5', border: '1px solid #E5E5E5' }}
-            aria-label="Messages"
-          >
-            <Send className="w-5 h-5" style={{ color: '#000' }} />
-            {user && unreadMessages > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: '#D4AF37', border: '2px solid #fff' }}>
-                <span className="text-[9px] font-bold leading-none" style={{ color: '#000' }}>{unreadMessages > 9 ? '9+' : unreadMessages}</span>
-              </span>
-            )}
-          </Link>
-        </div>
-      </div>
-
+    <div className="ig-container min-h-screen">
       {/* Social switcher tabs — For You / Following / Shops / Live.
           FUNCTIONAL: filters the feed by post type / seller relationship. */}
-      <div className="fx-topbar border-t border-[#E5E5E5]" style={{ paddingTop: 0, paddingBottom: '8px' }}>
+      <div className="sticky top-[var(--app-header-h)] md:top-0 z-30 bg-white border-b border-[#E5E5E5]" style={{ paddingTop: 0, paddingBottom: '8px' }}>
         <div className="flex items-center justify-around text-xs font-semibold">
           {(['For You', 'Following', 'Shops', 'Live'] as const).map((tab) => (
             <button

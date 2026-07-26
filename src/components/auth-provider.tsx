@@ -15,6 +15,7 @@ interface AuthContextType {
   cartCount: number;
   isSeller: boolean;
   sellerChecked: boolean;
+  sellerSlug: string | null;
   unreadMessages: number;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signup: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
@@ -29,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   cartCount: 0,
   isSeller: false,
   sellerChecked: false,
+  sellerSlug: null,
   unreadMessages: 0,
   login: async () => ({ success: false }),
   signup: async () => ({ success: false }),
@@ -43,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [cartCount, setCartCount] = useState(0);
   const [isSeller, setIsSeller] = useState(false);
   const [sellerChecked, setSellerChecked] = useState(false);
+  const [sellerSlug, setSellerSlug] = useState<string | null>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
   const refreshCartCount = useCallback(async () => {
@@ -116,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const data = await resp.json();
           if (!cancelled && data.success && data.seller) {
             setIsSeller(true);
+            setSellerSlug(data.seller.slug || null);
           }
         }
       } catch {}
@@ -184,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, cartCount, isSeller, sellerChecked, unreadMessages, login, signup, logout, refreshCartCount, refreshUnreadMessages }}>
+    <AuthContext.Provider value={{ user, loading, cartCount, isSeller, sellerChecked, sellerSlug, unreadMessages, login, signup, logout, refreshCartCount, refreshUnreadMessages }}>
       {children}
     </AuthContext.Provider>
   );

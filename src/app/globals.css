@@ -54,6 +54,11 @@
    ============================================================ */
 
 :root {
+  /* App chrome dimensions (driven from AppChrome / AppSidebar / MobileHeader) */
+  --app-sidebar-w: 264px;
+  --app-header-h: calc(56px + env(safe-area-inset-top));
+  --app-nav-h: 64px;
+
   /* Cellex — 3 shades only: White, Black, Champagne Gold (#D4AF37).
      No other colors. Clean, premium, minimal. */
   --background: #FFFFFF;
@@ -480,10 +485,15 @@ html, body {
   margin: 0 auto;
 }
 
-/* On desktop (>=768px), allow the top bar to span wider but still centered */
+/* On desktop (>=768px), the sidebar owns the left edge, so the fixed top bar
+   should start to the right of the sidebar and span the content area instead
+   of being centred in the full viewport. */
 @media (min-width: 768px) {
   .ig-topbar {
-    max-width: 935px;
+    left: var(--app-sidebar-w);
+    right: 0;
+    max-width: none;
+    margin: 0;
   }
 }
 

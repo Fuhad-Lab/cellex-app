@@ -6,7 +6,7 @@ import { AuthProvider } from "@/components/auth-provider";
 import { OTABootstrap } from "@/components/ota-bootstrap";
 import { OptimisticUIProvider } from "@/components/optimistic-ui";
 import { GlobalSpotlight } from "@/components/global-spotlight";
-import { NavShell } from "@/components/nav-shell";
+import { AppChrome } from "@/components/app-chrome";
 import { NativeBackGesture } from "@/components/native-back-gesture";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -53,9 +53,9 @@ export default function RootLayout({
             <AuthProvider>
               <OTABootstrap />
               <OptimisticUIProvider>
-                <NavShell>
+                <AppChrome>
                   {children}
-                </NavShell>
+                </AppChrome>
                 <GlobalSpotlight />
                 <Toaster />
               </OptimisticUIProvider>

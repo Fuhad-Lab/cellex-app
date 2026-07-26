@@ -2,165 +2,107 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Plus, ShoppingCart, Send, Play } from 'lucide-react';
+import {
+  Home,
+  Compass,
+  MessageCircle,
+  Bookmark,
+  ShoppingCart,
+  Settings,
+} from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 
 /**
- * MobileNav — dark glass pill + SEPARATE circular search button (WA0058 style).
+ * MobileNav — floating bottom navigation for mobile.
  *
- * Layout: [pill nav bar]  [search circle]
- * The search button is BESIDE the pill, not inside it. Both are dark glass.
- * Small gap between them. Same height. Same glass material.
+ * Matches the reference "Mobile bottom navigation":
+ *   - BUYER:         Home · Explore · Messages · Saved · Cart · Settings
+ *   - BUYER-SELLER:  Home · Explore · Messages · Saved · Cart · Settings
  *
- * Auth-aware:
- * 1. BUYER: Messenger | Shorts | [Home] | Cart   +  [Search]
- * 2. BUYER-SELLER: Home | Shorts | [+] | Cart   +  [Search]
- * 3. NOT AUTHENTICATED: same as buyer
+ * (The two variants share the same six destinations in the reference.)
+ * Hidden on desktop where the sidebar owns navigation.
  */
+const NAV_ITEMS = [
+  { href: '/', label: 'Home', icon: Home, exact: true },
+  { href: '/categories', label: 'Explore', icon: Compass },
+  { href: '/messenger', label: 'Messages', icon: MessageCircle },
+  { href: '/wishlist', label: 'Saved', icon: Bookmark },
+  { href: '/cart', label: 'Cart', icon: ShoppingCart, badge: 'cart' as const },
+  { href: '/settings', label: 'Settings', icon: Settings },
+];
+
 export function MobileNav() {
   const pathname = usePathname();
-  const { cartCount, user, isSeller, unreadMessages } = useAuth();
+  const { cartCount, user, unreadMessages } = useAuth();
 
-  const navItems = isSeller
-    ? [
-        { href: '/', label: 'Home', icon: Home },
-        { href: '/shorts', label: 'Shorts', icon: Play },
-        { href: '/create', label: 'Add', icon: Plus, center: true },
-        { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-      ]
-    : [
-        { href: '/messenger', label: 'Messages', icon: Send },
-        { href: '/shorts', label: 'Shorts', icon: Play },
-        { href: '/', label: 'Home', icon: Home, center: true },
-        { href: '/cart', label: 'Cart', icon: ShoppingCart, showBadge: true },
-      ];
-
-  const openSearch = () => {
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('open-spotlight'));
-    }
-  };
+  const isActive = (href: string, exact?: boolean) =>
+    exact ? pathname === href : pathname === href || pathname.startsWith(href + '/');
 
   return (
-    <div
-      className="fixed left-1/2 -translate-x-1/2 z-50 md:hidden flex items-center gap-2"
+    <nav
+      className="md:hidden fixed left-1/2 -translate-x-1/2 z-50 flex items-center justify-around"
       style={{
-        bottom: 'calc(env(safe-area-inset-bottom) + 16px)',
-        maxWidth: '440px',
-        width: '90%',
+        bottom: 'calc(env(safe-area-inset-bottom) + 14px)',
+        width: 'min(440px, 92%)',
+        height: 'var(--app-nav-h)',
+        borderRadius: '22px',
+        background: 'rgba(20, 20, 22, 0.72)',
+        backdropFilter: 'blur(25px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(25px) saturate(180%)',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
       }}
+      aria-label="Primary"
     >
-      {/* Nav pill — dark glass */}
-      <div
-        className="flex items-center justify-around h-full px-4"
-        style={{
-          flex: '1 1 0',
-          height: '64px',
-          borderRadius: '32px',
-          background: 'rgba(20, 20, 22, 0.72)',
-          backdropFilter: 'blur(25px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(25px) saturate(180%)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-        }}
-      >
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
-
-          if (item.center) {
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center justify-center"
-                aria-label={item.label}
-              >
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-90"
-                  style={{
-                    background: 'linear-gradient(135deg, #D4AF37 0%, #C4A030 100%)',
-                    boxShadow: '0 4px 16px rgba(212,175,55,0.4)',
-                  }}
+      {NAV_ITEMS.map((item) => {
+        const active = isActive(item.href, item.exact);
+        const Icon = item.icon;
+        const showCartBadge = item.badge === 'cart' && user && cartCount > 0;
+        const showMsgBadge = item.label === 'Messages' && user && unreadMessages > 0;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full"
+            style={{ color: active ? '#D4AF37' : 'rgba(255,255,255,0.7)' }}
+            aria-label={item.label}
+            aria-current={active ? 'page' : undefined}
+          >
+            <span className="relative flex items-center justify-center">
+              <Icon
+                className="w-[22px] h-[22px] transition-all"
+                strokeWidth={active ? 2.4 : 1.9}
+                style={{
+                  fill: active && item.label === 'Home' ? '#D4AF37' : 'none',
+                }}
+              />
+              {showCartBadge && (
+                <span
+                  className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[9px] font-bold"
+                  style={{ background: '#D4AF37', color: '#000' }}
                 >
-                  <Icon className="w-5 h-5" style={{ color: '#000000' }} strokeWidth={2.5} />
-                </div>
-              </Link>
-            );
-          }
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center justify-center relative transition-all"
-              style={{ flex: '1 1 0', height: '100%' }}
-              aria-label={item.label}
-            >
-              {isActive && (
-                <div
-                  className="absolute"
-                  style={{
-                    width: '48px',
-                    height: '38px',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    borderRadius: '14px',
-                    background: 'rgba(212, 175, 55, 0.2)',
-                    border: '1px solid rgba(212, 175, 55, 0.4)',
-                  }}
-                />
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
               )}
-              <div className="relative flex items-center justify-center">
-                <Icon
-                  className={`w-6 h-6 transition-all duration-300 ${
-                    isActive ? 'scale-110' : ''
-                  }`}
-                  strokeWidth={isActive ? 2.5 : 1.8}
-                  style={{
-                    color: isActive ? '#D4AF37' : 'rgba(255,255,255,0.7)',
-                    fill: isActive && (item.label === 'Home' || item.label === 'Messages' || item.label === 'Shorts') ? '#D4AF37' : 'none',
-                  }}
-                />
-                {item.showBadge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1" style={{ background: '#D4AF37', color: '#000' }}>
-                    {cartCount}
-                  </span>
-                )}
-                {item.label === 'Messages' && user && unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center" style={{ background: '#D4AF37', border: '2px solid rgba(20,20,22,0.9)' }}>
-                    <span className="text-[9px] font-bold leading-none" style={{ color: '#000' }}>{unreadMessages > 9 ? '9+' : unreadMessages}</span>
-                  </span>
-                )}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Search button — SEPARATE circular button BESIDE the pill (WA0058 style) */}
-      <button
-        onClick={openSearch}
-        className="flex items-center justify-center shrink-0 transition-transform active:scale-90"
-        style={{
-          width: '64px',
-          height: '64px',
-          borderRadius: '50%',
-          background: 'rgba(20, 20, 22, 0.72)',
-          backdropFilter: 'blur(25px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(25px) saturate(180%)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-        }}
-        aria-label="Search"
-      >
-        <Search
-          className="w-6 h-6"
-          strokeWidth={1.8}
-          style={{ color: 'rgba(255,255,255,0.7)' }}
-        />
-      </button>
-    </div>
+              {showMsgBadge && (
+                <span
+                  className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full flex items-center justify-center text-[9px] font-bold"
+                  style={{ background: '#D4AF37', color: '#000', border: '2px solid rgba(20,20,22,0.9)' }}
+                >
+                  {unreadMessages > 9 ? '9+' : unreadMessages}
+                </span>
+              )}
+            </span>
+            <span
+              className="text-[10px] font-semibold leading-none"
+              style={{ color: active ? '#D4AF37' : 'rgba(255,255,255,0.7)' }}
+            >
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
