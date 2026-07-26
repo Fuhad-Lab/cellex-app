@@ -44,572 +44,585 @@
 }
 
 /* ============================================================
-   Cellex Design System — Instagram-inspired
-   Social commerce: IG's clean white UI + commerce CTAs.
-   - System font stack (matches IG exactly)
-   - Pure white bg / pure black text
-   - #f5f5f5 hover, #dbdbdb borders, #8e8e8e secondary text
-   - Square media in feed (1:1, full-bleed within card)
-   - Compact action bar (24px icons, no labels)
+   Cellex Design System
+   Monochrome social-commerce UI matching the reference screens.
+   - Neutral accent (near-black in light, near-white in dark)
+   - Full light + dark theme support via .dark class
+   - Every legacy .ig-* / .fx-* / .glass-* class is preserved but
+     re-pointed at tokens so existing pages restyle automatically.
    ============================================================ */
 
 :root {
-  /* Cellex — 3 shades only: White, Black, Champagne Gold (#D4AF37).
-     No other colors. Clean, premium, minimal. */
-  --background: #FFFFFF;
-  --foreground: #000000;
-  --card: #FFFFFF;
-  --card-foreground: #000000;
-  --popover: #FFFFFF;
-  --popover-foreground: #000000;
-  --primary: #D4AF37;
-  --primary-hover: #C4A030;
-  --primary-foreground: #000000;
-  --secondary: #F5F5F5;
-  --secondary-foreground: #000000;
-  --muted: #F5F5F5;
-  --muted-foreground: #666666;
-  --accent: #D4AF37;
-  --accent-foreground: #000000;
-  --destructive: #D4AF37;
-  --destructive-foreground: #000000;
-  --border: #E5E5E5;
-  --input: #F5F5F5;
-  --ring: #D4AF37;
-  --chart-1: #D4AF37;
-  --chart-2: #000000;
-  --chart-3: #FFFFFF;
-  --chart-4: #666666;
-  --chart-5: #E5E5E5;
-  --radius: 0.5rem;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #D4AF37;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #F5F5F5;
-  --sidebar-accent-foreground: #000000;
-  --sidebar-border: #E5E5E5;
-  --sidebar-ring: #D4AF37;
+  --background: #ffffff;
+  --foreground: #0a0a0b;
+  --card: #ffffff;
+  --card-foreground: #0a0a0b;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0b;
 
-  /* Semantic tokens — 3 shades: white, black, champagne gold */
-  --cellex-bg: #FFFFFF;              /* white */
-  --cellex-surface: #FFFFFF;          /* white */
-  --cellex-surface-2: #F5F5F5;        /* off-white (subtle) */
-  --cellex-text: #000000;             /* black */
-  --cellex-text-muted: #666666;       /* dark grey (black at 60% — still monochrome) */
-  --cellex-coral: #D4AF37;            /* champagne gold */
-  --cellex-coral-hover: #C4A030;      /* darker gold on hover */
-  --cellex-sand: #D4AF37;             /* champagne gold */
-  --cellex-success: #D4AF37;          /* champagne gold (was green — now gold) */
-  --cellex-border: #E5E5E5;           /* light grey border (white family) */
+  /* Neutral accent — matches the black buttons/badges in the references */
+  --primary: #0a0a0b;
+  --primary-hover: #262629;
+  --primary-foreground: #ffffff;
 
-  /* IG-style font stack */
-  --font-ig: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #0a0a0b;
+  --muted: #f4f4f5;
+  --muted-foreground: #6b7280;
+  --accent: #f4f4f5;
+  --accent-foreground: #0a0a0b;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e7eb;
+  --input: #ffffff;
+  --ring: #0a0a0b;
+
+  --chart-1: #0a0a0b;
+  --chart-2: #6b7280;
+  --chart-3: #9ca3af;
+  --chart-4: #d1d5db;
+  --chart-5: #e5e7eb;
+
+  --radius: 0.75rem;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0a0a0b;
+  --sidebar-primary: #0a0a0b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #0a0a0b;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #0a0a0b;
+
+  /* Cellex semantic aliases (kept for backwards compatibility) */
+  --cellex-bg: var(--background);
+  --cellex-surface: var(--card);
+  --cellex-surface-2: var(--muted);
+  --cellex-text: var(--foreground);
+  --cellex-text-muted: var(--muted-foreground);
+  --cellex-coral: var(--primary);
+  --cellex-coral-hover: var(--primary-hover);
+  --cellex-sand: var(--muted);
+  --cellex-success: #16a34a;
+  --cellex-live: #ef4444;
+  --cellex-border: var(--border);
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(9, 9, 11, 0.04);
+  --shadow-sm: 0 1px 3px rgba(9, 9, 11, 0.06), 0 1px 2px rgba(9, 9, 11, 0.04);
+  --shadow-md: 0 4px 12px rgba(9, 9, 11, 0.07);
+  --shadow-lg: 0 12px 32px rgba(9, 9, 11, 0.1);
+
+  /* Layout metrics */
+  --sidebar-width: 240px;
+  --topbar-height: 56px;
+  --bottomnav-height: 60px;
+
+  --font-ig: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
 }
 
 .dark {
-  --background: #FFFFFF;
-  --foreground: #000000;
-  --card: #FFFFFF;
-  --card-foreground: #000000;
-  --popover: #FFFFFF;
-  --popover-foreground: #000000;
-  --primary: #D4AF37;
-  --primary-foreground: #000000;
-  --secondary: #F5F5F5;
-  --secondary-foreground: #000000;
-  --muted: #F5F5F5;
-  --muted-foreground: #666666;
-  --accent: #D4AF37;
-  --accent-foreground: #000000;
-  --destructive: #D4AF37;
-  --destructive-foreground: #000000;
-  --border: #E5E5E5;
-  --input: #F5F5F5;
-  --ring: #D4AF37;
+  --background: #0a0a0b;
+  --foreground: #fafafa;
+  --card: #141416;
+  --card-foreground: #fafafa;
+  --popover: #141416;
+  --popover-foreground: #fafafa;
+
+  --primary: #fafafa;
+  --primary-hover: #e4e4e7;
+  --primary-foreground: #0a0a0b;
+
+  --secondary: #1c1c1f;
+  --secondary-foreground: #fafafa;
+  --muted: #1c1c1f;
+  --muted-foreground: #a1a1aa;
+  --accent: #1c1c1f;
+  --accent-foreground: #fafafa;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #27272a;
+  --input: #141416;
+  --ring: #fafafa;
+
+  --chart-1: #fafafa;
+  --chart-2: #a1a1aa;
+  --chart-3: #71717a;
+  --chart-4: #3f3f46;
+  --chart-5: #27272a;
+
+  --sidebar: #0a0a0b;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #fafafa;
+  --sidebar-primary-foreground: #0a0a0b;
+  --sidebar-accent: #1c1c1f;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #27272a;
+  --sidebar-ring: #fafafa;
+
+  --cellex-success: #22c55e;
+  --cellex-live: #ef4444;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
 * {
-  border-color: var(--cellex-border);
+  border-color: var(--border);
 }
 
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  background-color: var(--background);
 }
 
 body {
-  background-color: var(--cellex-bg);
-  color: var(--cellex-text);
-  font-size: 16px;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 15px;
   line-height: 1.5;
   font-family: var(--font-ig);
   font-feature-settings: "rlig" 1, "calt" 1;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-h1 { font-size: 1.5rem; line-height: 1.3; }
-h2 { font-size: 1.25rem; line-height: 1.35; }
-h3 { font-size: 1.125rem; line-height: 1.4; }
-
-/* Brand — champagne gold gradient */
-.brand-gradient {
-  background: linear-gradient(135deg, #D4AF37 0%, #C4A030 100%);
+h1 {
+  font-size: 1.5rem;
+  line-height: 1.3;
 }
-
-.brand-text {
-  color: #000000;
+h2 {
+  font-size: 1.25rem;
+  line-height: 1.35;
 }
-
-/* Price — black bold */
-.price {
-  color: #000000;
-  font-weight: 700;
-}
-
-/* Glow — subtle dark shadow */
-.glow {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-}
-
-.glow-hover:hover {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-/* Hide scrollbar */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Sale badge — indigo */
-.sale-badge {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: #ffffff;
-  font-weight: 700;
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 12px;
-  line-height: 1.2;
-}
-
-/* Bestseller badge — gold */
-.bestseller-badge {
-  background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);
-  color: #fff;
-  font-weight: 700;
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 12px;
-}
-
-/* Buy Now button — indigo gradient */
-.btn-buy-now {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 16px;
-  border-radius: 999px;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
-}
-.btn-buy-now:hover { background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); transform: translateY(-1px); }
-.btn-buy-now:active { transform: translateY(0); }
-
-/* Urgency — indigo */
-.urgency {
-  color: #a5b4fc;
-  font-weight: 700;
-}
-
-/* Input fields — 16px to prevent iOS zoom */
-input, textarea, select {
-  font-size: 16px;
-}
-
-button {
-  font-size: 16px;
+h3 {
+  font-size: 1.125rem;
+  line-height: 1.4;
 }
 
 /* ============================================================
-   ANIMATIONS
+   TYPOGRAPHY SCALE
    ============================================================ */
-
-/* Fade in */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.text-display {
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.text-headline {
+  font-size: 1.375rem;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.text-title {
+  font-size: 1.0625rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.text-body-lg {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.text-body {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+.text-caption {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+.text-micro {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
 }
 
-/* Slide up */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ============================================================
+   BRAND / PRICE
+   ============================================================ */
+.brand-gradient {
+  background: var(--primary);
 }
 
-/* Slide in from left */
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+.brand-text {
+  color: var(--foreground);
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
-/* Scale in */
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+.price {
+  color: var(--foreground);
+  font-weight: 700;
 }
 
-/* Shimmer (for skeletons) */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+.urgency {
+  color: var(--destructive);
+  font-weight: 600;
 }
 
-/* Page transition */
-@keyframes pageEnter {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ============================================================
+   CARDS & SURFACES
+   ============================================================ */
+.ig-card,
+.fx-card,
+.glass-card,
+.glass,
+.glass-section,
+.liquid-glass {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
 }
 
-/* Utility classes */
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.4s ease-out forwards;
-}
-
-.animate-slide-in-left {
-  animation: slideInLeft 0.3s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.3s ease-out forwards;
-}
-
-.animate-page-enter {
-  animation: pageEnter 0.3s ease-out forwards;
-}
-
-/* Staggered delays */
-.delay-0 { animation-delay: 0ms; }
-.delay-50 { animation-delay: 50ms; }
-.delay-100 { animation-delay: 100ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-
-/* Skeleton shimmer — white/grey (monochrome) */
-.skeleton {
-  background: #F5F5F5;
-  background-image: linear-gradient(90deg, #F5F5F5 25%, #E5E5E5 50%, #F5F5F5 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Shimmer utility */
-.shimmer {
-  background: #F5F5F5;
-  background-image: linear-gradient(90deg, #F5F5F5 0%, #E5E5E5 50%, #F5F5F5 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Hover lift effect */
-.hover-lift {
-  transition: all 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-/* Smooth card transitions */
-.card-transition {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Button transitions */
-button, a {
-  transition: all 0.15s ease;
-}
-
-/* Image zoom on hover */
-.img-zoom {
+.ig-cart-card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   overflow: hidden;
 }
-.img-zoom img {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.img-zoom:hover img {
-  transform: scale(1.08);
+
+.ig-feed-card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
-/* Page transition overlay */
-.page-transition {
+.ig-card-spaced {
+  margin-bottom: 16px;
+}
+
+.glass-modal {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+}
+
+.fx-divider {
+  height: 1px;
+  background: var(--border);
+  border: none;
+}
+
+.glow {
+  box-shadow: var(--shadow-sm);
+}
+.glow-hover:hover {
+  box-shadow: var(--shadow-md);
+}
+.fx-glow {
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   NAV / TOPBAR
+   ============================================================ */
+.ig-topbar,
+.fx-topbar,
+.glass-topbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: transparent;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.page-transition-exit {
-  animation: fadeIn 0.2s ease-out reverse;
-}
-
-/* Loading dots */
-.loading-dots span {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #6366f1;
-  margin: 0 3px;
-  animation: loadingDots 1.4s infinite ease-in-out;
-}
-.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes loadingDots {
-  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-  40% { transform: scale(1); opacity: 1; }
-}
-
-/* Smooth pulse for live badges */
-@keyframes smoothPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-.smooth-pulse {
-  animation: smoothPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* ============================================================
-   MOBILE WEBVIEW SIZING FIXES (Capacitor)
-   Fixes the "page appears zoomed in on first paint" bug by:
-   1. Pinning html/body width to 100vw (no horizontal overflow)
-   2. Disabling iOS text auto-inflation
-   3. Disabling tap-highlight + long-press callout (native feel)
-   4. Respecting the notch / dynamic island via env(safe-area-inset-*)
-   ============================================================ */
-html, body {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-}
-
-/* Safe-area insets: applied on the body so every page gets them automatically.
-   NOTE: padding-top is NOT applied here because the fixed .ig-topbar handles
-   the top inset itself (positioned at top: env(safe-area-inset-top)). If we
-   added body padding-top too, we'd get double spacing on pages with a topbar. */
-body {
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-
-/* The bottom mobile-nav should sit ABOVE the home-indicator bar on iPhone X+. */
-nav.fixed.bottom-0 {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* While the page is being dragged via swipe-back, add a subtle drop-shadow
-   to sell the "card sliding over the previous page" effect (iOS-like). */
-.page-shell.is-dragging {
-  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
-}
-
-/* ============================================================
-   NAVIGATION (standard Next.js — no iOS stack)
-   ============================================================ */
-html, body {
-  overscroll-behavior-x: none;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ============================================================
-   INSTAGRAM-STYLE UTILITIES (applied across the app)
-   ============================================================ */
-
-/* IG-style container — centers content, max 470px on mobile (matches IG feed width) */
-.ig-container {
-  max-width: 470px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-/* IG-style top bar — FIXED at top, white, 1px bottom border, compact height.
-   Uses position: fixed so it stays pinned during scroll (matches IG mobile web).
-   Positioned at top: env(safe-area-inset-top) so it sits BELOW the iPhone notch.
-
-   Pages that use .ig-topbar have pt-[54px] added to their root div by the
-   add_topbar_offset.py script. The offset is augmented with safe-area-inset-top
-   via the .ig-topbar-offset class (use that instead of pt-[54px] for pages
-   that need to account for the notch). */
-.ig-topbar {
-  position: fixed;
-  top: env(safe-area-inset-top);
-  left: 0;
-  right: 0;
   z-index: 50;
-  background: rgba(5, 5, 8, 0.6) !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  height: 54px;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  height: var(--topbar-height);
   display: flex;
   align-items: center;
-  padding: 0 12px;
-  max-width: 470px;
-  margin: 0 auto;
+  padding: 0 16px;
+  padding-top: env(safe-area-inset-top);
+  box-sizing: content-box;
 }
 
-/* On desktop (>=768px), allow the top bar to span wider but still centered */
-@media (min-width: 768px) {
-  .ig-topbar {
-    max-width: 935px;
-  }
-}
-
-/* Helper class — adds top padding equal to the fixed topbar height + notch.
-   Applied automatically to page root divs by add_topbar_offset.py. */
 .ig-topbar-offset {
-  padding-top: calc(54px + env(safe-area-inset-top));
+  padding-top: calc(var(--topbar-height) + env(safe-area-inset-top));
 }
 
-/* IG logo — bold serif-style wordmark */
 .ig-logo {
   font-family: var(--font-ig);
   font-weight: 800;
-  font-size: 22px;
-  letter-spacing: -0.5px;
-  color: #ffffff;
+  font-size: 20px;
+  letter-spacing: -0.04em;
+  color: var(--foreground);
 }
 
-/* IG-style stories ring — gradient border around avatar */
-.ig-story-ring {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  padding: 2px;
-  border-radius: 50%;
+.fx-nav,
+.glass-nav,
+.ig-bottom-nav {
+  background: var(--background);
+  border-top: 1px solid var(--border);
 }
 
-/* IG-style avatar — circular, object-cover */
-.ig-avatar-sm { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-.ig-avatar-md { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
-.ig-avatar-lg { width: 77px; height: 77px; border-radius: 50%; object-fit: cover; }
+.glass-active-pill {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 999px;
+}
 
-/* IG-style action bar — 24px icons, no labels, tight spacing */
-.ig-action-bar {
-  display: flex;
+.fx-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 12px;
-}
-.ig-action-bar button {
-  background: transparent;
-  border: none;
-  padding: 4px;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid transparent;
   cursor: pointer;
-  color: #ffffff;
+  white-space: nowrap;
 }
-.ig-action-bar button:hover {
-  color: #cbd5e1;
+.fx-pill:hover {
+  background: var(--secondary);
+  border-color: var(--border);
 }
 
-/* IG-style icon button — used in top bar */
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-buy-now,
+.fx-btn-primary,
+.ig-btn-primary,
+.ig-gradient-btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 11px 20px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-buy-now:hover,
+.fx-btn-primary:hover,
+.ig-btn-primary:hover,
+.ig-gradient-btn:hover {
+  opacity: 0.88;
+}
+.btn-buy-now:active,
+.fx-btn-primary:active,
+.ig-btn-primary:active {
+  transform: scale(0.985);
+}
+
+.ig-btn-outline,
+.fx-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ig-btn-outline:hover,
+.fx-btn-ghost:hover {
+  background: var(--muted);
+}
+
 .ig-icon-btn {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #ffffff;
+  color: var(--foreground);
   border-radius: 50%;
   transition: background 0.15s ease;
 }
 .ig-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--muted);
 }
 
-/* IG-style feed card — kept for backwards compat. New feed cards use
-   .ig-card (rounded iOS-style card with soft shadow). */
-.ig-feed-card {
-  background: rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+.fx-link {
+  color: var(--foreground);
+  font-weight: 600;
+  text-decoration: none;
+}
+.fx-link:hover {
+  text-decoration: underline;
 }
 
-/* iOS-style rounded card — used for feed posts, suggested sellers,
-   live auctions, shorts and any self-contained content block.
-   - Dark glass background (the body has a subtle gradient so cards "float")
-   - 24px radius (matches iOS large corner radius)
-   - overflow: hidden so media conforms to the rounded corners
-   - Soft shadow for depth without being heavy */
-.ig-card {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+/* ============================================================
+   BADGES
+   ============================================================ */
+.fx-badge,
+.sale-badge,
+.bestseller-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.fx-badge-red {
+  background: var(--cellex-live);
   color: #ffffff;
 }
 
-.dark .ig-card {
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+/* ============================================================
+   INPUTS
+   ============================================================ */
+.fx-input,
+.glass-input,
+.ig-search-input {
+  background: var(--muted);
+  border: 1px solid transparent;
+  color: var(--foreground);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.fx-input::placeholder,
+.glass-input::placeholder,
+.ig-search-input::placeholder {
+  color: var(--muted-foreground);
+}
+.fx-input:focus,
+.glass-input:focus,
+.ig-search-input:focus {
+  border-color: var(--ring);
+  background: var(--background);
 }
 
-/* Spacing helper — adds 12px horizontal margins + 16px bottom margin
-   so cards don't touch screen edges and are physically separated. */
-.ig-card-spaced {
-  margin-left: 12px;
-  margin-right: 12px;
-  margin-bottom: 24px;
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+button {
+  font-size: 15px;
 }
 
-/* Cart item card — slightly smaller radius (20px) than feed cards,
-   with the same soft shadow. */
-.ig-cart-card {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  color: #ffffff;
+.fx-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
 }
 
-.dark .ig-cart-card {
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+.ig-container {
+  max-width: 630px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* IG-style media — square, full-bleed */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================
+   AVATARS / STORY RING
+   ============================================================ */
+.ig-story-ring {
+  background: var(--foreground);
+  padding: 2px;
+  border-radius: 50%;
+}
+
+.ig-gradient-border {
+  background: var(--foreground);
+  padding: 2px;
+  border-radius: 50%;
+}
+
+.ig-avatar-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.ig-avatar-md {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.ig-avatar-lg {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ============================================================
+   FEED PRIMITIVES
+   ============================================================ */
+.ig-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 14px;
+}
+.ig-action-bar button {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ig-action-bar button:hover {
+  color: var(--muted-foreground);
+}
+
 .ig-media {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--muted);
   position: relative;
   overflow: hidden;
 }
@@ -620,61 +633,55 @@ html, body {
   object-fit: cover;
 }
 
-/* IG-style likes count — bold, no label */
 .ig-likes {
   font-weight: 600;
   font-size: 14px;
-  color: #ffffff;
-  padding: 0 12px 4px;
+  color: var(--foreground);
+  padding: 0 14px 4px;
 }
 
-/* IG-style caption — bold username + text */
 .ig-caption {
   font-size: 14px;
-  color: #ffffff;
-  padding: 0 12px 8px;
-  line-height: 1.4;
+  color: var(--foreground);
+  padding: 0 14px 8px;
+  line-height: 1.5;
 }
 .ig-caption .username {
   font-weight: 600;
   margin-right: 6px;
 }
 
-/* IG-style timestamp — uppercase, small, gray */
 .ig-timestamp {
-  font-size: 10px;
-  color: #94a3b8;
+  font-size: 11px;
+  color: var(--muted-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
-  padding: 0 12px 12px;
+  letter-spacing: 0.04em;
+  padding: 0 14px 12px;
 }
 
-/* IG-style "View all comments" link */
 .ig-comments-link {
   font-size: 14px;
-  color: #94a3b8;
-  padding: 0 12px 4px;
+  color: var(--muted-foreground);
+  padding: 0 14px 4px;
   display: inline-block;
   cursor: pointer;
 }
 .ig-comments-link:hover {
-  color: #cbd5e1;
+  color: var(--foreground);
 }
 
-/* Bottom nav — now a floating glass island (WhatsApp Liquid Glass style).
-   The actual styling is in the .glass-nav class. This is kept for backward
-   compatibility but the mobile-nav component now uses .glass-nav directly. */
-.ig-bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-  height: 0px;
-  pointer-events: none;
+.ig-hero-bg {
+  background: var(--muted);
 }
 
-/* IG-style profile header — 77px avatar + stats row */
+.ig-gradient-text {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
 .ig-profile-header {
   display: flex;
   align-items: center;
@@ -683,7 +690,7 @@ html, body {
 }
 .ig-profile-stats {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   flex: 1;
 }
 .ig-profile-stat {
@@ -693,27 +700,25 @@ html, body {
   gap: 2px;
 }
 .ig-profile-stat .num {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
-  color: #ffffff;
+  color: var(--foreground);
 }
 .ig-profile-stat .label {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--muted-foreground);
 }
 
-/* IG-style post grid — 3 columns, no gaps */
 .ig-post-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: rgba(255, 255, 255, 0.06);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 3px;
 }
 .ig-post-grid > * {
   aspect-ratio: 1 / 1;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--muted);
   overflow: hidden;
+  border-radius: 6px;
 }
 .ig-post-grid img {
   width: 100%;
@@ -721,11 +726,10 @@ html, body {
   object-fit: cover;
 }
 
-/* IG-style tab bar under profile header */
 .ig-tab-bar {
   display: flex;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  height: 44px;
+  border-bottom: 1px solid var(--border);
+  height: 46px;
 }
 .ig-tab {
   flex: 1;
@@ -735,654 +739,322 @@ html, body {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #94a3b8;
-  border-top: 1px solid transparent;
-  margin-top: -1px;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
 }
 .ig-tab.active {
-  color: #ffffff;
-  border-top-color: #6366f1;
-}
-
-/* IG-style button — outlined (Edit Profile style) */
-.ig-btn-outline {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  color: var(--foreground);
   font-weight: 600;
-  font-size: 14px;
-  padding: 6px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-.ig-btn-outline:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* IG-style primary button — indigo */
-.ig-btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  border: none;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 6px 24px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
-}
-.ig-btn-primary:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-}
-.ig-btn-primary.following {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: none;
-}
-.ig-btn-primary.following:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* IG-style search input — glass pill, no border */
-.ig-search-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  color: #ffffff;
-  width: 100%;
-}
-.ig-search-input:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(99, 102, 241, 0.5);
-  outline: none;
-}
-.ig-search-input::placeholder {
-  color: #64748b;
-}
-
-/* Hide elements at IG breakpoints (desktop sidebar shows at >=768px) */
-@media (min-width: 768px) {
-  .ig-bottom-nav, .glass-nav { display: none !important; }
+  border-bottom-color: var(--foreground);
 }
 
 /* ============================================================
-   VISUAL LIVENESS — animations + effects
-   These add motion and visual interest without being distracting.
+   SKELETONS
    ============================================================ */
-
-/* Scroll-triggered fade-in + slide-up.
-   Apply .reveal to any element; it starts invisible and animates in
-   when the .reveal-visible class is added (via IntersectionObserver). */
-.reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-  will-change: opacity, transform;
-}
-.reveal.reveal-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* IG gradient text — for the Cellex wordmark on special occasions */
-.ig-gradient-text {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* IG gradient button — for primary CTAs that need extra pop */
-.ig-gradient-btn {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  color: #ffffff;
-  font-weight: 600;
-  border: none;
+.skeleton,
+.shimmer,
+.ig-skeleton,
+.ig-shimmer {
+  background: var(--muted);
+  background-image: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    var(--secondary) 50%,
+    var(--muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 8px;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  background-size: 150% 150%;
-  background-position: 0% 50%;
 }
-.ig-gradient-btn:hover {
-  background-position: 100% 50%;
-  box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-.ig-gradient-btn:active {
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes smoothPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes heartBurst {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes loadingDots {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in,
+.fx-fade-in,
+.reveal {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+.animate-slide-up {
+  animation: slideUp 0.35s ease-out forwards;
+}
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+.ig-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+.animate-scale-in,
+.glass-pill-enter {
+  animation: scaleIn 0.25s ease-out forwards;
+}
+.animate-page-enter {
+  animation: pageEnter 0.28s ease-out forwards;
+}
+.ig-bounce-in {
+  animation: bounceIn 0.35s ease-out forwards;
+}
+.ig-heart-burst {
+  animation: heartBurst 0.35s ease-out;
+}
+.ig-float,
+.liquid-fluid {
+  animation: floatY 3s ease-in-out infinite;
+}
+.smooth-pulse,
+.ig-pulse-glow {
+  animation: smoothPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.delay-0 {
+  animation-delay: 0ms;
+}
+.delay-50 {
+  animation-delay: 50ms;
+}
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-150 {
+  animation-delay: 150ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--foreground);
+  margin: 0 3px;
+  animation: loadingDots 1.4s infinite ease-in-out;
+}
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* ============================================================
+   INTERACTIONS
+   ============================================================ */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-transition {
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button,
+a {
+  transition: all 0.15s ease;
+}
+
+.ig-tap:active {
   transform: scale(0.97);
 }
 
-/* Image hover zoom — subtle scale-up on product images */
+.img-zoom,
 .ig-img-zoom {
   overflow: hidden;
 }
+.img-zoom img,
 .ig-img-zoom img {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.img-zoom:hover img,
 .ig-img-zoom:hover img {
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
-/* Tap feedback — scale down on active (mobile) */
-.ig-tap {
-  transition: transform 0.1s ease;
-}
-.ig-tap:active {
-  transform: scale(0.95);
-}
-
-/* Pulse glow — for the LIVE badge */
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(237, 73, 86, 0.7); }
-  50% { box-shadow: 0 0 0 8px rgba(237, 73, 86, 0); }
-}
-.ig-pulse-glow {
-  animation: pulseGlow 2s infinite;
-}
-
-/* Shimmer — for the logo and loading states */
-@keyframes shimmerMove {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.ig-shimmer {
-  background: linear-gradient(90deg, #6366f1 0%, #a5b4fc 50%, #6366f1 100%);
-  background-size: 200% 100%;
-  animation: shimmerMove 3s linear infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* Bounce-in — for the suggested sellers cards */
-@keyframes bounceIn {
-  0% { opacity: 0; transform: scale(0.8) translateY(10px); }
-  60% { opacity: 1; transform: scale(1.02) translateY(-2px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-.ig-bounce-in {
-  animation: bounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* Heart burst — scale + fade for the like animation */
-@keyframes heartBurst {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.35); }
-  60% { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-.ig-heart-burst {
-  animation: heartBurst 0.4s ease-out;
-}
-
-/* Subtle gradient background — applied to the homepage hero area */
-.ig-hero-bg {
-  background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(5, 5, 8, 0) 100%);
-}
-
-/* Floating animation — for the LIVE indicator dot */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-}
-.ig-float {
-  animation: float 2s ease-in-out infinite;
-}
-
-/* Skeleton with IG gradient shimmer */
-.ig-skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
-  background-size: 200% 100%;
-  animation: shimmerMove 1.5s infinite;
-  border-radius: 4px;
-}
-
-/* Slide-in from right — for the suggested sellers carousel */
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-.ig-slide-in-right {
-  animation: slideInRight 0.4s ease-out forwards;
-}
-
-/* Gradient border — for featured seller cards */
-.ig-gradient-border {
-  position: relative;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-}
-.ig-gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 14px;
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  z-index: -1;
-}
-
-/* ============================================================
-   LIQUID GLASS — WhatsApp-style glassmorphism design system
-   Applied across: bottom nav, topbar, cards, modals, overlays
-   ============================================================ */
-
-/* ============================================================
-   LIQUID GLASS — WhatsApp iOS glassmorphism (exact specs)
-   Light: #FFFFFF 70% + #FFFFFF 45% border + 6% shadow, 24px blur
-   Dark:  #121212 75% + #FFFFFF 12% border + 30% shadow, 16px blur
-   Engine: backdrop-blur(25px) saturate(120%)
-   ============================================================ */
-
-/* Base glass container */
-.glass {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease-in-out;
-}
-
-.dark .glass {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
-}
-
-/* Glass topbar — dark glass with blur */
-.glass-topbar {
-  background: rgba(5, 5, 8, 0.6) !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-}
-
-.dark .glass-topbar {
-  background: rgba(5, 5, 8, 0.6) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-}
-
-/* Glass bottom nav — floating island */
-.glass-nav {
-  background: rgba(15, 15, 25, 0.7);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 32px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease-in-out;
-}
-
-.dark .glass-nav {
-  background: rgba(15, 15, 25, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-/* Active tab indicator */
-.glass-active-pill {
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 16px;
-  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.dark .glass-active-pill {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* Glass card */
-.glass-card {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.dark .glass-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
-}
-
-/* Glass modal/sheet */
-.glass-modal {
-  background: rgba(15, 15, 25, 0.85);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.dark .glass-modal {
-  background: rgba(15, 15, 25, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.30);
-}
-
-/* Glass input */
-.glass-input {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dark .glass-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Glass section — for content blocks, list sections */
-.glass-section {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dark .glass-section {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Spring animation for active tab transitions */
-@keyframes glassPillSpring {
-  0% { transform: scale(0.8); opacity: 0; }
-  60% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.glass-pill-enter {
-  animation: glassPillSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Body background — solid white (WA0003 Facebook-style clean white) */
-body {
-  background: #FFFFFF !important;
-  min-height: 100vh;
-  color: #000000;
-}
-
-.dark body {
-  background: #FFFFFF !important;
-  color: #000000;
-}
-/* ============================================================
-   LIQUID GLASS — High-fidelity glassmorphism for dark smoke bg
-   ============================================================ */
-
-.liquid-glass {
-  background: linear-gradient(
-    135deg, 
-    rgba(255, 255, 255, 0.07) 0%, 
-    rgba(255, 255, 255, 0.02) 40%, 
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.2),
-    inset 0 -10px 20px rgba(255, 255, 255, 0.02),
-    0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-.liquid-fluid {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(59, 130, 246, 0.1) 100%);
-  backdrop-filter: blur(8px);
-  box-shadow: 
-    inset 0 4px 6px rgba(255, 255, 255, 0.15),
-    0 4px 15px rgba(59, 130, 246, 0.2);
-}
-
-/* Accessibility: Focus states for keyboard navigation */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid rgba(56, 189, 248, 0.6);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Accessibility: Better color contrast on dark bg */
-.ig-timestamp {
-  color: #94a3b8 !important;
-}
-
-/* Scroll behavior: instant on mobile for performance */
-@media (max-width: 768px) {
-  html {
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ============================================================
-   FUTURISTIC DESIGN SYSTEM — Social E-Commerce
-   Unified across every page. Dark smoke bg + indigo accents
-   + glassmorphism + smooth animations.
-   ============================================================ */
-
-/* --- Typography --- */
-.text-display { font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
-.text-headline { font-size: 1.5rem; line-height: 1.3; font-weight: 700; letter-spacing: -0.01em; }
-.text-title { font-size: 1.125rem; line-height: 1.4; font-weight: 600; }
-.text-body-lg { font-size: 1rem; line-height: 1.5; }
-.text-body { font-size: 0.875rem; line-height: 1.5; }
-.text-caption { font-size: 0.75rem; line-height: 1.4; }
-.text-micro { font-size: 0.625rem; line-height: 1.3; }
-
-/* --- Cards — solid white (Facebook/WA0003 style) --- */
-.fx-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  color: #000000;
-  transition: all 0.2s ease;
-}
-.fx-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* --- Topbar — solid white --- */
-.fx-topbar {
-  background: #FFFFFF !important;
-  border-bottom: 1px solid #E5E5E5 !important;
-}
-
-/* --- Nav — handled directly in mobile-nav.tsx with inline styles for
-   the dark glass pill + separate search circle (WA0058 style) --- */
-.fx-nav {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* --- Buttons (champagne gold primary, white ghost) --- */
-.fx-btn-primary {
-  background: linear-gradient(135deg, #D4AF37 0%, #C4A030 100%);
-  color: #000000;
-  font-weight: 700;
-  border-radius: 9999px;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
-}
-.fx-btn-primary:hover {
-  background: linear-gradient(135deg, #C4A030 0%, #B49020 100%);
-  box-shadow: 0 6px 24px rgba(212, 175, 55, 0.4);
-  transform: translateY(-1px);
-}
-.fx-btn-primary:active { transform: translateY(0); }
-
-.fx-btn-ghost {
-  background: #FFFFFF;
-  color: #000000;
-  font-weight: 600;
-  border-radius: 9999px;
-  padding: 12px 24px;
-  border: 1px solid #E5E5E5;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.fx-btn-ghost:hover {
-  background: #F5F5F5;
-  border-color: #D4AF37;
-}
-
-/* --- Inputs --- */
-.fx-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  color: #ffffff;
-  padding: 12px 16px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-.fx-input:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(99, 102, 241, 0.5);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-.fx-input::placeholder { color: #64748b; }
-
-/* --- Pills / Tags --- */
-.fx-pill {
-  background: rgba(255, 255, 255, 0.06);
-  color: #cbd5e1;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.fx-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-.fx-pill.active {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: #ffffff;
-  border-color: transparent;
-  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
-}
-
-/* --- Section Headers --- */
-.fx-section-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.02em;
+.page-transition {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 9999;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-out;
+}
+.page-transition-exit {
+  animation: fadeIn 0.2s ease-out reverse;
 }
 
-/* --- Links --- */
-.fx-link {
-  color: #818cf8;
-  font-weight: 600;
-  transition: color 0.2s ease;
+.page-shell.is-dragging {
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
 }
-.fx-link:hover { color: #a5b4fc; }
-
-/* --- Price --- */
-.fx-price {
-  font-weight: 800;
-  font-size: 18px;
-  color: #ffffff;
-  letter-spacing: -0.01em;
-}
-
-/* --- Badges --- */
-.fx-badge {
-  background: rgba(99, 102, 241, 0.15);
-  color: #a5b4fc;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.fx-badge-red {
-  background: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-}
-
-/* --- Dividers --- */
-.fx-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
-}
-
-/* --- Animations --- */
-@keyframes fx-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.fx-fade-in { animation: fx-fade-in 0.4s ease-out forwards; }
-
-@keyframes fx-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.1); }
-  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.2); }
-}
-.fx-glow { animation: fx-glow 3s ease-in-out infinite; }
-
-/* --- Scrollbar --- */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
 /* ============================================================
-   Liquid Glass Utility Classes
-   Sits on top of the Grok-style heavy fluid smoke background.
-   Thick glass with reflective borders (top + left light catches),
-   depth shadows, and inner rim for a 3D heavy feel.
+   MOBILE WEBVIEW SIZING (Capacitor)
    ============================================================ */
-@layer utilities {
-  .liquid-glass {
-    /* Base Glass */
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
+html,
+body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  overscroll-behavior-x: none;
+  -webkit-font-smoothing: antialiased;
+}
 
-    /* Reflective Borders */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Top light catch */
-    border-left: 1px solid rgba(255, 255, 255, 0.2); /* Left light catch */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
 
-    /* Depth Shadows */
-    box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.4), /* Drop shadow */
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* Inner rim */
-  }
-
-  .liquid-glass-high-contrast {
-    /* For active states or buttons */
-    background: linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
