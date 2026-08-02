@@ -1,0 +1,55 @@
+# Render Deployment Configuration — Cellex Backend Services
+# https://render.com/docs/blueprint-spec
+
+services:
+  # === NestJS Core API ===
+  - type: web
+    name: cellex-nestjs-api
+    runtime: docker
+    dockerfilePath: ./nestjs/Dockerfile
+    dockerContext: ./nestjs
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      # Secrets come from Supabase Secrets (not stored on Render)
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: CELLEX_INTERNAL_TOKEN
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+    autoDeploy: true
+
+  # === FastAPI AI Service ===
+  - type: web
+    name: cellex-fastapi-ai
+    runtime: docker
+    dockerfilePath: ./fastapi/Dockerfile
+    dockerContext: ./fastapi
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PORT
+        value: 3002
+      # Secrets come from Supabase Secrets (not stored on Render)
+      - key: CELLEX_INTERNAL_TOKEN
+        sync: false
+      - key: NESTJS_API_URL
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: ZAI_API_KEY
+        sync: false
+      - key: GORSE_URL
+        sync: false
+    autoDeploy: true

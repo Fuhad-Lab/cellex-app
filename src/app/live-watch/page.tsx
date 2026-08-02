@@ -1,0 +1,297 @@
+'use client';
+
+import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { api, formatPrice } from '@/lib/api';
+import { API_BASE } from '@/lib/api';
+import { Send, Eye, ChevronLeft, ShoppingBag, Radio, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { useAuth } from '@/components/auth-provider';
+import { useToast } from '@/hooks/use-toast';
+import { PageSkeleton } from '@/components/page-skeleton';
+
+function LiveWatchContent() {
+  const params = useSearchParams();
+  const sessionId = params.get('id') || '';
+  const router = useRouter();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const [session, setSession] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [chatInput, setChatInput] = useState('');
+  const [joined, setJoined] = useState(false);
+  const [lastMsgId, setLastMsgId] = useState(0);
+  const [streamOnline, setStreamOnline] = useState(false);
+  const [streamConfig, setStreamConfig] = useState<{hlsUrl: string; statusUrl: string; previewUrl: string} | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const pollRef = useRef<NodeJS.Timeout | null>(null);
+
+  const load = useCallback(async () => {
+    if (!sessionId) return;
+    const [sessResp, msgsResp] = await Promise.all([
+      api.live.get(sessionId),
+      api.live.messages(sessionId, 0),
+    ]);
+    if (sessResp.success && sessResp.session) {
+      setSession(sessResp.session);
+      if (sessResp.session.status === 'live' && user && !joined) {
+        api.live.join(sessionId).then(() => setJoined(true));
+      }
+    }
+    if (msgsResp.success) {
+      setMessages(msgsResp.messages || []);
+      const lastId = Math.max(0, ...(msgsResp.messages || []).map((m: any) => m.id || 0));
+      setLastMsgId(lastId);
+    }
+    setLoading(false);
+  }, [sessionId, user, joined]);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Fetch stream config from server (NO hardcoded URLs in frontend)
+  useEffect(() => {
+    api.live.getStreamConfig().then((resp) => {
+      if (resp.success && resp.config) {
+        setStreamConfig(resp.config);
+      }
+    });
+  }, []);
+
+  // Check if stream is actually online (seller is broadcasting)
+  // Uses the status URL from server config — NOT hardcoded
+  useEffect(() => {
+    if (!session || session.status !== 'live' || !streamConfig?.statusUrl) return;
+    const checkStream = async () => {
+      try {
+        const resp = await fetch(streamConfig.statusUrl);
+        const data = await resp.json();
+        setStreamOnline(data.online === true);
+      } catch {
+        setStreamOnline(false);
+      }
+    };
+    checkStream();
+    const interval = setInterval(checkStream, 5000);
+    return () => clearInterval(interval);
+  }, [session, streamConfig]);
+
+  // Poll messages
+  useEffect(() => {
+    if (!sessionId || session?.status !== 'live') return;
+    pollRef.current = setInterval(async () => {
+      const result = await api.live.messages(sessionId, lastMsgId);
+      if (result.success && result.messages?.length) {
+        setMessages((prev) => [...prev, ...result.messages]);
+        const newLast = Math.max(lastMsgId, ...result.messages.map((m: any) => m.id || 0));
+        setLastMsgId(newLast);
+      }
+    }, 3000);
+    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+  }, [sessionId, lastMsgId, session?.status]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!chatInput.trim() || !user) return;
+    const text = chatInput.trim();
+    setChatInput('');
+    const result = await api.live.message(sessionId, text);
+    if (!result.success) {
+      toast({ title: 'Error', description: result.error, variant: 'destructive' });
+    }
+  };
+
+  if (loading) { return <PageSkeleton variant="live" />; }
+
+  if (!session) {
+    return (
+      <div className="ig-container min-h-screen ig-topbar-offset">
+        <div className="fx-topbar ig-topbar">
+          <button onClick={() => router.push('/live')} className="ig-icon-btn" aria-label="Back">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-base font-semibold flex-1 ml-2">Live</h1>
+        </div>
+        <div className="text-center py-20">
+          <p className="text-slate-400">Session not found</p>
+          <Link href="/live" className="text-white font-semibold mt-3 inline-block">Back to live</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const isLive = session.status === 'live';
+  // Check if this session uses Owncast (stream_url contains our Owncast URL)
+  const usesOwncast = session.stream_url && session.stream_url.includes('ai-module-tester.onrender.com');
+
+  return (
+    <div className="ig-container min-h-screen pb-24">
+      {/* Top bar */}
+      <div className="fx-topbar ig-topbar">
+        <button onClick={() => router.push('/live')} className="ig-icon-btn" aria-label="Back">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-base font-semibold flex-1 ml-2 truncate">{session.title}</h1>
+      </div>
+
+      {/* Stream — Owncast player */}
+      <div className="aspect-video bg-indigo-600 relative">
+        {usesOwncast ? (
+          <>
+            {/* Owncast HLS player */}
+            <video
+              autoPlay
+              muted
+              playsInline
+              controls
+              className="w-full h-full"
+              poster={session.featured_product?.image_url || undefined}
+            >
+              <source src={streamConfig?.hlsUrl || ''} type="application/x-mpegURL" />
+              Your browser does not support the video tag.
+            </video>
+
+            {/* Offline overlay — shown when seller hasn't started streaming yet */}
+            {isLive && !streamOnline && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/80">
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-3">
+                  <Radio className="w-8 h-8 animate-pulse" />
+                </div>
+                <p className="text-sm font-semibold">Waiting for seller to start streaming</p>
+                <p className="text-xs text-white/60 mt-1">The session is live — video will appear here shortly</p>
+              </div>
+            )}
+
+            {/* Offline session overlay */}
+            {!isLive && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-indigo-600">
+                <Radio className="w-12 h-12 text-white/30 mb-2" />
+                <p className="text-sm font-semibold">Session has ended</p>
+                <p className="text-xs text-white/50 mt-1">This live session is no longer active</p>
+              </div>
+            )}
+          </>
+        ) : session.stream_url ? (
+          // Fallback: YouTube or other URL
+          session.stream_url.includes('youtube') || session.stream_url.includes('youtu.be') ? (
+            <iframe
+              src={session.stream_url.replace('watch?v=', 'embed/')}
+              className="w-full h-full"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
+          ) : (
+            <video src={session.stream_url} autoPlay muted loop controls className="w-full h-full" />
+          )
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-white flex-col gap-2">
+            <Radio className="w-12 h-12" />
+            <p className="text-sm">Audio-only / text live session</p>
+          </div>
+        )}
+
+        {/* LIVE badge + viewer count */}
+        <div className="absolute top-2 left-2 flex items-center gap-2 pointer-events-none">
+          {isLive && (
+            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-white/10 rounded-full animate-pulse" /> LIVE
+            </span>
+          )}
+          <span className="bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+            <Eye className="w-3 h-3" /> {session.viewer_count || 0}
+          </span>
+        </div>
+      </div>
+
+      {/* Meta */}
+      <div className="p-4">
+        <h2 className="font-semibold text-base">{session.title}</h2>
+        <div className="text-xs text-slate-400 mt-0.5">
+          by{' '}
+          <Link href={session.seller_slug ? `/${session.seller_slug}` : `/seller-profile?id=${session.seller_id}`} className="text-white font-medium">
+            {session.seller_name}
+          </Link>
+        </div>
+
+        {session.featured_product && (
+          <div className="mt-3 border border-white/10 rounded-md p-3 flex items-center gap-3">
+            <div className="w-16 h-16 rounded-md bg-white/5 overflow-hidden">
+              {session.featured_product.image_url && (
+                <img src={session.featured_product.image_url} alt="" className="w-full h-full object-cover" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-sm line-clamp-1">{session.featured_product.name}</div>
+              <div className="text-white font-bold">{formatPrice(session.featured_product.price)}</div>
+            </div>
+            <Link href={`/product?id=${session.featured_product.id}`}>
+              <button className="bg-indigo-600 text-white font-semibold rounded-md px-3 py-2 text-xs hover:bg-white/10">
+                <ShoppingBag className="w-3.5 h-3.5 inline mr-1" /> Buy
+              </button>
+            </Link>
+          </div>
+        )}
+
+        {/* Open in full screen link for Owncast */}
+        {usesOwncast && isLive && (
+          <a
+            href={streamConfig?.previewUrl || '#'}
+            target="_blank"
+            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white mt-3 transition-colors"
+          >
+            <ExternalLink className="w-3 h-3" /> Open in full screen
+          </a>
+        )}
+      </div>
+
+      {/* Chat */}
+      <div className="border-t border-white/10 flex flex-col h-[50vh]">
+        <div className="px-4 py-3 border-b border-white/5 font-semibold text-sm">Live Chat</div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          {messages.length === 0 && (
+            <p className="text-center text-xs text-slate-500 mt-8">No messages yet. Be the first.</p>
+          )}
+          {messages.map((m) => (
+            <div key={m.id} className="text-sm">
+              <span className={`font-semibold ${m.message_type === 'system' ? 'text-amber-600' : m.message_type === 'purchase' ? 'text-green-600' : 'text-white'}`}>
+                {m.name || m.sender_name || 'Anonymous'}:
+              </span>{' '}
+              <span className="text-neutral-800">{m.message}</span>
+            </div>
+          ))}
+          <div ref={chatEndRef} />
+        </div>
+        <div className="p-2 border-t border-white/5 flex gap-2">
+          <input
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder={user ? 'Type a message...' : 'Login to chat'}
+            disabled={!user || !isLive}
+            className="flex-1 bg-white/5 border border-white/10 rounded-md px-3 py-2 text-sm disabled:opacity-50 focus:bg-white/10 focus:border-white/10 outline-none"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!user || !isLive || !chatInput.trim()}
+            className="bg-indigo-600 text-white rounded-md px-4 disabled:opacity-30 hover:bg-white/10"
+            aria-label="Send"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LiveWatchPage() {
+  return (
+    <Suspense fallback={<PageSkeleton variant="live" />}>
+      <LiveWatchContent />
+    </Suspense>
+  );
+}

@@ -1,0 +1,14 @@
+{
+  "name": "cellex-core-api",
+  "version": "1.0.0",
+  "description": "Cellex Core API — secure middle layer backend",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@supabase/supabase-js": "^2.39.0",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.0"
+  }
+}

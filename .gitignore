@@ -1,0 +1,65 @@
+# Secrets — NEVER commit these
+.env
+.env.local
+.env.production
+.env.development
+*.pem
+*.key
+secrets.json
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+.next/
+out/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp files
+tmp/
+.temp/
+
+# Migration backup (contains old code with secrets)
+.migration-backup/
+
+# Tool results
+tool-results/
+
+# Large files
+*.mp4
+*.webm
+!public/*.mp4
+worklog.md
+scripts/
+.migration-backup/
+scripts/
+download/
+supabase/.temp/
+skills/
+.agents/
+agent-ctx/
+Screen *.png
+IMG-*.jpg
+*.png
+!public/**/*.png
+!public/**/*.jpg
+skills/
+upload/
+*.webp
+!public/**/*.webp

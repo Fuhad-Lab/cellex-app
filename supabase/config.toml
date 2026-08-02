@@ -1,0 +1,16 @@
+project_id = "tcwdbokruvlizkxcpkzj"
+
+[functions.social]
+verify_jwt = false
+
+[functions.auth]
+verify_jwt = false
+
+[functions.seller-profile]
+verify_jwt = false
+
+[functions.seller-products]
+verify_jwt = false
+
+[functions.profile]
+verify_jwt = false
