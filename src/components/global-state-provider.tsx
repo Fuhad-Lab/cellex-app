@@ -67,6 +67,21 @@ export function GlobalStateProvider({ children }: { children: React.ReactNode })
   const storeRef = useRef<Record<string, unknown>>({});
   const [, setVersion] = useState(0);
 
+  // Debug: track mount count to verify the provider stays mounted across navigation.
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const w = window as any;
+      w.__globalStateMountCount = (w.__globalStateMountCount || 0) + 1;
+      w.__globalStateStore = storeRef.current;
+      console.log(`[GlobalStateProvider] MOUNT #${w.__globalStateMountCount}`);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        console.log('[GlobalStateProvider] UNMOUNT');
+      }
+    };
+  }, []);
+
   // Scroll positions — same pattern. Ref for reads, no re-render needed.
   const scrollRef = useRef<Record<string, number>>({});
 
