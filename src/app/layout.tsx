@@ -10,6 +10,7 @@ import { NavShell } from "@/components/nav-shell";
 import { DesktopSidebar } from "@/components/desktop-sidebar";
 import { NativeBackGesture } from "@/components/native-back-gesture";
 import { AnimationProvider, PageLoader } from "@/components/animation-provider";
+import { GlobalStateProvider } from "@/components/global-state-provider";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -53,26 +54,32 @@ export default function RootLayout({
         <PageLoader />
         {/* Content Viewport */}
         <div className="relative z-10 w-full min-h-screen">
-          <NativeBackGesture>
-            <AuthProvider>
-              <OTABootstrap />
-              <OptimisticUIProvider>
-                {/* Animation Provider — smooth scroll, text splitting, scroll reveals */}
-                <AnimationProvider>
-                  {/* Desktop sidebar (lg+ only). Fixed on the left, content offset via lg:pl-64. */}
-                  <DesktopSidebar />
-                  {/* Content area: padded left on desktop to make room for the sidebar. */}
-                  <div className="md:pl-60 lg:pl-64 xl:pl-72">
-                    <NavShell>
-                      {children}
-                    </NavShell>
-                  </div>
-                  <GlobalSpotlight />
-                  <Toaster />
-                </AnimationProvider>
-              </OptimisticUIProvider>
-            </AuthProvider>
-          </NativeBackGesture>
+          {/* Global State Provider — lifts page state (active tab, liked sets,
+              feed cache, scroll position, etc.) into the Root Layout so it
+              survives ANY number of navigation hops (not just the 2-3 that
+              cacheComponents keeps alive). Memory-only, XSS-safe. */}
+          <GlobalStateProvider>
+            <NativeBackGesture>
+              <AuthProvider>
+                <OTABootstrap />
+                <OptimisticUIProvider>
+                  {/* Animation Provider — smooth scroll, text splitting, scroll reveals */}
+                  <AnimationProvider>
+                    {/* Desktop sidebar (lg+ only). Fixed on the left, content offset via lg:pl-64. */}
+                    <DesktopSidebar />
+                    {/* Content area: padded left on desktop to make room for the sidebar. */}
+                    <div className="md:pl-60 lg:pl-64 xl:pl-72">
+                      <NavShell>
+                        {children}
+                      </NavShell>
+                    </div>
+                    <GlobalSpotlight />
+                    <Toaster />
+                  </AnimationProvider>
+                </OptimisticUIProvider>
+              </AuthProvider>
+            </NativeBackGesture>
+          </GlobalStateProvider>
         </div>
       </body>
     </html>

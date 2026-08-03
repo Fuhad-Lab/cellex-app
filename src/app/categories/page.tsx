@@ -15,6 +15,7 @@ import { SmartImage } from '@/components/smart-image';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { useOptimisticUI } from '@/components/optimistic-ui';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 import { motion } from 'framer-motion';
 
 // Categories — match the actual categories in the database.
@@ -37,13 +38,19 @@ function CategoriesContent() {
       ? urlCategory
       : DEFAULT_CATEGORY;
 
-  const [category, setCategory] = useState<string>(initialCategory);
-  const [searchQuery, setSearchQuery] = useState<string>(urlQuery);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [likedProducts, setLikedProducts] = useState<Set<number>>(new Set());
-  const [savedProducts, setSavedProducts] = useState<Set<number>>(new Set());
-  const [savedWishlistIds, setSavedWishlistIds] = useState<Map<number, string>>(new Map());
+  // Persisted state — survives navigation away and back.
+  const [category, setCategory] = usePersistedState<string>('categories:category', initialCategory);
+  const [searchQuery, setSearchQuery] = usePersistedState<string>('categories:searchQuery', urlQuery);
+  const [products, setProducts] = usePersistedState<Product[]>('categories:products', []);
+  const [likedProducts, setLikedProducts] = usePersistedState<Set<number>>('categories:likedProducts', new Set<number>());
+  const [savedProducts, setSavedProducts] = usePersistedState<Set<number>>('categories:savedProducts', new Set<number>());
+  const [savedWishlistIds, setSavedWishlistIds] = usePersistedState<Map<number, string>>('categories:savedWishlistIds', new Map<number, string>());
+
+  // Skip loading skeleton if we already have cached products.
+  const [loading, setLoading] = useState(products.length === 0);
+
+  // Restore scroll on mount, save on unmount.
+  useScrollPreservation('categories');
 
   // Search bar ref — dispatches visibility events to GlobalSpotlight
   const searchBarRef = useRef<HTMLButtonElement>(null);

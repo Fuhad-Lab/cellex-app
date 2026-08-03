@@ -7,16 +7,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 const CATEGORIES = ['All', 'Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys', 'General'];
 
 export default function SellersPage() {
   const router = useRouter();
-  const [sellers, setSellers] = useState<any[]>([]);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('All');
-  const [sort, setSort] = useState<'followers' | 'name' | 'products'>('followers');
+  // Persisted across navigation hops.
+  const [sellers, setSellers] = usePersistedState<any[]>('sellers:list', []);
+  const [allProducts, setAllProducts] = usePersistedState<Product[]>('sellers:allProducts', []);
+  const [search, setSearch] = usePersistedState<string>('sellers:search', '');
+  const [category, setCategory] = usePersistedState<string>('sellers:category', 'All');
+  const [sort, setSort] = usePersistedState<'followers' | 'name' | 'products'>('sellers:sort', 'followers');
+  // Skip loading skeleton if we already have cached sellers.
+  const [loading, setLoading] = useState(sellers.length === 0);
+
+  // Restore scroll on mount, save on unmount.
+  useScrollPreservation('sellers');
 
   useEffect(() => {
     (async () => {

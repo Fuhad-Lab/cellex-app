@@ -7,23 +7,31 @@ import { Card } from '@/components/ui/card';
 import { Search, ChevronLeft, Store, Sparkles, Video as VideoIcon,
   Star, ShoppingBag, Play, Paperclip, Send, ChevronDown, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 
 function SearchContent() {
   const params = useSearchParams();
   const router = useRouter();
   const query = params.get('q') || '';
 
-  const [searchInput, setSearchInput] = useState(query);
-  const [aiAnswer, setAiAnswer] = useState('');
-  const [aiProducts, setAiProducts] = useState<Product[]>([]);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [videos, setVideos] = useState<any[]>([]);
+  // Persisted state — survives navigation away and back, no matter how many
+  // pages are visited in between.
+  const [searchInput, setSearchInput] = usePersistedState<string>('search:input', query);
+  const [aiAnswer, setAiAnswer] = usePersistedState<string>('search:aiAnswer', '');
+  const [aiProducts, setAiProducts] = usePersistedState<Product[]>('search:aiProducts', []);
+  const [allProducts, setAllProducts] = usePersistedState<Product[]>('search:allProducts', []);
+  const [videos, setVideos] = usePersistedState<any[]>('search:videos', []);
+  const [chatHistory, setChatHistory] = usePersistedState<{user: string; ai: string}[]>('search:chatHistory', []);
+  const [view, setView] = usePersistedState<'ai' | 'products' | 'videos'>('search:view', 'ai');
+
+  // Transient state — not persisted.
   const [loading, setLoading] = useState(false);
   const [showThoughtProcess, setShowThoughtProcess] = useState(false);
-  const [chatHistory, setChatHistory] = useState<{user: string; ai: string}[]>([]);
   const [followUpInput, setFollowUpInput] = useState('');
   const [followUpLoading, setFollowUpLoading] = useState(false);
-  const [view, setView] = useState<'ai' | 'products' | 'videos'>('ai');
+
+  // Restore scroll on mount, save on unmount.
+  useScrollPreservation('search');
 
   // Ref for the top search bar — dispatches visibility events to GlobalSpotlight
   const searchBarRef = useRef<HTMLDivElement>(null);

@@ -10,12 +10,18 @@ import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { RevealOnScroll } from '@/components/animation-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 export default function WishlistPage() {
   const { user, loading: authLoading, refreshCartCount } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Persisted across navigation hops.
+  const [items, setItems] = usePersistedState<any[]>('wishlist:items', []);
+  // Skip loading skeleton if we already have cached items.
+  const [loading, setLoading] = useState(items.length === 0);
+
+  // Restore scroll on mount, save on unmount.
+  useScrollPreservation('wishlist');
 
   const load = async () => {
     setLoading(true);

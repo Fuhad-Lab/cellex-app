@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 import { useOptimisticUI } from '@/components/optimistic-ui';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { CommentsModal } from '@/components/comments-modal';
@@ -51,15 +52,24 @@ export default function HomePage() {
   const { toast } = useToast();
   const { burst } = useOptimisticUI();
 
-  const [feed, setFeed] = useState<FeedPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-  const viewedPosts = useRef<Set<string>>(new Set());
-  const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
-  const [following, setFollowing] = useState<Set<string>>(new Set());
+  // Persisted state — survives ANY number of navigation hops (Home → Cart →
+  // Saved → Home keeps Home's state). Backed by the Root Layout's memory
+  // via GlobalStateProvider. Memory-only, XSS-safe.
+  const [feed, setFeed] = usePersistedState<FeedPost[]>('home:feed', []);
+  const [likedPosts, setLikedPosts] = usePersistedState<Set<string>>('home:likedPosts', new Set<string>());
+  const [savedPosts, setSavedPosts] = usePersistedState<Set<string>>('home:savedPosts', new Set<string>());
+  const [following, setFollowing] = usePersistedState<Set<string>>('home:following', new Set<string>());
 
   // Filter tabs — Screen 7: For You / Following / Trending
-  const [activeTab, setActiveTab] = useState<TabKey>('For You');
+  const [activeTab, setActiveTab] = usePersistedState<TabKey>('home:activeTab', 'For You');
+
+  // Transient state — not persisted (resets on every mount).
+  // Skip the loading skeleton if we already have a cached feed.
+  const [loading, setLoading] = useState(feed.length === 0);
+  const viewedPosts = useRef<Set<string>>(new Set());
+
+  // Restore scroll on mount, save on unmount + on user scroll.
+  useScrollPreservation('home');
 
   const searchBarRef = useRef<HTMLButtonElement>(null);
 

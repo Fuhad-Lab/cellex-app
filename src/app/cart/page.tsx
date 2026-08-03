@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 import { SmartImage } from '@/components/smart-image';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 import {
   Search, User as UserIcon, Trash2, Minus, Plus, X,
   ShoppingCart, ArrowRight, Store, Sparkles, Tag, Heart,
@@ -31,16 +32,23 @@ export default function CartPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Persisted state — survives navigation away and back, no matter how many
+  // pages are visited in between.
+  const [items, setItems] = usePersistedState<CartItem[]>('cart:items', []);
+  const [sellers, setSellers] = usePersistedState<Record<string, SellerInfo>>('cart:sellers', {});
+  const [likedProductIds, setLikedProductIds] = usePersistedState<Set<number>>('cart:likedProductIds', new Set<number>());
+  const [recommendations, setRecommendations] = usePersistedState<Product[]>('cart:recommendations', []);
+  const [appliedPromo, setAppliedPromo] = usePersistedState<string | null>('cart:appliedPromo', null);
+  const [promoDiscount, setPromoDiscount] = usePersistedState<number>('cart:promoDiscount', 0);
+
+  // Transient state — not persisted.
+  const [loading, setLoading] = useState(items.length === 0);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [sellers, setSellers] = useState<Record<string, SellerInfo>>({});
-  const [likedProductIds, setLikedProductIds] = useState<Set<number>>(new Set());
-  const [recommendations, setRecommendations] = useState<Product[]>([]);
   const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
-  const [promoDiscount, setPromoDiscount] = useState(0);
   const [checkingOut, setCheckingOut] = useState(false);
+
+  // Restore scroll on mount, save on unmount.
+  useScrollPreservation('cart');
 
   const searchBarRef = useRef<HTMLButtonElement>(null);
 
