@@ -9,10 +9,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Store, Save } from 'lucide-react';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
+import { useScrollPreservation } from '@/components/global-state-provider';
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports', 'Books', 'Food', 'Toys', 'General'];
 const SELLER_TYPES = ['individual', 'business', 'farmer'];
 
 export default function SellerProfilePage() {
+  useScrollPreservation('seller-profile');
+
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

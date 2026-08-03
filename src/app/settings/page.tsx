@@ -10,7 +10,10 @@ import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function SettingsPage() {
+  useScrollPreservation('settings');
+
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);

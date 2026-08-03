@@ -11,7 +11,10 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function CheckoutPage() {
+  useScrollPreservation('checkout');
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 /**
  * VideosPage — grid browse page for all videos.
  *
@@ -18,6 +19,8 @@ import { PageSkeleton } from '@/components/page-skeleton';
  * play count overlay. Tapping any cell navigates to /shorts.
  */
 export default function VideosPage() {
+  useScrollPreservation('videos');
+
   const router = useRouter();
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

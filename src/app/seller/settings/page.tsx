@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import { User, LogOut, Trash2, Mail, Shield, Bell, Globe, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function SellerSettingsPage() {
+  useScrollPreservation('seller-settings');
+
   const { user, logout } = useAuth();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);

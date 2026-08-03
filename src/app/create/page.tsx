@@ -9,10 +9,13 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { api, formatPrice, API_BASE } from '@/lib/api';
 import { MagneticButton } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 type PostType = 'video' | 'photo' | 'text' | 'story';
 type CreateMode = 'post' | 'product';
 
 export default function CreatePage() {
+  useScrollPreservation('create');
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();

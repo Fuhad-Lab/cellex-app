@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { CommentsModal } from '@/components/comments-modal';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 /**
  * ShortsPage — immersive full-screen vertical video experience.
  *
@@ -23,6 +24,8 @@ import { CommentsModal } from '@/components/comments-modal';
  * - Top: back button + mute toggle
  */
 export default function ShortsPage() {
+  useScrollPreservation('shorts');
+
   const router = useRouter();
   const { user } = useAuth();
   const { toast } = useToast();

@@ -6,7 +6,10 @@ import { Send, Users, ChevronLeft, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function TelegramPage() {
+  useScrollPreservation('telegram');
+
   const router = useRouter();
   const [info, setInfo] = useState<any>(null);
   const [recent, setRecent] = useState<any[]>([]);

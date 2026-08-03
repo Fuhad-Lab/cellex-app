@@ -8,7 +8,10 @@ import { Radio, Eye, Square, Copy, ExternalLink, Video, Info } from 'lucide-reac
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE } from '@/lib/api';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function GoLivePage() {
+  useScrollPreservation('seller-go-live');
+
   const { toast } = useToast();
   const [products, setProducts] = useState<any[]>([]);
   const [title, setTitle] = useState('');

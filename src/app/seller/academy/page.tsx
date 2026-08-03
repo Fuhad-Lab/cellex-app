@@ -2,6 +2,7 @@
 
 import { Camera, Tag, Headphones, TrendingUp, GraduationCap, Sparkles } from 'lucide-react';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 const upcomingCourses = [
   {
     icon: Camera,
@@ -34,6 +35,8 @@ const upcomingCourses = [
 ];
 
 export default function SellerAcademyPage() {
+  useScrollPreservation('seller-academy');
+
   return (
     <div className="space-y-6">
       {/* Header */}

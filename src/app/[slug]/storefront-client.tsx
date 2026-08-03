@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { SmartImage } from '@/components/smart-image';
 import { StorefrontAvatarPlayer } from '@/components/storefront-avatar-player';
+import { useScrollPreservation } from '@/components/global-state-provider';
 import {
   ChevronLeft,
   Share2,
@@ -97,6 +98,9 @@ export default function SellerStorefront({
   const router = useRouter();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Preserve scroll position when navigating away and back.
+  useScrollPreservation('storefront');
 
   const [seller, setSeller] = useState<any>(null);
   const [products, setProducts] = useState<Product[]>([]);

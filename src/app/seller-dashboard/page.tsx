@@ -15,6 +15,7 @@ import { API_BASE } from '@/lib/api';
 import { SellerAvatarModal } from '@/components/seller-avatar-modal';
 import { MagneticButton } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 /**
  * SellerDashboardPage — dynamic seller dashboard.
  *
@@ -34,6 +35,8 @@ import { MagneticButton } from '@/components/animation-provider';
  * top products carousel, and quick action buttons.
  */
 export default function SellerDashboardPage() {
+  useScrollPreservation('seller-dashboard');
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 

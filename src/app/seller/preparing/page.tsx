@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Store, Loader2, Check, Sparkles } from 'lucide-react';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 /**
  * SellerPreparingPage — shown after a user submits the become-a-seller form.
  *
@@ -13,6 +14,8 @@ import { Store, Loader2, Check, Sparkles } from 'lucide-react';
  * progress indicator. After ~3 seconds, redirects to the seller dashboard.
  */
 export default function SellerPreparingPage() {
+  useScrollPreservation('seller-preparing');
+
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState(0);

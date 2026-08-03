@@ -5,7 +5,10 @@ import { api, formatPrice, timeAgo } from '@/lib/api';
 import { ShoppingBag, Package } from 'lucide-react';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function SellerOrdersPage() {
+  useScrollPreservation('seller-orders');
+
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

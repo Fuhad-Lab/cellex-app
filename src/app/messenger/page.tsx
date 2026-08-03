@@ -12,6 +12,7 @@ import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
 import { RevealOnScroll } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 interface Conversation {
   id: string;
   type: string;
@@ -36,6 +37,8 @@ interface Message {
 }
 
 export default function MessengerPage() {
+  useScrollPreservation('messenger');
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [isSeller, setIsSeller] = useState(false);

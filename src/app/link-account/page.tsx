@@ -11,9 +11,12 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 const WHATSAPP_BOT_NUMBER = '+234 813 437 6492'; // placeholder
 
 export default function LinkAccountPage() {
+  useScrollPreservation('link-account');
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();

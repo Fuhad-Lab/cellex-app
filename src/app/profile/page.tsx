@@ -23,6 +23,7 @@ import {
   Bookmark,
 } from 'lucide-react';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 /**
  * ProfilePage — Screen 12 mobile buyer profile.
  *
@@ -105,6 +106,8 @@ const STATUS_STYLES: Record<string, { bg: string; fg: string }> = {
 };
 
 export default function ProfilePage() {
+  useScrollPreservation('profile');
+
   const { user, loading: authLoading, isSeller, logout } = useAuth();
   const router = useRouter();
   const { toast } = useToast();

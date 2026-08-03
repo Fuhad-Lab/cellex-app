@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 function SellerProfileContent() {
   const params = useSearchParams();
   const sellerId = params.get('id') || '';
@@ -259,6 +260,8 @@ function formatCount(n: number): string {
 }
 
 export default function SellerProfilePage() {
+  useScrollPreservation('seller-profile');
+
   return (
     <Suspense fallback={<PageSkeleton variant="seller-profile" />}>
       <SellerProfileContent />

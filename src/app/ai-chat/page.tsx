@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useRouter } from 'next/navigation';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -23,6 +24,8 @@ const SUGGESTIONS = [
 ];
 
 export default function AiChatPage() {
+  useScrollPreservation('ai-chat');
+
   const { user } = useAuth();
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);

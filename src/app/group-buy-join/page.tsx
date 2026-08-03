@@ -7,6 +7,7 @@ import { Users, Check, ShoppingBag, Lock, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 function GroupBuyJoinContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -240,6 +241,8 @@ function GroupBuyJoinContent() {
 }
 
 export default function GroupBuyJoinPage() {
+  useScrollPreservation('group-buy-join');
+
   return (
     <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-2 border-white/10 border-t-black rounded-full animate-spin" /></div>}>
       <GroupBuyJoinContent />

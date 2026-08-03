@@ -11,6 +11,7 @@ import { ChevronLeft, Store, Check, User, Building, Sprout,
   Camera, MapPin, FileText, Loader2 } from 'lucide-react';
 import { API_BASE } from '@/lib/api';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 const CATEGORIES = [
   'Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports',
   'Books', 'Food', 'Toys', 'General'
@@ -23,6 +24,8 @@ const SELLER_TYPES = [
 ];
 
 export default function BecomeSellerPage() {
+  useScrollPreservation('become-seller');
+
   const router = useRouter();
   const { toast } = useToast();
 

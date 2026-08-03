@@ -11,6 +11,7 @@ import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { useToast } from '@/hooks/use-toast';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-700',
   confirmed: 'bg-[#F5F5F5] text-[#666666]',
@@ -225,6 +226,8 @@ function OrdersContent() {
 }
 
 export default function OrdersPage() {
+  useScrollPreservation('orders');
+
   return (
     <Suspense fallback={<PageSkeleton variant="orders" />}>
       <OrdersContent />

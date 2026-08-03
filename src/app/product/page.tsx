@@ -20,6 +20,7 @@ import { MobileNav } from '@/components/mobile-nav';
 import { GroupBuySuccessModal, generateGroupBuyName } from '@/components/group-buy-success-modal';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 // Screen 8 — static variant options (the product API does not carry variants,
 // so we render the same colorways + EU sizes shown in the reference).
 const COLORWAYS = ['Onyx Black', 'Cloud White', 'Desert Sand'];
@@ -1160,6 +1161,8 @@ function formatCount(n: number): string {
 }
 
 export default function ProductPage() {
+  useScrollPreservation('product');
+
   return (
     <Suspense fallback={<PageSkeleton variant="product" />}>
       <ProductContent />

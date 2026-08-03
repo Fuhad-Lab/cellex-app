@@ -11,6 +11,7 @@ import { api } from '@/lib/api';
 import { timeAgo } from '@/lib/api';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
+import { useScrollPreservation } from '@/components/global-state-provider';
 const STORY_TYPES = [
   { key: 'announcement', label: 'Announcement', icon: Megaphone },
   { key: 'deal', label: 'Deal', icon: Tag },
@@ -19,6 +20,8 @@ const STORY_TYPES = [
 ];
 
 export default function SellerStoriesPage() {
+  useScrollPreservation('seller-stories');
+
   const { toast } = useToast();
   const [stories, setStories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);

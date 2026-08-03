@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 const PALMPAY_ACCOUNT = '8088561764';
 const PALMPAY_NAME = 'Abdlrazaq Bidemi Awofolaji';
 const PALMPAY_BANK = 'PalmPay';
@@ -273,6 +274,8 @@ function PaymentContent() {
 }
 
 export default function PaymentPage() {
+  useScrollPreservation('payment');
+
   return (
     <Suspense fallback={<PageSkeleton variant="payment" />}>
       <PaymentContent />

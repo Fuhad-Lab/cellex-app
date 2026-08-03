@@ -13,6 +13,7 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 import { MagneticButton } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 function LoginContent() {
   const { user, login, signup } = useAuth();
   const router = useRouter();
@@ -365,6 +366,8 @@ function LoginContent() {
 }
 
 export default function LoginPage() {
+  useScrollPreservation('login');
+
   return (
     <Suspense fallback={<PageSkeleton variant="login" />}>
       <LoginContent />

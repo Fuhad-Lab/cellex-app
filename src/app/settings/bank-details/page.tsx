@@ -8,7 +8,10 @@ import { API_BASE } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { MagneticButton } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function BankDetailsPage() {
+  useScrollPreservation('settings-bank-details');
+
   const { user, loading: authLoading, isSeller } = useAuth();
   const router = useRouter();
   const { toast } = useToast();

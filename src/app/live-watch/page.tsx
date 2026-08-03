@@ -10,6 +10,7 @@ import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 function LiveWatchContent() {
   const params = useSearchParams();
   const sessionId = params.get('id') || '';
@@ -289,6 +290,8 @@ function LiveWatchContent() {
 }
 
 export default function LiveWatchPage() {
+  useScrollPreservation('live-watch');
+
   return (
     <Suspense fallback={<PageSkeleton variant="live" />}>
       <LiveWatchContent />

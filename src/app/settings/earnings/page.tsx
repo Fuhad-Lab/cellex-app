@@ -8,6 +8,7 @@ import { API_BASE } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 function formatNaira(n: number) {
   return `₦${Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }
@@ -23,6 +24,8 @@ function timeAgo(iso?: string) {
 }
 
 export default function EarningsPage() {
+  useScrollPreservation('settings-earnings');
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();

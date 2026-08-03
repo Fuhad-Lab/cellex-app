@@ -11,6 +11,7 @@ import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 /**
  * SellerVideosPage — manage product videos AND reels.
  *
@@ -24,6 +25,8 @@ import { API_BASE } from '@/lib/api';
  * The video grid has tabs to filter: All / Product Videos / Reels.
  */
 export default function SellerVideosPage() {
+  useScrollPreservation('seller-videos');
+
   const { toast } = useToast();
   const [products, setProducts] = useState<any[]>([]);
   const [videos, setVideos] = useState<any[]>([]);

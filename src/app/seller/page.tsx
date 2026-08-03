@@ -5,7 +5,10 @@ import { api, formatPrice, timeAgo } from '@/lib/api';
 import { Package, ShoppingBag, Users, TrendingUp, Radio, Plus, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { useScrollPreservation } from '@/components/global-state-provider';
 export default function SellerDashboard() {
+  useScrollPreservation('seller');
+
   const [stats, setStats] = useState<any>({});
   const [recent, setRecent] = useState<any>(null);
   const [loading, setLoading] = useState(true);

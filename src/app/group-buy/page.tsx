@@ -9,6 +9,7 @@ import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
+import { useScrollPreservation } from '@/components/global-state-provider';
 function GroupBuyContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -194,6 +195,8 @@ function GroupBuyContent() {
 }
 
 export default function GroupBuyPage() {
+  useScrollPreservation('group-buy');
+
   return (
     <Suspense fallback={<PageSkeleton variant="group-buy" />}>
       <GroupBuyContent />
