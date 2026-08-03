@@ -58,29 +58,20 @@ export function GlobalStateProvider({ children }: { children: React.ReactNode })
   // reads are always O(1) and never depend on a re-render. This is critical
   // because `usePersistedState` reads from the store in its `useState`
   // initializer — if the value depended on a React render cycle, the timing
-  // could be wrong (especially under React 19 concurrent rendering and
-  // Next.js cacheComponents which can defer commits).
+  // could be wrong (especially under React 19 concurrent rendering).
   //
   // We ALSO keep a React state counter (`version`) to force consumers to
   // re-render when setState is called. This way, the value is always current
   // for reads, AND React knows to re-render when writes happen.
+  //
+  // NOTE: cacheComponents must be DISABLED for this provider to work.
+  // cacheComponents wraps each cached page (including its layout subtree) in
+  // React's <Activity> component, which creates a SEPARATE instance of this
+  // provider per cached page — so the store would not be shared. Without
+  // cacheComponents, the Root Layout truly stays mounted (single instance)
+  // and the store is shared across all pages.
   const storeRef = useRef<Record<string, unknown>>({});
   const [, setVersion] = useState(0);
-
-  // Debug: track mount count to verify the provider stays mounted across navigation.
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const w = window as any;
-      w.__globalStateMountCount = (w.__globalStateMountCount || 0) + 1;
-      w.__globalStateStore = storeRef.current;
-      console.log(`[GlobalStateProvider] MOUNT #${w.__globalStateMountCount}`);
-    }
-    return () => {
-      if (typeof window !== 'undefined') {
-        console.log('[GlobalStateProvider] UNMOUNT');
-      }
-    };
-  }, []);
 
   // Scroll positions — same pattern. Ref for reads, no re-render needed.
   const scrollRef = useRef<Record<string, number>>({});
@@ -91,10 +82,6 @@ export function GlobalStateProvider({ children }: { children: React.ReactNode })
 
   const setState = useCallback((key: string, value: unknown) => {
     storeRef.current[key] = value;
-    // Debug: expose the store on window so we can inspect it from devtools.
-    if (typeof window !== 'undefined') {
-      (window as any).__globalStateStore = storeRef.current;
-    }
     // Bump version to trigger re-renders in consumers that read this value
     // through `useGlobalState()` directly. (usePersistedState doesn't need
     // this because it has its own local useState.)

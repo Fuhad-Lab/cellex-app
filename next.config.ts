@@ -9,12 +9,19 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   reactStrictMode: false,
-  // cacheComponents: keeps up to 3 previously-visited pages alive in RAM
-  // (via React's <Activity> component) instead of unmounting them on navigation.
-  // This preserves all component state, form inputs, and scroll position
-  // strictly in browser memory — no localStorage/sessionStorage, so it is
-  // XSS-safe. Solves the "pages are not saved when I leave and come back" UX issue.
-  cacheComponents: true,
+  // cacheComponents DISABLED — it conflicts with GlobalStateProvider.
+  //
+  // cacheComponents keeps up to ~3 pages alive by wrapping each page (including
+  // its layout subtree) in React's <Activity> component. This means each cached
+  // page gets its OWN instance of GlobalStateProvider, so the in-memory store
+  // is NOT shared across pages — defeating the whole point of lifting state
+  // into the Root Layout.
+  //
+  // Instead, we rely on GlobalStateProvider (in layout.tsx) to hold page state
+  // in a single ref that survives any number of navigation hops. The Root
+  // Layout truly stays mounted (one instance) without cacheComponents, so the
+  // store is shared. Memory-only, XSS-safe.
+  // cacheComponents: true,
   // Allow running behind Hugging Face Spaces reverse proxy.
   experimental: {
     serverActions: {
