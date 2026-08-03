@@ -53,18 +53,33 @@ const GlobalStateContext = createContext<GlobalStateContextValue | null>(null);
 export function GlobalStateProvider({ children }: { children: React.ReactNode }) {
   // In-memory map of arbitrary page state. Held in the Root Layout, so it
   // survives any number of client-side route changes.
-  const [states, setStates] = useState<Record<string, unknown>>({});
+  //
+  // IMPORTANT: We keep the canonical store in a REF (not React state) so that
+  // reads are always O(1) and never depend on a re-render. This is critical
+  // because `usePersistedState` reads from the store in its `useState`
+  // initializer — if the value depended on a React render cycle, the timing
+  // could be wrong (especially under React 19 concurrent rendering and
+  // Next.js cacheComponents which can defer commits).
+  //
+  // We ALSO keep a React state counter (`version`) to force consumers to
+  // re-render when setState is called. This way, the value is always current
+  // for reads, AND React knows to re-render when writes happen.
+  const storeRef = useRef<Record<string, unknown>>({});
+  const [, setVersion] = useState(0);
 
-  // Scroll positions are stored in a ref — they change frequently and we
-  // don't want to trigger React re-renders on every scroll event.
+  // Scroll positions — same pattern. Ref for reads, no re-render needed.
   const scrollRef = useRef<Record<string, number>>({});
 
   const getState = useCallback(<T,>(key: string, initial: T): T => {
-    return key in states ? (states[key] as T) : initial;
-  }, [states]);
+    return key in storeRef.current ? (storeRef.current[key] as T) : initial;
+  }, []);
 
   const setState = useCallback((key: string, value: unknown) => {
-    setStates((prev) => ({ ...prev, [key]: value }));
+    storeRef.current[key] = value;
+    // Bump version to trigger re-renders in consumers that read this value
+    // through `useGlobalState()` directly. (usePersistedState doesn't need
+    // this because it has its own local useState.)
+    setVersion((v) => v + 1);
   }, []);
 
   const getScroll = useCallback((key: string): number => {
@@ -111,20 +126,27 @@ export function usePersistedState<T>(
   const [local, setLocal] = useState<T>(() => getState(key, initialValue));
 
   // Whenever the local state changes, mirror it into the global map so it
-  // survives the next unmount.
+  // survives the next unmount. We compute `next` OUTSIDE the setLocal updater
+  // so we don't perform a side effect inside a reducer (which React 19
+  // concurrent rendering may defer or drop).
   const setter = useCallback(
     (value: T | ((prev: T) => T)) => {
-      setLocal((prev) => {
-        const next =
-          typeof value === 'function'
-            ? (value as (p: T) => T)(prev)
-            : value;
-        setState(key, next);
-        return next;
-      });
+      const next =
+        typeof value === 'function'
+          ? (value as (p: T) => T)(local)
+          : value;
+      setLocal(next);
+      setState(key, next);
     },
-    [key, setState],
+    [key, local, setState],
   );
+
+  // Belt-and-suspenders: also sync local → global whenever local changes.
+  // This catches any state updates that bypass our setter (e.g. async
+  // setState calls that React batched differently).
+  useEffect(() => {
+    setState(key, local);
+  }, [key, local, setState]);
 
   return [local, setter];
 }
