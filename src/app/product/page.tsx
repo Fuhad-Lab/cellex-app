@@ -754,7 +754,7 @@ function ProductContent() {
             fontWeight: 600,
             cursor: adding ? 'not-allowed' : 'pointer',
           }}
-          aria-label="Add to cart"
+          aria-label="Add to cart" className="btn-ripple"
         >
           <ShoppingCart className="w-4 h-4" strokeWidth={2} />
           <span>Add to Cart</span>
@@ -773,7 +773,7 @@ function ProductContent() {
             border: 'none',
             cursor: adding ? 'not-allowed' : 'pointer',
           }}
-          aria-label="Buy now"
+          aria-label="Buy now" className="btn-ripple"
         >
           <Zap className="w-4 h-4" strokeWidth={2} />
           <span>Buy Now</span>
