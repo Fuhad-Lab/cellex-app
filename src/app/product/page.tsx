@@ -743,7 +743,7 @@ function ProductContent() {
         <button
           onClick={addToCart}
           disabled={adding}
-          className="flex-1 flex items-center justify-center gap-2 font-semibold transition-opacity active:opacity-70 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 font-semibold transition-opacity active:opacity-70 disabled:opacity-50 btn-ripple"
           style={{
             height: '48px',
             borderRadius: '999px',
@@ -754,7 +754,7 @@ function ProductContent() {
             fontWeight: 600,
             cursor: adding ? 'not-allowed' : 'pointer',
           }}
-          aria-label="Add to cart" className="btn-ripple"
+          aria-label="Add to cart"
         >
           <ShoppingCart className="w-4 h-4" strokeWidth={2} />
           <span>Add to Cart</span>
@@ -762,7 +762,7 @@ function ProductContent() {
         <button
           onClick={buyNow}
           disabled={adding}
-          className="flex-1 flex items-center justify-center gap-2 font-semibold transition-opacity active:opacity-70 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 font-semibold transition-opacity active:opacity-70 disabled:opacity-50 btn-ripple"
           style={{
             height: '48px',
             borderRadius: '999px',
@@ -773,7 +773,7 @@ function ProductContent() {
             border: 'none',
             cursor: adding ? 'not-allowed' : 'pointer',
           }}
-          aria-label="Buy now" className="btn-ripple"
+          aria-label="Buy now"
         >
           <Zap className="w-4 h-4" strokeWidth={2} />
           <span>Buy Now</span>
