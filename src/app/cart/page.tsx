@@ -53,8 +53,13 @@ export default function CartPage() {
   const searchBarRef = useRef<HTMLButtonElement>(null);
 
   // ===== Load cart + wishlist + recommendations =====
+  const hasCachedItems = items.length > 0;
   const load = useCallback(async () => {
-    setLoading(true);
+    // Don't show loading skeleton if we already have cached items — just
+    // refresh in the background so the user sees their cart instantly.
+    if (!hasCachedItems) {
+      setLoading(true);
+    }
     const [cartResult, wishlistResult, recommendResult] = await Promise.all([
       api.cart.get(),
       api.wishlist.get().catch(() => ({ success: false })),
@@ -122,7 +127,7 @@ export default function CartPage() {
     }
 
     setLoading(false);
-  }, []);
+  }, [hasCachedItems]);
 
   useEffect(() => {
     if (!authLoading && !user) {

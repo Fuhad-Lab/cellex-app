@@ -56,9 +56,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const result = await api.cart.count();
+      // Use api.cart.get() instead of api.cart.count() — the 'count' op is
+      // not supported by the backend. We derive the count from the items array.
+      const result = await api.cart.get();
       if (result.success) {
-        setCartCount(result.count || 0);
+        const items = result.items || [];
+        // Sum quantities — each cart item has a quantity field.
+        const totalCount = items.reduce(
+          (sum: number, item: any) => sum + (item.quantity || 1),
+          0
+        );
+        setCartCount(totalCount);
       }
     } catch {}
   }, [user]);

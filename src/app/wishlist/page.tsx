@@ -24,7 +24,11 @@ export default function WishlistPage() {
   useScrollPreservation('wishlist');
 
   const load = async () => {
-    setLoading(true);
+    // Don't show loading skeleton if we already have cached items — just
+    // refresh in the background so the user sees their wishlist instantly.
+    if (items.length === 0) {
+      setLoading(true);
+    }
     const result = await api.wishlist.get();
     if (result.success) setItems(result.items || []);
     setLoading(false);
