@@ -11,7 +11,7 @@ import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 /**
  * SellerVideosPage — manage product videos AND reels.
  *
@@ -28,9 +28,9 @@ export default function SellerVideosPage() {
   useScrollPreservation('seller-videos');
 
   const { toast } = useToast();
-  const [products, setProducts] = useState<any[]>([]);
-  const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = usePersistedState<any[]>('seller-videos:products', []);
+  const [videos, setVideos] = usePersistedState<any[]>('seller-videos:data', []);
+  const [loading, setLoading] = useState(videos.length === 0);
   const [caption, setCaption] = useState('');
   const [productId, setProductId] = useState<number | ''>('');
   const [videoUrl, setVideoUrl] = useState('');

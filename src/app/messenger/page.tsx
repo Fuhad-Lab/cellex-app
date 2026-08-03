@@ -12,7 +12,7 @@ import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
 import { RevealOnScroll } from '@/components/animation-provider';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 interface Conversation {
   id: string;
   type: string;
@@ -43,12 +43,12 @@ export default function MessengerPage() {
   const router = useRouter();
   const [isSeller, setIsSeller] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'group_buys' | 'sellers'>('all');
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = usePersistedState<Conversation[]>('messenger:conversations', []);
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [sending, setSending] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(conversations.length === 0);
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null);
   const [decryptErrors, setDecryptErrors] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);

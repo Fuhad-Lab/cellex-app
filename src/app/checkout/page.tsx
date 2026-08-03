@@ -11,15 +11,15 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 export default function CheckoutPage() {
   useScrollPreservation('checkout');
 
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = usePersistedState<CartItem[]>('checkout:items', []);
+  const [loading, setLoading] = useState(items.length === 0);
   const [placing, setPlacing] = useState(false);
 
   const [fullName, setFullName] = useState('');

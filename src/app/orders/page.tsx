@@ -11,7 +11,7 @@ import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { useToast } from '@/hooks/use-toast';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-amber-100 text-amber-700',
   confirmed: 'bg-[#F5F5F5] text-[#666666]',
@@ -26,8 +26,8 @@ function OrdersContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = usePersistedState<any[]>('orders:data', []);
+  const [loading, setLoading] = useState(orders.length === 0);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [verifyingPayment, setVerifyingPayment] = useState(false);
 

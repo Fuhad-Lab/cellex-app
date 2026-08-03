@@ -15,7 +15,7 @@ import { API_BASE } from '@/lib/api';
 import { SellerAvatarModal } from '@/components/seller-avatar-modal';
 import { MagneticButton } from '@/components/animation-provider';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 /**
  * SellerDashboardPage — dynamic seller dashboard.
  *
@@ -41,10 +41,10 @@ export default function SellerDashboardPage() {
   const router = useRouter();
 
   const [seller, setSeller] = useState<any>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = usePersistedState<Product[]>('seller-dashboard:products', []);
+  const [orders, setOrders] = usePersistedState<any[]>('seller-dashboard:orders', []);
+  const [videos, setVideos] = usePersistedState<any[]>('seller-dashboard:videos', []);
+  const [loading, setLoading] = useState(products.length === 0);
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
   useEffect(() => {

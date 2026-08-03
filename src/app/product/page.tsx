@@ -20,7 +20,7 @@ import { MobileNav } from '@/components/mobile-nav';
 import { GroupBuySuccessModal, generateGroupBuyName } from '@/components/group-buy-success-modal';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 // Screen 8 — static variant options (the product API does not carry variants,
 // so we render the same colorways + EU sizes shown in the reference).
 const COLORWAYS = ['Onyx Black', 'Cloud White', 'Desert Sand'];
@@ -37,11 +37,11 @@ function ProductContent() {
   const [seller, setSeller] = useState<any>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState(0);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = usePersistedState<Review[]>('product:reviews', []);
   const [reviewSummary, setReviewSummary] = useState<{ avg: number; count: number }>({ avg: 0, count: 0 });
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [adding, setAdding] = useState(false);
   const [showTryOn, setShowTryOn] = useState(false);
   const [saved, setSaved] = useState(false);

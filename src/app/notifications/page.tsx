@@ -8,7 +8,7 @@ import { useAuth } from '@/components/auth-provider';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { api, timeAgo } from '@/lib/api';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 interface Notification {
   id: string;
   type: 'order' | 'like' | 'follow' | 'live' | 'group_buy' | 'system' | 'product';
@@ -24,8 +24,8 @@ export default function NotificationsPage() {
 
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = usePersistedState<Notification[]>('notifications:data', []);
+  const [loading, setLoading] = useState(notifications.length === 0);
 
   useEffect(() => {
     if (!authLoading && !user) {

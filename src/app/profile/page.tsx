@@ -23,7 +23,7 @@ import {
   Bookmark,
 } from 'lucide-react';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 /**
  * ProfilePage — Screen 12 mobile buyer profile.
  *
@@ -113,9 +113,9 @@ export default function ProfilePage() {
   const { toast } = useToast();
 
   const [profile, setProfile] = useState<any>(null);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [wishlist, setWishlist] = useState<any[]>([]);
-  const [following, setFollowing] = useState<any[]>([]);
+  const [orders, setOrders] = usePersistedState<any[]>('profile:orders', []);
+  const [wishlist, setWishlist] = usePersistedState<any[]>('profile:wishlist', []);
+  const [following, setFollowing] = usePersistedState<any[]>('profile:following', []);
   const [publicProfile, setPublicProfile] = useState<any>(null);
   const [reviews, setReviews] = useState<Activity[]>([]);
   // Lazy initial state — read the URL hash (#orders, #saved) on mount so users
@@ -127,7 +127,7 @@ export default function ProfilePage() {
       ? hash
       : 'activity';
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(orders.length === 0);
 
   // Sync hash when view changes (no setState here — just URL replacement)
   useEffect(() => {

@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 function SellerProfileContent() {
   const params = useSearchParams();
   const sellerId = params.get('id') || '';
@@ -22,9 +22,9 @@ function SellerProfileContent() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [stats, setStats] = useState<any>({});
   const [tab, setTab] = useState<'products' | 'videos'>('products');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = usePersistedState<Product[]>('seller-profile:products', []);
+  const [videos, setVideos] = usePersistedState<any[]>('seller-profile:videos', []);
+  const [loading, setLoading] = useState(products.length === 0);
 
   const load = useCallback(async () => {
     if (!sellerId) return;

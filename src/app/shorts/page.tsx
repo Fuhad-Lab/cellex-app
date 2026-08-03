@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { CommentsModal } from '@/components/comments-modal';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 /**
  * ShortsPage — immersive full-screen vertical video experience.
  *
@@ -29,8 +29,8 @@ export default function ShortsPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [videos, setVideos] = usePersistedState<any[]>('shorts:videos', []);
+  const [loading, setLoading] = useState(videos.length === 0);
   const [activeIdx, setActiveIdx] = useState(0);
   const [muted, setMuted] = useState(true);
   const [likes, setLikes] = useState<Record<number, boolean>>({});

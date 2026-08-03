@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
 
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 /**
  * VideosPage — grid browse page for all videos.
  *
@@ -22,8 +22,8 @@ export default function VideosPage() {
   useScrollPreservation('videos');
 
   const router = useRouter();
-  const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [videos, setVideos] = usePersistedState<any[]>('videos:data', []);
+  const [loading, setLoading] = useState(videos.length === 0);
 
   useEffect(() => {
     (async () => {

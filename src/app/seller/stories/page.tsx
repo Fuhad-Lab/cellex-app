@@ -11,7 +11,7 @@ import { api } from '@/lib/api';
 import { timeAgo } from '@/lib/api';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 const STORY_TYPES = [
   { key: 'announcement', label: 'Announcement', icon: Megaphone },
   { key: 'deal', label: 'Deal', icon: Tag },
@@ -23,9 +23,9 @@ export default function SellerStoriesPage() {
   useScrollPreservation('seller-stories');
 
   const { toast } = useToast();
-  const [stories, setStories] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [stories, setStories] = usePersistedState<any[]>('seller-stories:stories', []);
+  const [products, setProducts] = usePersistedState<any[]>('seller-stories:products', []);
+  const [loading, setLoading] = useState(stories.length === 0);
   const [storyType, setStoryType] = useState('announcement');
   const [imageUrl, setImageUrl] = useState('');
   const [caption, setCaption] = useState('');

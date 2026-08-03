@@ -7,14 +7,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
-import { useScrollPreservation } from '@/components/global-state-provider';
+import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 export default function LivePage() {
   useScrollPreservation('live');
 
   const router = useRouter();
-  const [liveNow, setLiveNow] = useState<any[]>([]);
-  const [recent, setRecent] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [liveNow, setLiveNow] = usePersistedState<any[]>('live:liveNow', []);
+  const [recent, setRecent] = usePersistedState<any[]>('live:recent', []);
+  const [loading, setLoading] = useState(liveNow.length === 0);
 
   useEffect(() => {
     (async () => {
