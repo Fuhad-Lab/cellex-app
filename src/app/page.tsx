@@ -19,6 +19,7 @@ import { CommentsModal } from '@/components/comments-modal';
 import { SmartImage } from '@/components/smart-image';
 import { MobileHeader } from '@/components/mobile-header';
 import { SmartVideo } from '@/components/smart-video';
+import { RevealOnScroll } from '@/components/animation-provider';
 
 interface FeedPost {
   type: 'video' | 'product';

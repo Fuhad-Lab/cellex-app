@@ -9,6 +9,7 @@ import { GlobalSpotlight } from "@/components/global-spotlight";
 import { NavShell } from "@/components/nav-shell";
 import { DesktopSidebar } from "@/components/desktop-sidebar";
 import { NativeBackGesture } from "@/components/native-back-gesture";
+import { AnimationProvider, PageLoader } from "@/components/animation-provider";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-sans",
@@ -48,22 +49,27 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
       <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-black bg-white`}>
+        {/* Page Loader — masks initial asset loading */}
+        <PageLoader />
         {/* Content Viewport */}
         <div className="relative z-10 w-full min-h-screen">
           <NativeBackGesture>
             <AuthProvider>
               <OTABootstrap />
               <OptimisticUIProvider>
-                {/* Desktop sidebar (lg+ only). Fixed on the left, content offset via lg:pl-64. */}
-                <DesktopSidebar />
-                {/* Content area: padded left on desktop to make room for the sidebar. */}
-                <div className="md:pl-60 lg:pl-64 xl:pl-72">
-                  <NavShell>
-                    {children}
-                  </NavShell>
-                </div>
-                <GlobalSpotlight />
-                <Toaster />
+                {/* Animation Provider — smooth scroll, text splitting, scroll reveals */}
+                <AnimationProvider>
+                  {/* Desktop sidebar (lg+ only). Fixed on the left, content offset via lg:pl-64. */}
+                  <DesktopSidebar />
+                  {/* Content area: padded left on desktop to make room for the sidebar. */}
+                  <div className="md:pl-60 lg:pl-64 xl:pl-72">
+                    <NavShell>
+                      {children}
+                    </NavShell>
+                  </div>
+                  <GlobalSpotlight />
+                  <Toaster />
+                </AnimationProvider>
               </OptimisticUIProvider>
             </AuthProvider>
           </NativeBackGesture>

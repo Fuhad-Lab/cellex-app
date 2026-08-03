@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Search, Plus, Store, Bell, Settings, ShoppingBag, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { useRef, useEffect } from 'react';
+import { MagneticButton } from '@/components/animation-provider';
 
 /**
  * MobileHeader — unified header for all mobile pages.
@@ -85,7 +86,7 @@ export function MobileHeader() {
           <>
             <Link
               href="/login"
-              className="flex items-center justify-center transition-opacity active:opacity-70"
+              className="flex items-center justify-center transition-opacity active:opacity-70 link-underline"
               style={{
                 height: '36px',
                 padding: '0 14px',
@@ -97,19 +98,21 @@ export function MobileHeader() {
             >
               <span className="text-xs font-semibold" style={{ color: '#111827' }}>Log in</span>
             </Link>
-            <Link
-              href="/login?mode=signup"
-              className="flex items-center justify-center transition-opacity active:opacity-70"
-              style={{
-                height: '36px',
-                padding: '0 14px',
-                borderRadius: '999px',
-                background: '#111827',
-              }}
-              aria-label="Sign up"
-            >
-              <span className="text-xs font-semibold" style={{ color: '#FFFFFF' }}>Sign up</span>
-            </Link>
+            <MagneticButton strength={0.2}>
+              <Link
+                href="/login?mode=signup"
+                className="flex items-center justify-center transition-opacity active:opacity-70 btn-ripple"
+                style={{
+                  height: '36px',
+                  padding: '0 14px',
+                  borderRadius: '999px',
+                  background: '#111827',
+                }}
+                aria-label="Sign up"
+              >
+                <span className="text-xs font-semibold" style={{ color: '#FFFFFF' }}>Sign up</span>
+              </Link>
+            </MagneticButton>
           </>
         ) : isSeller ? (
           // ===== BUYER-SELLER: + button, My Shop, Bell, Settings =====

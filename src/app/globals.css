@@ -1386,3 +1386,209 @@ select:focus-visible {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
   }
 }
+
+/* ============================================================================
+   PREMIUM ANIMATION SYSTEM
+   Powered by: Lenis (smooth scroll) + GSAP + SplitType
+   Easing: cubic-bezier(0.25, 1, 0.5, 1) — premium ease-out
+   ============================================================================ */
+
+/* --- Lenis Smooth Scroll --- */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* --- SplitType: character/word/line animations --- */
+.split-text .char,
+.split-text .word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+.split-text .line {
+  overflow: hidden;
+  display: block;
+}
+
+/* --- Scroll Reveal: initial hidden state (GSAP sets to visible) --- */
+[data-reveal] {
+  will-change: transform, opacity;
+}
+
+/* --- Magnetic button glow effect --- */
+.magnetic-glow {
+  position: relative;
+  overflow: hidden;
+}
+.magnetic-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 200ms cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+}
+.magnetic-glow:hover::before {
+  opacity: 1;
+}
+
+/* --- Premium card hover: lift + shadow --- */
+.card-premium {
+  transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 300ms cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+.card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Image zoom on hover (for product cards) --- */
+.img-zoom {
+  overflow: hidden;
+}
+.img-zoom img {
+  transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+.img-zoom:hover img {
+  transform: scale(1.05);
+}
+
+/* --- Button ripple effect --- */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 400ms cubic-bezier(0.25, 1, 0.5, 1),
+              height 400ms cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 400ms ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.btn-ripple:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+  transition: 0s;
+}
+
+/* --- Skeleton shimmer (premium loading) --- */
+.shimmer-premium {
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 0%,
+    #e5e7eb 50%,
+    #f3f4f6 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-slide 1.5s infinite cubic-bezier(0.25, 1, 0.5, 1);
+}
+@keyframes shimmer-slide {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* --- Smooth fade-in for page transitions --- */
+.page-fade-in {
+  animation: fadeInUp 400ms cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* --- Link underline animation --- */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 250ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* --- Reduced motion: disable all animations --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .shimmer-premium {
+    animation: none;
+    background: #f3f4f6;
+  }
+}
+
+/* --- Focus visible: premium ring --- */
+*:focus-visible {
+  outline: 2px solid #111827;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- Custom scrollbar (premium feel) --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+  transition: background 200ms ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* --- Smooth slider track --- */
+.smooth-slider-track {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.smooth-slider-track > * {
+  pointer-events: auto;
+}
