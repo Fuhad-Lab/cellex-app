@@ -76,6 +76,10 @@ export function GlobalStateProvider({ children }: { children: React.ReactNode })
 
   const setState = useCallback((key: string, value: unknown) => {
     storeRef.current[key] = value;
+    // Debug: expose the store on window so we can inspect it from devtools.
+    if (typeof window !== 'undefined') {
+      (window as any).__globalStateStore = storeRef.current;
+    }
     // Bump version to trigger re-renders in consumers that read this value
     // through `useGlobalState()` directly. (usePersistedState doesn't need
     // this because it has its own local useState.)
