@@ -288,6 +288,8 @@ export function PageLoader() {
       ease: 'power2.inOut',
       onComplete: () => {
         loader.style.display = 'none';
+        loader.style.pointerEvents = 'none';
+        loader.style.zIndex = '-1';
       },
     });
 
