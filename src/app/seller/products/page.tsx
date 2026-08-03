@@ -249,7 +249,7 @@ export default function SellerProductsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-extrabold">Products</h1>
-        <Button onClick={openCreate} className="bg-[#111827] text-black hover:bg-[#F5F5F5] font-bold">
+        <Button onClick={openCreate} className="bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5] font-bold">
           <Plus className="w-4 h-4 mr-1" /> Add product
         </Button>
       </div>
@@ -269,7 +269,7 @@ export default function SellerProductsPage() {
           icon={<Package className="w-8 h-8" />}
           title="No products yet"
           message="Add your first product to start selling on Cellex."
-          action={<Button onClick={openCreate} className="bg-[#111827] text-black hover:bg-[#F5F5F5]">Add product</Button>}
+          action={<Button onClick={openCreate} className="bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5]">Add product</Button>}
         />
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
@@ -333,12 +333,12 @@ export default function SellerProductsPage() {
                     <div key={idx} className="relative aspect-square rounded-md overflow-hidden bg-[#F5F5F5] group">
                       <img src={url} alt="" className="w-full h-full object-cover" />
                       {idx === 0 && (
-                        <span className="absolute top-1 left-1 bg-[#111827] text-black text-[8px] font-bold px-1 py-0.5 rounded">COVER</span>
+                        <span className="absolute top-1 left-1 bg-[#111827] btn-ripple  text-black text-[8px] font-bold px-1 py-0.5 rounded">COVER</span>
                       )}
                       <button
                         type="button"
                         onClick={() => removeImage(idx)}
-                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-black flex items-center justify-center hover:bg-[#111827]"
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-black flex items-center justify-center hover:bg-[#111827] btn-ripple "
                         aria-label="Remove image"
                       >
                         <X className="w-3 h-3" />
@@ -388,7 +388,7 @@ export default function SellerProductsPage() {
               <p className="text-[11px] text-[#666666] -mt-1">Show authenticity. Max 10MB.</p>
               {videoUrl ? (
                 <div className="flex items-center gap-3">
-                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-[#111827]" muted />
+                  <video src={videoUrl} className="w-20 h-20 rounded-lg object-cover bg-[#111827] btn-ripple " muted />
                   <button
                     type="button"
                     onClick={() => setVideoUrl('')}
@@ -484,7 +484,7 @@ export default function SellerProductsPage() {
               )}
             </div>
 
-            <Button onClick={save} disabled={saving} className="w-full bg-[#111827] text-black hover:bg-[#F5F5F5] font-bold">
+            <Button onClick={save} disabled={saving} className="w-full bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5] font-bold">
               {saving ? 'Saving...' : editing ? 'Update product' : 'Create product'}
             </Button>
           </div>

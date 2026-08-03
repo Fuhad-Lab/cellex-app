@@ -7,6 +7,7 @@ import { api, formatPrice, type CartItem, type Product } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 import { SmartImage } from '@/components/smart-image';
 import {
   Search, User as UserIcon, Trash2, Minus, Plus, X,

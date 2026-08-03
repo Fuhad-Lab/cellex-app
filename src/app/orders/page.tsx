@@ -209,7 +209,7 @@ function OrdersContent() {
                           toast({ title: 'Payment failed', description: data.error, variant: 'destructive' });
                         }
                       }}
-                      className="w-full bg-[#111827] text-white font-semibold rounded-xl py-2.5 hover:bg-[#374151] transition"
+                      className="w-full bg-[#111827] btn-ripple  text-white font-semibold rounded-xl py-2.5 hover:bg-[#374151] transition"
                     >
                       Pay Now
                     </button>

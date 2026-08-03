@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { MobileHeader } from '@/components/mobile-header';
+import { RevealOnScroll } from '@/components/animation-provider';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { SmartImage } from '@/components/smart-image';
 import { useAuth } from '@/components/auth-provider';

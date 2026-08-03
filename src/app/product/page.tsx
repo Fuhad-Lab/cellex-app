@@ -18,6 +18,7 @@ import { CommentsModal } from '@/components/comments-modal';
 import { SmartImage } from '@/components/smart-image';
 import { MobileNav } from '@/components/mobile-nav';
 import { GroupBuySuccessModal, generateGroupBuyName } from '@/components/group-buy-success-modal';
+import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
 // Screen 8 — static variant options (the product API does not carry variants,
 // so we render the same colorways + EU sizes shown in the reference).
@@ -498,7 +499,7 @@ function ProductContent() {
                 <img
                   src={seller.profile_image}
                   alt={seller.business_name || 'Seller'}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover img-zoom"
                 />
               ) : (
                 <span className="font-bold" style={{ fontSize: '18px', color: '#6B7280' }}>

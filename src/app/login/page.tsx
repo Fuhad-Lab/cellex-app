@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
+import { MagneticButton } from '@/components/animation-provider';
 
 function LoginContent() {
   const { user, login, signup } = useAuth();
@@ -343,7 +344,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#111827] text-white font-semibold rounded-md py-3 hover:bg-[#374151] disabled:opacity-50 inline-flex items-center justify-center gap-2"
+              className="w-full bg-[#111827] btn-ripple  text-white font-semibold rounded-md py-3 hover:bg-[#374151] disabled:opacity-50 inline-flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

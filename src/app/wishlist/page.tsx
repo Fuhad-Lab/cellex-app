@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
+import { RevealOnScroll } from '@/components/animation-provider';
 export default function WishlistPage() {
   const { user, loading: authLoading, refreshCartCount } = useAuth();
   const router = useRouter();

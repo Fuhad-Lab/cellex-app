@@ -74,7 +74,7 @@ export function DesktopSidebar() {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2 px-3 py-2 mb-4">
         <div
-          className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#111827]"
+          className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#111827] btn-ripple "
           aria-hidden
         >
           <ShoppingBag className="w-5 h-5 text-white" strokeWidth={2} />
@@ -125,7 +125,7 @@ export function DesktopSidebar() {
             href={isSeller ? '/seller-dashboard' : '/profile'}
             className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[#F3F4F6] transition"
           >
-            <div className="w-9 h-9 rounded-full bg-[#111827] flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-full bg-[#111827] btn-ripple  flex items-center justify-center shrink-0">
               <span className="text-sm font-bold text-white">
                 {(user as any)?.email?.charAt(0)?.toUpperCase() || 'U'}
               </span>
@@ -142,7 +142,7 @@ export function DesktopSidebar() {
         ) : (
           <Link
             href="/login"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition"
           >
             <User className="w-4 h-4" /> Log in
           </Link>

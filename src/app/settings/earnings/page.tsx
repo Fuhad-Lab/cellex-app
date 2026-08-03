@@ -6,6 +6,7 @@ import { ChevronLeft, Wallet, Clock, CheckCircle, TrendingUp, ArrowDownToLine, B
 import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
 
 function formatNaira(n: number) {
   return `₦${Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
@@ -88,7 +89,7 @@ export default function EarningsPage() {
   const payouts = data?.payouts || [];
 
   return (
-    <div className="min-h-screen bg-white pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="min-h-screen bg-white page-fade-in pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] px-4 h-14 flex items-center gap-2">
         <button onClick={() => router.push('/settings')} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#F3F4F6]" aria-label="Back">
@@ -101,7 +102,7 @@ export default function EarningsPage() {
         {/* Balance cards */}
         <div className="grid grid-cols-2 gap-3">
           {/* Available balance */}
-          <div className="p-4 rounded-2xl bg-[#111827] text-white">
+          <div className="p-4 rounded-2xl bg-[#111827] btn-ripple  text-white">
             <div className="flex items-center gap-1.5 mb-2">
               <Wallet className="w-4 h-4 text-[#D4AF37]" />
               <span className="text-[10px] font-semibold uppercase opacity-80">Available</span>
@@ -163,10 +164,11 @@ export default function EarningsPage() {
         )}
 
         {/* Request payout button */}
+        <MagneticButton strength={0.15}>
         <button
           onClick={handlePayout}
           disabled={requesting || !bankDetails || (earnings.availableBalance || 0) < 100}
-          className="w-full h-12 rounded-xl bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2 disabled:opacity-40"
+          className="w-full h-12 rounded-xl bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2 disabled:opacity-40"
         >
           {requesting ? (
             <>
@@ -180,6 +182,7 @@ export default function EarningsPage() {
             </>
           )}
         </button>
+        </MagneticButton>
         {(earnings.availableBalance || 0) < 100 && bankDetails && (
           <p className="text-[10px] text-[#9CA3AF] text-center">Minimum withdrawal is ₦100</p>
         )}

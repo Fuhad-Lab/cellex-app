@@ -261,7 +261,7 @@ export function TryItOnModal({ isOpen, onClose, productName, productCategory, pr
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-[#111827] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-[#111827] btn-ripple  flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -395,7 +395,7 @@ export function TryItOnModal({ isOpen, onClose, productName, productCategory, pr
                 <a
                   href={resultImage}
                   download={`try-on-${productName.replace(/[^a-zA-Z0-9]/g, '_')}.png`}
-                  className="flex-1 h-11 rounded-xl bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2"
+                  className="flex-1 h-11 rounded-xl bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" /> Download
                 </a>
@@ -451,7 +451,7 @@ export function TryItOnModal({ isOpen, onClose, productName, productCategory, pr
               {userImage && (
                 <button
                   onClick={generate}
-                  className="w-full h-12 rounded-xl bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2"
+                  className="w-full h-12 rounded-xl bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Generate Try-On
@@ -535,7 +535,7 @@ export function TryItOnModal({ isOpen, onClose, productName, productCategory, pr
           {!generating && error && !resultImage && userImage && (
             <button
               onClick={retry}
-              className="w-full h-11 rounded-xl bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2"
+              className="w-full h-11 rounded-xl bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-4 h-4" /> Retry
             </button>

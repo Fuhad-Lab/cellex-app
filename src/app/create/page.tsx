@@ -7,6 +7,7 @@ import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { api, formatPrice, API_BASE } from '@/lib/api';
+import { MagneticButton } from '@/components/animation-provider';
 
 type PostType = 'video' | 'photo' | 'text' | 'story';
 type CreateMode = 'post' | 'product';
@@ -285,7 +286,7 @@ export default function CreatePage() {
           </p>
           <button
             onClick={() => router.push('/become-seller')}
-            className="bg-[#111827] text-white text-sm font-semibold px-6 py-3 rounded-full"
+            className="bg-[#111827] btn-ripple  text-white text-sm font-semibold px-6 py-3 rounded-full"
           >
             Become a Seller
           </button>
@@ -308,7 +309,7 @@ export default function CreatePage() {
           <button
             onClick={handlePostSubmit}
             disabled={posting || uploading || !selectedProduct || (postType !== 'text' && !mediaUrl)}
-            className="text-sm font-bold px-5 py-2 rounded-full bg-[#111827] text-white disabled:opacity-40 transition"
+            className="text-sm font-bold px-5 py-2 rounded-full bg-[#111827] btn-ripple  text-white disabled:opacity-40 transition"
           >
             {posting ? 'Posting...' : 'Post'}
           </button>
@@ -316,7 +317,7 @@ export default function CreatePage() {
           <button
             onClick={handleProductSubmit}
             disabled={creatingProduct || uploadingProductImage || !productName || !productPrice || !productImage}
-            className="text-sm font-bold px-5 py-2 rounded-full bg-[#111827] text-white disabled:opacity-40 transition"
+            className="text-sm font-bold px-5 py-2 rounded-full bg-[#111827] btn-ripple  text-white disabled:opacity-40 transition"
           >
             {creatingProduct ? 'Creating...' : 'Publish'}
           </button>

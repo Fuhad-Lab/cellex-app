@@ -133,7 +133,7 @@ export function SellerAvatarModal({ isOpen, onClose, sellerName, onSaved }: Sell
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-[#111827] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-[#111827] btn-ripple  flex items-center justify-center">
               <Mic className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -197,7 +197,7 @@ export function SellerAvatarModal({ isOpen, onClose, sellerName, onSaved }: Sell
                   onChange={(e) => setScript(e.target.value.slice(0, 500))}
                   placeholder="Hello! Welcome to my shop. I sell quality products at the best prices..."
                   rows={4}
-                  className="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827] focus:bg-white transition resize-none"
+                  className="w-full bg-[#F9FAFB] border border-[#E5E7EB] card-premium  rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827] focus:bg-white transition resize-none"
                 />
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {SCRIPT_SUGGESTIONS.map((s, i) => (
@@ -233,7 +233,7 @@ export function SellerAvatarModal({ isOpen, onClose, sellerName, onSaved }: Sell
               <button
                 onClick={handleGenerate}
                 disabled={generating || !script.trim()}
-                className="w-full h-12 rounded-xl bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2 disabled:opacity-40"
+                className="w-full h-12 rounded-xl bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2 disabled:opacity-40"
               >
                 {generating ? (
                   <>

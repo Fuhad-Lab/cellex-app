@@ -13,6 +13,7 @@ import { api, formatPrice, timeAgo, type Product } from '@/lib/api';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 import { SellerAvatarModal } from '@/components/seller-avatar-modal';
+import { MagneticButton } from '@/components/animation-provider';
 
 /**
  * SellerDashboardPage — dynamic seller dashboard.
@@ -348,13 +349,15 @@ export default function SellerDashboardPage() {
           <QuickAction href="/seller/go-live" icon={Radio} label="Go Live" />
         </div>
         <div className="grid grid-cols-3 gap-2 mt-2">
+          <MagneticButton strength={0.15}>
           <button
             onClick={() => setAvatarModalOpen(true)}
-            className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-[#111827] text-white hover:bg-[#374151] transition"
+            className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-[#111827] btn-ripple  text-white hover:bg-[#374151] transition"
           >
             <Mic className="w-5 h-5" />
             <span className="text-[10px] font-semibold">AI Avatar</span>
           </button>
+        </MagneticButton>
         </div>
       </div>
 

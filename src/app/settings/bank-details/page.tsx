@@ -6,6 +6,7 @@ import { ChevronLeft, Building2, Check, Loader2, AlertCircle, Banknote } from 'l
 import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { MagneticButton } from '@/components/animation-provider';
 
 export default function BankDetailsPage() {
   const { user, loading: authLoading, isSeller } = useAuth();
@@ -104,7 +105,7 @@ export default function BankDetailsPage() {
   if (authLoading) return null;
 
   return (
-    <div className="min-h-screen bg-white pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="min-h-screen bg-white page-fade-in pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] px-4 h-14 flex items-center gap-2">
         <button onClick={() => router.push('/settings')} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#F3F4F6]" aria-label="Back">
@@ -142,7 +143,7 @@ export default function BankDetailsPage() {
             <select
               value={selectedBank}
               onChange={(e) => setSelectedBank(e.target.value)}
-              className="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827]"
+              className="w-full bg-[#F9FAFB] border border-[#E5E7EB] card-premium  rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827]"
             >
               <option value="">Select your bank...</option>
               {banks.map((b) => (
@@ -160,7 +161,7 @@ export default function BankDetailsPage() {
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
             placeholder="10-digit account number"
-            className="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827]"
+            className="w-full bg-[#F9FAFB] border border-[#E5E7EB] card-premium  rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827]"
             maxLength={10}
           />
         </div>
@@ -173,15 +174,16 @@ export default function BankDetailsPage() {
             value={accountName}
             onChange={(e) => setAccountName(e.target.value)}
             placeholder="Name on the bank account"
-            className="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827]"
+            className="w-full bg-[#F9FAFB] border border-[#E5E7EB] card-premium  rounded-xl p-3 text-sm text-[#111827] outline-none focus:border-[#111827]"
           />
         </div>
 
         {/* Save button */}
+        <MagneticButton strength={0.15}>
         <button
           onClick={handleSave}
           disabled={saving || !accountName || !accountNumber || !selectedBank}
-          className="w-full h-12 rounded-xl bg-[#111827] text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2 disabled:opacity-40"
+          className="w-full h-12 rounded-xl bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition flex items-center justify-center gap-2 disabled:opacity-40"
         >
           {saving ? (
             <>
@@ -195,6 +197,7 @@ export default function BankDetailsPage() {
             </>
           )}
         </button>
+        </MagneticButton>
 
         {existingDetails && (
           <div className="p-3 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">

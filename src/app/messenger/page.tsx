@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
+import { RevealOnScroll } from '@/components/animation-provider';
 
 interface Conversation {
   id: string;
@@ -252,7 +253,7 @@ export default function MessengerPage() {
   // ---- Loading skeleton (no "no messages" flash) ----
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white page-fade-in">
         {/* Header skeleton */}
         <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] px-4 py-3 flex items-center">
           <div className="w-9 h-9 rounded-full bg-[#F3F4F6] animate-pulse" />
@@ -311,12 +312,12 @@ export default function MessengerPage() {
             ) : activeConversation.otherUserImage ? (
               <img src={activeConversation.otherUserImage} alt="" className="w-9 h-9 rounded-full object-cover" />
             ) : (
-              <div className="w-9 h-9 rounded-full bg-[#111827] flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full bg-[#111827] btn-ripple  flex items-center justify-center">
                 <span className="text-sm font-bold text-white">{otherInitial}</span>
               </div>
             )}
             {isGroup && (
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#111827] border-2 border-white flex items-center justify-center">
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#111827] btn-ripple  border-2 border-white flex items-center justify-center">
                 <Users className="w-2.5 h-2.5 text-white" />
               </div>
             )}
@@ -410,7 +411,7 @@ export default function MessengerPage() {
             <button
               onClick={sendMessage}
               disabled={sending}
-              className="w-9 h-9 rounded-full bg-[#111827] flex items-center justify-center disabled:opacity-30 shrink-0 transition active:scale-90"
+              className="w-9 h-9 rounded-full bg-[#111827] btn-ripple  flex items-center justify-center disabled:opacity-30 shrink-0 transition active:scale-90"
               aria-label="Send"
             >
               <Send className="w-4 h-4 text-white" />
@@ -427,7 +428,7 @@ export default function MessengerPage() {
 
   // ============ CONVERSATION LIST VIEW ============
   return (
-    <div className="min-h-screen bg-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="min-h-screen bg-white page-fade-in" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#E5E7EB] px-4 py-3 flex items-center">
         <button onClick={() => router.push('/')} className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="Back">
@@ -508,7 +509,7 @@ export default function MessengerPage() {
                 ? 'When buyers message you about products or group buys, conversations will appear here.'
                 : 'Message sellers about products, join group buys, or ask questions. Your messages are encrypted.'}
             </p>
-            <Link href="/categories" className="bg-[#111827] text-white text-sm font-semibold px-6 py-3 rounded-full">
+            <Link href="/categories" className="bg-[#111827] btn-ripple  text-white text-sm font-semibold px-6 py-3 rounded-full">
               Browse Products
             </Link>
           </div>
@@ -538,12 +539,12 @@ export default function MessengerPage() {
                     ) : conv.otherUserImage ? (
                       <img src={conv.otherUserImage} alt="" className="w-12 h-12 rounded-full object-cover" />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-[#111827] flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-[#111827] btn-ripple  flex items-center justify-center">
                         <span className="font-semibold text-white text-sm">{initial}</span>
                       </div>
                     )}
                     {isGroup && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#111827] border-2 border-white flex items-center justify-center">
+                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#111827] btn-ripple  border-2 border-white flex items-center justify-center">
                         <Users className="w-3 h-3 text-white" />
                       </div>
                     )}
