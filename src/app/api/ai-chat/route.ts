@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         history: body.history || [],
         systemPrompt: SYSTEM_PROMPT,
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(30000), // 30s — AI responses can take longer
     });
 
     const data = await resp.json();

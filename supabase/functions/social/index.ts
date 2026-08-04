@@ -1781,7 +1781,7 @@ async function handleCheckoutPlaceOrder(body: any, user: any) {
   }
 }
 
-// === AI Chat — uses Hugging Face inference router (OpenAI-compatible) ===
+// === AI Chat — uses ZAI (z.ai) inference API ===
 async function handleAiChat(body: any, user: any) {
   if (!user) return errorResponse('Authentication required', 401);
 
@@ -1790,15 +1790,13 @@ async function handleAiChat(body: any, user: any) {
     return errorResponse('Valid message required (max 2000 chars)', 400);
   }
 
-  const HF_ROUTER_URL = Deno.env.get('HF_ROUTER_URL') || '';
-  const HF_TOKEN = Deno.env.get('HF_TOKEN') || '';
-  const HF_MODEL = Deno.env.get('HF_INFERENCE_MODEL') || 'meta-llama/Llama-3.1-8B-Instruct';
+  const ZAI_BASE_URL = Deno.env.get('ZAI_BASE_URL') || 'https://internal-api.z.ai/v1';
+  const ZAI_API_KEY = Deno.env.get('ZAI_API_KEY') || 'Z.ai';
+  const ZAI_TOKEN = Deno.env.get('ZAI_TOKEN') || '';
+  const ZAI_USER_ID = Deno.env.get('ZAI_USER_ID') || '';
+  const ZAI_CHAT_ID = Deno.env.get('ZAI_CHAT_ID') || '';
   const AI_TIMEOUT = parseInt(Deno.env.get('AI_TIMEOUT') || '15');
   const MAX_TOKENS = parseInt(Deno.env.get('MAX_NEW_TOKENS') || '500');
-
-  if (!HF_ROUTER_URL || !HF_TOKEN) {
-    return errorResponse('AI service not configured', 500);
-  }
 
   // Build messages array — system prompt + context + history + user message
   const messages: any[] = [];
@@ -1818,25 +1816,30 @@ async function handleAiChat(body: any, user: any) {
   messages.push({ role: 'user', content: message });
 
   try {
-    const resp = await fetch(`${HF_ROUTER_URL}/v1/chat/completions`, {
+    const resp = await fetch(`${ZAI_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${HF_TOKEN}`,
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ZAI_API_KEY}`,
+        'X-Z-AI-From': 'Z',
+        'X-Chat-Id': ZAI_CHAT_ID,
+        'X-User-Id': ZAI_USER_ID,
+        'X-Token': ZAI_TOKEN,
       },
       body: JSON.stringify({
-        model: HF_MODEL,
+        model: 'glm-4-flash',
         messages,
         max_tokens: MAX_TOKENS,
         temperature: 0.7,
+        thinking: { type: 'disabled' },
       }),
       signal: AbortSignal.timeout(AI_TIMEOUT * 1000),
     });
 
     if (!resp.ok) {
       const errText = await resp.text().catch(() => '');
-      console.error('[AI Chat] HF router error:', resp.status, errText);
-      return errorResponse('AI service error', 502);
+      console.error('[AI Chat] ZAI error:', resp.status, errText);
+      return errorResponse(`AI service error (${resp.status})`, 502);
     }
 
     const data = await resp.json();
@@ -1849,11 +1852,11 @@ async function handleAiChat(body: any, user: any) {
     return jsonResponse({
       success: true,
       reply: reply.trim(),
-      message: reply.trim(), // backward compat
-      content: reply.trim(), // backward compat
+      message: reply.trim(),
+      content: reply.trim(),
     });
   } catch (err) {
     console.error('[AI Chat] Error:', err);
-    return errorResponse('AI service unavailable', 503);
+    return errorResponse(`AI service unavailable: ${String(err).substring(0, 200)}`, 503);
   }
 }
