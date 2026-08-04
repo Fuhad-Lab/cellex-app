@@ -1383,25 +1383,47 @@ async function handlePaymentSaveBankDetails(body: any, user: any) {
 
   let recipientCode = null;
   let isVerified = false;
+  let verifyError = null;
 
-  try {
-    // Resolve account to verify
-    const resolveData = await paystackFetch(
-      `/bank/resolve?account_number=${encodeURIComponent(accountNumber)}&bank_code=${encodeURIComponent(bankCode)}`
-    );
-    if (resolveData.status) isVerified = true;
+  if (!PAYSTACK_SECRET) {
+    verifyError = 'Paystack secret key not configured';
+  } else {
+    try {
+      // Resolve account to verify
+      const resolveData = await paystackFetch(
+        `/bank/resolve?account_number=${encodeURIComponent(accountNumber)}&bank_code=${encodeURIComponent(bankCode)}`
+      );
+      if (resolveData.status) isVerified = true;
+    } catch (e) {
+      verifyError = e.message || String(e);
+      console.error('[Payment] Bank resolve failed:', verifyError);
+      // Don't return here — we still want to save the details even if
+      // Paystack verification fails (e.g. mobile money banks like PalmPay
+      // may not support /bank/resolve). The seller can still receive
+      // payouts via the transfer recipient created below.
+    }
 
-    // Create transfer recipient
-    const transferData = await paystackFetch('/transferrecipient', {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'nuban', name: accountName, account_number: accountNumber,
-        bank_code: bankCode, currency: 'NGN',
-      }),
-    });
-    recipientCode = transferData.data?.recipient_code || null;
-  } catch (e) {
-    console.error('[Payment] Bank verification failed:', e);
+    // Try to create a transfer recipient (needed for payouts).
+    // This is separate from verification — it works even for banks that
+    // don't support /bank/resolve.
+    try {
+      const transferData = await paystackFetch('/transferrecipient', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: 'nuban', name: accountName, account_number: accountNumber,
+          bank_code: bankCode, currency: 'NGN',
+        }),
+      });
+      recipientCode = transferData.data?.recipient_code || null;
+      // If we successfully created a transfer recipient, the bank details
+      // are valid — mark as verified even if /bank/resolve failed.
+      if (recipientCode && !isVerified) {
+        isVerified = true;
+      }
+    } catch (e) {
+      console.error('[Payment] Transfer recipient creation failed:', e.message || e);
+      if (!verifyError) verifyError = e.message || String(e);
+    }
   }
 
   // Upsert
@@ -1421,7 +1443,12 @@ async function handlePaymentSaveBankDetails(body: any, user: any) {
     }),
   });
   const result = await resp.json();
-  return jsonResponse({ success: true, bankDetails: result[0], verified: isVerified });
+  return jsonResponse({
+    success: true,
+    bankDetails: result[0],
+    verified: isVerified,
+    verifyError: verifyError,
+  });
 }
 
 async function handlePaymentInitialize(body: any, user: any) {

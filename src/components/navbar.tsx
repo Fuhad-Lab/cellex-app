@@ -124,7 +124,7 @@ export function Navbar() {
                       <Heart className="w-4 h-4 text-primary" /> Wishlist
                     </Link>
                     <div className="border-t border-white/5 my-1" />
-                    <Link href="/seller" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    <Link href="/seller-dashboard" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Store className="w-4 h-4 text-primary" /> Seller Dashboard
                     </Link>
                     <Link href="/link-account" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">

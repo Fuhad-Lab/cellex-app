@@ -92,10 +92,23 @@ export default function BankDetailsPage() {
       if (data.success) {
         setExistingDetails(data.bankDetails);
         setVerified(data.verified);
-        toast({
-          title: data.verified ? 'Bank details verified!' : 'Bank details saved',
-          description: data.verified ? 'Your account is ready for payouts.' : 'We could not verify your account automatically. Payouts may be delayed.',
-        });
+        if (data.verified) {
+          toast({
+            title: 'Bank details verified!',
+            description: 'Your account is ready for payouts.',
+          });
+        } else if (data.verifyError) {
+          toast({
+            title: 'Bank details saved (verification failed)',
+            description: `Saved, but Paystack could not verify: ${data.verifyError}. Payouts may be delayed.`,
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Bank details saved',
+            description: 'We could not verify your account automatically. Payouts may be delayed.',
+          });
+        }
       } else {
         toast({ title: 'Error', description: data.error, variant: 'destructive' });
       }
