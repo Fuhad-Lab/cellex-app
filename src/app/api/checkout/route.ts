@@ -1,3 +1,4 @@
+import { validateCsrf, csrfRejected } from '@/lib/csrf';
 import { NextRequest, NextResponse } from 'next/server';
 
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
@@ -23,6 +24,7 @@ const COOKIE_NAME = 'cellex_session_id';
  * 7. Return order ID + total
  */
 export async function POST(request: NextRequest) {
+  if (!validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'Service not configured' }, { status: 500 });
   }

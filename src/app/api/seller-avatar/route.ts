@@ -1,3 +1,4 @@
+import { validateCsrf, csrfRejected } from '@/lib/csrf';
 import { NextRequest, NextResponse } from 'next/server';
 
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
@@ -31,6 +32,7 @@ const LANGUAGE_MAP: Record<string, { name: string; voice: string; flag: string }
 };
 
 export async function POST(request: NextRequest) {
+  if (!validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'SUPABASE_ANON_KEY not set' }, { status: 500 });
   }

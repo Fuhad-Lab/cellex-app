@@ -34,6 +34,7 @@ export function errorResponse(message: string, status = 400): Response {
 /**
  * Get the user from a session_id.
  *
+ * WEB BROWSER STRATEGY (HTTP-only cookies):
  * The web-server sends the session_id in the Authorization header as:
  *   Authorization: Bearer <session_id>
  *
@@ -41,19 +42,31 @@ export function errorResponse(message: string, status = 400): Response {
  *   1. Extracts the session_id from the header
  *   2. Looks up the access_token in the web_sessions table
  *   3. Verifies the access_token with Supabase Auth
- *   4. Returns the user object
+ *   4. Implements SLIDING EXPIRATION — extends the session on each request
+ *      (60-day window resets on activity, like Meta's long-lived tokens)
+ *   5. Returns the user object
+ *
+ * MOBILE NATIVE STRATEGY (OAuth 2.0):
+ * Mobile clients send a short-lived access_token directly:
+ *   Authorization: Bearer <access_token>
+ * The token expires after 1 hour. The mobile client uses a refresh_token
+ * (stored in OS-level secure storage) to get a new access_token via
+ * /api/auth?op=refresh. See handleTokenRefresh in the edge function.
  *
  * NO cookies, NO localStorage — the session is stored IN SUPABASE.
  */
+const SLIDING_EXPIRATION_DAYS = 60; // 60-day sliding window (like Meta)
+const SLIDING_EXPIRATION_MS = SLIDING_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
+
 export async function getUser(req: Request): Promise<{ id: string; email?: string } | null> {
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }
 
-  const sessionId = authHeader.replace('Bearer ', '');
+  const token = authHeader.replace('Bearer ', '');
 
-  if (!sessionId) return null;
+  if (!token) return null;
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -65,15 +78,19 @@ export async function getUser(req: Request): Promise<{ id: string; email?: strin
   };
 
   try {
-    // Step 1: Look up the session in web_sessions
+    // Step 1: Look up the session in web_sessions by session_id
     const sessionResp = await fetch(
-      `${supabaseUrl}/rest/v1/web_sessions?select=access_token,expires_at&session_id=eq.${encodeURIComponent(sessionId)}&limit=1`,
+      `${supabaseUrl}/rest/v1/web_sessions?select=access_token,expires_at,user_id&session_id=eq.${encodeURIComponent(token)}&limit=1`,
       { headers: adminHeaders }
     );
 
     const sessions = await sessionResp.json();
 
-    if (!sessions || sessions.length === 0) return null;
+    // If no session found, try treating the token as a direct access_token
+    // (mobile OAuth flow — short-lived tokens)
+    if (!sessions || sessions.length === 0) {
+      return await verifyAccessToken(token, supabaseUrl, serviceKey);
+    }
 
     const session = sessions[0];
 
@@ -85,6 +102,44 @@ export async function getUser(req: Request): Promise<{ id: string; email?: strin
       headers: {
         'apikey': serviceKey,
         'Authorization': `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (!userResp.ok) return null;
+
+    const user = await userResp.json();
+    if (!user?.id) return null;
+
+    // Step 4: SLIDING EXPIRATION — extend the session on each request.
+    // This implements the 60-day sliding window: any activity resets the
+    // expiration to 60 days from now. Inactive sessions expire naturally.
+    const newExpiresAt = new Date(Date.now() + SLIDING_EXPIRATION_MS).toISOString();
+    fetch(`${supabaseUrl}/rest/v1/web_sessions?session_id=eq.${encodeURIComponent(token)}`, {
+      method: 'PATCH',
+      headers: { ...adminHeaders, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ expires_at: newExpiresAt }),
+    }).catch(() => {}); // non-blocking — don't fail the request if extension fails
+
+    return { id: user.id, email: user.email };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Verify a direct access token (mobile OAuth flow).
+ * Short-lived tokens (1 hour) issued by Supabase Auth.
+ */
+async function verifyAccessToken(
+  accessToken: string,
+  supabaseUrl: string,
+  serviceKey: string
+): Promise<{ id: string; email?: string } | null> {
+  try {
+    const userResp = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: {
+        'apikey': serviceKey,
+        'Authorization': `Bearer ${accessToken}`,
       },
     });
 

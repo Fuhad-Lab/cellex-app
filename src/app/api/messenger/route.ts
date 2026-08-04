@@ -1,3 +1,4 @@
+import { validateCsrf, csrfRejected } from '@/lib/csrf';
 import { NextRequest, NextResponse } from 'next/server';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -32,6 +33,7 @@ const OP_MAP: Record<string, string> = {
 };
 
 export async function POST(request: NextRequest) {
+  if (!validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'SUPABASE_ANON_KEY not set' }, { status: 500 });
   }

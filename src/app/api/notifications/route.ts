@@ -1,3 +1,4 @@
+import { validateCsrf, csrfRejected } from '@/lib/csrf';
 import { NextRequest, NextResponse } from 'next/server';
 
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
@@ -9,6 +10,7 @@ const COOKIE_NAME = 'cellex_session_id';
  * Maps frontend op names to edge function op names.
  */
 export async function POST(request: NextRequest) {
+  if (!validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'SUPABASE_ANON_KEY not set' }, { status: 500 });
   }

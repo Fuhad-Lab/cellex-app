@@ -72,10 +72,27 @@ export interface Review {
   reviewer_name?: string;
 }
 
+/**
+ * Get the CSRF token from the cookie (set by the server on login).
+ * This is the "double-submit cookie" pattern — the token is read from a
+ * non-HttpOnly cookie and sent as a custom header on every POST request.
+ * The server validates that the header matches the cookie.
+ */
+function getCsrfToken(): string {
+  if (typeof document === 'undefined') return '';
+  const match = document.cookie.match(/(?:^|;\s*)cellex_csrftoken=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
 async function apiCall(path: string, body: Record<string, unknown> = {}) {
   const resp = await fetch(`${API_BASE}/api/${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      // Inject CSRF token on every API call — server validates this matches
+      // the cellex_csrftoken cookie. Prevents Cross-Site Request Forgery.
+      'X-CSRF-Token': getCsrfToken(),
+    },
     body: JSON.stringify(body),
     credentials: 'include',
   });

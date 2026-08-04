@@ -9,6 +9,7 @@
  * exposed in the frontend bundle (it lives only in Render env vars).
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { validateCsrf, csrfRejected } from '@/lib/csrf';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
@@ -36,6 +37,13 @@ export async function proxyToEdgeFunction(edgeName: string, request: NextRequest
       { success: false, error: 'Server configuration error' },
       { status: 500 }
     );
+  }
+
+  // CSRF validation — reject state-changing requests without valid token.
+  // The auth route (/api/auth) handles its own CSRF since it sets the cookie.
+  // All other routes must validate.
+  if (!validateCsrf(request)) {
+    return csrfRejected();
   }
 
   const sessionId = request.cookies.get(COOKIE_NAME)?.value || '';
