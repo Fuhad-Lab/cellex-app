@@ -32,6 +32,22 @@ let zaiConfig: { baseUrl: string; apiKey: string; token: string; userId: string;
 
 async function loadZaiConfig() {
   if (zaiConfig) return zaiConfig;
+
+  // First try env vars (set on Render)
+  const envBaseUrl = process.env.ZAI_BASE_URL;
+  const envApiKey = process.env.ZAI_API_KEY;
+  if (envBaseUrl && envApiKey) {
+    zaiConfig = {
+      baseUrl: envBaseUrl,
+      apiKey: envApiKey,
+      token: process.env.ZAI_TOKEN || '',
+      userId: process.env.ZAI_USER_ID || '',
+      chatId: process.env.ZAI_CHAT_ID || '',
+    };
+    return zaiConfig;
+  }
+
+  // Fall back to config file (local development)
   try {
     const configPaths = [
       '/etc/.z-ai-config',
