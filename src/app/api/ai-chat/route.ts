@@ -143,6 +143,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[AI Chat] Error:', error);
-    return NextResponse.json({ success: false, error: 'AI service unavailable' }, { status: 500 });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: `AI service unavailable: ${errorMsg.substring(0, 100)}` }, { status: 500 });
   }
 }
