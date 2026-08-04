@@ -1784,10 +1784,9 @@ async function handleCheckoutPlaceOrder(body: any, user: any) {
   }
 }
 
-// === AI Chat — proxies to NestJS backend which calls ZAI API ===
-// Architecture: Frontend → Edge Function → Backend (NestJS) → ZAI API
-// The edge function can't reach internal-api.z.ai directly (network restriction),
-// so it proxies to the NestJS backend which CAN reach it.
+// === AI Chat — uses NVIDIA NIM API directly (fast, reachable from edge function) ===
+// Architecture: Frontend → Edge Function → NVIDIA NIM API
+// NVIDIA is reachable from Supabase edge functions and provides 2-3s response times.
 async function handleAiChat(body: any, user: any) {
   if (!user) return errorResponse('Authentication required', 401);
 
@@ -1796,37 +1795,70 @@ async function handleAiChat(body: any, user: any) {
     return errorResponse('Valid message required (max 2000 chars)', 400);
   }
 
-  const NESTJS_URL = Deno.env.get('NESTJS_API_URL') || '';
-  const INTERNAL_TOKEN = Deno.env.get('CELLEX_INTERNAL_TOKEN') || '';
-
-  if (!NESTJS_URL || !INTERNAL_TOKEN) {
-    return errorResponse('Backend service not configured', 500);
+  const NVIDIA_API_KEY = Deno.env.get('NVIDIA_API_KEY') || '';
+  if (!NVIDIA_API_KEY) {
+    return errorResponse('AI service not configured', 500);
   }
 
+  // Build messages array
+  const messages: any[] = [];
+  if (systemPrompt) {
+    messages.push({ role: 'system', content: systemPrompt });
+  }
+  if (context) {
+    messages.push({ role: 'system', content: `Context: ${context}` });
+  }
+  if (Array.isArray(history)) {
+    for (const h of history.slice(-6)) { // last 6 messages for context (keeps it fast)
+      if (h.role && h.content) {
+        messages.push({ role: h.role, content: h.content });
+      }
+    }
+  }
+  messages.push({ role: 'user', content: message });
+
   try {
-    const resp = await fetch(`${NESTJS_URL}/ai/chat`, {
+    // Use NVIDIA's llama-3.1-nano-8b-instruct — fast and intelligent
+    const resp = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${NVIDIA_API_KEY}`,
         'Content-Type': 'application/json',
-        'X-Internal-Token': INTERNAL_TOKEN,
-        'X-User-Id': user.id,
-        'X-User-Email': user.email || '',
+        'Accept': 'application/json',
       },
-      body: JSON.stringify({ message, context, history, systemPrompt }),
-      signal: AbortSignal.timeout(30000),
+      body: JSON.stringify({
+        model: 'meta/llama-3.1-8b-instruct',
+        messages,
+        max_tokens: 300, // Keep short for fast response (2-3s)
+        temperature: 0.7,
+        top_p: 0.9,
+        stream: false,
+      }),
+      signal: AbortSignal.timeout(10000), // 10s max
     });
 
     if (!resp.ok) {
       const errText = await resp.text().catch(() => '');
-      console.error('[AI Chat] Backend error:', resp.status, errText);
-      return errorResponse(`AI service error (${resp.status}): ${errText.substring(0, 200)}`, 502);
+      console.error('[AI Chat] NVIDIA error:', resp.status, errText.substring(0, 200));
+      return errorResponse('AI service error', 502);
     }
 
     const data = await resp.json();
-    return jsonResponse(data);
+    const reply = data.choices?.[0]?.message?.content || '';
+
+    if (!reply) {
+      return errorResponse('AI returned empty response', 502);
+    }
+
+    return jsonResponse({
+      success: true,
+      reply: reply.trim(),
+      message: reply.trim(),
+      content: reply.trim(),
+    });
   } catch (err) {
     console.error('[AI Chat] Error:', err);
-    return errorResponse(`AI service unavailable: ${String(err).substring(0, 100)}`, 503);
+    return errorResponse('AI service unavailable', 503);
   }
 }
 

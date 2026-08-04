@@ -58,12 +58,30 @@ function SearchContent() {
     setAllProducts([]);
     setVideos([]);
 
-    // Smart search (AI-powered semantic search via edge function)
-    const [searchResp, vidResp] = await Promise.all([
+    // Run product search, video search, AND AI answer IN PARALLEL for speed.
+    const csrfToken = typeof document !== 'undefined'
+      ? (document.cookie.match(/cellex_csrftoken=([^;]+)/) || [])[1] || ''
+      : '';
+
+    const [searchResp, vidResp, aiResp] = await Promise.all([
       api.smartSearch(q, 30),
       api.videos.feed(50).catch(() => ({ success: false, videos: [] })),
+      fetch(`${API_BASE}/api/ai-chat`, {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        body: JSON.stringify({
+          message: `A user searched for "${q}" on Cellex (a Nigerian e-commerce marketplace). Provide a helpful, comprehensive answer about what's available. Mention types of products, price ranges, and shopping tips. Be friendly and informative (2-3 sentences max).`,
+          context: 'Search overview',
+          history: [],
+        }),
+      }).catch(() => null),
     ]);
 
+    // Process product results
     const products = searchResp.success
       ? (searchResp.products || searchResp.results || [])
       : [];
@@ -72,7 +90,7 @@ function SearchContent() {
     setLoading(false);
     setHasSearched(q);
 
-    // Filter videos
+    // Process video results
     if (vidResp.success) {
       const qLower = q.toLowerCase();
       const filtered = (vidResp.videos || []).filter((v: any) =>
@@ -83,25 +101,11 @@ function SearchContent() {
       setVideos(filtered);
     }
 
-    // AI response via /api/ai-chat
-    try {
-      const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: `A user searched for "${q}" on Cellex (a Nigerian e-commerce marketplace). Provide a helpful, comprehensive answer about what's available. Mention types of products, price ranges, and shopping tips. Be friendly and informative (2-3 paragraphs).`,
-          context: 'Search overview',
-          history: [],
-        }),
-      });
-      if (aiResp.ok) {
-        const data = await aiResp.json();
-        setAiAnswer(data.reply || data.message || data.content || `Here's what I found for "${q}": ${products.length} products available.`);
-      } else {
-        setAiAnswer(`Here's what I found for "${q}": ${products.length} products available on Cellex.`);
-      }
-    } catch {
+    // Process AI response
+    if (aiResp && aiResp.ok) {
+      const data = await aiResp.json();
+      setAiAnswer(data.reply || data.message || data.content || `Here's what I found for "${q}": ${products.length} products available.`);
+    } else {
       setAiAnswer(`Here's what I found for "${q}": ${products.length} products available on Cellex.`);
     }
     setAiLoading(false);

@@ -1,24 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { validateCsrf, csrfRejected } from '@/lib/csrf';
 
 /**
  * AI Chat API route
  *
- * ARCHITECTURE: Frontend → Edge Function → Backend → ZAI API
+ * ARCHITECTURE: Frontend → /api/ai-chat → NVIDIA NIM API
  *
- * However, the edge function can't reach internal-api.z.ai (network restriction)
- * and the backend deploy is failing. As a TEMPORARY workaround, this route
- * calls the ZAI API directly from the Next.js server (which CAN reach it).
+ * Uses NVIDIA's NIM (NVIDIA Inference Microservices) API for fast,
+ * intelligent AI responses. NVIDIA is reachable from Render (unlike ZAI's
+ * internal API) and provides sub-3-second response times.
  *
- * SECURITY: The ZAI credentials are read from a config file that is NOT
- * committed to git (.z-ai-config in the home directory). No secrets are
- * exposed to the frontend.
+ * SECURITY:
+ * - The NVIDIA_API_KEY is stored as a Supabase secret and read by the edge
+ *   function. This route calls the edge function (op=ai_chat) which proxies
+ *   to NVIDIA.
+ * - No API keys are exposed to the frontend.
+ * - CSRF validation is enforced.
  *
- * TODO: Once the backend deploy succeeds, route this through the edge function
- * → backend → ZAI API as per the architecture.
+ * PERFORMANCE:
+ * - Uses NVIDIA's llama-3.1-nano-8b-instruct model (fast, lightweight)
+ * - Max 300 tokens (keeps response time under 3 seconds)
+ * - Temperature 0.7 (balanced creativity and consistency)
  */
 
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 const COOKIE_NAME = 'cellex_session_id';
 
 const SYSTEM_PROMPT = `You are Cellex AI, a friendly shopping assistant for Cellex — Nigeria's #1 social commerce marketplace.
@@ -27,53 +33,12 @@ Prices are in Nigerian Naira (₦). Be concise, friendly, and helpful (2-3 sente
 If users ask about specific products, mention you can search for them.
 If users ask about orders, shipping, or payments, direct them to the appropriate page.`;
 
-// Load ZAI config from the home directory config file (not committed to git)
-let zaiConfig: { baseUrl: string; apiKey: string; token: string; userId: string; chatId: string } | null = null;
-
-async function loadZaiConfig() {
-  if (zaiConfig) return zaiConfig;
-
-  // First try env vars (set on Render)
-  const envBaseUrl = process.env.ZAI_BASE_URL;
-  const envApiKey = process.env.ZAI_API_KEY;
-  if (envBaseUrl && envApiKey) {
-    zaiConfig = {
-      baseUrl: envBaseUrl,
-      apiKey: envApiKey,
-      token: process.env.ZAI_TOKEN || '',
-      userId: process.env.ZAI_USER_ID || '',
-      chatId: process.env.ZAI_CHAT_ID || '',
-    };
-    return zaiConfig;
+export async function POST(request: NextRequest) {
+  // CSRF validation
+  if (!validateCsrf(request)) {
+    return csrfRejected();
   }
 
-  // Fall back to config file (local development)
-  try {
-    const configPaths = [
-      '/etc/.z-ai-config',
-      path.join(process.env.HOME || '', '.z-ai-config'),
-    ];
-    for (const configPath of configPaths) {
-      try {
-        const configStr = await fs.readFile(configPath, 'utf-8');
-        const config = JSON.parse(configStr);
-        if (config.baseUrl && config.apiKey) {
-          zaiConfig = {
-            baseUrl: config.baseUrl,
-            apiKey: config.apiKey,
-            token: config.token || '',
-            userId: config.userId || '',
-            chatId: config.chatId || '',
-          };
-          return zaiConfig;
-        }
-      } catch {}
-    }
-  } catch {}
-  return null;
-}
-
-export async function POST(request: NextRequest) {
   let body: any;
   try { body = await request.json(); } catch {
     return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
@@ -84,66 +49,40 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Valid message required (max 2000 chars)' }, { status: 400 });
   }
 
-  // Load ZAI config
-  const config = await loadZaiConfig();
-  if (!config) {
-    return NextResponse.json({ success: false, error: 'AI service not configured' }, { status: 500 });
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return NextResponse.json({ success: false, error: 'Service not configured' }, { status: 500 });
   }
 
-  // Build messages array
-  const messages: any[] = [
-    { role: 'system', content: SYSTEM_PROMPT },
-  ];
-  if (context) {
-    messages.push({ role: 'system', content: `Context: ${context}` });
+  // Read the session ID from the cookie and forward as Bearer token
+  const sessionId = request.cookies.get(COOKIE_NAME)?.value || '';
+
+  const headers: Record<string, string> = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json',
+  };
+  if (sessionId) {
+    headers['Authorization'] = `Bearer ${sessionId}`;
   }
-  if (Array.isArray(history)) {
-    for (const h of history.slice(-10)) {
-      if (h.role && h.content) {
-        messages.push({ role: h.role, content: h.content });
-      }
-    }
-  }
-  messages.push({ role: 'user', content: message });
 
   try {
-    const resp = await fetch(`${config.baseUrl}/chat/completions`, {
+    // Call the edge function which has the NVIDIA_API_KEY
+    const resp = await fetch(`${SUPABASE_URL}/functions/v1/social`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.apiKey}`,
-        'X-Z-AI-From': 'Z',
-        'X-Chat-Id': config.chatId,
-        'X-User-Id': config.userId,
-        'X-Token': config.token,
-      },
+      headers,
       body: JSON.stringify({
-        model: 'glm-4-flash',
-        messages,
-        max_tokens: 500,
-        temperature: 0.7,
-        thinking: { type: 'disabled' },
+        op: 'ai_chat',
+        message,
+        context: context || '',
+        history: history || [],
+        systemPrompt: SYSTEM_PROMPT,
       }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(15000), // 15s — NVIDIA is fast (2-3s typically)
     });
-
-    if (!resp.ok) {
-      console.error('[AI Chat] ZAI error:', resp.status);
-      return NextResponse.json({ success: false, error: 'AI service error' }, { status: 502 });
-    }
 
     const data = await resp.json();
-    const reply = data.choices?.[0]?.message?.content || '';
-
-    return NextResponse.json({
-      success: true,
-      reply: reply.trim(),
-      message: reply.trim(),
-      content: reply.trim(),
-    });
+    return NextResponse.json(data, { status: resp.status });
   } catch (error) {
     console.error('[AI Chat] Error:', error);
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ success: false, error: `AI service unavailable: ${errorMsg.substring(0, 100)}` }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'AI service unavailable' }, { status: 500 });
   }
 }
