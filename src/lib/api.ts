@@ -1,12 +1,18 @@
 // Cellex API Client
 // For web: uses relative paths (/api/) — handled by Next.js route handlers
-// For Capacitor (APK/IPA): uses absolute URL to the live HF Space
+// For Capacitor (APK/IPA): uses absolute URL from env var (never hardcoded)
 // Detection: checks if running on localhost with Capacitor's native bridge
 
 import { Capacitor } from '@capacitor/core';
 
+// SECURITY: The API base URL is read from NEXT_PUBLIC_API_BASE env var.
+// This is a PUBLIC URL (the frontend itself) — NOT a secret. It's only
+// needed for Capacitor native builds where relative URLs don't work.
+// The actual backend (NestJS) and Supabase edge function URLs are NEVER
+// in the frontend — all API calls go through /api/* route handlers which
+// proxy to the edge functions server-side.
 const API_BASE = Capacitor.isNativePlatform()
-  ? 'https://eesha-learn.onrender.com'
+  ? (process.env.NEXT_PUBLIC_API_BASE || '')
   : '';
 
 export { Capacitor };

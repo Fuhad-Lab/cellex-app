@@ -1384,12 +1384,15 @@ async function handlePaymentSaveBankDetails(body: any, user: any) {
   let recipientCode = null;
   let isVerified = false;
   let verifyError = null;
+  let transferError = null;
 
   if (!PAYSTACK_SECRET) {
     verifyError = 'Paystack secret key not configured';
   } else {
+    // Step 1: Try to resolve the account via /bank/resolve
+    // Note: This endpoint does NOT work for mobile money banks like PalmPay (code 999991).
+    // For those, we rely on /transferrecipient as the verification method.
     try {
-      // Resolve account to verify
       const resolveData = await paystackFetch(
         `/bank/resolve?account_number=${encodeURIComponent(accountNumber)}&bank_code=${encodeURIComponent(bankCode)}`
       );
@@ -1397,15 +1400,11 @@ async function handlePaymentSaveBankDetails(body: any, user: any) {
     } catch (e) {
       verifyError = e.message || String(e);
       console.error('[Payment] Bank resolve failed:', verifyError);
-      // Don't return here — we still want to save the details even if
-      // Paystack verification fails (e.g. mobile money banks like PalmPay
-      // may not support /bank/resolve). The seller can still receive
-      // payouts via the transfer recipient created below.
     }
 
-    // Try to create a transfer recipient (needed for payouts).
-    // This is separate from verification — it works even for banks that
-    // don't support /bank/resolve.
+    // Step 2: Create a transfer recipient (needed for payouts).
+    // This works for ALL banks that support transfers, including mobile money banks.
+    // If this succeeds, the bank details are valid — mark as verified.
     try {
       const transferData = await paystackFetch('/transferrecipient', {
         method: 'POST',
@@ -1415,18 +1414,26 @@ async function handlePaymentSaveBankDetails(body: any, user: any) {
         }),
       });
       recipientCode = transferData.data?.recipient_code || null;
-      // If we successfully created a transfer recipient, the bank details
-      // are valid — mark as verified even if /bank/resolve failed.
-      if (recipientCode && !isVerified) {
+      if (recipientCode) {
         isVerified = true;
       }
     } catch (e) {
-      console.error('[Payment] Transfer recipient creation failed:', e.message || e);
-      if (!verifyError) verifyError = e.message || String(e);
+      transferError = e.message || String(e);
+      console.error('[Payment] Transfer recipient creation failed:', transferError);
+    }
+
+    // Combine errors for the response
+    if (!isVerified) {
+      if (verifyError && transferError) {
+        verifyError = `Resolve: ${verifyError} | Transfer: ${transferError}`;
+      } else if (transferError) {
+        verifyError = transferError;
+      }
+      // If transferError is null but recipientCode was set, something weird happened
     }
   }
 
-  // Upsert
+  // Upsert bank details
   const { url, headers } = supabaseRest();
   const resp = await fetch(`${url}/rest/v1/seller_bank_details`, {
     method: 'POST',
@@ -1447,7 +1454,7 @@ async function handlePaymentSaveBankDetails(body: any, user: any) {
     success: true,
     bankDetails: result[0],
     verified: isVerified,
-    verifyError: verifyError,
+    verifyError: isVerified ? null : verifyError,
   });
 }
 

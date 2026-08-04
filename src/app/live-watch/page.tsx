@@ -126,8 +126,9 @@ function LiveWatchContent() {
   }
 
   const isLive = session.status === 'live';
-  // Check if this session uses Owncast (stream_url contains our Owncast URL)
-  const usesOwncast = session.stream_url && session.stream_url.includes('ai-module-tester.onrender.com');
+  // Check if this session uses Owncast — the server returns an isOwncast flag
+  // in the stream config so we don't hardcode internal hostnames in the client.
+  const usesOwncast = session.isOwncast || false;
 
   return (
     <div className="ig-container min-h-screen pb-24">

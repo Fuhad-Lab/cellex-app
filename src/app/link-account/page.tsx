@@ -12,7 +12,9 @@ import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
 import { useScrollPreservation } from '@/components/global-state-provider';
-const WHATSAPP_BOT_NUMBER = '+234 813 437 6492'; // placeholder
+// WhatsApp bot number is read from env var (NEXT_PUBLIC_WHATSAPP_BOT_NUMBER)
+// so it's not hardcoded in the client bundle.
+const WHATSAPP_BOT_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || '';
 
 export default function LinkAccountPage() {
   useScrollPreservation('link-account');
