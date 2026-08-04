@@ -1814,8 +1814,9 @@ async function handleAiChat(body: any, user: any) {
     });
 
     if (!resp.ok) {
-      console.error('[AI Chat] Backend error:', resp.status);
-      return errorResponse('AI service error', 502);
+      const errText = await resp.text().catch(() => '');
+      console.error('[AI Chat] Backend error:', resp.status, errText);
+      return errorResponse(`AI service error (${resp.status}): ${errText.substring(0, 200)}`, 502);
     }
 
     const data = await resp.json();
