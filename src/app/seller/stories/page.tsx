@@ -157,7 +157,7 @@ export default function SellerStoriesPage() {
           </select>
         </div>
 
-        <button onClick={post} disabled={posting} className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50">
+        <button onClick={post} disabled={posting} className="w-full bg-[#171717] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50">
           <Send className="w-4 h-4 inline mr-1" />
           {posting ? 'Posting...' : 'Post story (24h)'}
         </button>

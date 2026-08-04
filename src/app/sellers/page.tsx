@@ -93,7 +93,7 @@ export default function SellersPage() {
               onClick={() => setCategory(c)}
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                 category === c
-                  ? 'bg-[#D4AF37] text-black'
+                  ? 'bg-[#171717] text-black'
                   : 'bg-[#F5F5F5] text-[#666666] hover:bg-[#F5F5F5]'
               }`}
             >
@@ -153,7 +153,7 @@ export default function SellersPage() {
                   {seller.profile_image ? (
                     <img src={seller.profile_image} className="w-12 h-12 rounded-full object-cover shrink-0" alt="" />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-[#D4AF37] flex items-center justify-center text-black font-bold text-sm shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-[#171717] flex items-center justify-center text-black font-bold text-sm shrink-0">
                       {initial}
                     </div>
                   )}

@@ -118,7 +118,7 @@ export default function AiChatPage() {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 ml-1 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-full bg-[#171717] flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4 text-black" />
           </div>
           <div>
@@ -136,7 +136,7 @@ export default function AiChatPage() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
-              msg.role === 'user' ? 'bg-[#F5F5F5]' : 'bg-[#D4AF37]'
+              msg.role === 'user' ? 'bg-[#F5F5F5]' : 'bg-[#171717]'
             }`}>
               {msg.role === 'user'
                 ? <User className="w-4 h-4 text-[#666666]" />
@@ -145,7 +145,7 @@ export default function AiChatPage() {
             <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`rounded-2xl px-4 py-2.5 text-sm ${
                 msg.role === 'user'
-                  ? 'bg-[#D4AF37] text-black rounded-br-md'
+                  ? 'bg-[#171717] text-black rounded-br-md'
                   : 'bg-[#F5F5F5] text-black rounded-bl-md'
               }`}>
                 <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -181,7 +181,7 @@ export default function AiChatPage() {
 
         {loading && (
           <div className="flex gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-[#171717] flex items-center justify-center">
               <Bot className="w-4 h-4 text-black" />
             </div>
             <div className="bg-[#F5F5F5] rounded-2xl rounded-bl-md px-4 py-3">
@@ -224,7 +224,7 @@ export default function AiChatPage() {
         <button
           onClick={() => send()}
           disabled={loading || !input.trim()}
-          className="bg-[#D4AF37] text-black rounded-md px-4 disabled:opacity-30 hover:bg-[#F5F5F5]"
+          className="bg-[#171717] text-black rounded-md px-4 disabled:opacity-30 hover:bg-[#F5F5F5]"
           aria-label="Send message"
         >
           <Send className="w-4 h-4" />

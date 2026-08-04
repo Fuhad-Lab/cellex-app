@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice, type Product, API_BASE } from '@/lib/api';
 import { Search, ChevronLeft, Store, Sparkles, Video as VideoIcon,
-  Star, ShoppingBag, Play, Send, Loader2, TrendingUp, Filter } from 'lucide-react';
+  Star, ShoppingBag, Play, Send, Loader2, X, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 
@@ -13,7 +13,7 @@ function SearchContent() {
   const router = useRouter();
   const query = params.get('q') || '';
 
-  // Persisted state — survives navigation away and back.
+  // Persisted state
   const [searchInput, setSearchInput] = usePersistedState<string>('search:input', query);
   const [aiAnswer, setAiAnswer] = usePersistedState<string>('search:aiAnswer', '');
   const [aiProducts, setAiProducts] = usePersistedState<Product[]>('search:aiProducts', []);
@@ -23,7 +23,7 @@ function SearchContent() {
   const [view, setView] = usePersistedState<'ai' | 'products' | 'videos'>('search:view', 'ai');
   const [hasSearched, setHasSearched] = usePersistedState<string>('search:lastQuery', '');
 
-  // Transient state.
+  // Transient state
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [followUpInput, setFollowUpInput] = useState('');
@@ -58,7 +58,7 @@ function SearchContent() {
     setAllProducts([]);
     setVideos([]);
 
-    // Call smart search (AI-powered semantic search via edge function).
+    // Smart search (AI-powered semantic search via edge function)
     const [searchResp, vidResp] = await Promise.all([
       api.smartSearch(q, 30),
       api.videos.feed(50).catch(() => ({ success: false, videos: [] })),
@@ -83,7 +83,7 @@ function SearchContent() {
       setVideos(filtered);
     }
 
-    // AI response — call through /api/ai-chat (which proxies to edge function).
+    // AI response via /api/ai-chat
     try {
       const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
         credentials: 'include',
@@ -108,7 +108,6 @@ function SearchContent() {
   }, []);
 
   useEffect(() => {
-    // Only search if the query is different from the last search.
     if (query && query !== hasSearched) {
       setSearchInput(query);
       doSearch(query);
@@ -158,49 +157,52 @@ function SearchContent() {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
       case 'popular': return (b.units_sold || 0) - (a.units_sold || 0);
-      default: return 0; // relevance — keep original order
+      default: return 0;
     }
   });
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header — light theme, clean, premium */}
-      <div ref={searchBarRef} className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-[#E5E5E5]">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+      {/* ===== STICKY HEADER — Google style ===== */}
+      <div ref={searchBarRef} className="sticky top-0 z-50 bg-white border-b border-[#e5e5e5]">
+        <div className="max-w-[692px] mx-auto px-4 py-3 flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-[#F5F5F5] text-[#111827]"
+            className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#f5f5f5] transition-colors"
             aria-label="Back"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 text-[#171717]" />
           </button>
-          <Link href="/" className="hidden sm:flex items-center gap-1.5 shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#111827]">
+          <Link href="/" className="shrink-0 flex items-center gap-1.5">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#171717]">
               <span className="font-extrabold text-base text-white" style={{ fontFamily: 'var(--font-geist-mono)' }}>C</span>
             </div>
-            <span className="text-lg font-extrabold text-[#111827]" style={{ fontFamily: 'var(--font-geist-mono)' }}>Cellex</span>
+            <span className="text-xl font-semibold text-[#171717] tracking-tight hidden sm:inline">Cellex</span>
           </Link>
-          <form onSubmit={handleSubmit} className="flex-1 flex items-center rounded-full px-4 py-2 bg-[#F5F5F5] border-2 border-transparent focus-within:border-[#D4AF37] focus-within:bg-white transition-all">
-            <Search className="w-4 h-4 mr-2 shrink-0 text-[#666666]" />
+          <form onSubmit={handleSubmit} className="flex-1 flex items-center h-11 px-4 bg-white border border-[#e5e5e5] rounded-full transition-all focus-within:border-[#d4d4d4] focus-within:shadow-[0_1px_6px_rgba(32,33,36,0.08)]">
+            <Search className="w-4 h-4 mr-3 shrink-0 text-[#737373]" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search Cellex..."
-              className="flex-1 bg-transparent outline-none text-base text-[#111827] placeholder:text-[#999999]"
+              className="flex-1 bg-transparent outline-none text-base text-[#171717] placeholder:text-[#a3a3a3]"
             />
             {searchInput && (
               <button
-                type="submit"
-                className="ml-2 px-3 py-1 rounded-full bg-[#D4AF37] text-white text-xs font-semibold hover:bg-[#C4A030] transition-colors"
+                type="button"
+                onClick={() => setSearchInput('')}
+                className="ml-2 shrink-0"
+                aria-label="Clear"
               >
-                Search
+                <X className="w-4 h-4 text-[#737373] hover:text-[#171717]" />
               </button>
             )}
           </form>
         </div>
-        {/* View toggle — pill style */}
-        <div className="max-w-3xl mx-auto px-4 flex items-center gap-1">
+
+        {/* ===== TABS — Google style (black underline) ===== */}
+        <div className="max-w-[692px] mx-auto px-4 flex items-center gap-1 overflow-x-auto scrollbar-none">
           {[
             { key: 'ai', label: 'AI Answer', icon: Sparkles },
             { key: 'products', label: `Products (${allProducts.length})`, icon: ShoppingBag },
@@ -212,93 +214,77 @@ function SearchContent() {
               <button
                 key={tab.key}
                 onClick={() => setView(tab.key as any)}
-                className={`flex items-center gap-1.5 py-2.5 px-3 text-sm font-medium border-b-2 transition-all ${
-                  isActive ? 'font-bold' : ''
+                className={`relative px-3 py-3.5 text-sm font-medium whitespace-nowrap transition-colors ${
+                  isActive ? 'text-[#171717] font-semibold' : 'text-[#737373] hover:text-[#525252]'
                 }`}
-                style={{
-                  borderColor: isActive ? '#D4AF37' : 'transparent',
-                  color: isActive ? '#111827' : '#666666',
-                }}
               >
-                <Icon className="w-3.5 h-3.5" />
-                {tab.label}
+                <span className="flex items-center gap-1.5">
+                  <Icon className="w-3.5 h-3.5" />
+                  {tab.label}
+                </span>
+                {isActive && (
+                  <span className="absolute left-2 right-2 -bottom-px h-[3px] bg-[#171717] rounded-t-full" />
+                )}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-3xl mx-auto px-4 py-6 pb-32">
-        {/* AI VIEW */}
-        {view === 'ai' && (
-          <div className="space-y-6">
-            {/* User query bubble */}
-            <div className="flex justify-end">
-              <div className="rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%] bg-[#D4AF37] text-white">
-                <p className="text-sm font-medium">{query}</p>
-              </div>
-            </div>
+      {/* ===== CONTENT ===== */}
+      <div className="max-w-[692px] mx-auto px-4 py-5 pb-32">
 
-            {/* AI response */}
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-[#D4AF37] to-[#C4A030] shadow-sm">
-                <Sparkles className="w-4 h-4 text-white" />
+        {/* ===== AI ANSWER VIEW (Google AI Overview style) ===== */}
+        {view === 'ai' && (
+          <div className="space-y-5">
+            {/* AI Answer card */}
+            <div>
+              {/* Label with black accent bar */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1 h-5 bg-[#171717] rounded-full" />
+                <span className="text-sm font-semibold text-[#171717]">AI Answer</span>
+                {aiLoading && (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#737373]" />
+                )}
               </div>
-              <div className="flex-1 bg-[#F9F9F9] rounded-2xl rounded-tl-md p-4 border border-[#EEEEEE]">
+
+              {/* Card body — gray fill, rounded, subtle border */}
+              <div className="bg-[#f5f5f5] rounded-xl p-4 border border-[#e5e5e5]">
                 {aiLoading ? (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[#666666] text-sm">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      AI is thinking...
-                    </div>
-                    <div className="space-y-1.5 mt-2">
-                      <div className="h-3 bg-[#E5E5E5] rounded animate-pulse w-full" />
-                      <div className="h-3 bg-[#E5E5E5] rounded animate-pulse w-5/6" />
-                      <div className="h-3 bg-[#E5E5E5] rounded animate-pulse w-4/6" />
-                    </div>
+                    <div className="h-3 bg-[#e5e5e5] rounded animate-pulse w-full" />
+                    <div className="h-3 bg-[#e5e5e5] rounded animate-pulse w-5/6" />
+                    <div className="h-3 bg-[#e5e5e5] rounded animate-pulse w-4/6" />
+                    <div className="h-3 bg-[#e5e5e5] rounded animate-pulse w-3/4" />
                   </div>
                 ) : (
-                  <div className="text-sm text-[#111827] leading-relaxed whitespace-pre-wrap">
-                    {aiAnswer}
-                  </div>
+                  <p className="text-sm text-[#171717] leading-relaxed whitespace-pre-wrap">{aiAnswer}</p>
                 )}
               </div>
             </div>
 
-            {/* Product recommendations */}
+            {/* Top product picks — source chips style */}
             {aiProducts.length > 0 && !aiLoading && (
-              <div className="ml-12">
+              <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="inline-block text-xs font-bold px-2.5 py-1 rounded-md bg-[#111827] text-white">
-                    Top picks for "{query}"
-                  </div>
+                  <span className="text-xs font-medium text-[#737373]">Top picks for "{query}"</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {aiProducts.map((p, i) => (
-                    <Link
-                      key={p.id}
-                      href={`/product?id=${p.id}`}
-                      className="block group"
-                    >
-                      <div className="rounded-xl overflow-hidden border border-[#E5E5E5] bg-white hover:shadow-lg hover:border-[#D4AF37] transition-all duration-200">
-                        <div className="aspect-square bg-[#F5F5F5] overflow-hidden">
+                  {aiProducts.map((p) => (
+                    <Link key={p.id} href={`/product?id=${p.id}`} className="block group">
+                      <div className="rounded-lg overflow-hidden border border-[#e5e5e5] bg-white hover:border-[#171717] hover:shadow-sm transition-all">
+                        <div className="aspect-square bg-[#f5f5f5] overflow-hidden">
                           {p.image_url ? (
-                            <img
-                              src={p.image_url}
-                              alt={p.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              loading="lazy"
-                            />
+                            <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#999999]">
-                              <Store className="w-8 h-8" />
+                            <div className="w-full h-full flex items-center justify-center text-[#a3a3a3]">
+                              <Store className="w-7 h-7" />
                             </div>
                           )}
                         </div>
-                        <div className="p-2.5">
-                          <div className="text-xs font-medium line-clamp-1 text-[#111827]">{p.name}</div>
-                          <div className="text-sm font-bold text-[#D4AF37] mt-0.5">{formatPrice(p.price)}</div>
+                        <div className="p-2">
+                          <div className="text-xs font-medium line-clamp-1 text-[#171717]">{p.name}</div>
+                          <div className="text-sm font-bold text-[#171717] mt-0.5">{formatPrice(p.price)}</div>
                         </div>
                       </div>
                     </Link>
@@ -310,19 +296,19 @@ function SearchContent() {
             {/* Follow-up chat history */}
             {chatHistory.map((msg, i) => (
               <div key={i} className="space-y-3">
+                {/* User message */}
                 <div className="flex justify-end">
-                  <div className="rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%] bg-[#D4AF37] text-white">
+                  <div className="rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%] bg-[#171717] text-white">
                     <p className="text-sm">{msg.user}</p>
                   </div>
                 </div>
+                {/* AI message */}
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-[#D4AF37] to-[#C4A030]">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-[#171717]">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex-1 bg-[#F9F9F9] rounded-2xl rounded-tl-md p-4 border border-[#EEEEEE]">
-                    <div className="text-sm text-[#111827] leading-relaxed whitespace-pre-wrap">
-                      {msg.ai}
-                    </div>
+                  <div className="flex-1 bg-[#f5f5f5] rounded-2xl rounded-tl-md p-3.5 border border-[#e5e5e5]">
+                    <p className="text-sm text-[#171717] leading-relaxed whitespace-pre-wrap">{msg.ai}</p>
                   </div>
                 </div>
               </div>
@@ -330,94 +316,92 @@ function SearchContent() {
 
             {followUpLoading && (
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-[#D4AF37] to-[#C4A030]">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-[#171717]">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                <div className="flex items-center gap-1 pt-3">
-                  <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className="flex items-center gap-1 pt-2.5">
+                  <span className="w-2 h-2 bg-[#171717] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-[#171717] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-[#171717] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             )}
           </div>
         )}
 
-        {/* PRODUCTS VIEW */}
+        {/* ===== PRODUCTS VIEW (Google organic results style) ===== */}
         {view === 'products' && (
           <div>
-            {/* Sort bar */}
+            {/* Result count + sort */}
             {!loading && allProducts.length > 0 && (
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#E5E5E5]">
-                <div className="text-sm text-[#666666]">
-                  <span className="font-bold text-[#111827]">{allProducts.length}</span> results for "{query}"
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#e5e5e5]">
+                <div className="text-sm text-[#737373]">
+                  <span className="font-semibold text-[#171717]">{allProducts.length}</span> results
                 </div>
-                <div className="flex items-center gap-2">
-                  <Filter className="w-3.5 h-3.5 text-[#666666]" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="text-xs font-medium bg-transparent border-0 outline-none cursor-pointer text-[#111827]"
-                  >
-                    <option value="relevance">Most Relevant</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="popular">Most Popular</option>
-                  </select>
-                </div>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="text-xs font-medium bg-transparent border-0 outline-none cursor-pointer text-[#525252]"
+                >
+                  <option value="relevance">Most Relevant</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="popular">Most Popular</option>
+                </select>
               </div>
             )}
 
             {loading ? (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex gap-3 animate-pulse">
-                    <div className="w-24 h-24 rounded-lg bg-[#E5E5E5] shrink-0" />
+                  <div key={i} className="flex gap-4 animate-pulse">
+                    <div className="w-24 h-24 rounded-lg bg-[#f5f5f5] shrink-0" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-[#E5E5E5] rounded w-3/4" />
-                      <div className="h-3 bg-[#E5E5E5] rounded w-1/2" />
-                      <div className="h-3 bg-[#E5E5E5] rounded" />
+                      <div className="h-3 bg-[#f5f5f5] rounded w-1/3" />
+                      <div className="h-5 bg-[#f5f5f5] rounded w-3/4" />
+                      <div className="h-3 bg-[#f5f5f5] rounded w-full" />
+                      <div className="h-3 bg-[#f5f5f5] rounded w-2/3" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : sortedProducts.length === 0 ? (
-              <div className="text-center py-16">
-                <Search className="w-12 h-12 mx-auto mb-3 text-[#CCCCCC]" />
-                <p className="text-sm font-medium text-[#666666]">No products found for "{query}"</p>
-                <p className="text-xs text-[#999999] mt-1">Try a different search term</p>
+              <div className="text-center py-20">
+                <Search className="w-12 h-12 mx-auto mb-3 text-[#d4d4d4]" />
+                <p className="text-sm font-medium text-[#525252]">No products found for "{query}"</p>
+                <p className="text-xs text-[#a3a3a3] mt-1">Try a different search term</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {sortedProducts.map((p, i) => (
-                  <SearchResult key={p.id} product={p} index={i} />
+              <div className="space-y-5">
+                {sortedProducts.map((p) => (
+                  <ProductResult key={p.id} product={p} />
                 ))}
               </div>
             )}
           </div>
         )}
 
-        {/* VIDEOS VIEW */}
+        {/* ===== VIDEOS VIEW ===== */}
         {view === 'videos' && (
           <div>
-            <div className="text-sm mb-4 text-[#666666]">
+            <div className="text-sm mb-4 text-[#737373]">
               {loading ? '' : `${videos.length} videos for "${query}"`}
             </div>
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="rounded-lg bg-[#E5E5E5] aspect-[9/16] animate-pulse" />
+                  <div key={i} className="rounded-lg bg-[#f5f5f5] aspect-[9/16] animate-pulse" />
                 ))}
               </div>
             ) : videos.length === 0 ? (
-              <div className="text-center py-16">
-                <VideoIcon className="w-12 h-12 mx-auto mb-3 text-[#CCCCCC]" />
-                <p className="text-sm text-[#666666]">No videos found</p>
+              <div className="text-center py-20">
+                <VideoIcon className="w-12 h-12 mx-auto mb-3 text-[#d4d4d4]" />
+                <p className="text-sm text-[#525252]">No videos found</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {videos.map((v, i) => (
-                  <VideoResult key={v.id} video={v} index={i} />
+                {videos.map((v) => (
+                  <VideoResult key={v.id} video={v} />
                 ))}
               </div>
             )}
@@ -425,25 +409,25 @@ function SearchContent() {
         )}
       </div>
 
-      {/* Follow-up input (floating above bottom nav, AI view only) */}
+      {/* ===== FOLLOW-UP INPUT (floating, AI view only) ===== */}
       {view === 'ai' && !aiLoading && (
         <div
           className="fixed left-1/2 -translate-x-1/2 z-40"
           style={{ bottom: 'calc(env(safe-area-inset-bottom) + 88px)', width: 'calc(100% - 24px)', maxWidth: '446px' }}
         >
-          <div className="flex items-center gap-2 rounded-full px-4 py-2.5 bg-white border-2 border-[#E5E5E5] focus-within:border-[#D4AF37] shadow-lg transition-all">
+          <div className="flex items-center gap-2 rounded-full px-4 py-2.5 bg-white border border-[#d4d4d4] focus-within:border-[#171717] shadow-md transition-all">
             <input
               type="text"
               value={followUpInput}
               onChange={(e) => setFollowUpInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendFollowUp()}
               placeholder="Ask a follow-up question..."
-              className="flex-1 bg-transparent outline-none text-sm text-[#111827] placeholder:text-[#999999]"
+              className="flex-1 bg-transparent outline-none text-sm text-[#171717] placeholder:text-[#a3a3a3]"
             />
             <button
               onClick={sendFollowUp}
               disabled={!followUpInput.trim() || followUpLoading}
-              className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-30 shrink-0 bg-[#D4AF37] hover:bg-[#C4A030] transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-30 shrink-0 bg-[#171717] hover:bg-[#333] transition-colors"
             >
               <Send className="w-4 h-4 text-white" />
             </button>
@@ -454,14 +438,12 @@ function SearchContent() {
   );
 }
 
-/* Premium search result card */
-function SearchResult({ product, index }: { product: Product; index: number }) {
+/* ===== Google-style organic product result ===== */
+function ProductResult({ product }: { product: Product }) {
   return (
-    <Link
-      href={`/product?id=${product.id}`}
-      className="flex gap-3 group"
-    >
-      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden shrink-0 bg-[#F5F5F5]">
+    <Link href={`/product?id=${product.id}`} className="flex gap-4 group">
+      {/* Thumbnail */}
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shrink-0 bg-[#f5f5f5]">
         {product.image_url ? (
           <img
             src={product.image_url}
@@ -470,34 +452,46 @@ function SearchResult({ product, index }: { product: Product; index: number }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-[#999999]">
+          <div className="w-full h-full flex items-center justify-center text-[#a3a3a3]">
             <Store className="w-8 h-8" />
           </div>
         )}
       </div>
+
+      {/* Content — Google organic result structure */}
       <div className="flex-1 min-w-0">
-        <div className="text-xs flex items-center gap-1 mb-0.5 text-[#666666]">
+        {/* URL/breadcrumb row (gray, small) */}
+        <div className="flex items-center gap-1 text-xs text-[#737373] mb-0.5">
           <Store className="w-3 h-3" />
-          {product.category || 'Cellex'}
-          <span className="text-[#D4AF37] font-medium ml-1">· Verified</span>
+          <span>{product.category || 'Cellex'}</span>
+          <span className="text-[#a3a3a3]">·</span>
+          <span>Verified Seller</span>
         </div>
-        <h3 className="text-base font-medium text-[#111827] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2">
+
+        {/* Title (black, large, underlined on hover) */}
+        <h3 className="text-lg font-normal text-[#171717] group-hover:underline leading-snug line-clamp-2">
           {product.name}
         </h3>
-        <div className="text-lg font-bold text-[#D4AF37] mt-0.5">{formatPrice(product.price)}</div>
+
+        {/* Price (bold, black) */}
+        <div className="text-base font-semibold text-[#171717] mt-0.5">{formatPrice(product.price)}</div>
+
+        {/* Snippet (gray, small) */}
         {product.description && (
-          <p className="text-sm line-clamp-2 mt-0.5 leading-snug text-[#666666]">{product.description}</p>
+          <p className="text-sm text-[#525252] line-clamp-2 mt-1 leading-snug">{product.description}</p>
         )}
-        <div className="flex items-center gap-3 mt-1.5 text-xs text-[#666666]">
+
+        {/* Meta row */}
+        <div className="flex items-center gap-3 mt-1.5 text-xs text-[#737373]">
           {typeof product.units_sold === 'number' && product.units_sold > 0 && (
             <span className="flex items-center gap-0.5">
               <TrendingUp className="w-3 h-3" /> {product.units_sold} sold
             </span>
           )}
           <span className="flex items-center gap-0.5">
-            <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" /> 4.5
+            <Star className="w-3 h-3 fill-[#171717] text-[#171717]" /> 4.5
           </span>
-          <span className="flex items-center gap-0.5 text-green-600">
+          <span className="flex items-center gap-0.5 text-[#525252]">
             <ShoppingBag className="w-3 h-3" /> Pay on delivery
           </span>
         </div>
@@ -506,36 +500,36 @@ function SearchResult({ product, index }: { product: Product; index: number }) {
   );
 }
 
-/* Video result card */
-function VideoResult({ video, index }: { video: any; index: number }) {
+/* ===== Video result ===== */
+function VideoResult({ video }: { video: any }) {
   const seller = video.seller || {};
   const sellerName = seller.business_name || 'Seller';
   const product = video.product;
   return (
     <Link href="/videos" className="block group">
-      <div className="rounded-xl overflow-hidden border border-[#E5E5E5] bg-white hover:shadow-lg hover:border-[#D4AF37] transition-all duration-200">
-        <div className="aspect-[9/16] relative bg-[#F5F5F5]">
+      <div className="rounded-lg overflow-hidden border border-[#e5e5e5] bg-white hover:border-[#171717] hover:shadow-sm transition-all">
+        <div className="aspect-[9/16] relative bg-[#f5f5f5]">
           {video.video_url ? (
             <video src={video.video_url} muted className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Play className="w-8 h-8 text-[#CCCCCC]" />
+              <Play className="w-8 h-8 text-[#d4d4d4]" />
             </div>
           )}
           <div className="absolute bottom-1 right-1 text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1 bg-black/60 text-white">
             <Play className="w-2.5 h-2.5" /> {video.views_count || 0}
           </div>
         </div>
-        <div className="p-2.5">
-          <div className="text-xs font-medium line-clamp-2 h-8 leading-tight text-[#111827]">{video.caption || 'Video'}</div>
+        <div className="p-2">
+          <div className="text-xs font-medium line-clamp-2 h-8 leading-tight text-[#171717]">{video.caption || 'Video'}</div>
           <div className="flex items-center gap-1 mt-1">
-            <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 bg-[#D4AF37] text-white">
+            <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 bg-[#171717] text-white">
               {sellerName.charAt(0)}
             </div>
-            <span className="text-[10px] truncate text-[#666666]">@{sellerName}</span>
+            <span className="text-[10px] truncate text-[#737373]">@{sellerName}</span>
           </div>
           {product && (
-            <div className="text-xs font-bold text-[#D4AF37] mt-0.5">{formatPrice(product.price)}</div>
+            <div className="text-xs font-bold text-[#171717] mt-0.5">{formatPrice(product.price)}</div>
           )}
         </div>
       </div>
@@ -547,7 +541,7 @@ export default function SearchPage() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-[60vh] bg-white">
-        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#171717]" />
       </div>
     }>
       <SearchContent />

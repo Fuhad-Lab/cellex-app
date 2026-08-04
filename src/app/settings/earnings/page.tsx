@@ -107,7 +107,7 @@ export default function EarningsPage() {
           {/* Available balance */}
           <div className="p-4 rounded-2xl bg-[#111827] btn-ripple  text-white">
             <div className="flex items-center gap-1.5 mb-2">
-              <Wallet className="w-4 h-4 text-[#D4AF37]" />
+              <Wallet className="w-4 h-4 text-[#171717]" />
               <span className="text-[10px] font-semibold uppercase opacity-80">Available</span>
             </div>
             <p className="text-xl font-bold">{formatNaira(earnings.availableBalance || 0)}</p>

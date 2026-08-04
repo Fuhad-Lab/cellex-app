@@ -100,7 +100,7 @@ function OrdersContent() {
             message="When you place your first order, it will appear here."
             action={
               <Link href="/categories">
-                <button className="bg-[#D4AF37] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
+                <button className="bg-[#171717] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Start shopping
                 </button>
               </Link>

@@ -141,8 +141,8 @@ export function StorefrontAvatarPlayer({
           {/* Text content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-1">
-              <Mic className="w-3 h-3 text-[#D4AF37]" />
-              <span className="text-[10px] font-semibold text-[#D4AF37] uppercase tracking-wide">
+              <Mic className="w-3 h-3 text-[#171717]" />
+              <span className="text-[10px] font-semibold text-[#171717] uppercase tracking-wide">
                 Meet {sellerName} · {langName}
               </span>
             </div>
@@ -166,7 +166,7 @@ export function StorefrontAvatarPlayer({
             <Volume2 className="w-3.5 h-3.5 text-white/60" />
             <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#D4AF37] rounded-full transition-all"
+                className="h-full bg-[#171717] rounded-full transition-all"
                 style={{ width: playing ? '100%' : '0%', transitionDuration: '3s' }}
               />
             </div>

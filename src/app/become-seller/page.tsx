@@ -109,7 +109,7 @@ export default function BecomeSellerPage() {
         {[1, 2, 3].map((s) => (
           <div
             key={s}
-            className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? 'bg-[#D4AF37]' : 'bg-[#F5F5F5]'}`}
+            className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? 'bg-[#171717]' : 'bg-[#F5F5F5]'}`}
           />
         ))}
       </div>
@@ -190,7 +190,7 @@ export default function BecomeSellerPage() {
           <button
             onClick={() => setStep(2)}
             disabled={!canProceedStep1}
-            className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
+            className="w-full bg-[#171717] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
           >
             Continue
           </button>
@@ -261,7 +261,7 @@ export default function BecomeSellerPage() {
             <button
               onClick={() => setStep(3)}
               disabled={!canProceedStep2}
-              className="flex-1 bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
+              className="flex-1 bg-[#171717] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
             >
               Continue
             </button>
@@ -308,7 +308,7 @@ export default function BecomeSellerPage() {
               'Go live to showcase products',
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-xs text-[#666666]">
-                <div className="w-4 h-4 rounded-full bg-[#D4AF37] text-black flex items-center justify-center text-[9px] font-bold shrink-0">
+                <div className="w-4 h-4 rounded-full bg-[#171717] text-black flex items-center justify-center text-[9px] font-bold shrink-0">
                   {i + 1}
                 </div>
                 {item}
@@ -323,7 +323,7 @@ export default function BecomeSellerPage() {
             <button
               onClick={submit}
               disabled={!canSubmit || saving}
-              className="flex-1 bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
+              className="flex-1 bg-[#171717] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50"
             >
               {saving ? (
                 <>

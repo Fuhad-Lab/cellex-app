@@ -159,11 +159,11 @@ export default function SellerVideosPage() {
       {/* Upload form */}
       <div className="border border-[#E5E5E5] rounded-md p-4 space-y-3 bg-[#F5F5F5]">
         <div className="flex items-center gap-2">
-          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${isReel ? 'bg-[#D4AF37] text-black' : 'bg-[#F5F5F5] text-[#666666]'}`}>
+          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${isReel ? 'bg-[#171717] text-black' : 'bg-[#F5F5F5] text-[#666666]'}`}>
             <Clapperboard className="w-4 h-4 inline mr-1" />
             Reel {isReel && '✓'}
           </div>
-          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${!isReel ? 'bg-[#D4AF37] text-black' : 'bg-[#F5F5F5] text-[#666666]'}`}>
+          <div className={`flex-1 p-2 rounded-md text-center text-xs font-semibold ${!isReel ? 'bg-[#171717] text-black' : 'bg-[#F5F5F5] text-[#666666]'}`}>
             <Package className="w-4 h-4 inline mr-1" />
             Product Video {!isReel && '✓'}
           </div>
@@ -178,7 +178,7 @@ export default function SellerVideosPage() {
         {/* File upload */}
         {videoUrl ? (
           <div className="flex items-center gap-3">
-            <video src={videoUrl} className="w-20 h-20 rounded-md object-cover bg-[#D4AF37]" muted />
+            <video src={videoUrl} className="w-20 h-20 rounded-md object-cover bg-[#171717]" muted />
             <button
               type="button"
               onClick={() => setVideoUrl('')}
@@ -237,7 +237,7 @@ export default function SellerVideosPage() {
           </select>
         </div>
 
-        <button onClick={create} disabled={uploading || !videoUrl} className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50">
+        <button onClick={create} disabled={uploading || !videoUrl} className="w-full bg-[#171717] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50">
           <Upload className="w-4 h-4 inline mr-1" />
           {uploading ? 'Posting...' : isReel ? 'Post Reel' : 'Post Product Video'}
         </button>
@@ -278,7 +278,7 @@ export default function SellerVideosPage() {
               const isProductVideo = v.product_id !== null && v.product_id !== undefined;
               return (
                 <div key={v.id} className="border border-[#E5E5E5] rounded-md overflow-hidden bg-[#F5F5F5]">
-                  <div className="aspect-[9/16] bg-[#D4AF37] relative">
+                  <div className="aspect-[9/16] bg-[#171717] relative">
                     {v.video_url ? (
                       <video src={v.video_url} className="w-full h-full object-cover" muted />
                     ) : (
@@ -288,7 +288,7 @@ export default function SellerVideosPage() {
                     )}
                     {/* Type badge */}
                     <div className="absolute top-1 left-1">
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isProductVideo ? 'bg-blue-500 text-black' : 'bg-[#D4AF37] text-black'}`}>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isProductVideo ? 'bg-blue-500 text-black' : 'bg-[#171717] text-black'}`}>
                         {isProductVideo ? 'PRODUCT' : 'REEL'}
                       </span>
                     </div>

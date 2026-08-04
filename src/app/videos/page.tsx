@@ -128,7 +128,7 @@ export default function VideosPage() {
                   )}
                   <div className="flex items-center gap-2 mt-1">
                     <span className="flex items-center gap-0.5 text-[9px] text-black/70">
-                      <Heart className="w-2.5 h-2.5 fill-[#D4AF37] text-[#D4AF37]" />
+                      <Heart className="w-2.5 h-2.5 fill-[#171717] text-[#171717]" />
                       {formatCount(likes)}
                     </span>
                     {product && (

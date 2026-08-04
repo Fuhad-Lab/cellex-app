@@ -93,7 +93,7 @@ export default function SellerProfilePage() {
 
       <div className="border border-[#E5E5E5] rounded-md p-4 space-y-3 bg-[#F5F5F5]">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-md bg-[#D4AF37] flex items-center justify-center overflow-hidden">
+          <div className="w-16 h-16 rounded-md bg-[#171717] flex items-center justify-center overflow-hidden">
             {profileImage ? (
               <img src={profileImage} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -162,7 +162,7 @@ export default function SellerProfilePage() {
           />
         </div>
 
-        <button onClick={save} disabled={saving} className="w-full bg-[#D4AF37] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50">
+        <button onClick={save} disabled={saving} className="w-full bg-[#171717] text-black font-semibold rounded-md py-3 hover:bg-[#F5F5F5] disabled:opacity-50">
           <Save className="w-4 h-4 inline mr-1" />
           {saving ? 'Saving...' : 'Save profile'}
         </button>

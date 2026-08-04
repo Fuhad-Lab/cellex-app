@@ -110,8 +110,11 @@ Deno.serve(async (req: Request) => {
       // === Checkout (creates order with server-side price verification) ===
       case 'checkout_place_order':      return await handleCheckoutPlaceOrder(body, user);
 
-      // === AI Chat (uses Hugging Face inference router) ===
+      // === AI Chat (routes through backend → NVIDIA/ZAI API) ===
       case 'ai_chat':                   return await handleAiChat(body, user);
+
+      // === NVIDIA Embeddings (for semantic search) ===
+      case 'generate_embedding':        return await handleGenerateEmbedding(body, user);
 
       default: return errorResponse(`Unknown op: ${op}`, 400);
     }
@@ -1824,5 +1827,59 @@ async function handleAiChat(body: any, user: any) {
   } catch (err) {
     console.error('[AI Chat] Error:', err);
     return errorResponse(`AI service unavailable: ${String(err).substring(0, 100)}`, 503);
+  }
+}
+
+// === NVIDIA Embeddings — generates text embeddings for semantic search ===
+// Uses NVIDIA's nv-embedqa-e5-v5 model (1024-dim) for semantic product search.
+// The NVIDIA_API_KEY is stored in Supabase secrets.
+async function handleGenerateEmbedding(body: any, user: any) {
+  const { text, inputType } = body;
+  if (!text || typeof text !== 'string' || text.length > 5000) {
+    return errorResponse('Valid text required (max 5000 chars)', 400);
+  }
+
+  const NVIDIA_API_KEY = Deno.env.get('NVIDIA_API_KEY') || '';
+  if (!NVIDIA_API_KEY) {
+    return errorResponse('Embedding service not configured', 500);
+  }
+
+  const NVIDIA_URL = 'https://integrate.api.nvidia.com/v1/embeddings';
+  const MODEL = 'nvidia/nv-embedqa-e5-v5';
+
+  try {
+    const resp = await fetch(NVIDIA_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${NVIDIA_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        input: [text],
+        input_type: inputType || 'query',
+        encoding_format: 'float',
+      }),
+      signal: AbortSignal.timeout(5000), // 5s — must be fast for search
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error('[Embedding] NVIDIA error:', resp.status, errText.substring(0, 200));
+      return errorResponse('Embedding service error', 502);
+    }
+
+    const data = await resp.json();
+    const embedding = data.data?.[0]?.embedding || [];
+
+    if (!embedding.length) {
+      return errorResponse('Empty embedding returned', 502);
+    }
+
+    return jsonResponse({ success: true, embedding });
+  } catch (err) {
+    console.error('[Embedding] Error:', err);
+    return errorResponse('Embedding service unavailable', 503);
   }
 }

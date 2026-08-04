@@ -57,7 +57,7 @@ export default function LivePage() {
             {liveNow.map((s) => (
               <Link key={s.id} href={`/live-watch?id=${s.id}`}>
                 <div className="overflow-hidden border border-[#E5E5E5] rounded-md hover:opacity-90 transition-opacity">
-                  <div className="aspect-video bg-[#D4AF37] relative">
+                  <div className="aspect-video bg-[#171717] relative">
                     <div className="w-full h-full flex items-center justify-center text-black">
                       <Radio className="w-10 h-10" />
                     </div>
@@ -72,7 +72,7 @@ export default function LivePage() {
                   <div className="p-3 bg-[#F5F5F5]">
                     <h3 className="font-semibold text-sm line-clamp-1">{s.title}</h3>
                     <div className="flex items-center gap-2 mt-1 text-xs text-[#666666]">
-                      <div className="w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center text-black text-[10px] font-bold">
+                      <div className="w-5 h-5 rounded-full bg-[#171717] flex items-center justify-center text-black text-[10px] font-bold">
                         {(s.seller_name || 'S').charAt(0)}
                       </div>
                       <span>{s.seller_name}</span>
@@ -121,7 +121,7 @@ export default function LivePage() {
             message="Sellers can go live to showcase their products in real-time. Follow sellers to get notified when they go live."
             action={
               <Link href="/categories">
-                <button className="bg-[#D4AF37] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
+                <button className="bg-[#171717] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Browse products
                 </button>
               </Link>

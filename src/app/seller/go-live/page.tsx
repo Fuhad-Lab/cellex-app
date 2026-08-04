@@ -241,7 +241,7 @@ export default function GoLivePage() {
       ) : (
         <div className="border border-[#E5E5E5] rounded-md p-4 space-y-3 bg-[#F5F5F5]">
           {/* Camera preview placeholder */}
-          <div className="aspect-video bg-[#D4AF37] rounded-md flex items-center justify-center text-black relative">
+          <div className="aspect-video bg-[#171717] rounded-md flex items-center justify-center text-black relative">
             <Video className="w-12 h-12" />
             <span className="absolute bottom-2 left-2 text-xs opacity-70">Video will stream via server</span>
           </div>

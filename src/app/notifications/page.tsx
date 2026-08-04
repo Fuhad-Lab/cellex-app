@@ -111,7 +111,7 @@ export default function NotificationsPage() {
           </p>
           <Link
             href="/categories"
-            className="bg-[#D4AF37] text-black text-sm font-semibold px-6 py-3 rounded-md"
+            className="bg-[#171717] text-black text-sm font-semibold px-6 py-3 rounded-md"
           >
             Browse Products
           </Link>

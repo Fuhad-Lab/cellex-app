@@ -25,7 +25,7 @@ export const DESIGN_TOKENS = {
     primaryHover: '#374151',   // Dark gray — hover states
     onPrimary: '#FFFFFF',      // White text on primary
     secondary: '#6B7280',      // Gray — secondary text
-    accent: '#D4AF37',         // Champagne gold — logo only
+    accent: '#171717',         // Champagne gold — logo only
     background: '#FFFFFF',     // White — backgrounds, cards
     surface: '#F9FAFB',        // Light gray — input fields, cards
     border: '#E5E7EB',         // Light gray — borders

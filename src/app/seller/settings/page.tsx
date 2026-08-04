@@ -147,7 +147,7 @@ function ToggleRow({ label, desc, defaultOn }: { label: string; desc: string; de
         type="button"
         onClick={() => setOn(!on)}
         className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
-          on ? 'bg-[#D4AF37]' : 'bg-[#F5F5F5]'
+          on ? 'bg-[#171717]' : 'bg-[#F5F5F5]'
         }`}
         aria-pressed={on}
         aria-label={label}

@@ -82,7 +82,7 @@ export default function WishlistPage() {
             message="Save items you love and come back to them later."
             action={
               <Link href="/categories">
-                <button className="bg-[#D4AF37] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
+                <button className="bg-[#171717] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Discover products
                 </button>
               </Link>
@@ -128,7 +128,7 @@ export default function WishlistPage() {
                 <div className="flex gap-2 mt-auto">
                   <button
                     onClick={() => addToCart(product)}
-                    className="flex-1 bg-[#D4AF37] text-black font-semibold rounded-md py-2 text-xs hover:bg-[#F5F5F5]"
+                    className="flex-1 bg-[#171717] text-black font-semibold rounded-md py-2 text-xs hover:bg-[#F5F5F5]"
                   >
                     <ShoppingCart className="w-3.5 h-3.5 inline mr-1" /> Add
                   </button>

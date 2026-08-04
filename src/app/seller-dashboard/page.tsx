@@ -177,7 +177,7 @@ export default function SellerDashboardPage() {
 
       {/* Profile header */}
       <div className="px-4 py-6 text-center border-b border-[#E5E5E5]">
-        <div className="w-20 h-20 rounded-full bg-[#D4AF37] flex items-center justify-center mx-auto mb-3 overflow-hidden">
+        <div className="w-20 h-20 rounded-full bg-[#171717] flex items-center justify-center mx-auto mb-3 overflow-hidden">
           {seller?.profile_image ? (
             <img src={seller.profile_image} alt="" className="w-full h-full object-cover" />
           ) : (
@@ -445,7 +445,7 @@ function EmptyStateCard({
       {actionHref && actionLabel && (
         <Link
           href={actionHref}
-          className="inline-block mt-3 bg-[#D4AF37] text-black text-xs font-semibold px-4 py-2 rounded-md hover:bg-[#F5F5F5]"
+          className="inline-block mt-3 bg-[#171717] text-black text-xs font-semibold px-4 py-2 rounded-md hover:bg-[#F5F5F5]"
         >
           {actionLabel}
         </Link>

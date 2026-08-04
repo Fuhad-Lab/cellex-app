@@ -108,7 +108,7 @@ export default function ShortsPage() {
 
   if (videos.length === 0) {
     return (
-      <div className="ig-container bg-[#D4AF37] min-h-screen flex flex-col items-center justify-center text-black">
+      <div className="ig-container bg-[#171717] min-h-screen flex flex-col items-center justify-center text-black">
         <Play className="w-12 h-12 text-black/30 mb-3" />
         <p className="text-sm font-semibold">No shorts yet</p>
         <p className="text-xs text-black/50 mt-1">Check back later for short videos</p>
@@ -120,7 +120,7 @@ export default function ShortsPage() {
   }
 
   return (
-    <div className="bg-[#D4AF37] h-screen overflow-hidden fixed inset-0 z-[100]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="bg-[#171717] h-screen overflow-hidden fixed inset-0 z-[100]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Top bar — minimal, overlaid on video */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 py-3" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 8px)' }}>
         <button
@@ -187,7 +187,7 @@ export default function ShortsPage() {
                   aria-label="Like"
                 >
                   <Heart
-                    className={`w-8 h-8 transition-transform ${isLiked ? 'fill-[#D4AF37] text-[#D4AF37] scale-110' : 'text-black'}`}
+                    className={`w-8 h-8 transition-transform ${isLiked ? 'fill-[#171717] text-[#171717] scale-110' : 'text-black'}`}
                     strokeWidth={1.5}
                   />
                   <span className="text-[10px] font-semibold">{formatCount(likesCount + (isLiked ? 1 : 0))}</span>
