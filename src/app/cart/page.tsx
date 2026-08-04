@@ -40,9 +40,13 @@ export default function CartPage() {
   const [recommendations, setRecommendations] = usePersistedState<Product[]>('cart:recommendations', []);
   const [appliedPromo, setAppliedPromo] = usePersistedState<string | null>('cart:appliedPromo', null);
   const [promoDiscount, setPromoDiscount] = usePersistedState<number>('cart:promoDiscount', 0);
+  // Track whether we've already loaded data at least once — prevents the
+  // loading skeleton from flashing on return visits even when the cart is empty.
+  const [hasLoadedOnce, setHasLoadedOnce] = usePersistedState<boolean>('cart:hasLoadedOnce', false);
 
-  // Transient state — not persisted.
-  const [loading, setLoading] = useState(items.length === 0);
+  // Transient state — not persisted. Skip loading skeleton if we've already
+  // loaded once (even if cart was empty).
+  const [loading, setLoading] = useState(!hasLoadedOnce);
   const [updating, setUpdating] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState('');
   const [checkingOut, setCheckingOut] = useState(false);
@@ -53,11 +57,10 @@ export default function CartPage() {
   const searchBarRef = useRef<HTMLButtonElement>(null);
 
   // ===== Load cart + wishlist + recommendations =====
-  const hasCachedItems = items.length > 0;
   const load = useCallback(async () => {
-    // Don't show loading skeleton if we already have cached items — just
+    // Don't show loading skeleton if we've already loaded once — just
     // refresh in the background so the user sees their cart instantly.
-    if (!hasCachedItems) {
+    if (!hasLoadedOnce) {
       setLoading(true);
     }
     const [cartResult, wishlistResult, recommendResult] = await Promise.all([
@@ -126,8 +129,9 @@ export default function CartPage() {
       setRecommendations(recommendResult.items.slice(0, 8));
     }
 
+    setHasLoadedOnce(true);
     setLoading(false);
-  }, [hasCachedItems]);
+  }, [hasLoadedOnce]);
 
   useEffect(() => {
     if (!authLoading && !user) {

@@ -17,20 +17,22 @@ export default function WishlistPage() {
   const { toast } = useToast();
   // Persisted across navigation hops.
   const [items, setItems] = usePersistedState<any[]>('wishlist:items', []);
-  // Skip loading skeleton if we already have cached items.
-  const [loading, setLoading] = useState(items.length === 0);
+  // Track whether we've already loaded data at least once.
+  const [hasLoadedOnce, setHasLoadedOnce] = usePersistedState<boolean>('wishlist:hasLoadedOnce', false);
+  // Skip loading skeleton if we've already loaded once (even if wishlist was empty).
+  const [loading, setLoading] = useState(!hasLoadedOnce);
 
   // Restore scroll on mount, save on unmount.
   useScrollPreservation('wishlist');
 
   const load = async () => {
-    // Don't show loading skeleton if we already have cached items — just
-    // refresh in the background so the user sees their wishlist instantly.
-    if (items.length === 0) {
+    // Don't show loading skeleton if we've already loaded once.
+    if (!hasLoadedOnce) {
       setLoading(true);
     }
     const result = await api.wishlist.get();
     if (result.success) setItems(result.items || []);
+    setHasLoadedOnce(true);
     setLoading(false);
   };
 

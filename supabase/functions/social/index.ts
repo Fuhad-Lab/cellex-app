@@ -110,6 +110,9 @@ Deno.serve(async (req: Request) => {
       // === Checkout (creates order with server-side price verification) ===
       case 'checkout_place_order':      return await handleCheckoutPlaceOrder(body, user);
 
+      // === AI Chat (uses Hugging Face inference router) ===
+      case 'ai_chat':                   return await handleAiChat(body, user);
+
       default: return errorResponse(`Unknown op: ${op}`, 400);
     }
   } catch (err) {
@@ -1775,5 +1778,82 @@ async function handleCheckoutPlaceOrder(body: any, user: any) {
   } catch (err) {
     console.error('Checkout error:', err);
     return errorResponse(`Server error: ${String(err)}`, 500);
+  }
+}
+
+// === AI Chat — uses Hugging Face inference router (OpenAI-compatible) ===
+async function handleAiChat(body: any, user: any) {
+  if (!user) return errorResponse('Authentication required', 401);
+
+  const { message, context, history, systemPrompt } = body;
+  if (!message || typeof message !== 'string' || message.length > 2000) {
+    return errorResponse('Valid message required (max 2000 chars)', 400);
+  }
+
+  const HF_ROUTER_URL = Deno.env.get('HF_ROUTER_URL') || '';
+  const HF_TOKEN = Deno.env.get('HF_TOKEN') || '';
+  const HF_MODEL = Deno.env.get('HF_INFERENCE_MODEL') || 'meta-llama/Llama-3.1-8B-Instruct';
+  const AI_TIMEOUT = parseInt(Deno.env.get('AI_TIMEOUT') || '15');
+  const MAX_TOKENS = parseInt(Deno.env.get('MAX_NEW_TOKENS') || '500');
+
+  if (!HF_ROUTER_URL || !HF_TOKEN) {
+    return errorResponse('AI service not configured', 500);
+  }
+
+  // Build messages array — system prompt + context + history + user message
+  const messages: any[] = [];
+  if (systemPrompt) {
+    messages.push({ role: 'system', content: systemPrompt });
+  }
+  if (context) {
+    messages.push({ role: 'system', content: `Context: ${context}` });
+  }
+  if (Array.isArray(history)) {
+    for (const h of history.slice(-10)) { // last 10 messages for context
+      if (h.role && h.content) {
+        messages.push({ role: h.role, content: h.content });
+      }
+    }
+  }
+  messages.push({ role: 'user', content: message });
+
+  try {
+    const resp = await fetch(`${HF_ROUTER_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${HF_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: HF_MODEL,
+        messages,
+        max_tokens: MAX_TOKENS,
+        temperature: 0.7,
+      }),
+      signal: AbortSignal.timeout(AI_TIMEOUT * 1000),
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error('[AI Chat] HF router error:', resp.status, errText);
+      return errorResponse('AI service error', 502);
+    }
+
+    const data = await resp.json();
+    const reply = data.choices?.[0]?.message?.content || data.choices?.[0]?.text || '';
+
+    if (!reply) {
+      return errorResponse('AI returned empty response', 502);
+    }
+
+    return jsonResponse({
+      success: true,
+      reply: reply.trim(),
+      message: reply.trim(), // backward compat
+      content: reply.trim(), // backward compat
+    });
+  } catch (err) {
+    console.error('[AI Chat] Error:', err);
+    return errorResponse('AI service unavailable', 503);
   }
 }
