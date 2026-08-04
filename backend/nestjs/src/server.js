@@ -742,6 +742,75 @@ app.post('/ai/tryon', async (req, res) => {
   res.json({ success: false, error: 'Try-on is handled by the Edge Function directly' });
 });
 
+// === AI Chat — uses ZAI (z.ai) API for chat completions ===
+// Called by the Supabase edge function (op=ai_chat) which proxies the request.
+app.post('/ai/chat', requireAuth, express.json({ limit: '1mb' }), async (req, res) => {
+  try {
+    const { message, context, history, systemPrompt } = req.body;
+    if (!message || typeof message !== 'string' || message.length > 2000) {
+      throw { message: 'Valid message required (max 2000 chars)', status: 400 };
+    }
+
+    // Build messages array
+    const messages = [];
+    if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+    if (context) messages.push({ role: 'system', content: `Context: ${context}` });
+    if (Array.isArray(history)) {
+      for (const h of history.slice(-10)) {
+        if (h.role && h.content) messages.push({ role: h.role, content: h.content });
+      }
+    }
+    messages.push({ role: 'user', content: message });
+
+    // ZAI config from env
+    const ZAI_BASE_URL = process.env.ZAI_BASE_URL || 'https://internal-api.z.ai/v1';
+    const ZAI_API_KEY = process.env.ZAI_API_KEY || 'Z.ai';
+    const ZAI_TOKEN = process.env.ZAI_TOKEN || '';
+    const ZAI_USER_ID = process.env.ZAI_USER_ID || '';
+    const ZAI_CHAT_ID = process.env.ZAI_CHAT_ID || '';
+
+    const aiResp = await fetch(`${ZAI_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ZAI_API_KEY}`,
+        'X-Z-AI-From': 'Z',
+        'X-Chat-Id': ZAI_CHAT_ID,
+        'X-User-Id': ZAI_USER_ID,
+        'X-Token': ZAI_TOKEN,
+      },
+      body: JSON.stringify({
+        model: 'glm-4-flash',
+        messages,
+        max_tokens: 500,
+        temperature: 0.7,
+        thinking: { type: 'disabled' },
+      }),
+      signal: AbortSignal.timeout(25000),
+    });
+
+    if (!aiResp.ok) {
+      console.error('[AI Chat] ZAI error:', aiResp.status);
+      throw { message: 'AI service error', status: 502 };
+    }
+
+    const data = await aiResp.json();
+    const reply = data.choices?.[0]?.message?.content || '';
+
+    auditLog(req, 'success');
+    res.json({
+      success: true,
+      reply: reply.trim(),
+      message: reply.trim(),
+      content: reply.trim(),
+    });
+  } catch (err) {
+    auditLog(req, 'error', err.message);
+    const e = sanitizeError(err);
+    res.status(e.status).json({ success: false, error: e.message });
+  }
+});
+
 // ============================================================================
 // ESCROW + PAYMENTS + PAYOUTS
 // ============================================================================

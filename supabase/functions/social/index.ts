@@ -1781,7 +1781,10 @@ async function handleCheckoutPlaceOrder(body: any, user: any) {
   }
 }
 
-// === AI Chat — uses ZAI (z.ai) inference API ===
+// === AI Chat — proxies to NestJS backend which calls ZAI API ===
+// Architecture: Frontend → Edge Function → Backend (NestJS) → ZAI API
+// The edge function can't reach internal-api.z.ai directly (network restriction),
+// so it proxies to the NestJS backend which CAN reach it.
 async function handleAiChat(body: any, user: any) {
   if (!user) return errorResponse('Authentication required', 401);
 
@@ -1790,73 +1793,35 @@ async function handleAiChat(body: any, user: any) {
     return errorResponse('Valid message required (max 2000 chars)', 400);
   }
 
-  const ZAI_BASE_URL = Deno.env.get('ZAI_BASE_URL') || 'https://internal-api.z.ai/v1';
-  const ZAI_API_KEY = Deno.env.get('ZAI_API_KEY') || 'Z.ai';
-  const ZAI_TOKEN = Deno.env.get('ZAI_TOKEN') || '';
-  const ZAI_USER_ID = Deno.env.get('ZAI_USER_ID') || '';
-  const ZAI_CHAT_ID = Deno.env.get('ZAI_CHAT_ID') || '';
-  const AI_TIMEOUT = parseInt(Deno.env.get('AI_TIMEOUT') || '15');
-  const MAX_TOKENS = parseInt(Deno.env.get('MAX_NEW_TOKENS') || '500');
+  const NESTJS_URL = Deno.env.get('NESTJS_API_URL') || '';
+  const INTERNAL_TOKEN = Deno.env.get('CELLEX_INTERNAL_TOKEN') || '';
 
-  // Build messages array — system prompt + context + history + user message
-  const messages: any[] = [];
-  if (systemPrompt) {
-    messages.push({ role: 'system', content: systemPrompt });
+  if (!NESTJS_URL || !INTERNAL_TOKEN) {
+    return errorResponse('Backend service not configured', 500);
   }
-  if (context) {
-    messages.push({ role: 'system', content: `Context: ${context}` });
-  }
-  if (Array.isArray(history)) {
-    for (const h of history.slice(-10)) { // last 10 messages for context
-      if (h.role && h.content) {
-        messages.push({ role: h.role, content: h.content });
-      }
-    }
-  }
-  messages.push({ role: 'user', content: message });
 
   try {
-    const resp = await fetch(`${ZAI_BASE_URL}/chat/completions`, {
+    const resp = await fetch(`${NESTJS_URL}/ai/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ZAI_API_KEY}`,
-        'X-Z-AI-From': 'Z',
-        'X-Chat-Id': ZAI_CHAT_ID,
-        'X-User-Id': ZAI_USER_ID,
-        'X-Token': ZAI_TOKEN,
+        'X-Internal-Token': INTERNAL_TOKEN,
+        'X-User-Id': user.id,
+        'X-User-Email': user.email || '',
       },
-      body: JSON.stringify({
-        model: 'glm-4-flash',
-        messages,
-        max_tokens: MAX_TOKENS,
-        temperature: 0.7,
-        thinking: { type: 'disabled' },
-      }),
-      signal: AbortSignal.timeout(AI_TIMEOUT * 1000),
+      body: JSON.stringify({ message, context, history, systemPrompt }),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!resp.ok) {
-      const errText = await resp.text().catch(() => '');
-      console.error('[AI Chat] ZAI error:', resp.status, errText);
-      return errorResponse(`AI service error (${resp.status})`, 502);
+      console.error('[AI Chat] Backend error:', resp.status);
+      return errorResponse('AI service error', 502);
     }
 
     const data = await resp.json();
-    const reply = data.choices?.[0]?.message?.content || data.choices?.[0]?.text || '';
-
-    if (!reply) {
-      return errorResponse('AI returned empty response', 502);
-    }
-
-    return jsonResponse({
-      success: true,
-      reply: reply.trim(),
-      message: reply.trim(),
-      content: reply.trim(),
-    });
+    return jsonResponse(data);
   } catch (err) {
     console.error('[AI Chat] Error:', err);
-    return errorResponse(`AI service unavailable: ${String(err).substring(0, 200)}`, 503);
+    return errorResponse(`AI service unavailable: ${String(err).substring(0, 100)}`, 503);
   }
 }
