@@ -16,9 +16,7 @@
  * and routing to the correct backend service.
  */
 
-const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL
-  ? `${process.env.SUPABASE_URL}/functions/v1`
-  : 'https://tcwdbokruvlizkxcpkzj.supabase.co/functions/v1';
+const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL ? `${process.env.SUPABASE_URL}/functions/v1` : '';
 
 // NOTE: The Supabase project URL is public (it's the Edge Function endpoint).
 // The anon key is public (RLS denies all — only Edge Functions with the

@@ -4,9 +4,7 @@ import {
   generateImageEmbedding,
 } from '@/lib/ai';
 
-const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL
-  ? `${process.env.SUPABASE_URL}/functions/v1`
-  : 'https://tcwdbokruvlizkxcpkzj.supabase.co/functions/v1';
+const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL ? `${process.env.SUPABASE_URL}/functions/v1` : '';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 
 /**

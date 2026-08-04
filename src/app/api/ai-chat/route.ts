@@ -8,9 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * the NVIDIA call with its server-side API key.
  */
 
-const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL
-  ? `${process.env.SUPABASE_URL}/functions/v1`
-  : 'https://tcwdbokruvlizkxcpkzj.supabase.co/functions/v1';
+const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL ? `${process.env.SUPABASE_URL}/functions/v1` : '';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 const COOKIE_NAME = 'cellex_session_id';
 

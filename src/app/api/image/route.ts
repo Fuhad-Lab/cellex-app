@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL
-  ? `${process.env.SUPABASE_URL}/functions/v1`
-  : 'https://tcwdbokruvlizkxcpkzj.supabase.co/functions/v1';
+const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL ? `${process.env.SUPABASE_URL}/functions/v1` : '';
 
 /**
  * Image Serving API
