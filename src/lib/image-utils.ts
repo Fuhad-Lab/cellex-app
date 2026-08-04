@@ -27,7 +27,7 @@ interface OptimizeOptions {
 
 /**
  * Check if a URL is a Supabase Storage URL (we can optimize these).
- * Supabase URLs look like: https://tcwdbokruvlizkxcpkzj.supabase.co/storage/v1/object/public/...
+ * Supabase URLs look like: https://YOUR-PROJECT.supabase.co/storage/v1/object/public/...
  */
 export function isSupabaseUrl(url: string): boolean {
   if (!url) return false;

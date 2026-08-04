@@ -19,8 +19,10 @@ import { NextRequest, NextResponse } from 'next/server';
  *   for a try-on flow that takes <3 minutes).
  */
 
-const FASHN_SPACE_URL = 'https://fashn-ai-fashn-vton-1-5.hf.space';
-// HF_TOKEN is NOT in the frontend — FASHN Space is public, no token needed
+// FASHN Space URL — read from env var so it's not hardcoded in source.
+// The Space is public (no token needed), but the URL should be configurable
+// for staging/production swaps.
+const FASHN_SPACE_URL = process.env.FASHN_SPACE_URL || 'https://fashn-ai-fashn-vton-1-5.hf.space';
 const MAX_RETRIES = 3;
 
 // In-memory job store (resets on server restart — acceptable for try-on)

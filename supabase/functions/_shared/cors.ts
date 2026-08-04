@@ -1,9 +1,24 @@
-// Shared CORS headers for all edge functions
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-};
+// Shared CORS headers for all edge functions.
+// SECURITY: Restrict to allowed origins from env var, NOT wildcard '*'.
+// This prevents any website from calling these endpoints from a user's browser.
+const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') || '')
+  .split(',')
+  .map((s: string) => s.trim())
+  .filter(Boolean);
+
+export function getCorsHeaders(origin?: string | null): Record<string, string> {
+  // Only allow the origin if it's in our allowlist
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : '';
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Vary': 'Origin',
+  };
+}
+
+// Backward-compatible export (uses empty origin — safe default)
+export const corsHeaders = getCorsHeaders(null);
 
 export function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {

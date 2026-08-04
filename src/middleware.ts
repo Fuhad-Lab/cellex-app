@@ -9,10 +9,12 @@ import { NextRequest, NextResponse } from 'next/server';
  * authenticated requests from those origins.
  */
 
-// Allowed origins — production site + common dev/preview URLs
-const ALLOWED_ORIGINS = [
-  'https://eesha-learn.onrender.com',
-  'https://eesha-ai.vercel.app',
+// Allowed origins — read from env var (comma-separated) with safe defaults.
+// SECURITY: We only allow requests from known origins. This prevents
+// cross-site request forgery (CSRF) and cross-origin data theft.
+const ENV_ORIGINS = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+
+const STATIC_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:3001',
   // Allow Hugging Face Spaces previews (for staging)
@@ -20,6 +22,9 @@ const ALLOWED_ORIGINS = [
   // Allow Vercel previews
   /^https:\/\/[\w-]+\.vercel\.app$/,
 ];
+
+// Combine env-configured origins with static dev defaults
+const ALLOWED_ORIGINS: (string | RegExp)[] = [...ENV_ORIGINS, ...STATIC_ORIGINS];
 
 function isAllowedOrigin(origin: string): boolean {
   return ALLOWED_ORIGINS.some(allowed => {

@@ -11,22 +11,54 @@
 
 const express = require('express');
 const cors = require('cors');
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const INTERNAL_TOKEN = process.env.CELLEX_INTERNAL_TOKEN || '';
+const CRON_SECRET = process.env.CRON_SECRET || '';
 
 // Supabase client (service role — bypasses RLS, safe because behind Edge Functions)
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseUrl || !supabaseKey) {
+  console.error('FATAL: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured');
+}
 const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey, {
   auth: { persistSession: false, autoRefreshToken: false },
 }) : null;
 
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+// === CORS — restrict to allowed origins only (default: same-origin via edge function) ===
+const ALLOWED_ORIGINS = (process.env.ALLOWED_BACKEND_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no Origin header (server-to-server, curl, Postman)
+    // or requests from allowed origins
+    if (!origin || ALLOWED_ORIGINS.length === 0 || ALLOWED_ORIGINS.includes(origin)) {
+      return cb(null, true);
+    }
+    return cb(new Error('Not allowed by CORS'));
+  },
+  credentials: false,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-Internal-Token', 'X-User-Id', 'X-User-Email', 'X-Request-Id', 'X-Cron-Secret'],
+}));
+
+// Lower body limit to prevent DoS (1MB default, override per-route for larger payloads)
+app.use(express.json({ limit: '1mb' }));
+
+// Disable x-powered-by header to prevent fingerprinting
+app.disable('x-powered-by');
+
+// === Constant-time token comparison (prevents timing attacks) ===
+function safeCompare(a, b) {
+  if (!a || !b) return false;
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
 
 // === Internal Token Guard ===
 app.use((req, res, next) => {
@@ -34,7 +66,7 @@ app.use((req, res, next) => {
   if (req.path === '/health') return next();
 
   const token = req.headers['x-internal-token'];
-  if (!INTERNAL_TOKEN || token !== INTERNAL_TOKEN) {
+  if (!INTERNAL_TOKEN || !safeCompare(token, INTERNAL_TOKEN)) {
     return res.status(401).json({ success: false, error: 'Invalid request source' });
   }
 
@@ -45,20 +77,64 @@ app.use((req, res, next) => {
   next();
 });
 
+// === Require authenticated user (non-empty userId) ===
+function requireAuth(req, res, next) {
+  if (!req.userId) {
+    return res.status(401).json({ success: false, error: 'Authentication required' });
+  }
+  next();
+}
+
+// === Require admin role ===
+async function requireAdmin(req, res, next) {
+  if (!req.userId) {
+    return res.status(401).json({ success: false, error: 'Authentication required' });
+  }
+  try {
+    const { data: profile } = await supabase.from('profiles')
+      .select('role').eq('id', req.userId).single();
+    if (!profile || profile.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Forbidden — admin access required' });
+    }
+    next();
+  } catch {
+    return res.status(500).json({ success: false, error: 'Authorization check failed' });
+  }
+}
+
+// === Require cron secret (for money-moving endpoints) ===
+function requireCronSecret(req, res, next) {
+  const secret = req.headers['x-cron-secret'];
+  if (!CRON_SECRET || !safeCompare(secret, CRON_SECRET)) {
+    return res.status(403).json({ success: false, error: 'Forbidden' });
+  }
+  next();
+}
+
 // === Error Sanitizer ===
 function sanitizeError(err) {
   let message = 'An error occurred. Please try again.';
   let status = 500;
 
+  // Log full error server-side only — never send raw error messages to client
+  console.error('[Error]', JSON.stringify({
+    message: err.message,
+    status: err.status,
+    stack: err.stack?.split('\n').slice(0, 3).join(' '),
+  }));
+
   if (err.message) {
     if (err.message.includes('duplicate key')) { status = 409; message = 'This item already exists.'; }
     else if (err.message.includes('foreign key')) { status = 400; message = 'Referenced item not found.'; }
     else if (err.message.includes('not null')) { status = 400; message = 'Missing required field.'; }
-    else if (err.message.includes('not found')) { status = 404; message = err.message; }
-    else if (err.message.includes('Not authorized')) { status = 403; message = err.message; }
-    else if (err.message.includes('required')) { status = 400; message = err.message; }
+    else if (err.message.includes('not found')) { status = 404; message = 'Resource not found'; }
+    else if (err.message.includes('Not authorized')) { status = 403; message = 'Forbidden'; }
+    else if (err.message.includes('required')) { status = 400; message = 'Missing required field'; }
   }
+  // Allow explicit status codes from thrown errors, but use sanitized message
+  // unless the error explicitly sets a public-safe message
   if (err.status) status = err.status;
+  if (err.publicMessage) message = err.publicMessage;
 
   return { status, message };
 }
@@ -69,7 +145,14 @@ async function auditLog(req, status, error) {
   if (!supabase) return;
   try {
     const body = { ...req.body };
-    delete body.password; delete body.token; delete body.card_number; delete body.cvv; delete body.secret;
+    // Expanded redaction list — never log sensitive fields
+    const SENSITIVE = [
+      'password', 'token', 'card_number', 'cvv', 'secret',
+      'accountNumber', 'accountName', 'bankCode', 'recipientCode',
+      'encryptedContent', 'iv', 'authorizationUrl', 'accessCode',
+      'reference', 'script', 'image', 'audio',
+    ];
+    for (const k of SENSITIVE) delete body[k];
     await supabase.from('audit_log').insert({
       user_id: req.userId || null,
       request_id: req.requestId || null,
@@ -85,7 +168,8 @@ async function auditLog(req, status, error) {
 
 // === Health Check ===
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'cellex-core-api', version: '1.0.0', time: new Date().toISOString() });
+  // Minimal health check — no version or timestamp to prevent fingerprinting
+  res.json({ status: 'ok' });
 });
 
 // === Products ===
@@ -236,60 +320,6 @@ app.get('/orders/:id', async (req, res) => {
 });
 
 // === Payments ===
-app.post('/payments/verify', async (req, res) => {
-  try {
-    const { reference, orderId } = req.body;
-    if (!reference) throw { message: 'Payment reference is required', status: 400 };
-
-    const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
-    if (!PAYSTACK_SECRET) throw { message: 'Payment service not configured', status: 500 };
-
-    // Fetch order
-    const { data: order, error } = await supabase.from('buyers_orders')
-      .select('*').eq('id', orderId).eq('user_id', req.userId).single();
-    if (error || !order) throw { message: 'Order not found', status: 404 };
-
-    if (order.status === 'paid') return res.json({ success: true, status: 'already_verified' });
-
-    // Verify with Paystack (SERVER-TO-SERVER)
-    const paystackResp = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-      headers: { 'Authorization': `Bearer ${PAYSTACK_SECRET}` },
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!paystackResp.ok) throw { message: 'Unable to verify payment', status: 400 };
-    const paystackData = await paystackResp.json();
-
-    if (!paystackData.status || paystackData.data.status !== 'success') {
-      throw { message: `Payment status: ${paystackData.data?.status || 'failed'}`, status: 400 };
-    }
-
-    // Check amount (Paystack returns kobo)
-    const expectedAmount = Math.round(Number(order.total) * 100);
-    if (paystackData.data.amount !== expectedAmount) {
-      console.error(`[Payments] AMOUNT MISMATCH: order=${order.id} expected=${expectedAmount} paid=${paystackData.data.amount}`);
-      throw { message: 'Payment amount does not match order total', status: 400 };
-    }
-
-    // Mark as paid
-    await supabase.from('buyers_orders').update({
-      status: 'paid', payment_ref: reference, paid_at: new Date().toISOString(),
-    }).eq('id', orderId);
-
-    await supabase.from('payments').insert({
-      order_id: orderId, user_id: req.userId, reference, amount: Number(order.total),
-      currency: 'NGN', channel: paystackData.data.channel || 'card', status: 'success',
-      paystack_response: JSON.stringify(paystackData.data).slice(0, 5000),
-    });
-
-    auditLog(req, 'success');
-    res.json({ success: true, status: 'verified', orderId, amount: Number(order.total) });
-  } catch (err) {
-    auditLog(req, 'error', err.message);
-    const e = sanitizeError(err);
-    res.status(e.status).json({ success: false, error: e.message });
-  }
-});
-
 // === Messaging ===
 app.get('/messaging/conversations', async (req, res) => {
   try {
@@ -489,7 +519,7 @@ app.post('/cart/remove', async (req, res) => {
 });
 
 // === Admin ===
-app.get('/admin/users', async (req, res) => {
+app.get('/admin/users', requireAdmin, async (req, res) => {
   try {
     const { data, error } = await supabase.from('profiles').select('id,full_name,phone,created_at').limit(100);
     if (error) throw error;
@@ -500,7 +530,7 @@ app.get('/admin/users', async (req, res) => {
   }
 });
 
-app.post('/admin/moderate', async (req, res) => {
+app.post('/admin/moderate', requireAdmin, async (req, res) => {
   try {
     const { type, id } = req.body;
     if (type === 'post') await supabase.from('feed_posts').update({ status: 'flagged' }).eq('id', id);
@@ -542,7 +572,8 @@ app.post('/ai/search', async (req, res) => {
     // Search via Edge Function (pgvector)
     if (embedding.length) {
       try {
-        const EDGE_URL = (process.env.SUPABASE_URL || 'https://tcwdbokruvlizkxcpkzj.supabase.co') + '/functions/v1';
+        if (!process.env.SUPABASE_URL) throw { message: 'Server configuration error', status: 500 };
+        const EDGE_URL = process.env.SUPABASE_URL + '/functions/v1';
         const searchResp = await fetch(`${EDGE_URL}/social`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -575,15 +606,18 @@ app.post('/ai/search', async (req, res) => {
 });
 
 // === AI Recommendations (Gorse + trending fallback) ===
-app.post('/ai/recommend', async (req, res) => {
+app.post('/ai/recommend', requireAuth, async (req, res) => {
   try {
-    const { userId, limit = 20 } = req.body;
+    // SECURITY FIX: Use req.userId from the authenticated session, NOT body.userId.
+    // Previously, any user could pass another user's ID and see their recommendations.
+    const userId = req.userId;
+    const limit = Math.min(parseInt(req.body.limit) || 20, 50);
     const GORSE_URL = process.env.GORSE_URL || '';
 
     // Try Gorse
     if (GORSE_URL) {
       try {
-        const gorseResp = await fetch(`${GORSE_URL}/api/recommend/${userId}?n=${limit}`, {
+        const gorseResp = await fetch(`${GORSE_URL}/api/recommend/${encodeURIComponent(userId)}?n=${limit}`, {
           signal: AbortSignal.timeout(5000),
         });
         if (gorseResp.ok) {
@@ -611,10 +645,16 @@ app.post('/ai/recommend', async (req, res) => {
 });
 
 // === AI Avatar (TTS) ===
-app.post('/ai/avatar', async (req, res) => {
+app.post('/ai/avatar', requireAuth, express.json({ limit: '2mb' }), async (req, res) => {
   try {
-    const { script, sellerId } = req.body;
-    if (!script) throw { message: 'Script is required', status: 400 };
+    // SECURITY FIX: Use req.userId from the authenticated session.
+    // Previously, any user could pass a different sellerId and overwrite
+    // that seller's avatar script/audio (IDOR vulnerability).
+    const { script } = req.body;
+    if (!script || typeof script !== 'string' || script.length > 5000) {
+      throw { message: 'Script is required (max 5000 characters)', status: 400 };
+    }
+    const sellerId = req.userId; // ALWAYS use the authenticated user's ID
 
     const ZAI_API_KEY = process.env.ZAI_API_KEY || '';
     let audioUrl = '';
@@ -840,7 +880,7 @@ app.post('/payments/initialize', async (req, res) => {
         amount: Math.round(Number(order.total) * 100), // kobo
         currency: 'NGN',
         reference: reference,
-        callback_url: `${req.headers.origin || 'https://eesha-learn.onrender.com'}/orders?payment_ref=${reference}`,
+        callback_url: `${process.env.PAYSTACK_CALLBACK_BASE || 'https://eesha-learn.onrender.com'}/orders?payment_ref=${reference}`,
         metadata: {
           order_id: order.id,
           user_id: req.userId,
@@ -998,8 +1038,18 @@ app.get('/payments/earnings', async (req, res) => {
     const totalEarnings = totalHeld + totalReleased + totalPaidOut;
 
     // Get bank details
-    const { data: bankDetails } = await supabase.from('seller_bank_details')
-      .select('*').eq('seller_id', req.userId).single();
+    const { data: bankDetailsRaw } = await supabase.from('seller_bank_details')
+      .select('bank_name,is_verified,account_number,account_name').eq('seller_id', req.userId).single();
+
+    // Mask the account number — only show last 4 digits to prevent PII leak
+    const bankDetails = bankDetailsRaw ? {
+      bank_name: bankDetailsRaw.bank_name,
+      is_verified: bankDetailsRaw.is_verified,
+      account_name: bankDetailsRaw.account_name,
+      account_number_masked: bankDetailsRaw.account_number
+        ? '••••' + bankDetailsRaw.account_number.slice(-4)
+        : null,
+    } : null;
 
     res.json({
       success: true,
@@ -1021,7 +1071,7 @@ app.get('/payments/earnings', async (req, res) => {
 });
 
 // === Process Payouts (called by cron job — sends money to sellers) ===
-app.post('/payments/process-payouts', async (req, res) => {
+app.post('/payments/process-payouts', requireCronSecret, async (req, res) => {
   try {
     if (!PAYSTACK_SECRET) throw { message: 'Payment service not configured', status: 500 };
 
@@ -1120,7 +1170,7 @@ app.post('/payments/process-payouts', async (req, res) => {
 });
 
 // === Release Escrow (called by cron job after 3-day hold) ===
-app.post('/payments/release-escrow', async (req, res) => {
+app.post('/payments/release-escrow', requireCronSecret, async (req, res) => {
   try {
     const now = new Date().toISOString();
     // Find all held escrow records past their release date

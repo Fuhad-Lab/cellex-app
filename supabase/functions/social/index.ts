@@ -88,12 +88,12 @@ Deno.serve(async (req: Request) => {
       case 'messenger_unread':    return await handleMessengerUnread(user);
 
       // === Personalization (pgvector) ===
-      case 'pgvector_similar':    return await handlePgvectorSimilar(body);
+      case 'pgvector_similar':    return await handlePgvectorSimilar(body, user);
       case 'products_by_ids':     return await handleProductsByIds(body);
       case 'pgvector_search':     return await handlePgvectorSearch(body);
 
-      // === Follower Notifications ===
-      case 'notify_followers_product': return await handleNotifyFollowersProduct(body);
+      // === Follower Notifications (requires auth + internal call) ===
+      case 'notify_followers_product': return await handleNotifyFollowersProduct(body, user);
 
       // === Public Seller Lookup ===
       case 'seller_by_slug':       return await handleSellerBySlug(body);
@@ -1012,11 +1012,14 @@ async function handleMessengerUnread(user: any) {
  * This is REAL personalization — "users who viewed X also viewed Y" but
  * powered by semantic similarity, not just co-occurrence.
  */
-async function handlePgvectorSimilar(body: any) {
-  const { userId, limit } = body;
-  if (!userId) return errorResponse('userId required', 400);
-  const safeUserId = String(userId).replace(/'/g, "''");
-  const safeLimit = Math.min(Number(limit) || 20, 50);
+async function handlePgvectorSimilar(body: any, user: any) {
+  // SECURITY FIX: Use the authenticated user's ID, NOT body.userId.
+  // Previously, any user could pass another user's ID and see their
+  // browsing history, wishlist, and reviews (PII leak).
+  if (!user) return errorResponse('Authentication required', 401);
+  const userId = user.id; // ALWAYS use the session user
+  const safeUserId = encodeURIComponent(userId);
+  const safeLimit = Math.min(Number(body.limit) || 20, 50);
 
   const { url, headers } = supabaseRest();
 
@@ -1238,9 +1241,14 @@ async function handlePgvectorSearch(body: any) {
  * Called by /api/seller-products after a successful product creation.
  * This is a public op (no auth required) — it's called server-to-server.
  */
-async function handleNotifyFollowersProduct(body: any) {
-  const { sellerId, productId, productName } = body;
-  if (!sellerId || !productId) return errorResponse('sellerId and productId required', 400);
+async function handleNotifyFollowersProduct(body: any, user: any) {
+  // SECURITY FIX: Require authentication. The sellerId must match the
+  // authenticated user's ID — this prevents anyone from spamming
+  // notifications to followers of any seller.
+  if (!user) return errorResponse('Authentication required', 401);
+  const { productId, productName } = body;
+  const sellerId = user.id; // ALWAYS use the session user's ID
+  if (!productId) return errorResponse('productId required', 400);
 
   try {
     // Get all followers of this seller
