@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Edit, Trash2, Search, Store, Package, Users, Upload, Loader2, X, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Store, Package, Users, Upload, Loader2, X, Image as ImageIcon, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -46,6 +46,7 @@ export default function SellerProductsPage() {
   const [groupBuyEnabled, setGroupBuyEnabled] = useState(false);
   const [groupBuyTarget, setGroupBuyTarget] = useState('3');
   const [groupBuyDiscount, setGroupBuyDiscount] = useState('20');
+  const [resellEnabled, setResellEnabled] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -59,7 +60,7 @@ export default function SellerProductsPage() {
   const resetForm = () => {
     setName(''); setPrice(''); setDescription(''); setCategory('Electronics');
     setImages([]); setVideoUrl('');
-    setGroupBuyEnabled(false); setGroupBuyTarget('3'); setGroupBuyDiscount('20');
+    setGroupBuyEnabled(false); setGroupBuyTarget('3'); setGroupBuyDiscount('20'); setResellEnabled(false);
   };
 
   const openCreate = () => {
@@ -483,6 +484,34 @@ export default function SellerProductsPage() {
                     <Label className="text-xs">Discount %</Label>
                     <Input type="number" value={groupBuyDiscount} onChange={(e) => setGroupBuyDiscount(e.target.value)} placeholder="20" min="5" max="80" />
                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* Resell Feature Toggle (Affiliate) */}
+            <div className="border-t border-[#E5E5E5] pt-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <RefreshCw className="w-4 h-4 text-[#666666]" />
+                  <div>
+                    <Label className="text-xs font-bold">Resell Feature</Label>
+                    <p className="text-[10px] text-[#666666]">Let others resell your product for a commission</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setResellEnabled(!resellEnabled)}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${resellEnabled ? 'bg-[#111827]' : 'bg-[#F5F5F5]'}`}
+                  aria-label="Toggle resell feature"
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${resellEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              {resellEnabled && (
+                <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-lg p-3 mt-2">
+                  <p className="text-[11px] text-[#525252] leading-relaxed">
+                    Anybody that reposts your product and successfully resells it will get 5% of the product price.
+                  </p>
                 </div>
               )}
             </div>

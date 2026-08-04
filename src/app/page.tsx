@@ -21,6 +21,7 @@ import { SmartImage } from '@/components/smart-image';
 import { MobileHeader } from '@/components/mobile-header';
 import { SmartVideo } from '@/components/smart-video';
 import { RevealOnScroll } from '@/components/animation-provider';
+import { FullPostModal } from '@/components/full-post-modal';
 
 interface FeedPost {
   type: 'video' | 'product';
@@ -70,6 +71,9 @@ export default function HomePage() {
 
   // Restore scroll on mount, save on unmount + on user scroll.
   useScrollPreservation('home');
+
+  // Full Post Modal state — when set, the modal opens (X/Twitter detail view style)
+  const [modalPost, setModalPost] = useState<FeedPost | null>(null);
 
   const searchBarRef = useRef<HTMLButtonElement>(null);
 
@@ -445,6 +449,7 @@ export default function HomePage() {
               onFollow={(e) => post.sellerId && toggleFollow(post.sellerId, e)}
               onAddToCart={(e) => post.product && addToCart(post.product, e)}
               trackView={trackView}
+              onOpenPost={() => setModalPost(post)}
             />
           ))
         )}
@@ -463,6 +468,9 @@ export default function HomePage() {
           </div>
         )}
       </main>
+
+      {/* Full Post Modal — X/Twitter detail view style */}
+      <FullPostModal post={modalPost} onClose={() => setModalPost(null)} />
     </div>
   );
 }
@@ -470,7 +478,7 @@ export default function HomePage() {
 /* ===================== Feed Post Card ===================== */
 
 function FeedPostCard({
-  post, index, liked, saved, isFollowing, onLike, onSave, onFollow, onAddToCart, trackView,
+  post, index, liked, saved, isFollowing, onLike, onSave, onFollow, onAddToCart, trackView, onOpenPost,
 }: {
   post: FeedPost;
   index: number;
@@ -482,6 +490,7 @@ function FeedPostCard({
   onFollow: (e: React.MouseEvent) => void;
   onAddToCart: (e: React.MouseEvent) => void;
   trackView: (postId: string, videoId?: number, productId?: number) => void;
+  onOpenPost: () => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -530,12 +539,20 @@ function FeedPostCard({
         overflow: 'hidden',
       }}
     >
-      {/* ===== SELLER HEADER (padding 16px 20px 12px) ===== */}
+      {/* ===== SELLER HEADER (click → opens Full Post Modal) ===== */}
       <div
-        className="flex items-center justify-between gap-3"
+        className="flex items-center justify-between gap-3 cursor-pointer"
         style={{ padding: '16px 20px 12px' }}
+        onClick={(e) => {
+          // Only open modal if clicking the header area (not the Follow button or more dots)
+          const target = e.target as HTMLElement;
+          if (target.closest('button')) return; // let buttons handle their own clicks
+          e.preventDefault();
+          e.stopPropagation();
+          onOpenPost();
+        }}
       >
-        <Link href={sellerHref} className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           {/* Avatar 40px circle */}
           <div
             className="shrink-0 overflow-hidden flex items-center justify-center"
@@ -583,7 +600,7 @@ function FeedPostCard({
               )}
             </div>
           </div>
-        </Link>
+        </div>
 
         {/* Right side: Follow button (if not following) OR more dots */}
         <div className="shrink-0 flex items-center gap-2">
