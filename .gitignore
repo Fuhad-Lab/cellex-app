@@ -63,3 +63,11 @@ skills/
 upload/
 *.webp
 !public/**/*.webp
+
+# Secrets — NEVER commit these
+.secrets/
+*.secret
+*.key
+.env.local
+.env.production
+.env.staging
