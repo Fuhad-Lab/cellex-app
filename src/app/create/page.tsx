@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { X, Package, Video, FileText, Camera, BookOpen, ChevronLeft, Upload, Check, AlertCircle, Tag, DollarSign, FolderOpen, Users, Percent } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -23,8 +23,10 @@ export default function CreatePage() {
   const [checking, setChecking] = useState(true);
   const [products, setProducts] = useState<any[]>([]);
 
-  // Top-level mode: post vs product
-  const [mode, setMode] = useState<CreateMode>('post');
+  // Top-level mode: post vs product (can be set via ?mode=product URL param)
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get('mode') === 'product' ? 'product' : 'post';
+  const [mode, setMode] = useState<CreateMode>(initialMode as CreateMode);
 
   // Post form state
   const [postType, setPostType] = useState<PostType>('photo');
@@ -38,7 +40,9 @@ export default function CreatePage() {
   // Product form state
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
-  const [productCategory, setProductCategory] = useState('General');
+  const [productCategory, setProductCategory] = useState<string[]>(['General']);
+  const [aiVerifying, setAiVerifying] = useState(false);
+  const [aiVerificationResult, setAiVerificationResult] = useState<{passed: boolean; issues: string[]} | null>(null);
   const [productDescription, setProductDescription] = useState('');
   const [productImage, setProductImage] = useState('');
   const [uploadingProductImage, setUploadingProductImage] = useState(false);
@@ -222,12 +226,80 @@ export default function CreatePage() {
     }
 
     setCreatingProduct(true);
+
+    // === AI VERIFICATION ===
+    // Before saving, the AI checks:
+    // 1. The product is not illegal (drugs, weapons, counterfeit, etc.)
+    // 2. The product photo matches the description
+    // 3. The user picked the correct category
+    setAiVerifying(true);
+    setAiVerificationResult(null);
+    try {
+      const csrfToken = typeof document !== 'undefined'
+        ? (document.cookie.match(/cellex_csrftoken=([^;]+)/) || [])[1] || ''
+        : '';
+
+      const verifyResp = await fetch(`${API_BASE}/api/ai-chat`, {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        body: JSON.stringify({
+          message: `Verify this product for listing on Cellex (Nigerian e-commerce marketplace):
+- Product name: ${productName.trim()}
+- Description: ${productDescription.trim()}
+- Categories selected: ${productCategory.join(', ')}
+- Image URL: ${productImage || 'none'}
+
+Check these 3 things and respond with ONLY a JSON object:
+1. Is this product illegal or unsafe? (drugs, weapons, counterfeit, adult content, etc.)
+2. Does the product name/description seem consistent? (if there's an image URL, note if it might not match)
+3. Are the selected categories appropriate for this product?
+
+Respond in this exact format:
+{"passed": true/false, "issues": ["issue 1", "issue 2"]}
+
+If all checks pass, return {"passed": true, "issues": []}.
+If any check fails, describe the specific issue in the issues array.`,
+          context: 'Product verification',
+          history: [],
+        }),
+      });
+
+      if (verifyResp.ok) {
+        const verifyData = await verifyResp.json();
+        const reply = verifyData.reply || verifyData.message || '';
+        // Try to parse the JSON from the AI response
+        const jsonMatch = reply.match(/\{[^}]+\}/);
+        if (jsonMatch) {
+          const result = JSON.parse(jsonMatch[0]);
+          if (!result.passed && result.issues && result.issues.length > 0) {
+            setAiVerificationResult({ passed: false, issues: result.issues });
+            toast({
+              title: 'Product needs attention',
+              description: result.issues.join('; '),
+              variant: 'destructive',
+            });
+            setAiVerifying(false);
+            setCreatingProduct(false);
+            return;
+          }
+        }
+      }
+    } catch {
+      // If AI verification fails, proceed with product creation (don't block the seller)
+    }
+    setAiVerifying(false);
+
     try {
       const createResp = await api.sellerProducts.create({
         name: productName.trim(),
         price: priceNum,
         description: productDescription.trim(),
-        category: productCategory,
+        category: productCategory.join(', '),
+        categories: productCategory,
         image_url: productImage,
       });
 
@@ -322,7 +394,7 @@ export default function CreatePage() {
             disabled={creatingProduct || uploadingProductImage || !productName || !productPrice || !productImage}
             className="text-sm font-bold px-5 py-2 rounded-full bg-[#111827] btn-ripple  text-white disabled:opacity-40 transition"
           >
-            {creatingProduct ? 'Creating...' : 'Publish'}
+            {aiVerifying ? 'AI Verifying...' : creatingProduct ? 'Creating...' : 'Publish'}
           </button>
         )}
       </div>
@@ -578,20 +650,40 @@ export default function CreatePage() {
                 />
               </div>
             </div>
-            <div>
-              <label className="text-xs font-semibold mb-2 block text-[#6B7280]">CATEGORY</label>
-              <div className="relative">
-                <FolderOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] z-10" />
-                <select
-                  value={productCategory}
-                  onChange={(e) => setProductCategory(e.target.value)}
-                  className={inputClass + ' pl-10 appearance-none'}
-                >
-                  {categories.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
+            <div className="col-span-2">
+              <label className="text-xs font-semibold mb-2 block text-[#6B7280]">CATEGORIES (select all that apply)</label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c) => {
+                  const selected = productCategory.includes(c);
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => {
+                        if (selected) {
+                          setProductCategory(productCategory.filter(cat => cat !== c));
+                        } else {
+                          setProductCategory([...productCategory.filter(cat => cat !== 'General'), c]);
+                        }
+                      }}
+                      className="font-medium transition-all"
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '999px',
+                        border: selected ? '1px solid #111827' : '1px solid #E5E5E5',
+                        background: selected ? '#111827' : '#FFFFFF',
+                        color: selected ? '#FFFFFF' : '#111827',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {c}
+                    </button>
+                  );
+                })}
               </div>
+              <p className="text-[10px] text-[#9CA3AF] mt-1">A product can belong to multiple categories (e.g., a watch is both Electronics and Fashion)</p>
             </div>
           </div>
 

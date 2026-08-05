@@ -46,8 +46,8 @@ function ProductContent() {
   const [showTryOn, setShowTryOn] = useState(false);
   const [saved, setSaved] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const [colorway, setColorway] = useState(COLORWAYS[0]);
-  const [size, setSize] = useState<number>(SIZES[2]);
+  const [colorway, setColorway] = useState('');
+  const [size, setSize] = useState<string>('');
   const [commentText, setCommentText] = useState('');
   const [posting, setPosting] = useState(false);
   const [helpfulReviews, setHelpfulReviews] = useState<Set<string>>(new Set());
@@ -283,8 +283,31 @@ function ProductContent() {
     );
   }
 
-  const tryOnCategories = ['Fashion', 'Beauty', 'Home'];
-  const canTryOn = tryOnCategories.includes(product.category || '');
+  const tryOnCategories = ['Fashion'];
+  const productCategories: string[] = (() => {
+    const cats = (product as any).categories;
+    if (Array.isArray(cats) && cats.length > 0) return cats;
+    if (product.category) return product.category.split(',').map((c: string) => c.trim());
+    return [];
+  })();
+  const canTryOn = productCategories.some(c => tryOnCategories.includes(c));
+
+  // Derive variants from the product data — only show if the product actually
+  // has colors/sizes. Don't show static placeholders for products that don't
+  // need them (e.g., electronics, food, books).
+  const productColors: string[] = (() => {
+    const colors = (product as any).colors || (product as any).color_options;
+    if (Array.isArray(colors) && colors.length > 0) return colors;
+    return [];
+  })();
+
+  const productSizes: string[] = (() => {
+    const sizes = (product as any).sizes || (product as any).size_options;
+    if (Array.isArray(sizes) && sizes.length > 0) return sizes.map(String);
+    return [];
+  })();
+
+  const productHasVariants = productColors.length > 0 || productSizes.length > 0;
 
   // Derive original price + discount % (product API has no compare_at field,
   // so fall back to the group-buy discount when one is configured).
@@ -592,8 +615,10 @@ function ProductContent() {
         </div>
       </div>
 
-      {/* ============ 4. VARIANTS ============ */}
+      {/* ============ 4. VARIANTS — only show if product has variants ============ */}
+      {productHasVariants && (
       <div style={{ padding: '16px' }} className="space-y-4">
+        {productColors.length > 0 && (
         <div>
           <div
             className="font-semibold"
@@ -604,10 +629,10 @@ function ProductContent() {
               marginBottom: '8px',
             }}
           >
-            Colorway
+            Color
           </div>
           <div className="flex gap-2 flex-wrap">
-            {COLORWAYS.map((c) => {
+            {productColors.map((c) => {
               const active = colorway === c;
               return (
                 <button
@@ -632,7 +657,9 @@ function ProductContent() {
             })}
           </div>
         </div>
+        )}
 
+        {productSizes.length > 0 && (
         <div>
           <div
             className="font-semibold"
@@ -643,10 +670,10 @@ function ProductContent() {
               marginBottom: '8px',
             }}
           >
-            Size (EU)
+            Size
           </div>
           <div className="flex gap-2">
-            {SIZES.map((s) => {
+            {productSizes.map((s) => {
               const active = size === s;
               return (
                 <button
@@ -672,7 +699,9 @@ function ProductContent() {
             })}
           </div>
         </div>
+        )}
       </div>
+      )}
 
       {/* ============ 5. QUANTITY SELECTOR ============ */}
       <div style={{ padding: '16px' }}>

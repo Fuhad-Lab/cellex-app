@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,7 @@ const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Beauty', 'Farm', 'Sports'
 export default function SellerProductsPage() {
   useScrollPreservation('seller-products');
 
+  const router = useRouter();
   const { toast } = useToast();
   const [products, setProducts] = usePersistedState<Product[]>('seller-products:data', []);
   const [loading, setLoading] = useState(products.length === 0);
@@ -253,7 +255,7 @@ export default function SellerProductsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-extrabold">Products</h1>
-        <Button onClick={openCreate} className="bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5] font-bold">
+        <Button onClick={() => router.push('/create?mode=product')} className="bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5] font-bold">
           <Plus className="w-4 h-4 mr-1" /> Add product
         </Button>
       </div>
@@ -273,7 +275,7 @@ export default function SellerProductsPage() {
           icon={<Package className="w-8 h-8" />}
           title="No products yet"
           message="Add your first product to start selling on Cellex."
-          action={<Button onClick={openCreate} className="bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5]">Add product</Button>}
+          action={<Button onClick={() => router.push('/create?mode=product')} className="bg-[#111827] btn-ripple  text-black hover:bg-[#F5F5F5]">Add product</Button>}
         />
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">

@@ -44,6 +44,10 @@ const SLIDE_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1]; // iOS-
 // a slide-in would feel like a glitch.)
 let suppressNextEntrance = false;
 
+// Module-level set of visited pages — pages that have been visited before
+// don't replay the entrance animation (only first visit or reload animates).
+const visitedPages = new Set<string>();
+
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -76,6 +80,17 @@ export function PageTransition({ children }: { children: ReactNode }) {
       x.set(0);
       return;
     }
+
+    // Skip animation for pages already visited — only animate on first visit.
+    // This prevents the animation from replaying every time the user navigates
+    // back to a page they've already seen.
+    if (visitedPages.has(pathname)) {
+      x.set(0);
+      return;
+    }
+
+    // First visit to this page — mark as visited and play the slide-in.
+    visitedPages.add(pathname);
 
     // Default forward navigation: slide in from the right.
     x.set(window.innerWidth);

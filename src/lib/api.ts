@@ -281,7 +281,7 @@ export const api = {
   },
   sellerProducts: {
     list: () => apiCall('seller-products', { op: 'list' }),
-    create: (data: { name: string; price: number; description?: string; category?: string; image_url?: string }) =>
+    create: (data: { name: string; price: number; description?: string; category?: string; categories?: string[]; image_url?: string }) =>
       apiCall('seller-products', { op: 'create', ...data }),
     update: (id: number, data: Record<string, unknown>) => apiCall('seller-products', { op: 'update', id, ...data }),
     delete: (id: number) => apiCall('seller-products', { op: 'delete', id }),
