@@ -58,27 +58,14 @@ function SearchContent() {
     setAllProducts([]);
     setVideos([]);
 
-    // Run product search, video search, AND AI answer IN PARALLEL for speed.
     const csrfToken = typeof document !== 'undefined'
       ? (document.cookie.match(/cellex_csrftoken=([^;]+)/) || [])[1] || ''
       : '';
 
-    const [searchResp, vidResp, aiResp] = await Promise.all([
+    // Step 1: Run product search + video search IN PARALLEL (both independent)
+    const [searchResp, vidResp] = await Promise.all([
       api.smartSearch(q, 30),
       api.videos.feed(50).catch(() => ({ success: false, videos: [] })),
-      fetch(`${API_BASE}/api/ai-chat`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken,
-        },
-        body: JSON.stringify({
-          message: `A user searched for "${q}" on Cellex (a Nigerian e-commerce marketplace). Provide a helpful, comprehensive answer about what's available. Mention types of products, price ranges, and shopping tips. Be friendly and informative (2-3 sentences max).`,
-          context: 'Search overview',
-          history: [],
-        }),
-      }).catch(() => null),
     ]);
 
     // Process product results
@@ -101,12 +88,35 @@ function SearchContent() {
       setVideos(filtered);
     }
 
-    // Process AI response
-    if (aiResp && aiResp.ok) {
-      const data = await aiResp.json();
-      setAiAnswer(data.reply || data.message || data.content || `Here's what I found for "${q}": ${products.length} products available.`);
-    } else {
-      setAiAnswer(`Here's what I found for "${q}": ${products.length} products available on Cellex.`);
+    // Step 2: Call AI with REAL product data as context.
+    // The AI now knows exactly what products exist and can answer questions about them.
+    // This is what makes it competitive with Alibaba — the AI has real product context.
+    const productContext = products.slice(0, 10).map((p: any, i: number) =>
+      `${i + 1}. ${p.name} — ${formatPrice(p.price)}${p.description ? ` (${p.description.substring(0, 100)})` : ''}${p.category ? ` [${p.category}]` : ''}`
+    ).join('\n');
+
+    try {
+      const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        body: JSON.stringify({
+          message: `A user searched for "${q}" on Cellex, a Nigerian e-commerce marketplace. Here are the actual products found:\n\n${productContext}\n\nBased on these REAL results, give a helpful, natural response. Reference specific products by name and price when relevant. Be conversational and genuinely helpful — like a knowledgeable shopping assistant. Don't use a template. If the results don't match what the user was looking for, acknowledge that and suggest alternatives. Keep it to 2-4 sentences.`,
+          context: `Search: "${q}". Products found: ${products.length}. Product details: ${productContext}`,
+          history: [],
+        }),
+      });
+      if (aiResp.ok) {
+        const data = await aiResp.json();
+        setAiAnswer(data.reply || data.message || data.content || '');
+      } else {
+        setAiAnswer('');
+      }
+    } catch {
+      setAiAnswer('');
     }
     setAiLoading(false);
   }, []);
@@ -130,23 +140,34 @@ function SearchContent() {
     const userMsg = followUpInput.trim();
     setFollowUpInput('');
     setFollowUpLoading(true);
+
+    const csrfToken = typeof document !== 'undefined'
+      ? (document.cookie.match(/cellex_csrftoken=([^;]+)/) || [])[1] || ''
+      : '';
+
+    // Build full product context so the AI can answer questions about specific products
+    const productContext = allProducts.slice(0, 10).map((p: any, i: number) =>
+      `${i + 1}. ${p.name} — ${formatPrice(p.price)}${p.description ? ` — ${p.description.substring(0, 150)}` : ''}${p.category ? ` [${p.category}]` : ''}${p.units_sold ? ` (${p.units_sold} sold)` : ''}`
+    ).join('\n');
+
     try {
       const aiResp = await fetch(`${API_BASE}/api/ai-chat`, {
         credentials: 'include',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
         body: JSON.stringify({
           message: userMsg,
-          context: `User searched for "${query}" on Cellex. Previous AI answer: ${aiAnswer}. Available products: ${allProducts.slice(0, 5).map(p => `${p.name} (${formatPrice(p.price)})`).join(', ')}`,
+          context: `The user searched for "${query}" on Cellex. Here are the REAL products in the results:\n\n${productContext}\n\nPrevious AI response: ${aiAnswer}\n\nAnswer the user's follow-up question based on these actual products. Reference specific products by name and price when relevant. Be natural and conversational — don't use templates. If the user asks about a product that's in the results, give them the real details (price, description). If they ask about something not in the results, say so honestly.`,
           history: chatHistory.map(m => [{ role: 'user', content: m.user }, { role: 'assistant', content: m.ai }]).flat(),
         }),
       });
       let aiMsg = '';
       if (aiResp.ok) {
         const data = await aiResp.json();
-        aiMsg = data.reply || data.message || data.content || 'I can help with that.';
-      } else {
-        aiMsg = 'I can help with that. Try browsing the products below.';
+        aiMsg = data.reply || data.message || data.content || '';
       }
       setChatHistory(prev => [...prev, { user: userMsg, ai: aiMsg }]);
     } catch {
