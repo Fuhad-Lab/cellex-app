@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Store, Loader2, Check, Sparkles } from 'lucide-react';
 
 import { useScrollPreservation } from '@/components/global-state-provider';
@@ -51,13 +50,11 @@ export default function SellerPreparingPage() {
 
   return (
     <div className="ig-container min-h-screen flex flex-col items-center justify-center px-6">
-      <motion.div
+      <div
         className="w-24 h-24 rounded-3xl bg-indigo-600 flex items-center justify-center mb-8"
-        animate={{ scale: [1, 1.05, 1], rotate: [0, -2, 2, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
       >
         <Store className="w-12 h-12 text-white" />
-      </motion.div>
+      </div>
 
       <h1 className="text-2xl font-bold text-center mb-2">
         Hold on, while we redesign your dashboard
@@ -68,7 +65,7 @@ export default function SellerPreparingPage() {
 
       <div className="w-full mb-4">
         <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-          <motion.div className="h-full bg-indigo-600 rounded-full" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${progress}%` }} />
         </div>
       </div>
 

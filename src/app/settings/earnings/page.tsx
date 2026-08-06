@@ -92,7 +92,7 @@ export default function EarningsPage() {
   const payouts = data?.payouts || [];
 
   return (
-    <div className="min-h-screen bg-white page-fade-in pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="min-h-screen bg-white  pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] px-4 h-14 flex items-center gap-2">
         <button onClick={() => router.push('/settings')} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#F3F4F6]" aria-label="Back">

@@ -883,7 +883,7 @@ function ProductContent() {
       >
         <button
           onClick={toggleWishlist}
-          className="flex items-center gap-1.5 transition-transform active:scale-90"
+          className="flex items-center gap-1.5 "
           aria-label="Like"
         >
           <Heart
@@ -901,7 +901,7 @@ function ProductContent() {
 
         <button
           onClick={() => setCommentsOpen(true)}
-          className="flex items-center gap-1.5 transition-transform active:scale-90"
+          className="flex items-center gap-1.5 "
           aria-label="Comments"
         >
           <MessageCircle className="w-5 h-5" strokeWidth={2} style={{ color: '#6B7280' }} />
@@ -912,7 +912,7 @@ function ProductContent() {
 
         <button
           onClick={shareProduct}
-          className="flex items-center gap-1.5 transition-transform active:scale-90"
+          className="flex items-center gap-1.5 "
           aria-label="Share"
         >
           <Share2 className="w-5 h-5" strokeWidth={2} style={{ color: '#6B7280' }} />
@@ -923,7 +923,7 @@ function ProductContent() {
 
         <button
           onClick={toggleWishlist}
-          className="flex items-center gap-1.5 transition-transform active:scale-90"
+          className="flex items-center gap-1.5 "
           aria-label="Save"
         >
           <Bookmark

@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, formatPrice, type Product } from '@/lib/api';
-import { motion } from 'framer-motion';
 import {
   Search, Heart, MessageCircle, Bookmark, Share2,
   Store, MoreHorizontal, BadgeCheck, Bell, User as UserIcon,
@@ -14,7 +13,6 @@ import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
-import { useOptimisticUI } from '@/components/optimistic-ui';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { CommentsModal } from '@/components/comments-modal';
 import { SmartImage } from '@/components/smart-image';
@@ -51,13 +49,14 @@ export default function HomePage() {
   const router = useRouter();
   const { user, isSeller } = useAuth();
   const { toast } = useToast();
-  const { burst } = useOptimisticUI();
+  
 
   // Persisted state — survives ANY number of navigation hops (Home → Cart →
   // Saved → Home keeps Home's state). Backed by the Root Layout's memory
   // via GlobalStateProvider. Memory-only, XSS-safe.
   const [feed, setFeed] = usePersistedState<FeedPost[]>('home:feed', []);
-  const [likedPosts, setLikedPosts] = usePersistedState<Set<string>>('home:likedPosts', new Set<string>());
+  // Like feature removed — like and save are different actions.
+  // Like was incorrectly mixing with the save/wishlist system.
   const [savedPosts, setSavedPosts] = usePersistedState<Set<string>>('home:savedPosts', new Set<string>());
   const [following, setFollowing] = usePersistedState<Set<string>>('home:following', new Set<string>());
 
@@ -300,12 +299,7 @@ export default function HomePage() {
           } catch {}
         }
 
-        // Initialize liked posts from API response
-        const initialLiked = new Set<string>();
-        posts.forEach(p => {
-          if (p.liked) initialLiked.add(p.id);
-        });
-        setLikedPosts(initialLiked);
+        // Like feature removed
       } catch (e) {
         console.error('Feed load error:', e);
       } finally {
@@ -315,28 +309,7 @@ export default function HomePage() {
     })();
   }, [user]);
 
-  const toggleLike = (postId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) { router.push('/login'); return; }
-    const post = feed.find(p => p.id === postId);
-    if (!post) return;
-    const isLiking = !likedPosts.has(postId);
-    const newLiked = new Set(likedPosts);
-    if (isLiking) {
-      newLiked.add(postId);
-      burst(e.clientX, e.clientY, 'heart');
-    } else {
-      newLiked.delete(postId);
-    }
-    setLikedPosts(newLiked);
-    if (post.videoId) {
-      if (isLiking) api.videos.like(post.videoId);
-      else api.videos.unlike(post.videoId);
-    }
-    const itemId = post.videoId ? `video:${post.videoId}` : post.productId ? `product:${post.productId}` : postId;
-    api.feedback(itemId, isLiking ? 'like' : 'unlike', isLiking ? 1 : 0);
-  };
+  // Like feature removed — toggleLike deleted
 
   const toggleSave = (postId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -380,7 +353,7 @@ export default function HomePage() {
     e.stopPropagation();
     if (!user) { router.push('/login'); return; }
     api.cart.add(product.id, 1);
-    burst(e.clientX, e.clientY, 'check');
+    
     toast({ title: 'Added to cart!', description: product.name });
     api.feedback(`product:${product.id}`, 'click', 1.5, { page: 'feed' });
   };
@@ -475,10 +448,10 @@ export default function HomePage() {
               key={post.id}
               post={post}
               index={index}
-              liked={likedPosts.has(post.id)}
+              liked={false}
               saved={savedPosts.has(post.id)}
               isFollowing={post.sellerId ? following.has(post.sellerId) : false}
-              onLike={(e) => toggleLike(post.id, e)}
+              onLike={() => {}}
               onSave={(e) => toggleSave(post.id, e)}
               onFollow={(e) => post.sellerId && toggleFollow(post.sellerId, e)}
               onAddToCart={(e) => post.product && addToCart(post.product, e)}
@@ -768,31 +741,12 @@ function FeedPostCard({
           padding: '16px 20px 20px',
         }}
       >
-        {/* Left: Heart | Comment | Share | Bookmark (gap 24px) */}
+        {/* Left: Comment | Share | Bookmark (gap 24px) — Like removed */}
         <div className="flex items-center" style={{ gap: '20px' }}>
-          {/* Like */}
-          <button
-            onClick={onLike}
-            className="flex items-center gap-1.5 transition-transform active:scale-90"
-            aria-label={liked ? 'Unlike' : 'Like'}
-          >
-            <Heart
-              className="w-5 h-5"
-              strokeWidth={2}
-              style={{
-                color: liked ? '#EF4444' : '#374151',
-                fill: liked ? '#EF4444' : 'none',
-              }}
-            />
-            <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>
-              {formatCount(likeCount)}
-            </span>
-          </button>
-
           {/* Comment */}
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCommentsOpen(true); }}
-            className="flex items-center gap-1.5 transition-transform active:scale-90"
+            className="flex items-center gap-1.5 "
             aria-label="Comments"
           >
             <MessageCircle className="w-5 h-5" strokeWidth={2} style={{ color: '#374151' }} />
@@ -816,7 +770,7 @@ function FeedPostCard({
               if (post.videoId) api.feedback(`video:${post.videoId}`, 'share', 0.5, { page: 'feed' });
               else if (post.productId) api.feedback(`product:${post.productId}`, 'share', 0.5, { page: 'feed' });
             }}
-            className="flex items-center gap-1.5 transition-transform active:scale-90"
+            className="flex items-center gap-1.5 "
             aria-label="Share"
           >
             <Share2 className="w-5 h-5" strokeWidth={2} style={{ color: '#374151' }} />
@@ -828,7 +782,7 @@ function FeedPostCard({
           {/* Bookmark */}
           <button
             onClick={onSave}
-            className="flex items-center justify-center transition-transform active:scale-90"
+            className="flex items-center justify-center "
             aria-label={saved ? 'Unsave' : 'Save'}
           >
             <Bookmark

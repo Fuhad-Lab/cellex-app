@@ -448,7 +448,7 @@ export default function SellerStorefront({
           type="button"
           onClick={() => router.back()}
           aria-label="Back"
-          className="flex items-center justify-center transition-transform active:scale-90"
+          className="flex items-center justify-center "
           style={{
             position: 'absolute',
             top: '16px',
@@ -470,7 +470,7 @@ export default function SellerStorefront({
           type="button"
           onClick={shareStore}
           aria-label="Share store"
-          className="flex items-center justify-center transition-transform active:scale-90"
+          className="flex items-center justify-center "
           style={{
             position: 'absolute',
             top: '16px',
@@ -1529,7 +1529,7 @@ function ProductCard({
           type="button"
           onClick={onLike}
           aria-label={isLiked ? 'Remove from wishlist' : 'Add to wishlist'}
-          className="flex items-center justify-center transition-transform active:scale-90"
+          className="flex items-center justify-center "
           style={{
             position: 'absolute',
             top: '8px',

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { api } from '@/lib/api';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import { X, Send, Trash2 } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { useRouter } from 'next/navigation';
@@ -115,20 +115,13 @@ export function CommentsModal({ open, onClose, postType, postId, postCaption, on
   };
 
   return (
-    <AnimatePresence>
+    <>
       {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm"
           onClick={onClose}
         >
-          <motion.div
-            initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: '100%', opacity: 0 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+          <div
             className="bg-slate-900 border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
@@ -222,10 +215,10 @@ export function CommentsModal({ open, onClose, postType, postId, postCaption, on
                 </button>
               )}
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 

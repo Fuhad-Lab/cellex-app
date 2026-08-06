@@ -16,7 +16,6 @@ import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { useOptimisticUI } from '@/components/optimistic-ui';
 import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
-import { motion } from 'framer-motion';
 
 // Categories — match the actual categories in the database.
 // (Previously had 'Tech' which doesn't exist — it's 'Electronics'. Added 'Farm' and 'General'.)
@@ -405,10 +404,7 @@ function DiscoveryCard({
   onSave: (e: React.MouseEvent) => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index * 0.04, 0.2) }}
+    <div
       style={{
         position: 'relative',
         aspectRatio: '3 / 4',
@@ -452,7 +448,7 @@ function DiscoveryCard({
           <button
             type="button"
             onClick={onLike}
-            className="flex items-center justify-center transition-transform active:scale-90"
+            className="flex items-center justify-center "
             style={{
               width: '32px',
               height: '32px',
@@ -474,7 +470,7 @@ function DiscoveryCard({
           <button
             type="button"
             onClick={onSave}
-            className="flex items-center justify-center transition-transform active:scale-90"
+            className="flex items-center justify-center "
             style={{
               width: '32px',
               height: '32px',
@@ -543,7 +539,7 @@ function DiscoveryCard({
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
 

@@ -248,7 +248,7 @@ export default function MessengerPage() {
   // ---- Loading skeleton (no "no messages" flash) ----
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-white page-fade-in">
+      <div className="min-h-screen bg-white ">
         {/* Header skeleton */}
         <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] px-4 py-3 flex items-center">
           <div className="w-9 h-9 rounded-full bg-[#F3F4F6] animate-pulse" />
@@ -423,7 +423,7 @@ export default function MessengerPage() {
 
   // ============ CONVERSATION LIST VIEW ============
   return (
-    <div className="min-h-screen bg-white page-fade-in" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="min-h-screen bg-white " style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#E5E7EB] px-4 py-3 flex items-center">
         <button onClick={() => router.push('/')} className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="Back">

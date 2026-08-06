@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, Heart, MessageCircle, Share2, Bookmark, Send, BadgeCheck, MoreHorizontal, Store } from 'lucide-react';
 import Link from 'next/link';
 import { SmartImage } from '@/components/smart-image';
@@ -142,13 +141,9 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
     : 'Free shipping';
 
   return (
-    <AnimatePresence>
+    <>
       {post && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+        <div
           className="fixed inset-0 z-[100] bg-white"
         >
           {/* ===== TOP NAVIGATION BAR ===== */}
@@ -255,7 +250,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
                   {/* Like */}
                   <button
                     onClick={handleLike}
-                    className="flex items-center gap-2 transition-transform active:scale-90"
+                    className="flex items-center gap-2 "
                     aria-label={liked ? 'Unlike' : 'Like'}
                   >
                     <Heart
@@ -269,7 +264,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
                   {/* Comment */}
                   <button
                     onClick={() => setCommentsOpen(true)}
-                    className="flex items-center gap-2 transition-transform active:scale-90"
+                    className="flex items-center gap-2 "
                     aria-label="Comments"
                   >
                     <MessageCircle className="w-5 h-5 text-[#374151]" strokeWidth={2} />
@@ -279,7 +274,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
                   {/* Share */}
                   <button
                     onClick={handleShare}
-                    className="flex items-center gap-2 transition-transform active:scale-90"
+                    className="flex items-center gap-2 "
                     aria-label="Share"
                   >
                     <Share2 className="w-5 h-5 text-[#374151]" strokeWidth={2} />
@@ -289,7 +284,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
                   {/* Bookmark */}
                   <button
                     onClick={handleSave}
-                    className="ml-auto flex items-center justify-center transition-transform active:scale-90"
+                    className="ml-auto flex items-center justify-center "
                     aria-label={saved ? 'Unsave' : 'Save'}
                   >
                     <Bookmark
@@ -320,9 +315,9 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
               onCommentAdded={() => setCommentCount(c => c + 1)}
             />
           )}
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 
