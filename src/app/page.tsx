@@ -106,9 +106,14 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
+        // For anonymous users, only fetch feed posts (no personalized recommendations).
+        // For logged-in users, fetch both feed posts AND recommendations.
+        const isAnon = !user;
         const [feedPostsResp, recommendResp] = await Promise.all([
           api.feedPosts.list(50).catch(() => ({ success: false, posts: [] })),
-          api.recommend.home(40),
+          isAnon
+            ? Promise.resolve({ success: false, posts: [] })
+            : api.recommend.home(40).catch(() => ({ success: false, posts: [] })),
         ]);
 
         // PERSONALIZED FEED:

@@ -53,7 +53,6 @@ export function DesktopSidebar() {
         { href: '/messenger', label: 'Messages', icon: MessageCircle },
         { href: '/wishlist', label: 'Saved', icon: Bookmark },
         { href: '/cart', label: 'Cart', icon: ShoppingCart },
-        { href: '/wishlist', label: 'WishList', icon: Heart }, // WishList = wishlist page (Saved uses Bookmark, WishList uses Heart to distinguish)
         { href: '/seller-dashboard', label: 'My Shop', icon: Store },
         { href: '/settings', label: 'Settings', icon: Settings },
       ]

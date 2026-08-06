@@ -64,22 +64,16 @@ export default function MessengerPage() {
   //   - Different conversations have different keys (so a member of conv A
   //     can't read conv B's messages)
   //
-  // The key is cached in sessionStorage (per conversation) so we don't re-derive
+  // The key is cached in memory (per conversation) so we don't re-derive
   // it on every render. PBKDF2 with 100k iterations takes ~100ms which would
   // cause a noticeable delay if done per-message.
-  //
-  // NOTE: This is "encryption at rest" — the server stores only encrypted_content
-  // + IV. A determined attacker who knows the conversation ID + salt could derive
-  // the key, but casual DB snoopers cannot read messages.
+  // NO sessionStorage/localStorage — keys are kept in memory only (RAM).
+  const keyCacheRef = useRef<Map<string, CryptoKey>>(new Map());
+
   const deriveKeyForConversation = useCallback(async (conversationId: string): Promise<CryptoKey | null> => {
-    const cacheKey = `cellex_chat_key_${conversationId}`;
-    const storedKey = sessionStorage.getItem(cacheKey);
-    if (storedKey) {
-      try {
-        const rawKey = Uint8Array.from(atob(storedKey), c => c.charCodeAt(0));
-        return await crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
-      } catch {}
-    }
+    // Check in-memory cache first
+    const cached = keyCacheRef.current.get(conversationId);
+    if (cached) return cached;
 
     const encoder = new TextEncoder();
     const salt = encoder.encode('cellex-e2e-encryption-v1-fixed-salt');
@@ -98,10 +92,8 @@ export default function MessengerPage() {
       ['encrypt', 'decrypt']
     );
 
-    // Cache for this session
-    const rawKey = await crypto.subtle.exportKey('raw', key);
-    const keyB64 = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
-    sessionStorage.setItem(cacheKey, keyB64);
+    // Cache in memory (NOT sessionStorage)
+    keyCacheRef.current.set(conversationId, key);
     return key;
   }, []);
 

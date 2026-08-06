@@ -108,30 +108,22 @@ export function AnimationProvider({ children }: { children: ReactNode }) {
     setTimeout(splitHeadings, 100);
 
     // === 3. SCROLL REVEAL FOR CARDS & SECTIONS ===
+    // DISABLED — scroll reveal animations cause re-animation on every page
+    // return visit. The user wants pages to appear exactly as they left them.
+    // Elements are now visible by default (no opacity:0 initial state).
     const revealElements = () => {
-      // Reveal cards, sections, images with fade-up
       const revealTargets = document.querySelectorAll(
         '[data-reveal]:not([data-revealed])'
       );
-
       revealTargets.forEach((el) => {
         el.setAttribute('data-revealed', 'true');
-        gsap.from(el, {
-          opacity: 0,
-          y: 30,
-          duration: REVEAL_DURATION,
-          ease: EASE_PREMIUM,
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 88%',
-            toggleActions: 'play none none reverse',
-            once: true,
-          },
-        });
+        // Just make the element visible immediately — no animation
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'none';
       });
     };
 
-    setTimeout(revealElements, 200);
+    setTimeout(revealElements, 50);
 
     // === 4. MUTATION OBSERVER — detect new content ===
     const observer = new MutationObserver((mutations) => {
@@ -472,12 +464,8 @@ export function SmoothSlider({
 }
 
 /**
- * RevealOnScroll — wrapper that adds data-reveal for scroll-triggered animations
- *
- * Usage:
- * <RevealOnScroll>
- *   <div>This content will fade up when scrolled into view</div>
- * </RevealOnScroll>
+ * RevealOnScroll — DISABLED. Content is now visible immediately.
+ * The wrapper is kept for backward compatibility but does no animation.
  */
 export function RevealOnScroll({
   children,
@@ -488,32 +476,8 @@ export function RevealOnScroll({
   className?: string;
   delay?: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
-    gsap.from(el, {
-      opacity: 0,
-      y: 30,
-      duration: REVEAL_DURATION,
-      ease: EASE_PREMIUM,
-      delay,
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 88%',
-        toggleActions: 'play none none reverse',
-        once: true,
-      },
-    });
-  }, [delay]);
-
   return (
-    <div ref={ref} className={className} style={{ willChange: 'transform, opacity' }}>
+    <div className={className}>
       {children}
     </div>
   );

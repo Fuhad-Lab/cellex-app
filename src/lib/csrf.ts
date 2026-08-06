@@ -36,9 +36,9 @@ export function generateCsrfToken(): string {
 export function setCsrfCookie(response: NextResponse, token: string): void {
   response.cookies.set(CSRF_COOKIE_NAME, token, {
     httpOnly: false, // JS must be able to read this
-    secure: process.env.NODE_ENV === 'production',
+    secure: true, // always secure — Render uses HTTPS
     sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60, // 7 days — matches session cookie
+    maxAge: 60 * 24 * 60 * 60, // 60 days — matches session cookie
     path: '/',
   });
 }

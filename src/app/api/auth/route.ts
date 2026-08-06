@@ -175,9 +175,9 @@ export async function POST(request: NextRequest) {
         // top-level navigation GETs)
         response.cookies.set(COOKIE_NAME, data.session_id, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: true, // always secure — Render uses HTTPS
           sameSite: 'lax',
-          maxAge: 7 * 24 * 60 * 60, // 7 days
+          maxAge: 60 * 24 * 60 * 60, // 60 days — matches sliding expiration
           path: '/',
         });
         // Set the CSRF token cookie — NOT HttpOnly (JS must read it)
