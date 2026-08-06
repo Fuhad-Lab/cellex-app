@@ -66,7 +66,10 @@ export default function HomePage() {
 
   // Transient state — not persisted (resets on every mount).
   // Skip the loading skeleton if we already have a cached feed.
-  const [loading, setLoading] = useState(feed.length === 0);
+  // Also skip if we've loaded once (even if feed was empty — prevents
+  // the "No posts found" flash on return visits).
+  const [hasLoadedOnce, setHasLoadedOnce] = usePersistedState<boolean>('home:hasLoadedOnce', false);
+  const [loading, setLoading] = useState(!hasLoadedOnce && feed.length === 0);
   const viewedPosts = useRef<Set<string>>(new Set());
 
   // Restore scroll on mount, save on unmount + on user scroll.
@@ -306,6 +309,7 @@ export default function HomePage() {
       } catch (e) {
         console.error('Feed load error:', e);
       } finally {
+        setHasLoadedOnce(true);
         setLoading(false);
       }
     })();
@@ -557,11 +561,8 @@ function FeedPostCard({
     : 'Free shipping';
 
   return (
-    <motion.article
+    <article
       ref={cardRef}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: Math.min(index * 0.03, 0.15) }}
       style={{
         background: '#FFFFFF',
         borderRadius: '16px',
@@ -873,7 +874,7 @@ function FeedPostCard({
         postCaption={post.caption}
         onCommentAdded={(count) => setCommentCount(count)}
       />
-    </motion.article>
+    </article>
   );
 }
 

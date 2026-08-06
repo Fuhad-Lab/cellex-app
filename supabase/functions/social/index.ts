@@ -378,14 +378,15 @@ async function handleFeedbackWrite(body: any, user: any) {
 
   if (type === 'view') {
     await supabaseInsert('product_view_log', { product_id: productId, user_id: user.id, source });
-  } else if (type === 'save') {
+  } else if (type === 'save' || type === 'like') {
+    // 'like' and 'save' both add to wishlist (like = save on Cellex)
     const { url, headers } = supabaseRest();
     await fetch(`${url}/rest/v1/buyers_wishlist`, {
       method: 'POST',
       headers: { ...headers, 'Prefer': 'return=minimal,resolution=ignore-duplicates' },
       body: JSON.stringify({ user_id: user.id, product_id: productId }),
     });
-  } else if (type === 'unsave') {
+  } else if (type === 'unsave' || type === 'unlike') {
     await supabaseDelete('buyers_wishlist', { user_id: `eq.${user.id}`, product_id: `eq.${productId}` });
   }
   return jsonResponse({ success: true });
@@ -490,7 +491,7 @@ async function handleGroupBuyStart(body: any, user: any) {
   const inviteCode = generateInviteCode();
   const targetCount = product.group_buy_target_count || 3;
   const discountPct = product.group_buy_discount_pct || 20;
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
 
   // Create group buy
   const groupBuy = await supabaseInsert('group_buys', {
