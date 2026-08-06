@@ -16,8 +16,11 @@ export function NavShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Strip query params and trailing slashes for matching
+  const cleanPath = pathname.split('?')[0].replace(/\/$/, '') || '/';
+
   // Check if this exact route should have the mobile nav bar
-  const hasMobileNav = ROUTES_WITH_NAV.includes(pathname);
+  const hasMobileNav = ROUTES_WITH_NAV.includes(cleanPath);
 
   // Check if this route has its own custom header (no back button needed)
   const hasCustomHeader = ROUTES_WITH_CUSTOM_HEADER.some(route => pathname === route) ||
