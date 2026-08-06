@@ -272,6 +272,31 @@ export default function HomePage() {
 
         setFeed(posts);
 
+        // If no posts were found (anonymous users or empty feed), fall back
+        // to showing products directly from the catalog.
+        if (posts.length === 0) {
+          try {
+            const productsResp = await api.products.all(30);
+            if (productsResp.success && productsResp.products) {
+              const productPosts: FeedPost[] = productsResp.products.map((p: any) => ({
+                type: 'product',
+                id: `prod-${p.id}`,
+                productId: p.id,
+                sellerId: p.seller_id,
+                sellerName: 'Seller',
+                mediaUrl: p.image_url || '',
+                caption: p.name || '',
+                likes: 0,
+                comments: 0,
+                product: p,
+                soldCount: p.units_sold,
+                verified: true,
+              }));
+              setFeed(productPosts);
+            }
+          } catch {}
+        }
+
         // Initialize liked posts from API response
         const initialLiked = new Set<string>();
         posts.forEach(p => {
