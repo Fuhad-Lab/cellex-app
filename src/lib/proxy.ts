@@ -40,13 +40,18 @@ export async function proxyToEdgeFunction(edgeName: string, request: NextRequest
   }
 
   // CSRF validation — reject state-changing requests without valid token.
-  // The auth route (/api/auth) handles its own CSRF since it sets the cookie.
-  // All other routes must validate.
-  if (!validateCsrf(request)) {
-    return csrfRejected();
-  }
-
+  // However, anonymous users (no session cookie) are exempt from CSRF
+  // because they can't have a CSRF cookie. This allows read-only endpoints
+  // (products list, feed posts, discover) to work for anonymous visitors.
   const sessionId = request.cookies.get(COOKIE_NAME)?.value || '';
+  if (sessionId) {
+    // User is logged in — require CSRF validation
+    if (!validateCsrf(request)) {
+      return csrfRejected();
+    }
+  }
+  // Anonymous users (no session) skip CSRF — they can only access public data
+
   const body = await request.text();
 
   const headers: Record<string, string> = {

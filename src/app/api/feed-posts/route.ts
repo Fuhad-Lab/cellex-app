@@ -11,7 +11,6 @@ const COOKIE_NAME = 'cellex_session_id';
  * Maps frontend op names to edge function op names.
  */
 export async function POST(request: NextRequest) {
-  if (!validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'SUPABASE_ANON_KEY not set' }, { status: 500 });
   }
@@ -20,6 +19,12 @@ export async function POST(request: NextRequest) {
   let body: any;
   try { body = await request.json(); } catch {
     return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  // CSRF validation — only for state-changing ops.
+  // 'list' is read-only and should work for anonymous users (no CSRF cookie).
+  if (body.op !== 'list') {
+    if (!validateCsrf(request)) return csrfRejected();
   }
 
   // Map frontend ops to edge function ops

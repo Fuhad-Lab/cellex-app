@@ -22,7 +22,8 @@ const EDGE_FUNCTIONS_URL = process.env.SUPABASE_URL ? `${process.env.SUPABASE_UR
  *   { success: false, error: "Seller not found" }
  */
 export async function POST(request: NextRequest) {
-  if (!validateCsrf(request)) return csrfRejected();
+  const _sessionId = request.cookies.get('cellex_session_id')?.value || '';
+  if (_sessionId && !validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'SUPABASE_ANON_KEY not set' }, { status: 500 });
   }

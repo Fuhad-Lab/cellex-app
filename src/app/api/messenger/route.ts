@@ -33,7 +33,8 @@ const OP_MAP: Record<string, string> = {
 };
 
 export async function POST(request: NextRequest) {
-  if (!validateCsrf(request)) return csrfRejected();
+  const _sessionId = request.cookies.get(COOKIE_NAME)?.value || '';
+  if (_sessionId && !validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'SUPABASE_ANON_KEY not set' }, { status: 500 });
   }

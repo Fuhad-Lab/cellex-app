@@ -24,7 +24,8 @@ const COOKIE_NAME = 'cellex_session_id';
  * 7. Return order ID + total
  */
 export async function POST(request: NextRequest) {
-  if (!validateCsrf(request)) return csrfRejected();
+  const _sessionId = request.cookies.get(COOKIE_NAME)?.value || '';
+  if (_sessionId && !validateCsrf(request)) return csrfRejected();
   if (!SUPABASE_ANON_KEY) {
     return NextResponse.json({ success: false, error: 'Service not configured' }, { status: 500 });
   }
