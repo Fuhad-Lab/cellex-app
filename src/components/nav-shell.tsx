@@ -27,7 +27,12 @@ export function NavShell({ children }: { children: React.ReactNode }) {
                           pathname.startsWith('/product');
 
   // Dynamic routes (/[slug] storefronts) and /seller/* have their own headers
-  const isDynamicStorefront = pathname.match(/^\/[^\/]+$/) && !ROUTES_WITH_NAV.includes(pathname) && !pathname.startsWith('/api');
+  // Only treat as storefront if it's a single segment AND not a known app route
+  const knownRoutes = [...ROUTES_WITH_NAV, ...ROUTES_WITH_CUSTOM_HEADER,
+    '/notifications', '/orders', '/profile', '/messenger', '/checkout', '/payment',
+    '/create', '/ai-chat', '/live', '/live-watch', '/group-buy', '/group-buy-join',
+    '/become-seller', '/link-account', '/telegram', '/seller-dashboard', '/seller-profile'];
+  const isDynamicStorefront = pathname.match(/^\/[^\/]+$/) && !knownRoutes.includes(pathname) && !pathname.startsWith('/api');
   const isSellerRoute = pathname.startsWith('/seller');
   const hasOwnHeader = hasCustomHeader || isDynamicStorefront || isSellerRoute;
 
