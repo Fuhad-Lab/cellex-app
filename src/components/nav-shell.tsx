@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { MobileNav } from '@/components/mobile-nav';
 import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 
 // ONLY these pages show the bottom mobile nav bar.
 // All other pages show a back button header instead.
@@ -50,12 +50,12 @@ export function NavShell({ children }: { children: React.ReactNode }) {
             >
               <ChevronLeft className="w-6 h-6 text-[#171717]" />
             </button>
-            <Link href="/" className="ml-1 flex items-center gap-1.5">
+            <InternalLink href="/" className="ml-1 flex items-center gap-1.5">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#111827]">
                 <span className="font-extrabold text-sm text-white" style={{ fontFamily: 'var(--font-geist-mono)' }}>C</span>
               </div>
               <span className="text-base font-semibold text-[#171717] tracking-tight">Cellex</span>
-            </Link>
+            </InternalLink>
           </div>
         </div>
       )}

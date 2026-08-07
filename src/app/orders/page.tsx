@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { api, formatPrice, timeAgo, API_BASE } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { Package, ChevronRight, ChevronLeft, Store, Loader2, CheckCircle } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -99,11 +99,11 @@ function OrdersContent() {
             title="No orders yet"
             message="When you place your first order, it will appear here."
             action={
-              <Link href="/categories">
+              <InternalLink href="/categories">
                 <button className="bg-[#171717] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Start shopping
                 </button>
-              </Link>
+              </InternalLink>
             }
           />
         </div>
@@ -168,9 +168,9 @@ function OrdersContent() {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <Link href={`/product?id=${item.product_id}`} className="text-sm font-medium hover:opacity-70 line-clamp-1">
+                            <InternalLink href={`/product?id=${item.product_id}`} className="text-sm font-medium hover:opacity-70 line-clamp-1">
                               {item.product_name || item.products?.name}
-                            </Link>
+                            </InternalLink>
                             <div className="text-xs text-[#666666]">
                               Qty {item.quantity} × {formatPrice(item.price)}
                             </div>

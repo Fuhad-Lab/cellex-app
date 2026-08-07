@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { ChevronLeft, Heart, MessageCircle, Share2, Bookmark, Send, BadgeCheck, MoreHorizontal, Store } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { SmartImage } from '@/components/smart-image';
 import { SmartVideo } from '@/components/smart-video';
 import { CommentsModal } from '@/components/comments-modal';
@@ -173,7 +173,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
             <div className="max-w-2xl mx-auto pb-32">
               {/* ===== SELLER HEADER ===== */}
               <div className="flex items-center justify-between gap-3 px-4 pt-4 pb-3">
-                <Link href={sellerHref} className="flex items-center gap-3 min-w-0">
+                <InternalLink href={sellerHref} className="flex items-center gap-3 min-w-0">
                   <div
                     className="shrink-0 overflow-hidden flex items-center justify-center"
                     style={{ width: '44px', height: '44px', borderRadius: '999px', background: '#F3F4F6' }}
@@ -191,7 +191,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
                     </div>
                     <div className="text-[13px] text-[#6B7280] truncate">@{handle}</div>
                   </div>
-                </Link>
+                </InternalLink>
               </div>
 
               {/* ===== 1. POST BODY (caption) ===== */}
@@ -220,7 +220,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
 
                   {/* Product overlay */}
                   {post.product && (
-                    <Link
+                    <InternalLink
                       href={productHref}
                       className="absolute"
                       style={{
@@ -239,7 +239,7 @@ export function FullPostModal({ post, onClose }: FullPostModalProps) {
                       </div>
                       <div className="text-[12px] text-white/80 mt-0.5">{subtext}</div>
                       <div className="font-bold text-[16px] text-white mt-1">{formatPrice(post.product.price)}</div>
-                    </Link>
+                    </InternalLink>
                   )}
                 </div>
               </div>

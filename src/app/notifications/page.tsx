@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { ChevronLeft, Bell, Package, Heart, Store, Radio, Users, Sparkles, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -86,7 +86,7 @@ export default function NotificationsPage() {
     <div className="ig-container min-h-screen ig-topbar-offset">
       {/* Top bar */}
       <div className="fx-topbar ig-topbar">
-        <button onClick={() => router.push('/')} className="ig-icon-btn" aria-label="Back">
+        <button onClick={() => router.push('/', { scroll: false })} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Notifications</h1>
@@ -109,19 +109,19 @@ export default function NotificationsPage() {
           <p className="text-sm text-[#666666] mb-6">
             When you get order updates, new followers, or deal alerts, they&apos;ll show up here.
           </p>
-          <Link
+          <InternalLink
             href="/categories"
             className="bg-[#171717] text-black text-sm font-semibold px-6 py-3 rounded-md"
           >
             Browse Products
-          </Link>
+          </InternalLink>
         </div>
       ) : (
         <div className="divide-y divide-white/5">
           {notifications.map((notif) => {
             const Icon = getIcon(notif.type);
             return (
-              <Link
+              <InternalLink
                 key={notif.id}
                 href={notif.href || '#'}
                 className={`flex items-start gap-3 px-4 py-3.5 hover:bg-[#F5F5F5] transition-colors ${
@@ -141,7 +141,7 @@ export default function NotificationsPage() {
                 {!notif.read && (
                   <span className="w-2 h-2 rounded-full bg-[#0095f6] shrink-0 mt-2" />
                 )}
-              </Link>
+              </InternalLink>
             );
           })}
         </div>

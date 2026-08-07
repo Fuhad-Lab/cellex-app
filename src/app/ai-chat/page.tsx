@@ -4,7 +4,7 @@ import { API_BASE } from '@/lib/api';
 import { useEffect, useState, useRef } from 'react';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { Sparkles, Send, Bot, User, Store, RotateCcw, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useAuth } from '@/components/auth-provider';
 import { useRouter } from 'next/navigation';
 
@@ -155,7 +155,7 @@ export default function AiChatPage() {
               {msg.products && msg.products.length > 0 && (
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {msg.products.map((p) => (
-                    <Link key={p.id} href={`/product?id=${p.id}`}>
+                    <InternalLink key={p.id} href={`/product?id=${p.id}`}>
                       <div className="overflow-hidden border border-[#E5E5E5] rounded-md hover:opacity-90 transition-opacity">
                         <div className="aspect-square bg-[#F5F5F5]">
                           {p.image_url ? (
@@ -171,7 +171,7 @@ export default function AiChatPage() {
                           <div className="text-sm font-bold text-black mt-1">{formatPrice(p.price)}</div>
                         </div>
                       </div>
-                    </Link>
+                    </InternalLink>
                   ))}
                 </div>
               )}

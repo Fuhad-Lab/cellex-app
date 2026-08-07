@@ -6,7 +6,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Link2, Phone, Check, Clock, Trash2, MessageCircle, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -73,7 +73,7 @@ export default function LinkAccountPage() {
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="fx-topbar ig-topbar">
-        <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">
+        <button onClick={() => router.push('/profile', { scroll: false })} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Link WhatsApp</h1>

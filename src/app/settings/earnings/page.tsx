@@ -95,7 +95,7 @@ export default function EarningsPage() {
     <div className="min-h-screen bg-white  pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] px-4 h-14 flex items-center gap-2">
-        <button onClick={() => router.push('/settings')} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#F3F4F6]" aria-label="Back">
+        <button onClick={() => router.push('/settings', { scroll: false })} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#F3F4F6]" aria-label="Back">
           <ChevronLeft className="w-5 h-5 text-[#111827]" />
         </button>
         <h1 className="text-base font-semibold text-[#111827]">Earnings & Payouts</h1>
@@ -151,7 +151,7 @@ export default function EarningsPage() {
               <p className="text-xs font-semibold text-[#92400E]">No bank account added</p>
               <p className="text-[10px] text-[#92400E] opacity-80">Add your bank details to receive payouts</p>
             </div>
-            <button onClick={() => router.push('/settings/bank-details')} className="text-xs font-bold text-[#92400E] underline">
+            <button onClick={() => router.push('/settings/bank-details', { scroll: false })} className="text-xs font-bold text-[#92400E] underline">
               Add
             </button>
           </div>

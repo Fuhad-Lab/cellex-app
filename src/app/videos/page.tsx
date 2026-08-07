@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api, formatPrice } from '@/lib/api';
 import { Play, Eye, Heart, ChevronLeft, Store, Clapperboard } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
 
@@ -47,13 +47,13 @@ export default function VideosPage() {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Videos</h1>
-        <Link href="/shorts" className="ig-icon-btn" aria-label="Shorts">
+        <InternalLink href="/shorts" className="ig-icon-btn" aria-label="Shorts">
           <Clapperboard className="w-5 h-5" />
-        </Link>
+        </InternalLink>
       </div>
 
       {/* Shorts promo banner */}
-      <Link
+      <InternalLink
         href="/shorts"
         className="block mx-3 mt-3 bg-gradient-to-r from-neutral-900 to-black text-black rounded-xl p-4 flex items-center gap-3 hover:from-neutral-800 hover:to-neutral-900 transition-colors"
       >
@@ -65,7 +65,7 @@ export default function VideosPage() {
           <div className="text-xs text-black/70">Swipe through short videos from sellers</div>
         </div>
         <Play className="w-5 h-5 fill-white shrink-0" />
-      </Link>
+      </InternalLink>
 
       {/* Section header */}
       <div className="px-3 pt-4 pb-2 flex items-center justify-between">
@@ -91,7 +91,7 @@ export default function VideosPage() {
             const product = video.product;
 
             return (
-              <Link
+              <InternalLink
                 key={video.id}
                 href="/shorts"
                 className="relative aspect-[9/16] bg-[#F5F5F5] overflow-hidden group"
@@ -145,7 +145,7 @@ export default function VideosPage() {
                     <Play className="w-5 h-5 text-black fill-white" />
                   </div>
                 </div>
-              </Link>
+              </InternalLink>
             );
           })}
         </div>

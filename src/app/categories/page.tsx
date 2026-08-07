@@ -7,7 +7,7 @@ import {
   Search, Bell, MessageCircle, ShoppingCart, User as UserIcon,
   Heart, Bookmark, Store, Sparkles,
 } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { MobileHeader } from '@/components/mobile-header';
 import { RevealOnScroll } from '@/components/animation-provider';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -413,7 +413,7 @@ function DiscoveryCard({
         background: '#F3F4F6',
       }}
     >
-      <Link
+      <InternalLink
         href={`/product?id=${product.id}`}
         className="block w-full h-full"
         style={{ position: 'absolute', inset: 0 }}
@@ -538,7 +538,7 @@ function DiscoveryCard({
             {formatPrice(product.price)}
           </div>
         </div>
-      </Link>
+      </InternalLink>
     </div>
   );
 }

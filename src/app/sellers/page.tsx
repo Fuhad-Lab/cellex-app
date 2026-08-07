@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api, type Product } from '@/lib/api';
 import { Store, Search, Users, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -144,7 +144,7 @@ export default function SellersPage() {
             const sellerHref = seller.slug ? `/${seller.slug}` : `/seller-profile?id=${seller.id}`;
 
             return (
-              <Link
+              <InternalLink
                 key={seller.id}
                 href={sellerHref}
                 className="block p-4 hover:bg-[#F5F5F5] transition-colors"
@@ -188,7 +188,7 @@ export default function SellersPage() {
                     ))}
                   </div>
                 )}
-              </Link>
+              </InternalLink>
             );
           })}
         </div>

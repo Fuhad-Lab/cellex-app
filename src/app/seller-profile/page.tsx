@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { api, formatPrice, timeAgo, type Product, type Review } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { Store, MapPin, Star, Grid3x3, Film, Package, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -82,9 +82,9 @@ function SellerProfileContent() {
         <p className="text-sm text-neutral-500 mb-6 max-w-xs mx-auto">
           This seller may no longer be active on Cellex. Try browsing other stores.
         </p>
-        <Link href="/categories" className="inline-block bg-black text-white text-sm font-semibold px-6 py-3 rounded-lg">
+        <InternalLink href="/categories" className="inline-block bg-black text-white text-sm font-semibold px-6 py-3 rounded-lg">
           Browse Products
-        </Link>
+        </InternalLink>
       </div>
     );
   }
@@ -168,12 +168,12 @@ function SellerProfileContent() {
         >
           {isFollowing ? 'Following' : 'Follow'}
         </button>
-        <Link
+        <InternalLink
           href={`/messenger?seller=${sellerId}`}
           className="flex-1 ig-btn-outline text-center inline-flex items-center justify-center"
         >
           Message
-        </Link>
+        </InternalLink>
       </div>
 
       {/* Tab bar — IG-style: 2 tabs (Products / Videos) */}
@@ -205,7 +205,7 @@ function SellerProfileContent() {
         ) : (
           <div className="ig-post-grid">
             {products.map((p) => (
-              <Link key={p.id} href={`/product?id=${p.id}`} className="block relative group">
+              <InternalLink key={p.id} href={`/product?id=${p.id}`} className="block relative group">
                 <img
                   src={p.image_url || ''}
                   alt={p.name}
@@ -217,7 +217,7 @@ function SellerProfileContent() {
                   <div className="text-white text-sm font-bold">{formatPrice(p.price)}</div>
                   <div className="text-white/80 text-[10px] mt-0.5">{p.units_sold || 0} sold</div>
                 </div>
-              </Link>
+              </InternalLink>
             ))}
           </div>
         )
@@ -233,7 +233,7 @@ function SellerProfileContent() {
         ) : (
           <div className="ig-post-grid">
             {videos.map((v) => (
-              <Link key={v.id} href="/videos" className="block relative group bg-black">
+              <InternalLink key={v.id} href="/videos" className="block relative group bg-black">
                 {v.video_url ? (
                   <video src={v.video_url} muted className="w-full h-full object-cover" />
                 ) : (
@@ -244,7 +244,7 @@ function SellerProfileContent() {
                 <div className="absolute top-2 right-2 flex items-center gap-1">
                   <span className="text-white text-[10px] font-semibold">{formatCount(v.views_count || 0)}</span>
                 </div>
-              </Link>
+              </InternalLink>
             ))}
           </div>
         )

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import {
@@ -58,7 +58,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
           const isActive = pathname === item.href;
           const Icon = item.icon;
           return (
-            <Link
+            <InternalLink
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
@@ -70,17 +70,17 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
             >
               <Icon className="w-4 h-4" />
               {item.label}
-            </Link>
+            </InternalLink>
           );
         })}
       </nav>
 
       <div className="p-2 border-t border-white/5">
-        <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5">
+        <InternalLink href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5">
           <Store className="w-4 h-4" /> Back to store
-        </Link>
+        </InternalLink>
         <button
-          onClick={async () => { await logout(); router.push('/'); }}
+          onClick={async () => { await logout(); router.push('/', { scroll: false }); }}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 w-full"
         >
           <LogOut className="w-4 h-4" /> Logout

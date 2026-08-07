@@ -6,7 +6,7 @@ import { useAuth } from '@/components/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Store, MapPin, CreditCard, ChevronLeft, Check, Shield, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
 import { MagneticButton, RevealOnScroll } from '@/components/animation-provider';
@@ -111,7 +111,7 @@ export default function CheckoutPage() {
       } else {
         // Payment init failed — order is created but unpaid
         toast({ title: 'Payment setup failed', description: paymentData.error || 'Please try again', variant: 'destructive' });
-        router.push('/orders');
+        router.push('/orders', { scroll: false });
       }
     } catch (err) {
       toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });

@@ -9,7 +9,7 @@ import {
   Plus, Settings as SettingsIcon, ShoppingBag, ShoppingCart,
   Home as HomeIcon, Sparkles,
 } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
@@ -663,7 +663,7 @@ function FeedPostCard({
         }}
       >
         {isVideo ? (
-          <Link href="/videos" className="block w-full h-full relative">
+          <InternalLink href="/videos" className="block w-full h-full relative">
             <SmartVideo
               src={post.mediaUrl}
               className="w-full h-full"
@@ -671,9 +671,9 @@ function FeedPostCard({
               loop={true}
               onInView={() => trackView(post.id, post.videoId, post.productId)}
             />
-          </Link>
+          </InternalLink>
         ) : (
-          <Link href={productHref} className="block w-full h-full">
+          <InternalLink href={productHref} className="block w-full h-full">
             <SmartImage
               src={post.mediaUrl}
               alt={post.caption || post.product?.name || ''}
@@ -681,12 +681,12 @@ function FeedPostCard({
               height={750}
               className="w-full h-full object-cover"
             />
-          </Link>
+          </InternalLink>
         )}
 
         {/* ===== PRODUCT OVERLAY (dark glass, bottom-left) ===== */}
         {post.product && (
-          <Link
+          <InternalLink
             href={productHref}
             className="absolute"
             style={{
@@ -731,7 +731,7 @@ function FeedPostCard({
             >
               {formatPrice(post.product.price)}
             </div>
-          </Link>
+          </InternalLink>
         )}
       </div>
 

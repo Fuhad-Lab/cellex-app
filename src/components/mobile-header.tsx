@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { Search, Plus, Store, Bell, Settings, ShoppingBag, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { useRef, useEffect } from 'react';
@@ -50,7 +50,7 @@ export function MobileHeader() {
       }}
     >
       {/* Logo — left */}
-      <Link href="/" className="shrink-0 flex items-center gap-2">
+      <InternalLink href="/" className="shrink-0 flex items-center gap-2">
         <div
           className="flex items-center justify-center"
           style={{ width: '40px', height: '40px', background: '#111827', borderRadius: '10px' }}
@@ -61,7 +61,7 @@ export function MobileHeader() {
         <span className="font-bold tracking-tight" style={{ fontSize: '20px', color: '#111827' }}>
           Cellex
         </span>
-      </Link>
+      </InternalLink>
 
       {/* Search bar — center */}
       <button
@@ -84,7 +84,7 @@ export function MobileHeader() {
           // No more "?" placeholder — that was bad UX.
           // Use compact pill buttons so they fit on small screens.
           <>
-            <Link
+            <InternalLink
               href="/login"
               className="flex items-center justify-center transition-opacity active:opacity-70 link-underline"
               style={{
@@ -97,9 +97,9 @@ export function MobileHeader() {
               aria-label="Log in"
             >
               <span className="text-xs font-semibold" style={{ color: '#111827' }}>Log in</span>
-            </Link>
+            </InternalLink>
             <MagneticButton strength={0.2}>
-              <Link
+              <InternalLink
                 href="/login?mode=signup"
                 className="flex items-center justify-center transition-opacity active:opacity-70 btn-ripple"
                 style={{
@@ -111,55 +111,55 @@ export function MobileHeader() {
                 aria-label="Sign up"
               >
                 <span className="text-xs font-semibold" style={{ color: '#FFFFFF' }}>Sign up</span>
-              </Link>
+              </InternalLink>
             </MagneticButton>
           </>
         ) : isSeller ? (
           // ===== BUYER-SELLER: + button, My Shop, Bell, Settings =====
           <>
             {/* + button — create post or product */}
-            <Link
+            <InternalLink
               href="/create"
               className="flex items-center justify-center transition-opacity active:opacity-70"
               style={{ width: '36px', height: '36px', borderRadius: '999px' }}
               aria-label="Create post or product"
             >
               <Plus className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={2} />
-            </Link>
+            </InternalLink>
             {/* My Shop icon — seller dashboard */}
-            <Link
+            <InternalLink
               href="/seller-dashboard"
               className="flex items-center justify-center transition-opacity active:opacity-70"
               style={{ width: '36px', height: '36px', borderRadius: '999px' }}
               aria-label="My Shop"
             >
               <Store className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={1.75} />
-            </Link>
+            </InternalLink>
             {/* Notification bell */}
-            <Link
+            <InternalLink
               href="/notifications"
               className="flex items-center justify-center relative transition-opacity active:opacity-70"
               style={{ width: '36px', height: '36px', borderRadius: '999px' }}
               aria-label="Notifications"
             >
               <Bell className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={1.75} />
-            </Link>
+            </InternalLink>
             {/* Settings gear */}
-            <Link
+            <InternalLink
               href="/settings"
               className="flex items-center justify-center transition-opacity active:opacity-70"
               style={{ width: '36px', height: '36px', borderRadius: '999px' }}
               aria-label="Settings"
             >
               <Settings className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={1.75} />
-            </Link>
+            </InternalLink>
           </>
         ) : (
           // ===== BUYER: Profile avatar + Notification bell =====
           // (Profile icon FIRST, then Notification icon — per spec)
           <>
             {/* Profile avatar — buyer only. Shows their profile picture or initial. */}
-            <Link
+            <InternalLink
               href="/profile"
               className="flex items-center justify-center overflow-hidden transition-opacity active:opacity-70"
               style={{ width: '36px', height: '36px', borderRadius: '999px', border: '2px solid #E5E7EB' }}
@@ -174,16 +174,16 @@ export function MobileHeader() {
                   </span>
                 </div>
               )}
-            </Link>
+            </InternalLink>
             {/* Notification bell */}
-            <Link
+            <InternalLink
               href="/notifications"
               className="flex items-center justify-center relative transition-opacity active:opacity-70"
               style={{ width: '36px', height: '36px', borderRadius: '999px' }}
               aria-label="Notifications"
             >
               <Bell className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={1.75} />
-            </Link>
+            </InternalLink>
           </>
         )}
       </div>

@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice } from '@/lib/api';
 import { ChevronLeft, Users, Share2, Check, ShoppingBag } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -64,7 +64,7 @@ function GroupBuyContent() {
         <Users className="w-12 h-12 mb-3" style={{ color: '#9CA3AF' }} />
         <p className="text-sm font-semibold" style={{ color: '#111827' }}>Group buy not found</p>
         <p className="text-xs mt-1" style={{ color: '#6B7280' }}>This group buy may have ended or been cancelled.</p>
-        <Link href="/" className="mt-4 text-sm font-semibold" style={{ color: '#111827' }}>Browse products</Link>
+        <InternalLink href="/" className="mt-4 text-sm font-semibold" style={{ color: '#111827' }}>Browse products</InternalLink>
       </div>
     );
   }
@@ -144,13 +144,13 @@ function GroupBuyContent() {
                 {joining ? 'Joining...' : 'Join Group Buy'}
               </button>
             ) : (
-              <Link
+              <InternalLink
                 href={`/login?next=${encodeURIComponent(`/group-buy?id=${groupBuyId}`)}`}
                 className="w-full font-semibold transition active:scale-95 flex items-center justify-center"
                 style={{ height: '52px', borderRadius: '999px', background: '#111827', color: '#FFFFFF', fontSize: '15px' }}
               >
                 Sign up to Join
-              </Link>
+              </InternalLink>
             )}
             <button
               onClick={share}
@@ -161,14 +161,14 @@ function GroupBuyContent() {
             </button>
           </div>
         ) : (
-          <Link href={`/product?id=${gb.product_id}`}>
+          <InternalLink href={`/product?id=${gb.product_id}`}>
             <button
               className="w-full font-semibold transition active:scale-95 flex items-center justify-center gap-2"
               style={{ height: '52px', borderRadius: '999px', background: '#111827', color: '#FFFFFF', fontSize: '15px' }}
             >
               <ShoppingBag className="w-5 h-5" /> Buy at {formatPrice(discountedPrice)}
             </button>
-          </Link>
+          </InternalLink>
         )}
 
         {/* How it works */}

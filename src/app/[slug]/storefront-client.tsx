@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { api, formatPrice, timeAgo, type Product } from '@/lib/api';
 import { API_BASE } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
@@ -346,7 +346,7 @@ export default function SellerStorefront({
           <span className="font-mono font-semibold">/{slug}</span> doesn&apos;t exist, or
           the seller may have changed their name.
         </p>
-        <Link
+        <InternalLink
           href="/"
           className="inline-flex items-center justify-center"
           style={{
@@ -360,7 +360,7 @@ export default function SellerStorefront({
           }}
         >
           Go to homepage
-        </Link>
+        </InternalLink>
       </div>
     );
   }
@@ -626,7 +626,7 @@ export default function SellerStorefront({
               </>
             )}
           </button>
-          <Link
+          <InternalLink
             href={`/messenger?seller=${seller.id}`}
             className="flex-1 flex items-center justify-center transition-opacity active:opacity-80"
             style={{
@@ -642,7 +642,7 @@ export default function SellerStorefront({
           >
             <MessageCircle className="w-4 h-4 mr-1.5" strokeWidth={2} />
             Message
-          </Link>
+          </InternalLink>
           <button
             type="button"
             onClick={shareStore}
@@ -1092,7 +1092,7 @@ export default function SellerStorefront({
             >
               Similar Sellers
             </h2>
-            <Link
+            <InternalLink
               href="/sellers"
               style={{
                 fontSize: '13px',
@@ -1101,7 +1101,7 @@ export default function SellerStorefront({
               }}
             >
               See all
-            </Link>
+            </InternalLink>
           </div>
 
           <div
@@ -1132,7 +1132,7 @@ export default function SellerStorefront({
                     textAlign: 'center',
                   }}
                 >
-                  <Link
+                  <InternalLink
                     href={
                       s.slug
                         ? `/${s.slug}`
@@ -1166,7 +1166,7 @@ export default function SellerStorefront({
                         {sName.charAt(0).toUpperCase()}
                       </span>
                     )}
-                  </Link>
+                  </InternalLink>
                   <div
                     className="font-semibold truncate"
                     style={{
@@ -1364,7 +1364,7 @@ function PostCard({ item }: { item: any }) {
       }}
     >
       {img && (
-        <Link
+        <InternalLink
           href={
             item.entity_id && activityType === 'product_added'
               ? `/product?id=${item.entity_id}`
@@ -1385,7 +1385,7 @@ function PostCard({ item }: { item: any }) {
             blur
             style={{ width: '100%', height: '100%' }}
           />
-        </Link>
+        </InternalLink>
       )}
       <div style={{ padding: '14px' }}>
         <div
@@ -1435,7 +1435,7 @@ function PostCard({ item }: { item: any }) {
           </p>
         )}
         {item.entity_id && activityType === 'product_added' && (
-          <Link
+          <InternalLink
             href={`/product?id=${item.entity_id}`}
             className="inline-flex items-center mt-3"
             style={{
@@ -1445,7 +1445,7 @@ function PostCard({ item }: { item: any }) {
             }}
           >
             View product →
-          </Link>
+          </InternalLink>
         )}
       </div>
     </div>
@@ -1477,7 +1477,7 @@ function ProductCard({
   const commentCount = 0;
 
   return (
-    <Link
+    <InternalLink
       href={`/product?id=${product.id}`}
       className="block transition-transform active:scale-[0.98]"
       style={{
@@ -1616,7 +1616,7 @@ function ProductCard({
           </span>
         </div>
       </div>
-    </Link>
+    </InternalLink>
   );
 }
 

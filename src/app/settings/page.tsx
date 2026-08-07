@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { ChevronLeft, ChevronRight, Bell, Globe, Shield, Store, LogOut,
   HelpCircle, Mail, Phone, User, Star, Sparkles, Building2, Wallet } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
@@ -53,7 +53,7 @@ export default function SettingsPage() {
 
   const handleLogout = async () => {
     await logout();
-    router.push('/');
+    router.push('/', { scroll: false });
   };
 
   const sectionLabel = "text-xs font-semibold text-slate-400 uppercase tracking-wide px-4 mb-2";
@@ -62,7 +62,7 @@ export default function SettingsPage() {
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="fx-topbar ig-topbar">
-        <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">
+        <button onClick={() => router.push('/profile', { scroll: false })} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Settings</h1>
@@ -72,14 +72,14 @@ export default function SettingsPage() {
       <div className="pt-4">
         <h2 className={sectionLabel}>Account</h2>
         <div className="divide-y divide-white/5 border-y border-white/5">
-          <Link href="/profile" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+          <InternalLink href="/profile" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
             <User className="w-5 h-5 text-white shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Edit Profile</div>
               <div className="text-xs text-slate-400">{profile?.full_name || user?.email}</div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-600" />
-          </Link>
+          </InternalLink>
 
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Mail className="w-5 h-5 text-slate-400 shrink-0" />
@@ -115,40 +115,40 @@ export default function SettingsPage() {
         <div className="divide-y divide-white/5 border-y border-white/5">
           {isSeller ? (
             <>
-              <Link href="/seller" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+              <InternalLink href="/seller" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
                 <Store className="w-5 h-5 text-white shrink-0" />
                 <div className="flex-1">
                   <div className="font-medium text-sm">Seller Dashboard</div>
                   <div className="text-xs text-slate-400">Manage your products, orders & analytics</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-600" />
-              </Link>
-              <Link href="/settings/earnings" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+              </InternalLink>
+              <InternalLink href="/settings/earnings" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
                 <Wallet className="w-5 h-5 text-white shrink-0" />
                 <div className="flex-1">
                   <div className="font-medium text-sm">Earnings & Payouts</div>
                   <div className="text-xs text-slate-400">View escrow balance, request payouts</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-600" />
-              </Link>
-              <Link href="/settings/bank-details" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+              </InternalLink>
+              <InternalLink href="/settings/bank-details" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
                 <Building2 className="w-5 h-5 text-white shrink-0" />
                 <div className="flex-1">
                   <div className="font-medium text-sm">Bank Details</div>
                   <div className="text-xs text-slate-400">Add bank account for payouts</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-600" />
-              </Link>
+              </InternalLink>
             </>
           ) : (
-            <Link href="/become-seller" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+            <InternalLink href="/become-seller" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
               <Store className="w-5 h-5 text-white shrink-0" />
               <div className="flex-1">
                 <div className="font-medium text-sm">Become a Seller</div>
                 <div className="text-xs text-slate-400">Start selling on Cellex — it's free</div>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-600" />
-            </Link>
+            </InternalLink>
           )}
         </div>
       </div>
@@ -157,22 +157,22 @@ export default function SettingsPage() {
       <div className="pt-6">
         <h2 className={sectionLabel}>Support</h2>
         <div className="divide-y divide-white/5 border-y border-white/5">
-          <Link href="/telegram" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+          <InternalLink href="/telegram" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
             <HelpCircle className="w-5 h-5 text-white shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Help & Support</div>
               <div className="text-xs text-slate-400">Get help via Telegram</div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-600" />
-          </Link>
-          <Link href="/ai-chat" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
+          </InternalLink>
+          <InternalLink href="/ai-chat" className="flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors">
             <Sparkles className="w-5 h-5 text-white shrink-0" />
             <div className="flex-1">
               <div className="font-medium text-sm">Ask AI Assistant</div>
               <div className="text-xs text-slate-400">Get instant help from our AI</div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-600" />
-          </Link>
+          </InternalLink>
         </div>
       </div>
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api, formatPrice } from '@/lib/api';
 import { Radio, Eye, ChevronLeft, Store } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { EmptyState } from '@/components/product-card';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -55,7 +55,7 @@ export default function LivePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {liveNow.map((s) => (
-              <Link key={s.id} href={`/live-watch?id=${s.id}`}>
+              <InternalLink key={s.id} href={`/live-watch?id=${s.id}`}>
                 <div className="overflow-hidden border border-[#E5E5E5] rounded-md hover:opacity-90 transition-opacity">
                   <div className="aspect-video bg-[#171717] relative">
                     <div className="w-full h-full flex items-center justify-center text-black">
@@ -85,7 +85,7 @@ export default function LivePage() {
                     )}
                   </div>
                 </div>
-              </Link>
+              </InternalLink>
             ))}
           </div>
         )}
@@ -97,7 +97,7 @@ export default function LivePage() {
           <h2 className="font-semibold text-sm mb-3">Recent Sessions</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {recent.slice(0, 6).map((s) => (
-              <Link key={s.id} href={`/live-watch?id=${s.id}`}>
+              <InternalLink key={s.id} href={`/live-watch?id=${s.id}`}>
                 <div className="overflow-hidden border border-[#E5E5E5] rounded-md hover:opacity-90 transition-opacity">
                   <div className="aspect-video bg-[#F5F5F5] flex items-center justify-center">
                     <Radio className="w-6 h-6 text-[#666666]" />
@@ -107,7 +107,7 @@ export default function LivePage() {
                     <div className="text-[10px] text-[#666666] mt-0.5">{s.seller_name}</div>
                   </div>
                 </div>
-              </Link>
+              </InternalLink>
             ))}
           </div>
         </section>
@@ -120,11 +120,11 @@ export default function LivePage() {
             title="No live sessions yet"
             message="Sellers can go live to showcase their products in real-time. Follow sellers to get notified when they go live."
             action={
-              <Link href="/categories">
+              <InternalLink href="/categories">
                 <button className="bg-[#171717] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Browse products
                 </button>
-              </Link>
+              </InternalLink>
             }
           />
         </div>

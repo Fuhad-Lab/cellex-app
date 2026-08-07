@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, ChevronLeft, User, Camera, Loader2, X } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { API_BASE } from '@/lib/api';
@@ -185,7 +185,7 @@ function LoginContent() {
         {/* Top bar back button */}
         {next !== '/' && (
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/', { scroll: false })}
             className="inline-flex items-center text-xs text-[#666666] hover:text-black"
           >
             <ChevronLeft className="w-4 h-4" /> Back to home

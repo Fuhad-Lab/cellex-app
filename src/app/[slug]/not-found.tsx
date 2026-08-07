@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { Store } from 'lucide-react';
 
 /**
@@ -15,12 +15,12 @@ export default function StoreNotFound() {
       <p className="text-sm text-neutral-500 max-w-xs mb-6">
         The store you&apos;re looking for doesn&apos;t exist, or the seller may have changed their name.
       </p>
-      <Link
+      <InternalLink
         href="/"
         className="bg-black text-white text-sm font-semibold px-6 py-3 rounded-md hover:bg-neutral-800 transition-colors"
       >
         Go to homepage
-      </Link>
+      </InternalLink>
     </div>
   );
 }

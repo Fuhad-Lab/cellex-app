@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { Store, Loader2, Check, Sparkles } from 'lucide-react';
 
 import { useScrollPreservation } from '@/components/global-state-provider';
@@ -89,9 +89,9 @@ export default function SellerPreparingPage() {
         <Sparkles className="w-3 h-3" />
       </div>
 
-      <Link href="/seller" className="mt-8 text-xs text-slate-500 underline">
+      <InternalLink href="/seller" className="mt-8 text-xs text-slate-500 underline">
         Skip to dashboard
-      </Link>
+      </InternalLink>
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api, timeAgo } from '@/lib/api';
 import { Send, Users, ChevronLeft, MessageSquare } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { useScrollPreservation } from '@/components/global-state-provider';
@@ -35,7 +35,7 @@ export default function TelegramPage() {
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="fx-topbar ig-topbar">
-        <button onClick={() => router.push('/profile')} className="ig-icon-btn" aria-label="Back">
+        <button onClick={() => router.push('/profile', { scroll: false })} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">Telegram Channel</h1>

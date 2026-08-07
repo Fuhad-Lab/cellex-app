@@ -9,7 +9,7 @@ import {
   MessageSquare, MessageCircle, CheckCircle, Video as VideoIcon,
   Bookmark, Minus, Plus, Zap, BadgeCheck, Users,
 } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -265,7 +265,7 @@ function ProductContent() {
         <p className="font-semibold" style={{ fontSize: '15px', color: '#6B7280' }}>
           Product not found
         </p>
-        <Link
+        <InternalLink
           href="/"
           className="inline-block mt-4 font-semibold"
           style={{
@@ -278,7 +278,7 @@ function ProductContent() {
           }}
         >
           Back to home
-        </Link>
+        </InternalLink>
       </div>
     );
   }
@@ -509,7 +509,7 @@ function ProductContent() {
           className="flex items-center gap-3"
           style={{ padding: '16px', borderBottom: '1px solid #E5E7EB' }}
         >
-          <Link href={sellerHref} className="shrink-0">
+          <InternalLink href={sellerHref} className="shrink-0">
             <div
               className="overflow-hidden flex items-center justify-center"
               style={{
@@ -531,9 +531,9 @@ function ProductContent() {
                 </span>
               )}
             </div>
-          </Link>
+          </InternalLink>
 
-          <Link href={sellerHref} className="flex-1 min-w-0">
+          <InternalLink href={sellerHref} className="flex-1 min-w-0">
             <div className="flex items-center gap-1">
               <span
                 className="font-semibold truncate"
@@ -553,7 +553,7 @@ function ProductContent() {
             >
               @{handle} · {formatCount(followers)} followers
             </div>
-          </Link>
+          </InternalLink>
 
           <button
             onClick={toggleFollow}

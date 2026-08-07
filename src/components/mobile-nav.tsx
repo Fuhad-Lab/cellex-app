@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { usePathname } from 'next/navigation';
 import { Home, Compass, MessageCircle, Bookmark, ShoppingCart, Settings } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
@@ -55,7 +55,7 @@ export function MobileNav() {
           const Icon = item.icon;
 
           return (
-            <Link
+            <InternalLink
               key={item.href}
               href={item.href}
               className="flex items-center justify-center relative transition-colors"
@@ -113,7 +113,7 @@ export function MobileNav() {
                   )}
                 </div>
               </div>
-            </Link>
+            </InternalLink>
           );
         })}
       </nav>

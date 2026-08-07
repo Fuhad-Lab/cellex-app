@@ -164,22 +164,18 @@ export function usePersistedState<T>(
 export function useScrollPreservation(pageKey: string): void {
   const { getScroll, saveScroll } = useGlobalState();
 
-  // CRITICAL: use useLayoutEffect (not useEffect) for scroll restoration.
-  // useLayoutEffect fires SYNCHRONOUSLY before the browser paints, so the
-  // user never sees the top of the page — they see the correct scroll position
-  // immediately. useEffect fires after paint, which means the user sees a
-  // flash of the top before being scrolled down.
+  // CRITICAL: useLayoutEffect fires BEFORE paint — scroll is restored
+  // before the user sees anything.
   useLayoutEffect(() => {
     const saved = getScroll(pageKey);
     if (saved > 0) {
-      // Restore IMMEDIATELY — before paint, before the user sees anything.
+      // Restore IMMEDIATELY — before paint.
       try {
         window.scrollTo(0, saved);
       } catch {}
 
-      // Also restore after a short delay — images loading from cache can
-      // change the page height and reset scroll. These retries ensure the
-      // position sticks.
+      // Retry at multiple intervals to handle images loading from cache
+      // and changing page height.
       const retries = [50, 150, 300, 600, 1000];
       const timers: ReturnType<typeof setTimeout>[] = [];
       for (const delay of retries) {
@@ -193,8 +189,19 @@ export function useScrollPreservation(pageKey: string): void {
         timers.push(t);
       }
 
+      // Final RAF re-assertion — covers animation libraries that run
+      // after mount and may change scroll.
+      const raf = requestAnimationFrame(() => {
+        if (Math.abs(window.scrollY - saved) > 10) {
+          try {
+            window.scrollTo(0, saved);
+          } catch {}
+        }
+      });
+
       return () => {
         timers.forEach(clearTimeout);
+        cancelAnimationFrame(raf);
         saveScroll(pageKey, window.scrollY);
       };
     }
@@ -213,12 +220,36 @@ export function useScrollPreservation(pageKey: string): void {
       }, 150);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Also save scroll on visibilitychange (user switching tabs / navigating away)
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        saveScroll(pageKey, window.scrollY);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // bfcache restore — if the page is restored from bfcache, re-assert scroll
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        const saved = getScroll(pageKey);
+        if (saved > 0) {
+          try {
+            window.scrollTo(0, saved);
+          } catch {}
+        }
+      }
+    };
+    window.addEventListener('pageshow', onPageShow);
+
     return () => {
       window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pageshow', onPageShow);
       if (timeout) clearTimeout(timeout);
       saveScroll(pageKey, window.scrollY);
     };
-  }, [pageKey, saveScroll]);
+  }, [pageKey, saveScroll, getScroll]);
 }
 
 /**

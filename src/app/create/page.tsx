@@ -188,7 +188,7 @@ export default function CreatePage() {
       });
       if (resp.success) {
         toast({ title: 'Post created!', description: 'Your post is now live in the feed.' });
-        router.push('/');
+        router.push('/', { scroll: false });
       } else {
         toast({ title: 'Failed to create post', description: resp.error });
       }

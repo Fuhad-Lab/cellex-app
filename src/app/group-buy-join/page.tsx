@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { Users, Check, ShoppingBag, Lock, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
@@ -99,9 +99,9 @@ function GroupBuyJoinContent() {
           <Users className="w-12 h-12 text-slate-600 mb-3" />
           <h2 className="text-base font-semibold mb-2">Group Buy Not Found</h2>
           <p className="text-sm text-slate-400 mb-4">{error}</p>
-          <Link href="/categories" className="inline-block bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-md">
+          <InternalLink href="/categories" className="inline-block bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-md">
             Browse Products
-          </Link>
+          </InternalLink>
         </div>
       </div>
     );
@@ -184,12 +184,12 @@ function GroupBuyJoinContent() {
               You&apos;ve joined this group buy. A conversation has been created in your messenger for this group.
             </p>
             <div className="flex gap-2">
-              <Link href="/messenger" className="flex-1">
+              <InternalLink href="/messenger" className="flex-1">
                 <button className="w-full bg-indigo-600 text-white font-semibold rounded-md py-2.5">Open Messenger</button>
-              </Link>
-              <Link href={`/product?id=${groupBuy?.product_id}`} className="flex-1">
+              </InternalLink>
+              <InternalLink href={`/product?id=${groupBuy?.product_id}`} className="flex-1">
                 <button className="w-full bg-white/10 border border-white/15 text-white font-semibold rounded-md py-2.5">View Product</button>
-              </Link>
+              </InternalLink>
             </div>
           </div>
         ) : !user && !authLoading ? (
@@ -200,12 +200,12 @@ function GroupBuyJoinContent() {
               You need to be logged in to join a group buy. Please sign up or login to continue.
             </p>
             <div className="flex gap-2">
-              <Link href={`/login?next=/group-buy-join?code=${inviteCode}`} className="flex-1">
+              <InternalLink href={`/login?next=/group-buy-join?code=${inviteCode}`} className="flex-1">
                 <button className="w-full bg-indigo-600 text-white font-semibold rounded-md py-2.5">Login</button>
-              </Link>
-              <Link href={`/login?next=/group-buy-join?code=${inviteCode}&mode=signup`} className="flex-1">
+              </InternalLink>
+              <InternalLink href={`/login?next=/group-buy-join?code=${inviteCode}&mode=signup`} className="flex-1">
                 <button className="w-full bg-white/10 border border-white/15 text-white font-semibold rounded-md py-2.5">Sign Up</button>
-              </Link>
+              </InternalLink>
             </div>
           </div>
         ) : (

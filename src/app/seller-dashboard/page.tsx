@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import {
   ChevronLeft, Store, Package, ShoppingBag, Radio, Video,
   BookOpen, Settings, DollarSign, Eye, TrendingUp, ArrowRight,
@@ -160,18 +160,18 @@ export default function SellerDashboardPage() {
   return (
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       <div className="fx-topbar ig-topbar">
-        <button onClick={() => router.push('/')} className="ig-icon-btn" aria-label="Back">
+        <button onClick={() => router.push('/', { scroll: false })} className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-base font-semibold flex-1 ml-2">My Store</h1>
         {sellerSlug && (
-          <Link
+          <InternalLink
             href={`/${sellerSlug}`}
             className="text-xs font-semibold text-sky-500 hover:text-sky-700 px-2 py-1"
             aria-label="View public storefront"
           >
             View store
-          </Link>
+          </InternalLink>
         )}
       </div>
 
@@ -195,12 +195,12 @@ export default function SellerDashboardPage() {
           <p className="text-sm text-[#666666] mt-3 max-w-md mx-auto">{seller.business_description}</p>
         )}
         {sellerSlug && (
-          <Link
+          <InternalLink
             href={`/${sellerSlug}`}
             className="inline-block mt-3 text-xs font-medium text-sky-500 hover:underline"
           >
             cellex.app/{sellerSlug}
-          </Link>
+          </InternalLink>
         )}
       </div>
 
@@ -220,9 +220,9 @@ export default function SellerDashboardPage() {
             Recent Orders
           </h3>
           {totalOrders > 0 && (
-            <Link href="/seller/orders" className="text-xs font-semibold text-sky-500 hover:text-sky-700 flex items-center gap-0.5">
+            <InternalLink href="/seller/orders" className="text-xs font-semibold text-sky-500 hover:text-sky-700 flex items-center gap-0.5">
               See all <ArrowRight className="w-3 h-3" />
-            </Link>
+            </InternalLink>
           )}
         </div>
 
@@ -241,7 +241,7 @@ export default function SellerDashboardPage() {
               const firstItemName = o.items?.[0]?.product_name;
               const extraItems = (o.items?.length || 0) - 1;
               return (
-                <Link
+                <InternalLink
                   key={o.id}
                   href="/seller/orders"
                   className="flex items-center gap-3 py-3 hover:bg-[#F5F5F5] -mx-2 px-2 rounded-md transition-colors"
@@ -274,7 +274,7 @@ export default function SellerDashboardPage() {
                   <div className="text-right shrink-0">
                     <div className="font-bold text-sm">{formatPrice(o.total)}</div>
                   </div>
-                </Link>
+                </InternalLink>
               );
             })}
           </div>
@@ -289,9 +289,9 @@ export default function SellerDashboardPage() {
             Top Products
           </h3>
           {totalProducts > 0 && (
-            <Link href="/seller/products" className="text-xs font-semibold text-sky-500 hover:text-sky-700 flex items-center gap-0.5">
+            <InternalLink href="/seller/products" className="text-xs font-semibold text-sky-500 hover:text-sky-700 flex items-center gap-0.5">
               See all <ArrowRight className="w-3 h-3" />
-            </Link>
+            </InternalLink>
           )}
         </div>
 
@@ -306,7 +306,7 @@ export default function SellerDashboardPage() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {topProducts.map((p) => (
-              <Link
+              <InternalLink
                 key={p.id}
                 href={`/product?id=${p.id}`}
                 className="block border border-[#E5E5E5] rounded-lg overflow-hidden hover:shadow-md transition-all"
@@ -334,7 +334,7 @@ export default function SellerDashboardPage() {
                     )}
                   </div>
                 </div>
-              </Link>
+              </InternalLink>
             ))}
           </div>
         )}
@@ -374,7 +374,7 @@ export default function SellerDashboardPage() {
             {section.items.map((item) => {
               const Icon = item.icon;
               return (
-                <Link
+                <InternalLink
                   key={item.href}
                   href={item.href}
                   className="flex items-center gap-3 px-2 py-3 hover:bg-[#F5F5F5] transition-colors"
@@ -385,7 +385,7 @@ export default function SellerDashboardPage() {
                     <div className="text-xs text-[#666666]">{item.sub}</div>
                   </div>
                   <ChevronLeft className="w-4 h-4 text-[#666666] rotate-180" />
-                </Link>
+                </InternalLink>
               );
             })}
           </div>
@@ -414,13 +414,13 @@ function StatBox({ icon: Icon, value, label, small }: { icon: any; value: any; l
 
 function QuickAction({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
   return (
-    <Link
+    <InternalLink
       href={href}
       className="flex flex-col items-center gap-1.5 py-3 border border-[#E5E5E5] rounded-lg hover:bg-[#F5F5F5] hover:border-white/15 transition-colors"
     >
       <Icon className="w-5 h-5 text-black" />
       <span className="text-[11px] font-semibold text-black">{label}</span>
-    </Link>
+    </InternalLink>
   );
 }
 
@@ -443,12 +443,12 @@ function EmptyStateCard({
       <p className="text-sm font-semibold text-[#666666]">{title}</p>
       <p className="text-xs text-[#666666] mt-1 max-w-xs mx-auto">{message}</p>
       {actionHref && actionLabel && (
-        <Link
+        <InternalLink
           href={actionHref}
           className="inline-block mt-3 bg-[#171717] text-black text-xs font-semibold px-4 py-2 rounded-md hover:bg-[#F5F5F5]"
         >
           {actionLabel}
-        </Link>
+        </InternalLink>
       )}
     </div>
   );

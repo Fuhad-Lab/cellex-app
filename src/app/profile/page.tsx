@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { api, formatPrice, timeAgo } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -242,7 +242,7 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     await logout();
-    router.push('/');
+    router.push('/', { scroll: false });
   };
 
   // ===== Build the unified activity feed (must run before any early return) =====
@@ -365,7 +365,7 @@ export default function ProfilePage() {
           Profile
         </h1>
         <div className="flex items-center gap-1.5">
-          <Link
+          <InternalLink
             href="/notifications"
             className="flex items-center justify-center transition-opacity active:opacity-70"
             style={{
@@ -381,8 +381,8 @@ export default function ProfilePage() {
               style={{ color: COLORS.text }}
               strokeWidth={1.75}
             />
-          </Link>
-          <Link
+          </InternalLink>
+          <InternalLink
             href="/settings"
             className="flex items-center justify-center transition-opacity active:opacity-70"
             style={{
@@ -398,7 +398,7 @@ export default function ProfilePage() {
               style={{ color: COLORS.text }}
               strokeWidth={1.75}
             />
-          </Link>
+          </InternalLink>
         </div>
       </header>
 
@@ -496,7 +496,7 @@ export default function ProfilePage() {
         {/* Edit Profile button — full-width pill, #F3F4F6 bg, chevron */}
         <button
           type="button"
-          onClick={() => router.push('/settings')}
+          onClick={() => router.push('/settings', { scroll: false })}
           className="w-full flex items-center justify-center gap-2 transition-opacity active:opacity-70"
           style={{
             height: '44px',
@@ -576,7 +576,7 @@ export default function ProfilePage() {
                 title="No activity yet"
                 message="Like products, follow sellers, and place orders — your activity will show up here."
                 cta={
-                  <Link
+                  <InternalLink
                     href="/"
                     className="inline-flex items-center justify-center"
                     style={{
@@ -590,7 +590,7 @@ export default function ProfilePage() {
                     }}
                   >
                     Browse products
-                  </Link>
+                  </InternalLink>
                 }
               />
             ) : (
@@ -618,7 +618,7 @@ export default function ProfilePage() {
                 title="No orders yet"
                 message="When you place your first order, it will appear here."
                 cta={
-                  <Link
+                  <InternalLink
                     href="/categories"
                     className="inline-flex items-center justify-center"
                     style={{
@@ -632,7 +632,7 @@ export default function ProfilePage() {
                     }}
                   >
                     Start shopping
-                  </Link>
+                  </InternalLink>
                 }
               />
             ) : (
@@ -657,7 +657,7 @@ export default function ProfilePage() {
                 title="No saved items"
                 message="Tap the bookmark on any product to save it for later."
                 cta={
-                  <Link
+                  <InternalLink
                     href="/categories"
                     className="inline-flex items-center justify-center"
                     style={{
@@ -671,7 +671,7 @@ export default function ProfilePage() {
                     }}
                   >
                     Discover products
-                  </Link>
+                  </InternalLink>
                 }
               />
             ) : (
@@ -791,7 +791,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
   if (type === 'liked' || type === 'purchased' || type === 'reviewed') {
     const productHref = productId ? `/product?id=${productId}` : '#';
     rightTile = (
-      <Link
+      <InternalLink
         href={productHref}
         className="flex items-center gap-2 shrink-0 transition-opacity active:opacity-70"
       >
@@ -829,7 +829,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
             {formatPrice(productPrice)}
           </span>
         )}
-      </Link>
+      </InternalLink>
     );
   } else if (type === 'followed') {
     const sellerHref = sellerSlug
@@ -838,7 +838,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
       ? `/seller-profile?id=${sellerId}`
       : '#';
     rightTile = (
-      <Link
+      <InternalLink
         href={sellerHref}
         className="shrink-0 transition-opacity active:opacity-70"
       >
@@ -870,7 +870,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
             </span>
           )}
         </div>
-      </Link>
+      </InternalLink>
     );
   }
 
@@ -1036,7 +1036,7 @@ function OrderCard({ order }: { order: any }) {
             const product = item.products || item.product;
             const img = product?.image_url || item.image_url;
             return (
-              <Link
+              <InternalLink
                 key={i}
                 href={`/product?id=${item.product_id || product?.id}`}
                 className="shrink-0 transition-opacity active:opacity-70"
@@ -1067,7 +1067,7 @@ function OrderCard({ order }: { order: any }) {
                     />
                   )}
                 </div>
-              </Link>
+              </InternalLink>
             );
           })}
           {items.length > 4 && (
@@ -1108,7 +1108,7 @@ function OrderCard({ order }: { order: any }) {
           >
             {formatPrice(order.total || 0)}
           </span>
-          <Link
+          <InternalLink
             href="/orders"
             className="flex items-center transition-opacity active:opacity-70"
             style={{
@@ -1123,7 +1123,7 @@ function OrderCard({ order }: { order: any }) {
               style={{ color: COLORS.text }}
               strokeWidth={2}
             />
-          </Link>
+          </InternalLink>
         </div>
       </div>
     </article>
@@ -1152,7 +1152,7 @@ function SavedCard({
       }}
     >
       {/* Square image with remove button overlay */}
-      <Link href={href} className="block relative">
+      <InternalLink href={href} className="block relative">
         <div
           style={{
             aspectRatio: '1 / 1',
@@ -1198,11 +1198,11 @@ function SavedCard({
             strokeWidth={2}
           />
         </button>
-      </Link>
+      </InternalLink>
 
       {/* Name + price */}
       <div style={{ padding: '12px' }}>
-        <Link href={href}>
+        <InternalLink href={href}>
           <h3
             className="line-clamp-2"
             style={{
@@ -1215,7 +1215,7 @@ function SavedCard({
           >
             {product.name}
           </h3>
-        </Link>
+        </InternalLink>
         <p
           className="font-bold"
           style={{

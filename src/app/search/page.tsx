@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice, type Product, API_BASE } from '@/lib/api';
 import { Search, ChevronLeft, Store, Sparkles, Video as VideoIcon,
   Star, ShoppingBag, Play, Send, Loader2, X, TrendingUp } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 
 function SearchContent() {
@@ -198,12 +198,12 @@ function SearchContent() {
           >
             <ChevronLeft className="w-5 h-5 text-[#171717]" />
           </button>
-          <Link href="/" className="shrink-0 flex items-center gap-1.5">
+          <InternalLink href="/" className="shrink-0 flex items-center gap-1.5">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#171717]">
               <span className="font-extrabold text-base text-white" style={{ fontFamily: 'var(--font-geist-mono)' }}>C</span>
             </div>
             <span className="text-xl font-semibold text-[#171717] tracking-tight hidden sm:inline">Cellex</span>
-          </Link>
+          </InternalLink>
           <form onSubmit={handleSubmit} className="flex-1 flex items-center h-11 px-4 bg-white border border-[#e5e5e5] rounded-full transition-all focus-within:border-[#d4d4d4] focus-within:shadow-[0_1px_6px_rgba(32,33,36,0.08)]">
             <Search className="w-4 h-4 mr-3 shrink-0 text-[#737373]" />
             <input
@@ -296,7 +296,7 @@ function SearchContent() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {aiProducts.map((p) => (
-                    <Link key={p.id} href={`/product?id=${p.id}`} className="block group">
+                    <InternalLink key={p.id} href={`/product?id=${p.id}`} className="block group">
                       <div className="rounded-lg overflow-hidden border border-[#e5e5e5] bg-white hover:border-[#171717] hover:shadow-sm transition-all">
                         <div className="aspect-square bg-[#f5f5f5] overflow-hidden">
                           {p.image_url ? (
@@ -312,7 +312,7 @@ function SearchContent() {
                           <div className="text-sm font-bold text-[#171717] mt-0.5">{formatPrice(p.price)}</div>
                         </div>
                       </div>
-                    </Link>
+                    </InternalLink>
                   ))}
                 </div>
               </div>
@@ -466,7 +466,7 @@ function SearchContent() {
 /* ===== Google-style organic product result ===== */
 function ProductResult({ product }: { product: Product }) {
   return (
-    <Link href={`/product?id=${product.id}`} className="flex gap-4 group">
+    <InternalLink href={`/product?id=${product.id}`} className="flex gap-4 group">
       {/* Thumbnail */}
       <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shrink-0 bg-[#f5f5f5]">
         {product.image_url ? (
@@ -521,7 +521,7 @@ function ProductResult({ product }: { product: Product }) {
           </span>
         </div>
       </div>
-    </Link>
+    </InternalLink>
   );
 }
 
@@ -531,7 +531,7 @@ function VideoResult({ video }: { video: any }) {
   const sellerName = seller.business_name || 'Seller';
   const product = video.product;
   return (
-    <Link href="/videos" className="block group">
+    <InternalLink href="/videos" className="block group">
       <div className="rounded-lg overflow-hidden border border-[#e5e5e5] bg-white hover:border-[#171717] hover:shadow-sm transition-all">
         <div className="aspect-[9/16] relative bg-[#f5f5f5]">
           {video.video_url ? (
@@ -558,7 +558,7 @@ function VideoResult({ video }: { video: any }) {
           )}
         </div>
       </div>
-    </Link>
+    </InternalLink>
   );
 }
 

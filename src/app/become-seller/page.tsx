@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -79,7 +79,7 @@ export default function BecomeSellerPage() {
       const data = await resp.json();
       if (data.success) {
         toast({ title: 'Welcome to Cellex Selling', description: 'Your seller account is ready' });
-        router.push('/seller/preparing');
+        router.push('/seller/preparing', { scroll: false });
       } else {
         toast({ title: 'Error', description: data.error || 'Failed to create seller account', variant: 'destructive' });
       }
@@ -95,9 +95,9 @@ export default function BecomeSellerPage() {
     <div className="ig-container min-h-screen pb-24 ig-topbar-offset">
       {/* Top bar */}
       <div className="fx-topbar ig-topbar">
-        <Link href="/settings" className="ig-icon-btn" aria-label="Back">
+        <InternalLink href="/settings" className="ig-icon-btn" aria-label="Back">
           <ChevronLeft className="w-6 h-6" />
-        </Link>
+        </InternalLink>
         <div className="flex-1 ml-1">
           <h1 className="text-base font-semibold">Become a Seller</h1>
           <p className="text-[10px] text-[#666666]">Step {step} of 3</p>

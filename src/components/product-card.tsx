@@ -1,13 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { Card } from '@/components/ui/card';
 import { Store } from 'lucide-react';
 import { Product, formatPrice } from '@/lib/api';
 
 export function ProductCard({ product, compact = false }: { product: Product; compact?: boolean }) {
   return (
-    <Link href={`/product?id=${product.id}`} className="block group">
+    <InternalLink href={`/product?id=${product.id}`} className="block group">
       <Card className={`overflow-hidden border-white/10 shadow-sm hover-lift card-transition ${compact ? '' : ''}`}>
         <div className={`aspect-square bg-neutral-50 relative ${compact ? '' : 'img-zoom'}`}>
           {product.image_url ? (
@@ -42,7 +42,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
           </div>
         </div>
       </Card>
-    </Link>
+    </InternalLink>
   );
 }
 

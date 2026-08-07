@@ -1,46 +1,32 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import { optimizeImage, getLqipUrl, isSupabaseUrl } from '@/lib/image-utils';
 
 /**
  * SmartImage — high-performance image component with LQIP blur-up.
  *
- * Features:
- * 1. Native loading="lazy" (deferred loading until near viewport)
- * 2. Low-resolution blurred placeholder (LQIP) — loads a 20px wide image
- *    instantly, shows it blurred, then swaps to full-res when loaded
- * 3. Supabase URL optimization — auto-appends width/quality/format=webp
- * 4. Optional srcset for responsive images
- * 5. Decoding="async" for non-blocking render
- * 6. Fade-in transition when full image loads
+ * KEY FIX: Uses useLayoutEffect (not useEffect) to detect cached images
+ * SYNCHRONOUSLY before the browser paints. This eliminates the LQIP
+ * placeholder flash on return visits — if the image is in the browser's
+ * HTTP cache, loaded is set to true before paint, so the user sees the
+ * full image immediately with no placeholder.
  *
- * Usage:
- *   <SmartImage src={product.image_url} alt={product.name} width={400} />
- *   <SmartImage src={url} alt="..." width={800} heights={[200,400,800]} />
+ * Also checks performance.getEntriesByType('resource') as a secondary
+ * cache detection method.
  */
 
 interface SmartImageProps {
   src: string | null | undefined;
   alt: string;
-  /** Target display width — used for optimization (Supabase URLs only) */
   width?: number;
-  /** Optional height for optimization */
   height?: number;
-  /** Responsive widths for srcset (e.g. [200, 400, 800]) */
   widths?: number[];
-  /** Quality 1-100 (default 70) */
   quality?: number;
-  /** CSS classes for the <img> */
   className?: string;
-  /** Style for the <img> */
   style?: React.CSSProperties;
-  /** onClick handler */
   onClick?: () => void;
-  /** Whether to use LQIP blur placeholder (default true, only works for Supabase URLs) */
   blur?: boolean;
-  /** Loading strategy — default 'eager' so images load immediately
-   * (browser serves from HTTP cache on return visits — no delay) */
   loading?: 'lazy' | 'eager';
 }
 
@@ -61,22 +47,44 @@ export function SmartImage({
   const [error, setError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Optimize the main image URL (Supabase only — others pass through)
   const optimizedSrc = src ? optimizeImage(src, { width, height, quality }) : '';
   const lqipSrc = src && blur ? getLqipUrl(src) : '';
 
-  // Build srcset for responsive images
   const srcset = src && widths && widths.length > 0
     ? widths.map((w) => `${optimizeImage(src, { width: w, quality })} ${w}w`).join(', ')
     : undefined;
 
-  // If the image is already cached (e.g. navigated back), it may load before
-  // the onLoad handler attaches. Check complete state on mount.
-  useEffect(() => {
-    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+  // CRITICAL: useLayoutEffect fires BEFORE the browser paints.
+  // If the image is already in the browser's cache (return visit), we set
+  // loaded=true immediately so the user never sees the LQIP placeholder flash.
+  useLayoutEffect(() => {
+    if (!src) return;
+
+    // Method 1: Check if the <img> element already has the image loaded.
+    // Browsers decode cached images synchronously when src is set, so
+    // imgRef.current.complete may already be true at this point.
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth > 0) {
       setLoaded(true);
+      return;
     }
-  }, [src]);
+
+    // Method 2: Check the Performance Resource Timing API.
+    // If the browser has a resource entry for this URL, it's been loaded
+    // before (cached) and will load instantly — skip the placeholder.
+    try {
+      const entries = performance.getEntriesByType('resource');
+      const isCached = entries.some(
+        (e) => e.name === optimizedSrc || e.name === src
+      );
+      if (isCached) {
+        // Don't set loaded=true yet — the <img> hasn't decoded yet.
+        // But we skip showing the LQIP by setting loaded=true after
+        // a microtask (faster than paint).
+        Promise.resolve().then(() => setLoaded(true));
+      }
+    } catch {}
+  }, [src, optimizedSrc]);
 
   if (!src || error) {
     return (
@@ -95,7 +103,7 @@ export function SmartImage({
       style={style}
       onClick={onClick}
     >
-      {/* LQIP blurred placeholder — loads instantly, fades out when full image loads */}
+      {/* LQIP blurred placeholder — only shows if image is NOT cached */}
       {lqipSrc && !loaded && (
         <img
           src={lqipSrc}
@@ -104,14 +112,13 @@ export function SmartImage({
           className="absolute inset-0 w-full h-full object-cover"
           style={{
             filter: 'blur(20px)',
-            transform: 'scale(1.1)', // hide blur edges
-            transition: 'opacity 0.3s ease-out',
+            transform: 'scale(1.1)',
             opacity: 1,
           }}
         />
       )}
 
-      {/* Main image — loads lazily, fades in when ready */}
+      {/* Main image — fades in when ready (instant if cached) */}
       <img
         ref={imgRef}
         src={optimizedSrc}
@@ -124,7 +131,7 @@ export function SmartImage({
         decoding="async"
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
-        className={`relative w-full h-full object-cover transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`relative w-full h-full object-cover ${loaded ? 'opacity-100' : 'opacity-0'}`}
         style={{ ...style, objectFit: 'cover' }}
       />
     </div>

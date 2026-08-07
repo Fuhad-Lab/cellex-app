@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { api, formatPrice } from '@/lib/api';
 import { Heart, Send, Bookmark, Share2, MessageCircle, Volume2, VolumeX, ChevronLeft, ShoppingBag, Play } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -112,9 +112,9 @@ export default function ShortsPage() {
         <Play className="w-12 h-12 text-black/30 mb-3" />
         <p className="text-sm font-semibold">No shorts yet</p>
         <p className="text-xs text-black/50 mt-1">Check back later for short videos</p>
-        <Link href="/" className="mt-6 bg-[#F5F5F5] text-black text-sm font-semibold px-6 py-2.5 rounded-md">
+        <InternalLink href="/" className="mt-6 bg-[#F5F5F5] text-black text-sm font-semibold px-6 py-2.5 rounded-md">
           Go home
-        </Link>
+        </InternalLink>
       </div>
     );
   }
@@ -238,7 +238,7 @@ export default function ShortsPage() {
               <div className="absolute left-0 right-16 bottom-24 px-4 z-20">
                 {/* Seller row */}
                 <div className="flex items-center gap-2 mb-2">
-                  <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')}>
+                  <InternalLink href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')}>
                     <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white bg-[#F5F5F5] shrink-0">
                       {sellerImage ? (
                         <img src={sellerImage} alt="" className="w-full h-full object-cover" />
@@ -248,17 +248,17 @@ export default function ShortsPage() {
                         </div>
                       )}
                     </div>
-                  </Link>
-                  <Link href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')} className="text-black font-semibold text-sm hover:opacity-80">
+                  </InternalLink>
+                  <InternalLink href={seller.slug ? `/${seller.slug}` : (seller.id ? `/seller-profile?id=${seller.id}` : '#')} className="text-black font-semibold text-sm hover:opacity-80">
                     {sellerName}
-                  </Link>
+                  </InternalLink>
                   {!user && (
-                    <Link
+                    <InternalLink
                       href="/login"
                       className="ml-2 bg-[#F5F5F5] text-black text-xs font-semibold px-3 py-1 rounded-md"
                     >
                       Follow
-                    </Link>
+                    </InternalLink>
                   )}
                 </div>
 
@@ -269,7 +269,7 @@ export default function ShortsPage() {
 
                 {/* Product CTA */}
                 {product && (
-                  <Link
+                  <InternalLink
                     href={`/product?id=${product.id}`}
                     className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-lg pl-2 pr-3 py-1.5 max-w-full"
                   >
@@ -283,7 +283,7 @@ export default function ShortsPage() {
                       <div className="text-xs font-bold text-black">{formatPrice(product.price)}</div>
                     </div>
                     <ShoppingBag className="w-4 h-4 text-black ml-1 shrink-0" />
-                  </Link>
+                  </InternalLink>
                 )}
               </div>
 

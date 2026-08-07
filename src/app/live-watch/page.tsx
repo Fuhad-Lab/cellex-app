@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice } from '@/lib/api';
 import { API_BASE } from '@/lib/api';
 import { Send, Eye, ChevronLeft, ShoppingBag, Radio, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
@@ -119,7 +119,7 @@ function LiveWatchContent() {
         </div>
         <div className="text-center py-20">
           <p className="text-slate-400">Session not found</p>
-          <Link href="/live" className="text-white font-semibold mt-3 inline-block">Back to live</Link>
+          <InternalLink href="/live" className="text-white font-semibold mt-3 inline-block">Back to live</InternalLink>
         </div>
       </div>
     );
@@ -214,9 +214,9 @@ function LiveWatchContent() {
         <h2 className="font-semibold text-base">{session.title}</h2>
         <div className="text-xs text-slate-400 mt-0.5">
           by{' '}
-          <Link href={session.seller_slug ? `/${session.seller_slug}` : `/seller-profile?id=${session.seller_id}`} className="text-white font-medium">
+          <InternalLink href={session.seller_slug ? `/${session.seller_slug}` : `/seller-profile?id=${session.seller_id}`} className="text-white font-medium">
             {session.seller_name}
-          </Link>
+          </InternalLink>
         </div>
 
         {session.featured_product && (
@@ -230,11 +230,11 @@ function LiveWatchContent() {
               <div className="font-semibold text-sm line-clamp-1">{session.featured_product.name}</div>
               <div className="text-white font-bold">{formatPrice(session.featured_product.price)}</div>
             </div>
-            <Link href={`/product?id=${session.featured_product.id}`}>
+            <InternalLink href={`/product?id=${session.featured_product.id}`}>
               <button className="bg-indigo-600 text-white font-semibold rounded-md px-3 py-2 text-xs hover:bg-white/10">
                 <ShoppingBag className="w-3.5 h-3.5 inline mr-1" /> Buy
               </button>
-            </Link>
+            </InternalLink>
           </div>
         )}
 

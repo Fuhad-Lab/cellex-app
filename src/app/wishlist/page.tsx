@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { api, formatPrice, type Product } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { Heart, Trash2, ShoppingCart, Store, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/product-card';
@@ -81,11 +81,11 @@ export default function WishlistPage() {
             title="Your wishlist is empty"
             message="Save items you love and come back to them later."
             action={
-              <Link href="/categories">
+              <InternalLink href="/categories">
                 <button className="bg-[#171717] text-black font-semibold rounded-md px-4 py-2.5 hover:bg-[#F5F5F5]">
                   Discover products
                 </button>
-              </Link>
+              </InternalLink>
             }
           />
         </div>
@@ -109,7 +109,7 @@ export default function WishlistPage() {
           if (!product) return null;
           return (
             <div key={item.id} className="p-4 flex gap-3">
-              <Link href={`/product?id=${product.id}`} className="shrink-0">
+              <InternalLink href={`/product?id=${product.id}`} className="shrink-0">
                 <div className="w-20 h-20 rounded-md bg-[#F5F5F5] overflow-hidden">
                   {product.image_url ? (
                     <img src={product.image_url} alt="" className="w-full h-full object-cover" />
@@ -119,11 +119,11 @@ export default function WishlistPage() {
                     </div>
                   )}
                 </div>
-              </Link>
+              </InternalLink>
               <div className="flex-1 min-w-0 flex flex-col">
-                <Link href={`/product?id=${product.id}`}>
+                <InternalLink href={`/product?id=${product.id}`}>
                   <h3 className="font-semibold text-sm text-black hover:opacity-70 line-clamp-2">{product.name}</h3>
-                </Link>
+                </InternalLink>
                 <div className="text-black font-bold mt-1">{formatPrice(product.price)}</div>
                 <div className="flex gap-2 mt-auto">
                   <button

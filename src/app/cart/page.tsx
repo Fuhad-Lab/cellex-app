@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { api, formatPrice, type CartItem, type Product } from '@/lib/api';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -311,7 +311,7 @@ export default function CartPage() {
             >
               <Search className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={1.75} />
             </button>
-            <Link
+            <InternalLink
               href={user ? '/profile' : '/login'}
               className="flex items-center justify-center overflow-hidden transition-opacity active:opacity-70"
               style={{
@@ -330,7 +330,7 @@ export default function CartPage() {
               ) : (
                 <UserIcon className="w-5 h-5" style={{ color: '#6B7280' }} strokeWidth={1.75} />
               )}
-            </Link>
+            </InternalLink>
           </div>
         </header>
 
@@ -356,7 +356,7 @@ export default function CartPage() {
           <p style={{ fontSize: '14px', color: '#6B7280', maxWidth: '320px', marginBottom: '24px' }}>
             Discover products from sellers you follow, or explore the marketplace for fresh picks.
           </p>
-          <Link
+          <InternalLink
             href="/"
             className="inline-flex items-center justify-center gap-2 transition-opacity active:opacity-70"
             style={{
@@ -372,7 +372,7 @@ export default function CartPage() {
           >
             Browse products
             <ArrowRight className="w-4 h-4" strokeWidth={2} />
-          </Link>
+          </InternalLink>
         </div>
       </div>
     );
@@ -427,7 +427,7 @@ export default function CartPage() {
           >
             <Search className="w-5 h-5" style={{ color: '#111827' }} strokeWidth={1.75} />
           </button>
-          <Link
+          <InternalLink
             href={user ? '/profile' : '/login'}
             className="flex items-center justify-center overflow-hidden transition-opacity active:opacity-70"
             style={{
@@ -446,7 +446,7 @@ export default function CartPage() {
             ) : (
               <UserIcon className="w-5 h-5" style={{ color: '#6B7280' }} strokeWidth={1.75} />
             )}
-          </Link>
+          </InternalLink>
         </div>
       </header>
 
@@ -528,7 +528,7 @@ export default function CartPage() {
               {/* Top row: thumbnail + product info */}
               <div className="flex gap-3">
                 {/* Product thumbnail (80x80) */}
-                <Link
+                <InternalLink
                   href={`/product?id=${item.product_id}`}
                   className="shrink-0 overflow-hidden"
                   style={{
@@ -547,11 +547,11 @@ export default function CartPage() {
                     loading="lazy"
                     className="w-full h-full"
                   />
-                </Link>
+                </InternalLink>
 
                 {/* Product details */}
                 <div className="flex-1 min-w-0 pr-7">
-                  <Link href={`/product?id=${item.product_id}`} className="block">
+                  <InternalLink href={`/product?id=${item.product_id}`} className="block">
                     <h3
                       className="line-clamp-2"
                       style={{
@@ -563,11 +563,11 @@ export default function CartPage() {
                     >
                       {product?.name || 'Product'}
                     </h3>
-                  </Link>
+                  </InternalLink>
 
                   {/* Seller row */}
                   <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                    <Link
+                    <InternalLink
                       href={sellerHref}
                       className="flex items-center gap-1.5 shrink-0"
                       aria-label={seller?.name || 'View seller'}
@@ -605,8 +605,8 @@ export default function CartPage() {
                       >
                         {seller?.name || 'Seller'}
                       </span>
-                    </Link>
-                    <Link
+                    </InternalLink>
+                    <InternalLink
                       href={sellerHref}
                       className="transition-opacity active:opacity-70"
                       style={{
@@ -616,7 +616,7 @@ export default function CartPage() {
                       }}
                     >
                       View seller
-                    </Link>
+                    </InternalLink>
                   </div>
 
                   {/* Tags row — "Liked item" badge shown when item is in wishlist */}
@@ -739,13 +739,13 @@ export default function CartPage() {
             <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#111827' }}>
               You might also like
             </h2>
-            <Link
+            <InternalLink
               href="/"
               className="inline-flex items-center transition-opacity active:opacity-70"
               style={{ fontSize: '13px', color: '#6B7280', fontWeight: 500 }}
             >
               See all
-            </Link>
+            </InternalLink>
           </div>
           <div
             className="flex gap-3 overflow-x-auto px-4 pb-2"
@@ -756,7 +756,7 @@ export default function CartPage() {
             }}
           >
             {recommendations.map((p) => (
-              <Link
+              <InternalLink
                 key={p.id}
                 href={`/product?id=${p.id}`}
                 className="shrink-0 block transition-transform active:scale-95"
@@ -797,7 +797,7 @@ export default function CartPage() {
                 >
                   {formatPrice(p.price)}
                 </p>
-              </Link>
+              </InternalLink>
             ))}
           </div>
         </section>

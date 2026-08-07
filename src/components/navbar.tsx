@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useAuth } from '@/components/auth-provider';
 import { useState, useRef, useEffect } from 'react';
 import { Search, ShoppingCart, User, ChevronDown, Store, Heart, Package, LogOut, Link2, Send } from 'lucide-react';
@@ -42,7 +42,7 @@ export function Navbar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`, { scroll: false });
     }
   };
 
@@ -52,7 +52,7 @@ export function Navbar() {
         {/* Top row */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
+          <InternalLink href="/" className="flex items-center gap-2 shrink-0">
             <div
               className="w-9 h-9 rounded-xl brand-gradient flex items-center justify-center glow"
               style={{ fontFamily: 'var(--font-geist-mono)' }}
@@ -65,7 +65,7 @@ export function Navbar() {
             >
               Cellex
             </span>
-          </Link>
+          </InternalLink>
 
           {/* Search */}
           <form onSubmit={handleSearch} className="flex-1 max-w-xl flex items-center border-2 border-white/10 rounded-full px-4 py-2 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15 transition-all">
@@ -84,20 +84,20 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-5">
-            <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors">
+            <InternalLink href="/" className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors">
               Home
-            </Link>
-            <Link href="/categories" className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors">
+            </InternalLink>
+            <InternalLink href="/categories" className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors">
               Category
-            </Link>
-            <Link href="/cart" className="relative text-slate-600 hover:text-primary transition-colors">
+            </InternalLink>
+            <InternalLink href="/cart" className="relative text-slate-600 hover:text-primary transition-colors">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-3 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </InternalLink>
 
             {/* Account */}
             {user ? (
@@ -114,25 +114,25 @@ export function Navbar() {
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-white/5 py-2 z-50">
-                    <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    <InternalLink href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <User className="w-4 h-4 text-primary" /> My Profile
-                    </Link>
-                    <Link href="/orders" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    </InternalLink>
+                    <InternalLink href="/orders" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Package className="w-4 h-4 text-primary" /> My Orders
-                    </Link>
-                    <Link href="/wishlist" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    </InternalLink>
+                    <InternalLink href="/wishlist" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Heart className="w-4 h-4 text-primary" /> Wishlist
-                    </Link>
+                    </InternalLink>
                     <div className="border-t border-white/5 my-1" />
-                    <Link href="/seller-dashboard" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    <InternalLink href="/seller-dashboard" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Store className="w-4 h-4 text-primary" /> Seller Dashboard
-                    </Link>
-                    <Link href="/link-account" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    </InternalLink>
+                    <InternalLink href="/link-account" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Link2 className="w-4 h-4 text-primary" /> Link WhatsApp
-                    </Link>
-                    <Link href="/telegram" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    </InternalLink>
+                    <InternalLink href="/telegram" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                       <Send className="w-4 h-4 text-primary" /> Telegram Alerts
-                    </Link>
+                    </InternalLink>
                     <div className="border-t border-white/5 my-1" />
                     <button
                       onClick={() => { logout(); window.location.href = '/'; }}
@@ -144,27 +144,27 @@ export function Navbar() {
                 )}
               </div>
             ) : (
-              <Link href="/login" className="text-sm font-semibold text-slate-600 hover:text-primary">
+              <InternalLink href="/login" className="text-sm font-semibold text-slate-600 hover:text-primary">
                 Account
-              </Link>
+              </InternalLink>
             )}
           </div>
 
           {/* Mobile cart */}
-          <Link href="/cart" className="md:hidden relative text-slate-600">
+          <InternalLink href="/cart" className="md:hidden relative text-slate-600">
             <ShoppingCart className="w-5 h-5" />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-3 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {cartCount}
               </span>
             )}
-          </Link>
+          </InternalLink>
         </div>
 
         {/* Category bar — hidden on home page (mobile + desktop layouts have their own) */}
         <div className="flex items-center gap-1 py-2 overflow-x-auto no-scrollbar home-category-bar">
           {categories.map((cat) => (
-            <Link
+            <InternalLink
               key={cat.label}
               href={cat.href}
               className={`text-sm font-medium px-3 py-1.5 rounded-full whitespace-nowrap transition-all ${
@@ -174,7 +174,7 @@ export function Navbar() {
               }`}
             >
               {cat.label}
-            </Link>
+            </InternalLink>
           ))}
         </div>
       </div>

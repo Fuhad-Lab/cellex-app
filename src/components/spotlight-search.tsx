@@ -94,7 +94,7 @@ export function SpotlightSearch({ isOpen, onClose }: { isOpen: boolean; onClose:
   const go = (href: string, label?: string) => {
     if (label) saveRecent(label);
     onClose();
-    router.push(href);
+    router.push(href, { scroll: false });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

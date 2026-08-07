@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { usePathname } from 'next/navigation';
 import {
   Home, Search, ShoppingBag, Heart, MessageCircle, ShoppingCart,
@@ -71,7 +71,7 @@ export function DesktopSidebar() {
       aria-label="Desktop sidebar"
     >
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 px-3 py-2 mb-4">
+      <InternalLink href="/" className="flex items-center gap-2 px-3 py-2 mb-4">
         <div
           className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#111827] btn-ripple "
           aria-hidden
@@ -79,7 +79,7 @@ export function DesktopSidebar() {
           <ShoppingBag className="w-5 h-5 text-white" strokeWidth={2} />
         </div>
         <span className="text-xl font-bold tracking-tight text-[#111827]">Cellex</span>
-      </Link>
+      </InternalLink>
 
       {/* Search button */}
       <button
@@ -95,32 +95,32 @@ export function DesktopSidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
-            <Link
+            <InternalLink
               key={item.label}
               href={item.href}
               className={itemClass(item.href)}
               aria-label={item.label}
             >
               <Icon className={iconClass} /> <span>{item.label}</span>
-            </Link>
+            </InternalLink>
           );
         })}
       </nav>
 
       {/* AI assistant — below nav, above logout area */}
       <div className="mt-4">
-        <Link
+        <InternalLink
           href="/ai-chat"
           className="flex items-center gap-3 px-4 py-3 rounded-full bg-gradient-to-r from-[#111827] to-[#374151] text-white text-sm font-medium hover:opacity-90 transition"
         >
           <Sparkles className="w-5 h-5" /> <span>AI Assistant</span>
-        </Link>
+        </InternalLink>
       </div>
 
       {/* Auth area — bottom */}
       <div className="mt-auto pt-4 border-t border-[#E5E7EB]">
         {user ? (
-          <Link
+          <InternalLink
             href={isSeller ? '/seller-dashboard' : '/profile'}
             className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[#F3F4F6] transition"
           >
@@ -137,14 +137,14 @@ export function DesktopSidebar() {
                 {isSeller ? 'Seller' : 'Buyer'}
               </div>
             </div>
-          </Link>
+          </InternalLink>
         ) : (
-          <Link
+          <InternalLink
             href="/login"
             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#111827] btn-ripple  text-white text-sm font-semibold hover:bg-[#374151] transition"
           >
             <User className="w-4 h-4" /> Log in
-          </Link>
+          </InternalLink>
         )}
       </div>
     </aside>

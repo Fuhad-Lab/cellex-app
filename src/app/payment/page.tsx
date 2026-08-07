@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback , Suspense} from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api, formatPrice } from '@/lib/api';
 import { Copy, Check, Clock, Banknote, CheckCircle2, AlertCircle, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import { useToast } from '@/hooks/use-toast';
 import { PageSkeleton } from '@/components/page-skeleton';
 
@@ -98,7 +98,7 @@ function PaymentContent() {
         <div className="text-center py-20">
           <AlertCircle className="w-12 h-12 mx-auto text-slate-600 mb-3" />
           <p className="text-slate-400 mb-4">Order not found</p>
-          <Link href="/cart" className="text-white font-semibold">Back to cart</Link>
+          <InternalLink href="/cart" className="text-white font-semibold">Back to cart</InternalLink>
         </div>
       </div>
     );
@@ -243,12 +243,12 @@ function PaymentContent() {
             </div>
 
             <div className="flex gap-2">
-              <Link href="/orders" className="flex-1">
+              <InternalLink href="/orders" className="flex-1">
                 <button className="w-full bg-indigo-600 text-white font-semibold rounded-md py-2.5">View orders</button>
-              </Link>
-              <Link href="/" className="flex-1">
+              </InternalLink>
+              <InternalLink href="/" className="flex-1">
                 <button className="w-full bg-white/10 border border-white/15 text-white font-semibold rounded-md py-2.5">Continue shopping</button>
-              </Link>
+              </InternalLink>
             </div>
           </div>
         )}

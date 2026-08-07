@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import InternalLink from '@/components/internal-link';
 import {
   ChevronLeft, MessageCircle, Store, Users, Sparkles, Send,
   Lock, ArrowLeft, Search, Plus, Phone, Video, MoreVertical,
@@ -426,13 +426,13 @@ export default function MessengerPage() {
     <div className="min-h-screen bg-white " style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#E5E7EB] px-4 py-3 flex items-center">
-        <button onClick={() => router.push('/')} className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="Back">
+        <button onClick={() => router.push('/', { scroll: false })} className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="Back">
           <ChevronLeft className="w-5 h-5" />
         </button>
         <h1 className="text-lg font-bold flex-1 text-[#111827] ml-2">Messages</h1>
-        <Link href="/ai-chat" className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="AI Assistant">
+        <InternalLink href="/ai-chat" className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="AI Assistant">
           <Sparkles className="w-5 h-5" />
-        </Link>
+        </InternalLink>
       </div>
 
       {/* Search bar */}
@@ -449,7 +449,7 @@ export default function MessengerPage() {
 
       {/* AI Assistant card */}
       <div className="px-4 py-2">
-        <Link href="/ai-chat" className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-[#111827] to-[#374151] hover:opacity-95 transition">
+        <InternalLink href="/ai-chat" className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-[#111827] to-[#374151] hover:opacity-95 transition">
           <div className="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center shrink-0">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
@@ -458,7 +458,7 @@ export default function MessengerPage() {
             <div className="text-[11px] opacity-80">Find products, get recommendations, ask questions</div>
           </div>
           <ChevronLeft className="w-5 h-5 text-white/60 rotate-180" />
-        </Link>
+        </InternalLink>
       </div>
 
       {/* Encryption badge */}
@@ -504,9 +504,9 @@ export default function MessengerPage() {
                 ? 'When buyers message you about products or group buys, conversations will appear here.'
                 : 'Message sellers about products, join group buys, or ask questions. Your messages are encrypted.'}
             </p>
-            <Link href="/categories" className="bg-[#111827] btn-ripple  text-white text-sm font-semibold px-6 py-3 rounded-full">
+            <InternalLink href="/categories" className="bg-[#111827] btn-ripple  text-white text-sm font-semibold px-6 py-3 rounded-full">
               Browse Products
-            </Link>
+            </InternalLink>
           </div>
         ) : (
           <div>

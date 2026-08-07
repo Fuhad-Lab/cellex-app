@@ -16,7 +16,7 @@ export default function SellerSettingsPage() {
   const handleLogout = async () => {
     setLoggingOut(true);
     await logout();
-    router.push('/');
+    router.push('/', { scroll: false });
   };
 
   const sectionLabel = "text-xs font-semibold text-[#666666] uppercase tracking-wide mb-2";
@@ -44,7 +44,7 @@ export default function SellerSettingsPage() {
           </div>
 
           <button
-            onClick={() => router.push('/profile')}
+            onClick={() => router.push('/profile', { scroll: false })}
             className="w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-[#F5F5F5] transition-colors"
           >
             <User className="w-5 h-5 text-black shrink-0" />
