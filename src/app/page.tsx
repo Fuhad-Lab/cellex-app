@@ -680,9 +680,6 @@ function FeedPostCard({
               width={600}
               height={750}
               className="w-full h-full object-cover"
-              // loading="eager" so images load immediately on return visits
-              // (browser serves from HTTP cache — no network request)
-              priority={false}
             />
           </Link>
         )}
