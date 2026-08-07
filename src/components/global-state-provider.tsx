@@ -163,21 +163,45 @@ export function usePersistedState<T>(
 export function useScrollPreservation(pageKey: string): void {
   const { getScroll, saveScroll } = useGlobalState();
 
-  // Restore on mount, save on unmount.
+  // Restore on mount — wait for content + images to render before scrolling.
+  // A single rAF is too fast (images haven't loaded). We use a sequence of
+  // rAF + setTimeout to ensure the page has enough height to scroll to.
   useEffect(() => {
     const saved = getScroll(pageKey);
     if (saved > 0) {
-      // Defer one frame so the page content has rendered.
-      const raf = requestAnimationFrame(() => {
-        try {
-          window.scrollTo({ top: saved, left: 0, behavior: 'auto' });
-        } catch {
-          // Some browsers don't support the options form — fall back.
-          window.scrollTo(0, saved);
-        }
+      let cancelled = false;
+
+      // Attempt 1: after 2 animation frames (DOM painted)
+      const raf1 = requestAnimationFrame(() => {
+        if (cancelled) return;
+        const raf2 = requestAnimationFrame(() => {
+          if (cancelled) return;
+          // Attempt 2: after 100ms (images may have loaded from cache)
+          setTimeout(() => {
+            if (cancelled) return;
+            try {
+              window.scrollTo({ top: saved, left: 0, behavior: 'auto' });
+            } catch {
+              window.scrollTo(0, saved);
+            }
+            // Attempt 3: after 500ms (fallback for slow image loading)
+            setTimeout(() => {
+              if (cancelled) return;
+              if (Math.abs(window.scrollY - saved) > 50) {
+                try {
+                  window.scrollTo({ top: saved, left: 0, behavior: 'auto' });
+                } catch {
+                  window.scrollTo(0, saved);
+                }
+              }
+            }, 500);
+          }, 100);
+        });
       });
+
       return () => {
-        cancelAnimationFrame(raf);
+        cancelled = true;
+        cancelAnimationFrame(raf1);
         saveScroll(pageKey, window.scrollY);
       };
     }
@@ -186,9 +210,7 @@ export function useScrollPreservation(pageKey: string): void {
     };
   }, [pageKey, getScroll, saveScroll]);
 
-  // Continuously save scroll position so it's captured even if the user
-  // never leaves the page (e.g. they hard-refresh — though that wipes RAM
-  // anyway). The debounced handler keeps this cheap.
+  // Continuously save scroll position (debounced).
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {

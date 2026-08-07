@@ -2,27 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  // Strict TypeScript — fail the build on missing imports / type errors.
-  // This catches bugs like the "Sparkles not imported" crash at build time
-  // instead of letting them hit production.
   typescript: {
     ignoreBuildErrors: false,
   },
   reactStrictMode: false,
-  // cacheComponents DISABLED — it conflicts with GlobalStateProvider.
-  //
-  // cacheComponents keeps up to ~3 pages alive by wrapping each page (including
-  // its layout subtree) in React's <Activity> component. This means each cached
-  // page gets its OWN instance of GlobalStateProvider, so the in-memory store
-  // is NOT shared across pages — defeating the whole point of lifting state
-  // into the Root Layout.
-  //
-  // Instead, we rely on GlobalStateProvider (in layout.tsx) to hold page state
-  // in a single ref that survives any number of navigation hops. The Root
-  // Layout truly stays mounted (one instance) without cacheComponents, so the
-  // store is shared. Memory-only, XSS-safe.
+  // cacheComponents DISABLED — conflicts with GlobalStateProvider.
   // cacheComponents: true,
-  // Allow running behind Hugging Face Spaces reverse proxy.
   experimental: {
     serverActions: {
       allowedOrigins: ['*.hf.space', '*.space-z.ai'],
@@ -30,6 +15,39 @@ const nextConfig: NextConfig = {
   },
   compress: true,
   poweredByHeader: false,
+  // === SECURITY HEADERS ===
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          // HSTS — force HTTPS for 1 year, include subdomains
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+          // X-Content-Type-Options — prevent MIME sniffing
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          // X-Frame-Options — prevent clickjacking
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          // Referrer-Policy — control referrer leakage
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // Permissions-Policy — restrict powerful browser features
+          { key: 'Permissions-Policy', value: 'geolocation=(), microphone=(), camera=(), payment=()' },
+          // Content-Security-Policy — prevent XSS and injection attacks
+          { key: 'Content-Security-Policy', value: [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "font-src 'self' https://fonts.gstatic.com",
+            "img-src 'self' data: https: blob:",
+            "media-src 'self' https: blob:",
+            "connect-src 'self' https://*.supabase.co https://*.onrender.com https://*.space-z.ai https://*.hf.space https://integrate.api.nvidia.com",
+            "frame-ancestors 'self'",
+            "base-uri 'self'",
+            "form-action 'self'",
+          ].join('; ') },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

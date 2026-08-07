@@ -27,10 +27,39 @@ const sora = Sora({
 export const metadata: Metadata = {
   title: "Cellex — Nigeria's #1 Marketplace",
   description: "Shop electronics, fashion, home goods and more. Social ecommerce with live shopping, group buys, and AI-powered discovery.",
-  keywords: ["Cellex", "Nigeria", "marketplace", "ecommerce", "online shopping"],
+  keywords: ["Cellex", "Nigeria", "marketplace", "ecommerce", "online shopping", "social commerce", "live shopping", "group buy"],
   icons: {
     icon: "/favicon.ico",
   },
+  // Canonical URL
+  alternates: {
+    canonical: "https://eesha-learn.onrender.com",
+  },
+  // Open Graph tags for social sharing
+  openGraph: {
+    title: "Cellex — Nigeria's #1 Marketplace",
+    description: "Shop electronics, fashion, home goods and more. Social ecommerce with live shopping, group buys, and AI-powered discovery.",
+    url: "https://eesha-learn.onrender.com",
+    siteName: "Cellex",
+    type: "website",
+    images: [
+      {
+        url: "/logo.svg",
+        width: 1200,
+        height: 630,
+        alt: "Cellex — Nigeria's #1 Marketplace",
+      },
+    ],
+  },
+  // Twitter Card tags
+  twitter: {
+    card: "summary_large_image",
+    title: "Cellex — Nigeria's #1 Marketplace",
+    description: "Shop electronics, fashion, home goods and more. Social ecommerce with live shopping, group buys, and AI-powered discovery.",
+    images: ["/logo.svg"],
+  },
+  // Referrer policy
+  referrer: "strict-origin-when-cross-origin",
 };
 
 export const viewport: Viewport = {
@@ -49,7 +78,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0 overflow-x-hidden">
+      <head>
+        {/* JSON-LD Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Cellex",
+              description: "Nigeria's #1 social commerce marketplace",
+              url: "https://eesha-learn.onrender.com",
+              logo: "https://eesha-learn.onrender.com/logo.svg",
+              sameAs: [],
+            }),
+          }}
+        />
+      </head>
       <body className={`${jakarta.variable} ${sora.variable} antialiased min-h-screen relative text-black bg-white`}>
+        {/* H1 for SEO — visually hidden but accessible to screen readers and search engines */}
+        <h1 className="sr-only">Cellex — Nigeria&apos;s #1 Social Commerce Marketplace</h1>
         {/* Page Loader — masks initial asset loading */}
         <PageLoader />
         {/* Content Viewport */}
