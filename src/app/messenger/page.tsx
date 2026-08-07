@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { API_BASE } from '@/lib/api';
-import { RevealOnScroll } from '@/components/animation-provider';
 
 import { usePersistedState, useScrollPreservation } from '@/components/global-state-provider';
 interface Conversation {
@@ -44,11 +43,12 @@ export default function MessengerPage() {
   const [isSeller, setIsSeller] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'group_buys' | 'sellers'>('all');
   const [conversations, setConversations] = usePersistedState<Conversation[]>('messenger:conversations', []);
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
+  const [activeConversation, setActiveConversation] = usePersistedState<Conversation | null>('messenger:activeConversation', null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [sending, setSending] = useState(false);
-  const [loading, setLoading] = useState(conversations.length === 0);
+  const [hasLoadedOnce, setHasLoadedOnce] = usePersistedState<boolean>('messenger:hasLoadedOnce', false);
+  const [loading, setLoading] = useState(!hasLoadedOnce && conversations.length === 0);
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null);
   const [decryptErrors, setDecryptErrors] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -131,6 +131,7 @@ export default function MessengerPage() {
             if (data.success && data.seller) setIsSeller(true);
           }
         } catch {}
+        setHasLoadedOnce(true);
         setLoading(false);
       })();
       loadConversations();
@@ -423,13 +424,10 @@ export default function MessengerPage() {
 
   // ============ CONVERSATION LIST VIEW ============
   return (
-    <div className="min-h-screen bg-white " style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      {/* Header */}
+    <div className="min-h-screen bg-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      {/* Header — simple, no back button (mobile nav bar is shown by NavShell) */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#E5E7EB] px-4 py-3 flex items-center">
-        <button onClick={() => router.push('/', { scroll: false })} className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="Back">
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-lg font-bold flex-1 text-[#111827] ml-2">Messages</h1>
+        <h1 className="text-lg font-bold flex-1 text-[#111827]">Messages</h1>
         <InternalLink href="/ai-chat" className="w-9 h-9 rounded-full flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition shrink-0" aria-label="AI Assistant">
           <Sparkles className="w-5 h-5" />
         </InternalLink>

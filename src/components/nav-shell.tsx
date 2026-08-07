@@ -7,7 +7,9 @@ import InternalLink from '@/components/internal-link';
 
 // ONLY these pages show the bottom mobile nav bar.
 // All other pages show a back button header instead.
-const ROUTES_WITH_NAV = ['/', '/categories', '/wishlist', '/cart', '/settings'];
+// Messenger shows the nav bar for the conversation list, but hides it
+// when a chat is open (handled by the messenger page itself).
+const ROUTES_WITH_NAV = ['/', '/categories', '/wishlist', '/cart', '/settings', '/messenger'];
 
 // These routes have their own custom headers (no back button, no nav bar)
 const ROUTES_WITH_CUSTOM_HEADER = ['/login', '/search', '/shorts', '/videos'];
@@ -29,7 +31,7 @@ export function NavShell({ children }: { children: React.ReactNode }) {
   // Dynamic routes (/[slug] storefronts) and /seller/* have their own headers
   // Only treat as storefront if it's a single segment AND not a known app route
   const knownRoutes = [...ROUTES_WITH_NAV, ...ROUTES_WITH_CUSTOM_HEADER,
-    '/notifications', '/orders', '/profile', '/messenger', '/checkout', '/payment',
+    '/notifications', '/orders', '/profile', '/checkout', '/payment',
     '/create', '/ai-chat', '/live', '/live-watch', '/group-buy', '/group-buy-join',
     '/become-seller', '/link-account', '/telegram', '/seller-dashboard', '/seller-profile'];
   const isDynamicStorefront = pathname.match(/^\/[^\/]+$/) && !knownRoutes.includes(pathname) && !pathname.startsWith('/api');
