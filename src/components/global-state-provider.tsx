@@ -33,6 +33,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -163,45 +164,37 @@ export function usePersistedState<T>(
 export function useScrollPreservation(pageKey: string): void {
   const { getScroll, saveScroll } = useGlobalState();
 
-  // Restore on mount — wait for content + images to render before scrolling.
-  // A single rAF is too fast (images haven't loaded). We use a sequence of
-  // rAF + setTimeout to ensure the page has enough height to scroll to.
-  useEffect(() => {
+  // CRITICAL: use useLayoutEffect (not useEffect) for scroll restoration.
+  // useLayoutEffect fires SYNCHRONOUSLY before the browser paints, so the
+  // user never sees the top of the page — they see the correct scroll position
+  // immediately. useEffect fires after paint, which means the user sees a
+  // flash of the top before being scrolled down.
+  useLayoutEffect(() => {
     const saved = getScroll(pageKey);
     if (saved > 0) {
-      let cancelled = false;
+      // Restore IMMEDIATELY — before paint, before the user sees anything.
+      try {
+        window.scrollTo(0, saved);
+      } catch {}
 
-      // Attempt 1: after 2 animation frames (DOM painted)
-      const raf1 = requestAnimationFrame(() => {
-        if (cancelled) return;
-        const raf2 = requestAnimationFrame(() => {
-          if (cancelled) return;
-          // Attempt 2: after 100ms (images may have loaded from cache)
-          setTimeout(() => {
-            if (cancelled) return;
+      // Also restore after a short delay — images loading from cache can
+      // change the page height and reset scroll. These retries ensure the
+      // position sticks.
+      const retries = [50, 150, 300, 600, 1000];
+      const timers: ReturnType<typeof setTimeout>[] = [];
+      for (const delay of retries) {
+        const t = setTimeout(() => {
+          if (Math.abs(window.scrollY - saved) > 20) {
             try {
-              window.scrollTo({ top: saved, left: 0, behavior: 'auto' });
-            } catch {
               window.scrollTo(0, saved);
-            }
-            // Attempt 3: after 500ms (fallback for slow image loading)
-            setTimeout(() => {
-              if (cancelled) return;
-              if (Math.abs(window.scrollY - saved) > 50) {
-                try {
-                  window.scrollTo({ top: saved, left: 0, behavior: 'auto' });
-                } catch {
-                  window.scrollTo(0, saved);
-                }
-              }
-            }, 500);
-          }, 100);
-        });
-      });
+            } catch {}
+          }
+        }, delay);
+        timers.push(t);
+      }
 
       return () => {
-        cancelled = true;
-        cancelAnimationFrame(raf1);
+        timers.forEach(clearTimeout);
         saveScroll(pageKey, window.scrollY);
       };
     }

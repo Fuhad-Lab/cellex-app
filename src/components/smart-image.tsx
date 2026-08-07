@@ -39,7 +39,8 @@ interface SmartImageProps {
   onClick?: () => void;
   /** Whether to use LQIP blur placeholder (default true, only works for Supabase URLs) */
   blur?: boolean;
-  /** Loading strategy — default 'lazy' */
+  /** Loading strategy — default 'eager' so images load immediately
+   * (browser serves from HTTP cache on return visits — no delay) */
   loading?: 'lazy' | 'eager';
 }
 
@@ -54,7 +55,7 @@ export function SmartImage({
   style,
   onClick,
   blur = true,
-  loading = 'lazy',
+  loading = 'eager',
 }: SmartImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
