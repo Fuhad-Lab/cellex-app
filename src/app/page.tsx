@@ -272,16 +272,15 @@ export default function HomePage() {
           posts.push(...seededShuffle(remaining, seed));
         }
 
-        setFeed(posts);
-
         // If no posts were found (anonymous users or empty feed), fall back
-        // to showing products directly from the catalog.
+        // to showing products directly from the catalog — BUT fetch the
+        // fallback BEFORE calling setFeed so there's no empty-state flash.
         if (posts.length === 0) {
           try {
             const productsResp = await api.products.all(30);
             if (productsResp.success && productsResp.products) {
-              const productPosts: FeedPost[] = productsResp.products.map((p: any) => ({
-                type: 'product',
+              posts.push(...productsResp.products.map((p: any) => ({
+                type: 'product' as const,
                 id: `prod-${p.id}`,
                 productId: p.id,
                 sellerId: p.seller_id,
@@ -293,11 +292,13 @@ export default function HomePage() {
                 product: p,
                 soldCount: p.units_sold,
                 verified: true,
-              }));
-              setFeed(productPosts);
+              })));
             }
           } catch {}
         }
+
+        // Single setFeed call — no intermediate empty state, no flash.
+        setFeed(posts);
 
         // Like feature removed
       } catch (e) {
